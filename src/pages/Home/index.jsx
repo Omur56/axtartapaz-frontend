@@ -348,7 +348,7 @@ const Home = () => {
                 >
                   <div
                     key={index}
-                    className="border sm:w-[240.4px] max-w-[240.4px] h-[300px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
+                    className="border sm:w-[240.4px] max-w-[240.4px] h-[210px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
                   >
                     <img
                       src={
@@ -379,15 +379,15 @@ const Home = () => {
           <div className=" ring-2 bg-slate-400 h-[1px] mb-6 w-full"></div>
         </div>
 
-        <div className="p-2 mt-6  justify-items-center rounded-[4px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[30px] w-full">
+        <div className="p-2 mt-6  justify-items-center rounded-[4px] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-[30px] w-full">
           {isLoading ? (
             Array.from({ length: 40 }).map((_, i) => (
               <div
                 key={i}
-                className="sm:w-[240.4px] max-w-[240.4px] h-[300px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
+                className=" max-w-[240.4px] h-[210px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
               >
-                <div className="sm:w-[240.4px] max-w-[240.4px] h-[300px] bg-white rounded-2xl shadow-md ">
-                  <div className="w-full h-[178.5px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
+                <div className="w-[160px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl shadow-md ">
+                  <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
                   <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
                   <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
                   <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
@@ -405,8 +405,8 @@ const Home = () => {
                   key={car.id}
                   to={`/cars/${car._id}`}
                 >
-                  <div className="sm:w-[240.4px] max-w-[240.4px] h-[300px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
-                    <div className="w-full h-[178.5px] bg-gray-100 relative">
+                  <div className="w-[160px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                    <div className="w-full h-[100px] bg-gray-100 relative">
                       <img
                         src={car.images[0]}
                         alt={car.brand}
@@ -414,16 +414,16 @@ const Home = () => {
                       />
                     </div>
                     <div className="p-2">
-                      <h3 className="text-xl font-bold font-black text-black">
+                      <h3 className="text-[12px] font-bold font-black text-black">
                         {car.price} AZN ₼
                       </h3>
-                      <h2 className="text-lg truncate w-50">
+                      <h2 className="text-[12px] truncate w-30">
                         {car.category}, {car.brand}, {car.model}
                       </h2>
-                      <p className="text-gray-600 truncate w-64">
+                      <p className="text-gray-600 truncate w-30">
                         {car.year},{car.motor} {car.km} km
                       </p>
-                      <p className="capitalize text-gray-400 text-[16px]">
+                      <p className="capitalize text-gray-400 text-[12px]">
                         {car.location}, {formatDate(car.data)}{" "}
                         {getCurrentTime(car.data)}
                       </p>
@@ -439,7 +439,7 @@ const Home = () => {
                   key={post._id}
                   to={`/elan/${post._id}`}
                 >
-                  <div key={post._id} className="sm:w-[240.4px] max-w-[240.4px] h-[300px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={post._id} className="w-[160px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         post.images && post.images.length > 0
@@ -449,17 +449,17 @@ const Home = () => {
                           : "/no-image.jpg"
                       }
                       alt={post.title}
-                      className="w-full h-[178.5px] object-cover rounded-t-[8px]"
+                      className="w-full h-[100px] object-cover rounded-t-[8px]"
                     />
                     <div className="p-4">
-                      <h3 className="text-xl font-bold text-black">
+                      <h3 className="text-[12px] font-bold text-black truncate w-30 ">
                         {post.price} AZN ₼
                       </h3>
-                      <h2 className="text-sm font-bold truncate w-62">
+                      <h2 className="text-[12px] font-bold truncate w-30">
                         {post.title}
                       </h2>
 
-                      <p className="capitalize text-gray-400 text-[16px] mt-5">
+                      <p className="capitalize text-gray-400 text-[12px] mt-5">
                         {post.location}, {formatDate(post.data)}{" "}
                         {getCurrentTime(post.data)}
                       </p>
@@ -475,7 +475,7 @@ const Home = () => {
                   key={item._id}
                   to={`/PostDetailElectronika/${item._id}`}
                 >
-                  <div key={item._id} className="sm:w-[240.4px] max-w-[240.4px] h-[300px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[160px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -483,19 +483,19 @@ const Home = () => {
                           : "/no-image.jpg"
                       }
                       alt={item.title}
-                      className="w-full h-[178.5px] object-cover rounded-t-[8px]"
+                      className="w-full h-[100px] object-cover rounded-t-[8px]"
                     />
                     <div className="p-4">
                       <h3 className="text-xl font-bold text-black">
                         {item.price} AZN ₼
                       </h3>
-                      <h2 className="text-sm font-bold truncate w-62">
+                      <h2 className="text-[12px] font-bold truncate w-30">
                         {item.category}
                       </h2>
-                      <h3 className="text-lg font-semibold truncate w-62">
+                      <h3 className="text-[12px] font-semibold truncate w-30">
                         {item.title}
                       </h3>
-                      <p className="capitalize text-gray-400 text-[16px]">
+                      <p className="capitalize text-gray-400 text-[12px]">
                         {item.location}, {formatDate(item.data)}{" "}
                         {getCurrentTime(item.data)}
                       </p>
@@ -511,7 +511,7 @@ const Home = () => {
                   key={item._id}
                   to={`/PostDetailAcsesuar/${item._id}`}
                 >
-                  <div key={item._id} className="sm:w-[240.4px] max-w-[240.4px] h-[300px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[160px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -519,19 +519,19 @@ const Home = () => {
                           : "/no-image.jpg"
                       }
                       alt={item.title}
-                      className="w-full h-[178.5px] object-cover rounded-t-[8px]"
+                      className="w-full h-[100px] object-cover rounded-t-[8px]"
                     />
                     <div className="p-4">
-                      <h3 className="text-xl font-bold text-black">
+                      <h3 className="text-[12px] font-bold text-black">
                         {item.price} AZN ₼
                       </h3>
-                      <h2 className="text-sm font-bold truncate w-62">
+                      <h2 className="text-[12px] font-bold truncate w-30">
                         {item.category}
                       </h2>
-                      <h3 className="text-lg font-semibold truncate w-62">
+                      <h3 className="text-[12px] font-semibold truncate w-30">
                         {item.title}
                       </h3>
-                      <p className="capitalize text-gray-400 text-[16px]">
+                      <p className="capitalize text-gray-400 text-[12px]">
                         {item.location}, {formatDate(item.data)}{" "}
                         {getCurrentTime(item.data)}
                       </p>
@@ -547,7 +547,7 @@ const Home = () => {
                   key={item._id}
                   to={`/PostRealEstate/${item._id}`}
                 >
-                  <div key={item._id} className="sm:w-[240.4px] max-w-[240.4px] h-[300px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[160px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -555,17 +555,17 @@ const Home = () => {
                           : "/no-image.jpg"
                       }
                       alt={item.title}
-                      className="w-full h-[178.5px] object-cover rounded-t-[8px]"
+                      className="w-full h-[100px] object-cover rounded-t-[8px]"
                     />
                     <div className="p-4">
-                      <h3 className="text-xl font-bold text-black">
+                      <h3 className="text-[12px] font-bold text-black">
                         {item.price} AZN ₼
                       </h3>
-                      <h2 className="text-sm font-bold truncate w-62">
+                      <h2 className="text-[12px] font-bold truncate w-30">
                         {item.title_type}, {item.type_building}, {item.location}
                       </h2>
 
-                      <p className="capitalize text-gray-400 text-[16px]">
+                      <p className="capitalize text-gray-400 text-[12px]">
                         {item.location}, {formatDate(item.data)}{" "}
                         {getCurrentTime(item.data)}
                       </p>
@@ -581,7 +581,7 @@ const Home = () => {
                   key={item._id}
                   to={`/PostDetailHousehold/${item._id}`}
                 >
-                  <div key={item._id} className="sm:w-[240.4px] max-w-[240.4px] h-[300px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[160px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -589,17 +589,17 @@ const Home = () => {
                           : "/no-image.jpg"
                       }
                       alt={item.title}
-                      className="w-full h-[178.5px] object-cover rounded-t-[8px]"
+                      className="w-full h-[100px] object-cover rounded-t-[8px]"
                     />
                     <div className="p-4">
-                      <h3 className="text-xl font-bold text-black">
+                      <h3 className="text-[12px] font-bold text-black truncate w-30">
                         {item.price} AZN ₼
                       </h3>
-                      <h2 className="text-sm font-boldtruncate w-62">
+                      <h2 className="text-[12px] font-bold truncate w-30">
                         {item.title}, {item.category}, {item.location}
                       </h2>
 
-                      <p className="capitalize text-gray-400 text-[16px]">
+                      <p className="capitalize text-gray-400 text-[12px]">
                         {item.location}, {formatDate(item.data)}{" "}
                         {getCurrentTime(item.data)}
                       </p>
@@ -615,7 +615,7 @@ const Home = () => {
                   key={item._id}
                   to={`/PostDetailPhone/${item._id}`}
                 >
-                  <div key={item._id} className="sm:w-[240.4px] max-w-[240.4px] h-[300px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[160px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -623,17 +623,17 @@ const Home = () => {
                           : "/no-image.jpg"
                       }
                       alt={item.title}
-                      className="w-full h-[178.5px] object-cover rounded-t-[8px]"
+                      className="w-full h-[100px] object-cover rounded-t-[8px]"
                     />
                     <div className="p-4">
                       <h3 className="text-xl font-bold text-black">
                         {item.price} AZN ₼
                       </h3>
-                      <h2 className="text-lg font-bold truncate w-62">
+                      <h2 className="text-[12px] font-bold truncate w-30">
                         {item.title}, {item.brand}, {item.model}
                       </h2>
-                      <h3 className="text-lg font-semibold"></h3>
-                      <p className="capitalize text-gray-400 text-[16px]">
+                      <h3 className="text-[12px] font-semibold truncate w-30"></h3>
+                      <p className="capitalize text-gray-400 text-[12px]">
                         {item.location}, {formatDate(item.data)}{" "}
                         {getCurrentTime(item.data)}
                       </p>
@@ -649,7 +649,7 @@ const Home = () => {
                   key={item._id}
                   to={`/PostDetailClothing/${item._id}`}
                 >
-                  <div key={item._id} className="sm:w-[240.4px] max-w-[240.4px] h-[300px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[160px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -657,17 +657,17 @@ const Home = () => {
                           : "/no-image.jpg"
                       }
                       alt={item.title}
-                      className="w-full h-[178.5px] object-cover rounded-t-[8px]"
+                      className="w-full h-[100px] object-cover rounded-t-[8px]"
                     />
                     <div className="p-4">
                       <h3 className="text-xl font-bold text-black">
                         {item.price} AZN ₼
                       </h3>
-                      <h2 className="text-lg font-bold truncate w-62">
+                      <h2 className="text-[12px] font-bold truncate w-30">
                         {item.title}, {item.brand}, {item.model}
                       </h2>
-                      <h3 className="text-lg font-semibold"></h3>
-                      <p className="capitalize text-gray-400 text-[16px]">
+                      <h3 className="text-[12px] font-semibold truncate w-30"></h3>
+                      <p className="capitalize text-gray-400 text-[12px]">
                         {item.location}, {formatDate(item.data)}{" "}
                         {getCurrentTime(item.data)}
                       </p>
