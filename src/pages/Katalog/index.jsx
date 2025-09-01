@@ -45,9 +45,9 @@ const Katalog = () => {
                 className="object-contain w-[70px] h-[70px]"
               />
             </button>
-            <div className="mt-1">
+            <div className="mt-2">
               <span
-                className={`text-[12px]  text-black font-bold leading-tight block  `}
+                className={`text-[10px]  text-black font-bold leading-tight block  `}
               >
                 {cat.label}
               </span>

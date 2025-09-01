@@ -50,7 +50,7 @@ export default function AdminPanel() {
     formData.append("image", newAd.image);
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/ads`, formData, {
+      await axiosInstance.post("/ads", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("Reklam əlavə olundu ✅");
@@ -141,21 +141,21 @@ export default function AdminPanel() {
           {[...ads].reverse().map((ad) => (
             <div key={ad._id} className="p-4 bg-white rounded-lg shadow">
               <img
-                src={`${process.env.REACT_APP_API_URL}/${ad.image}`}
+                src={`${process.env.REACT_APP_API_URL}/uploads/${ad.image}`}
                 alt={ad.title}
                 className="w-full h-32 object-cover rounded mb-2"
               />
               <div className="flex justify-between">
                 <div className="grid grid-col-1 sm:grid-col-2">
                   <h3 className="font-semibold">{ad.title}</h3>
-                  <Link
-                    href={ad.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-blue-500 text-sm truncate w-10 "
-                  >
-                    Link Click
-                  </Link>
+                  <a
+  href={ad.link}
+  target="_blank"
+  rel="noreferrer"
+  className="text-blue-500 text-sm truncate"
+>
+  Link Click
+</a>
                 </div>
                 <button
                   onClick={() => handleDeleteAd(ad._id)}

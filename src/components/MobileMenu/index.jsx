@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { menuItems } from "../SideBarMenu/data";
+import menuItems from '../SideBarMenu/data'; 
 
 const BottomMenu = () => {
   const [showNavbar, setShowNavbar] = useState(true);

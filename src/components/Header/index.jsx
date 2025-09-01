@@ -22,7 +22,7 @@ function Header() {
   };
 
   return (
-    <header className="header bg-gradient-to-r from-sky-700 to-green-500 mx-auto my-auto shadow-[0px_0px_10px_0px_rgba(0,0,0,0.5)] rounded-b-[10px]">  
+    <header className="header bg-white mx-auto my-auto shadow-[0px_0px_10px_0px_rgba(0,0,0,0.5)] rounded-b-[10px]">  
       <div className="flex justify-between items-center py-4 mx-auto my-auto max-w-[1200px]">
         <TitleLogo />
 
@@ -30,13 +30,13 @@ function Header() {
           {!isLoggedIn && (
             <>
               <button
-                className="flex hidden md:flex transform ease-in-out duration-500 items-center text-[14px] font-[500] gap-2 bg-transparent border border-blue-500 text-white hover:text-white px-3 py-1 rounded-[4px] hover:bg-blue-500"
+                className="flex hidden md:flex transform ease-in-out duration-500 items-center text-[12px] font-[500] gap-2 bg-transparent border border-blue-500 text-blue-600 hover:text-white px-3 py-1 rounded-[4px] hover:bg-blue-500"
                 onClick={() => navigate("/login")}
               >
                 <FaSignInAlt /> Daxil ol
               </button>
               <button
-                className="flex hidden md:flex transform ease-in-out duration-500 items-center text-[14px] font-[500] gap-2 bg-transparent border border-blue-500 text-white hover:text-white px-3 py-1 rounded-[4px] hover:bg-blue-500"
+                className="flex hidden md:flex transform ease-in-out duration-500 items-center text-[12px] font-[500] gap-2 bg-transparent border border-blue-500 text-blue-600 hover:text-white px-3 py-1 rounded-[4px] hover:bg-blue-500"
                 onClick={() => navigate("/reqister")}
               >
                 <FaUserPlus /> Qeydiyyat

@@ -8,14 +8,14 @@ import {
   AiOutlineSearch 
 } from "react-icons/ai";
 
-export const menuItems = [
+const menuItems = [
   {
     id: 1,
     text: "Əsas",
     url: "/",
     icon: (
       <AiFillHome 
-        className="text-blue-500 hover:text-blue-700 transition duration-300 transform hover:scale-125 hover:rotate-12" 
+        className="text-blue-500 hover:bg-blue-700 border rounded-[8px] hover:text-white transition duration-300 transform hover:scale-125" 
         size={28} 
       />
     ),
@@ -26,7 +26,7 @@ export const menuItems = [
     url: "/Katalog",
     icon: (
       <AiOutlineAppstore 
-        className="text-purple-500 hover:text-purple-700 transition duration-300 transform hover:scale-125 hover:-rotate-12" 
+        className="text-purple-500 hover:bg-purple-700 border rounded-[8px] hover:text-white transition duration-300 transform hover:scale-125 " 
         size={28} 
       />
     ),
@@ -37,8 +37,8 @@ export const menuItems = [
     url: "/CreateCatalogPost",
     icon: (
       <AiOutlinePlusCircle 
-        className="text-green-500 hover:text-green-700 transition duration-300 transform hover:scale-125 hover:rotate-6" 
-        size={30} 
+        className="text-green-500 mt-[-20px] hover:bg-red-700 border rounded-[50px] hover:text-white transition duration-300 transform hover:scale-125 " 
+        size={50} 
       />
     ),
   },
@@ -48,7 +48,7 @@ export const menuItems = [
     url: "/profile",
     icon: (
       <AiOutlineUser 
-        className="text-pink-500 hover:text-pink-700 transition duration-300 transform hover:scale-125 hover:-rotate-6" 
+        className="text-pink-500 hover:bg-pink-700 transition border rounded-[50px] hover:text-white duration-300 transform hover:scale-125 " 
         size={28} 
       />
     ),
@@ -59,7 +59,7 @@ export const menuItems = [
     url: "/search",
     icon: (
       <AiOutlineSearch 
-        className="text-yellow-500 hover:text-yellow-700 transition duration-300 transform hover:scale-125 hover:rotate-12" 
+        className="text-yellow-500 hover:bg-yellow-700 transition border rounded-[50px] hover:text-white duration-300 transform hover:scale-125 " 
         size={28} 
       />
     ),
@@ -87,3 +87,5 @@ export const menuItems = [
     ),
   },
 ];
+
+export default menuItems; // ✅ default export

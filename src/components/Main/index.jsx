@@ -12,7 +12,7 @@ const RootLayout = () => {
  
   
   return (
-   <div className=" bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50">
+   <div className=" bg-[#f5f5f5]">
        <Header />
   
       <Outlet />

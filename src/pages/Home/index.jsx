@@ -379,7 +379,7 @@ const Home = () => {
           <div className=" ring-2 bg-slate-400 h-[1px] mb-6 w-full"></div>
         </div>
 
-        <div className=" mt-6  justify-items-center gap-[5px] p-[5px] rounded-[4px] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-[30px] w-full">
+        <div className=" mt-6  justify-items-center gap-[10px] p-[5px] rounded-[4px] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5  w-full">
           {isLoading ? (
             Array.from({ length: 40 }).map((_, i) => (
               <div
