@@ -59,7 +59,7 @@ export default function CreateElectronikaPost() {
   // Backenddən elanları çəkmək üçün
   const fetchItems = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/electronika/");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/electronika/`);
       setElectronikaItems(res.data);
     } catch (err) {
       console.error(err);

@@ -47,13 +47,13 @@ function Header() {
           {isLoggedIn && (
             <>
               <button
-                className="flex hidden md:flex transform ease-in-out duration-500 items-center text-[14px] font-[500] gap-2 bg-transparent border border-blue-500 text-white hover:text-white px-3 py-1 rounded-[4px] hover:bg-blue-500"
+                className="flex hidden md:flex transform ease-in-out duration-500 items-center text-[12px] font-[500] gap-2 bg-transparent border border-blue-500 text-blue-600 hover:text-white px-3 py-1 rounded-[4px] hover:bg-blue-500"
                 onClick={() => navigate("/profile")}
               >
                 <FaUser /> Profil
               </button>
               <button
-                className="flex hidden md:flex transform ease-in-out duration-500 items-center text-[14px] font-[500] gap-2 bg-red-600 text-white px-3 py-1 rounded-[4px] hover:bg-red-400"
+                className="flex hidden md:flex transform ease-in-out duration-500 items-center text-[12px] font-[500] gap-2 bg-red-600 text-white px-3 py-1 rounded-[4px] hover:bg-red-400"
                 onClick={handleLogout}
               >
                 <FaSignOutAlt /> Logout
