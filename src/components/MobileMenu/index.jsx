@@ -35,7 +35,7 @@ const BottomMenu = () => {
         <Link
           key={item.id}
           to={item.url}
-          className="flex flex-col items-center text-xs hover:text-[#01D063] transition-colors"
+          className="flex flex-col items-center text-xs hover:text-[#1c04f7] transition-colors"
         >
           <div className="text-[25px]">{item.icon}</div>
           <span className="text-[10px]">{item.text}</span>

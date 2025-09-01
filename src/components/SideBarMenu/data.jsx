@@ -1,64 +1,89 @@
+import { 
+  AiFillHome, 
+  AiOutlineUser, 
+  AiOutlineSetting, 
+  AiOutlineMail, 
+  AiOutlineAppstore, 
+  AiOutlinePlusCircle, 
+  AiOutlineSearch 
+} from "react-icons/ai";
 
-
-import {
-  FaHome,
-  FaUser,
-  FaCog,
-  FaEnvelope,
-  FaThLarge,
-   FaPlus,
-   FaSearch,
-} from "react-icons/fa";
-import { MdPersonAdd } from "react-icons/md";
 export const menuItems = [
   {
     id: 1,
     text: "Əsas",
     url: "/",
-    icon: <FaHome />,
+    icon: (
+      <AiFillHome 
+        className="text-blue-500 hover:text-blue-700 transition duration-300 transform hover:scale-125 hover:rotate-12" 
+        size={28} 
+      />
+    ),
   },
   {
     id: 2,
     text: "Katalog",
     url: "/Katalog",
-    icon: <FaThLarge />,
+    icon: (
+      <AiOutlineAppstore 
+        className="text-purple-500 hover:text-purple-700 transition duration-300 transform hover:scale-125 hover:-rotate-12" 
+        size={28} 
+      />
+    ),
   },
   {
     id: 3,
     text: "Yeni Elan",
     url: "/CreateCatalogPost",
-    icon:<FaPlus size={30} /> ,
+    icon: (
+      <AiOutlinePlusCircle 
+        className="text-green-500 hover:text-green-700 transition duration-300 transform hover:scale-125 hover:rotate-6" 
+        size={30} 
+      />
+    ),
   },
   {
     id: 4,
     text: "Profil",
     url: "/profile",
-    icon: <FaUser />,
+    icon: (
+      <AiOutlineUser 
+        className="text-pink-500 hover:text-pink-700 transition duration-300 transform hover:scale-125 hover:-rotate-6" 
+        size={28} 
+      />
+    ),
   },
   {
     id: 5,
     text: "Axtarış",
     url: "/search",
-    icon: <FaSearch  />,
+    icon: (
+      <AiOutlineSearch 
+        className="text-yellow-500 hover:text-yellow-700 transition duration-300 transform hover:scale-125 hover:rotate-12" 
+        size={28} 
+      />
+    ),
   },
   {
     id: 6,
     text: "Əlaqə",
     url: "/contact",
-    icon: <FaEnvelope />,
+    icon: (
+      <AiOutlineMail 
+        className="text-red-500 hover:text-red-700 transition duration-300 transform hover:scale-125 hover:-rotate-12" 
+        size={28} 
+      />
+    ),
   },
-
   {
     id: 7,
     text: "Settings",
     url: "/settings",
-    icon: <FaCog />,
-    
+    icon: (
+      <AiOutlineSetting 
+        className="text-indigo-500 hover:text-indigo-700 transition duration-300 transform hover:scale-125 hover:rotate-6" 
+        size={28} 
+      />
+    ),
   },
-    // {
-  //   id: 5,
-  //   text: "Haqqımızda",
-  //   url: "/about",
-  //   icon: <FaInfoCircle />,
-  // },
 ];

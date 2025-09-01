@@ -340,7 +340,7 @@ const Home = () => {
           )}
 
           {!loading && results.length > 0 && (
-            <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2  sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {results.map((item, index) => (
                 <Link
                   key={item.id || item._id}
@@ -348,7 +348,7 @@ const Home = () => {
                 >
                   <div
                     key={index}
-                    className="border sm:w-[240.4px] max-w-[240.4px] h-[210px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
+                    className="border  max-w-[240.4px] h-[210px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
                   >
                     <img
                       src={
@@ -359,13 +359,13 @@ const Home = () => {
                           : "/placeholder.png"
                       }
                       alt={item.title || "Image"}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-[100px] object-cover"
                     />
                     <div className="p-4">
                       <h2 className="text-lg font-semibold mb-1">
                         {item.price} AZN
                       </h2>
-                      <h3 className="text-lg font-semibold mb-1">
+                      <h3 className="text-[12px] font-semibold  mb-1">
                         {item.title} {item.category}, {item.brand}, {item.model}
                       </h3>
                       <p className="text-gray-600"></p>
@@ -379,7 +379,7 @@ const Home = () => {
           <div className=" ring-2 bg-slate-400 h-[1px] mb-6 w-full"></div>
         </div>
 
-        <div className="p-2 mt-6  justify-items-center rounded-[4px] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-[30px] w-full">
+        <div className=" mt-6  justify-items-center gap-[5px] p-[5px] rounded-[4px] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-[30px] w-full">
           {isLoading ? (
             Array.from({ length: 40 }).map((_, i) => (
               <div
