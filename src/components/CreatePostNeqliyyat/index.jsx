@@ -639,3 +639,262 @@ const handleOpenForm = () => {
     </div>
   );
 }
+
+
+
+
+
+// import React, { useState, useEffect } from "react";
+// import axios from "axios";
+// import { Link } from "react-router-dom";
+// import { useParams } from "react-router-dom";
+// import { X } from "lucide-react";
+// import Swal from "sweetalert2";
+// import CircularProgress from '@mui/material/CircularProgress';
+// import Box from '@mui/material/Box';
+
+// export default function CreatePost() {
+//   const [isOpen, setIsOpen] = useState(false);
+//   const { id } = useParams();
+//   const [editingId, setEditingId] = useState(null);
+//   const [form, setForm] = useState({
+//     id: Date.now(),
+//     category: "",
+//     brand: "",
+//     model: "",
+//     ban_type: "",
+//     year: "",
+//     price: "",
+//     location: "",
+//     images: [],
+//     km: "",
+//     motor: "",
+//     transmission: "",
+//     engine: "",
+//     contact: { name: "", email: "", phone: "" },
+//     liked: false,
+//     favorite: false,
+//     data: new Date(),
+//     description: "",
+//   });
+
+//   const [posts, setPosts] = useState([]);
+//   const [query, setQuery] = useState("");
+//   const [results, setResults] = useState([]);
+//   const [loading, setLoading] = useState(false);
+//   const [isLoading, setIsLoading] = useState(true);
+
+//   const token = localStorage.getItem("token");
+//   const userId = localStorage.getItem("userId");
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     if (name.startsWith("contact.")) {
+//       const field = name.split(".")[1];
+//       setForm(prev => ({ ...prev, contact: { ...prev.contact, [field]: value } }));
+//     } else if (name === "data") {
+//       setForm(prev => ({ ...prev, data: new Date(value) }));
+//     } else {
+//       setForm(prev => ({ ...prev, [name]: value }));
+//     }
+//   };
+
+//   const handleFileChange = (e) => {
+//     const files = Array.from(e.target.files);
+//     if (files.length > 20) {
+//       alert("Ən çoxu 20 şəkil yükləyə bilərsiniz.");
+//       return;
+//     }
+//     setForm(prev => ({ ...prev, images: files }));
+//   };
+
+//   const fetchPosts = async () => {
+//     setIsLoading(true);
+//     try {
+//       const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/cars`);
+//       setPosts(res.data);
+//     } catch (err) {
+//       console.error("API xətası:", err);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchPosts();
+//   }, []);
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     if (!token || !userId) {
+//       Swal.fire({
+//         icon: "warning",
+//         title: "Giriş tələb olunur",
+//         text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+//       });
+//       return;
+//     }
+
+//     const formData = new FormData();
+//     form.images.forEach(file => formData.append("images", file));
+
+//     Object.entries(form).forEach(([key, value]) => {
+//       if (key === "data") return;
+//       if (key === "contact") {
+//         Object.entries(value).forEach(([k, v]) => formData.append(`contact.${k}`, v));
+//       } else if (key !== "images") {
+//         formData.append(key, value);
+//       }
+//     });
+
+//     formData.append("data", form.data ? form.data.toISOString() : new Date().toISOString());
+//     formData.append("userId", userId);
+
+//     try {
+//       if (editingId) {
+//         // Edit
+//         await axios.put(`${process.env.REACT_APP_API_URL}/api/cars/${editingId}`, formData, {
+//           headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+//         });
+//         setEditingId(null);
+//       } else {
+//         // Yeni post
+//         await axios.post(`${process.env.REACT_APP_API_URL}/api/cars`, formData, {
+//           headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+//         });
+//       }
+//       resetForm();
+//       fetchPosts();
+//       Swal.fire({ icon: "success", title: "Elan uğurla yerləşdirildi!", confirmButtonColor: "#3085d6" });
+//     } catch (err) {
+//       console.error(err);
+//       Swal.fire({ icon: "error", title: "Xəta baş verdi", text: err.response?.data?.error || "Server xətası", confirmButtonColor: "#d33" });
+//     }
+//   };
+
+//   const resetForm = () => {
+//     setForm({
+//       id: Date.now(),
+//       category: "",
+//       brand: "",
+//       model: "",
+//       ban_type: "",
+//       year: "",
+//       price: "",
+//       location: "",
+//       images: [],
+//       km: "",
+//       motor: "",
+//       transmission: "",
+//       engine: "",
+//       contact: { name: "", email: "", phone: "" },
+//       liked: false,
+//       favorite: false,
+//       data: new Date(),
+//       description: "",
+//     });
+//   };
+
+//   const formatDate = (dateString) => {
+//     const date = new Date(dateString);
+//     return date.toLocaleDateString("az-AZ", { day: "numeric", month: "long", year: "numeric" });
+//   };
+
+//   const getCurrentTime = (isoString) => new Date(isoString).toTimeString().slice(0,5);
+
+//   const handleSearch = async () => {
+//     if (!query.trim()) return;
+//     setLoading(true);
+//     try {
+//       const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/cars`);
+//       const filtered = res.data.filter(item => {
+//         const search = query.toLowerCase();
+//         return Object.values(item).some(val => typeof val === "string" && val.toLowerCase().includes(search));
+//       });
+//       setResults(filtered);
+//     } catch (err) {
+//       console.error(err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleOpenForm = () => {
+//     if (!token) {
+//       Swal.fire({
+//         icon: "warning",
+//         title: "Giriş tələb olunur",
+//         text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+//         confirmButtonColor: "#3085d6",
+//       });
+//       return;
+//     }
+//     setIsOpen(true);
+//   };
+
+//   return (
+//     <div className="min-h-screen p-6 max-w-5xl mx-auto">
+//       <div className="flex justify-between items-center mb-4">
+//         <input
+//           className="w-full max-w-[400px] border p-2 rounded"
+//           placeholder="AxtarTap..."
+//           value={query}
+//           onChange={(e) => setQuery(e.target.value)}
+//           onKeyDown={(e) => { if(e.key === "Enter") handleSearch(); }}
+//         />
+//         <button onClick={handleSearch} className="ml-2 px-4 py-2 bg-green-500 text-white rounded">Axtar</button>
+//       </div>
+
+//       <button onClick={handleOpenForm} className="px-4 py-2 bg-blue-600 text-white rounded-lg mb-4">Elan yerləşdirmək üçün formu aç</button>
+
+//       {isOpen && (
+//         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+//           <div className="relative w-[90%] max-w-3xl max-h-[90vh] overflow-y-auto bg-white p-6 rounded-xl shadow-lg">
+//             <button onClick={() => setIsOpen(false)} className="absolute top-2 right-2 text-gray-600 hover:text-red-600"><X size={28}/></button>
+//             <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+//               <input name="category" value={form.category} onChange={handleChange} placeholder="Kateqoriya" className="border p-2 rounded" required />
+//               <input name="brand" value={form.brand} onChange={handleChange} placeholder="Marka" className="border p-2 rounded" required />
+//               <input name="model" value={form.model} onChange={handleChange} placeholder="Model" className="border p-2 rounded" required />
+//               <input name="ban_type" value={form.ban_type} onChange={handleChange} placeholder="Ban növü" className="border p-2 rounded" required />
+//               <input name="year" type="number" value={form.year} onChange={handleChange} placeholder="İl" className="border p-2 rounded" required />
+//               <input name="price" type="number" value={form.price} onChange={handleChange} placeholder="Qiymət" className="border p-2 rounded" required />
+//               <input name="location" value={form.location} onChange={handleChange} placeholder="Şəhər/Rayon" className="border p-2 rounded" required />
+//               <input name="km" type="number" value={form.km} onChange={handleChange} placeholder="KM" className="border p-2 rounded" required />
+//               <input name="motor" value={form.motor} onChange={handleChange} placeholder="Motor" className="border p-2 rounded" required />
+//               <select name="transmission" value={form.transmission} onChange={handleChange} className="border p-2 rounded" required>
+//                 <option value="">Ötürücü</option>
+//                 <option value="manual">Manual</option>
+//                 <option value="automatic">Avtomat</option>
+//               </select>
+//               <input name="engine" value={form.engine} onChange={handleChange} placeholder="Mühərrik" className="border p-2 rounded" required />
+//               <input name="contact.name" value={form.contact.name} onChange={handleChange} placeholder="Adınız" className="border p-2 rounded" required />
+//               <input name="contact.phone" value={form.contact.phone} onChange={handleChange} placeholder="Telefon" className="border p-2 rounded" required />
+//               <input name="contact.email" value={form.contact.email} onChange={handleChange} placeholder="Email" className="border p-2 rounded" />
+//               <textarea name="description" value={form.description} onChange={handleChange} placeholder="Əlavə məlumat" className="border p-2 rounded col-span-2" />
+//               <input type="file" multiple onChange={handleFileChange} className="col-span-2" accept="image/*" />
+//               <button type="submit" className="col-span-2 px-4 py-2 bg-green-600 text-white rounded">{editingId ? "Yenilə" : "Yerləşdir"}</button>
+//             </form>
+//           </div>
+//         </div>
+//       )}
+
+//       {loading ? (
+//         <Box display="flex" justifyContent="center"><CircularProgress /></Box>
+//       ) : (
+//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+//           {(results.length ? results : posts).map(item => (
+//             <Link to={`/post/${item._id}`} key={item._id} className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition">
+//               <img src={item.images?.[0] || "/placeholder.png"} alt={item.title} className="w-full h-48 object-cover" />
+//               <div className="p-3">
+//                 <h3 className="font-semibold">{item.brand} {item.model}</h3>
+//                 <p className="text-gray-500">{item.price} AZN</p>
+//                 <p className="text-gray-400 text-sm">{formatDate(item.data)} {getCurrentTime(item.data)}</p>
+//               </div>
+//             </Link>
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }

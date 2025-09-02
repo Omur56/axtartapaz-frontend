@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
-
 const Home = () => {
   const [cars, setCars] = useState([]);
 
@@ -279,16 +278,7 @@ const Home = () => {
     
     <div className="min-h-scree">
   <div className="flex  justify-between gap-4">
-       <div className="hidden md:block w-1/6 bg-white sticky top-4 h-screen  p-2 p-4">
-        {ads.slice(0, 1).map((ad) => (
-          <a key={ad._id} href={ad.link} target="_blank" rel="noreferrer">
-            <img
-              src={`${process.env.REACT_APP_API_URL}/${ad.image}`}
-              alt={ad.title}
-              className="rounded-md w-full h-[550px]" />
-          </a>
-        ))}
-      </div>
+      
 
       <div className="flex-1 "> 
       <div className="max-w-5xl mx-auto p-4  gap-4">
@@ -682,17 +672,7 @@ const Home = () => {
       </div>
 
 
-      <div className="w-1/6 hidden md:block  sticky top-4 bg-white h-screen b p-2">
-        {ads.slice(0, 1).map((ad) => (
-          <a key={ad._id} href={ad.link} target="_blank" rel="noreferrer">
-            <img
-              src={`${process.env.REACT_APP_API_URL}/${ad.image}`}
-              alt={ad.title}
-              className="rounded-md w-full h-[550px] shadow-md"
-            />
-          </a>
-        ))}
-      </div>
+    
      </div>
     </div>
      
