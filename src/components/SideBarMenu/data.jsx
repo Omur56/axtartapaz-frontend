@@ -4,7 +4,7 @@ import {
   AiOutlineSetting, 
   AiOutlineMail, 
   AiOutlineAppstore, 
-  AiOutlinePlusCircle, 
+  AiOutlinePlus, 
   AiOutlineSearch 
 } from "react-icons/ai";
 
@@ -15,7 +15,7 @@ const menuItems = [
     url: "/",
     icon: (
       <AiFillHome 
-        className="text-blue-500 hover:bg-blue-700 border rounded-[8px] hover:text-white transition duration-300 transform hover:scale-125" 
+        className="text-slate-500 border rounded-[8px] hover:text-red-500 hover:text-white bg-transparent transition duration-300 transform hover:scale-125" 
         size={28} 
       />
     ),
@@ -26,7 +26,7 @@ const menuItems = [
     url: "/Katalog",
     icon: (
       <AiOutlineAppstore 
-        className="text-purple-500 hover:bg-purple-700 border rounded-[8px] hover:text-white transition duration-300 transform hover:scale-125 " 
+        className="text-slate-500 border rounded-[8px] hover:text-red-500 transition duration-300 transform hover:scale-125 " 
         size={28} 
       />
     ),
@@ -36,9 +36,9 @@ const menuItems = [
     text: "Yeni Elan",
     url: "/CreateCatalogPost",
     icon: (
-      <AiOutlinePlusCircle 
-        className="text-green-500 mt-[-20px] hover:bg-red-700 border rounded-[50px] hover:text-white transition duration-300 transform hover:scale-125 " 
-        size={50} 
+      <AiOutlinePlus 
+        className="text-white bg-red-500  mt-[-15px] hover:bg-red-700 border rounded-[50px] hover:text-white transition duration-300 transform hover:scale-125 " 
+        size={60} 
       />
     ),
   },
@@ -48,7 +48,7 @@ const menuItems = [
     url: "/profile",
     icon: (
       <AiOutlineUser 
-        className="text-pink-500 hover:bg-pink-700 transition border rounded-[50px] hover:text-white duration-300 transform hover:scale-125 " 
+        className="text-slate-500 hover:bg-red-500 transition border rounded-[50px] hover:text-white duration-300 transform hover:scale-125 " 
         size={28} 
       />
     ),
@@ -59,7 +59,7 @@ const menuItems = [
     url: "/search",
     icon: (
       <AiOutlineSearch 
-        className="text-yellow-500 hover:bg-yellow-700 transition border rounded-[50px] hover:text-white duration-300 transform hover:scale-125 " 
+        className="text-slate hover:bg-red-500 transition border rounded-[50px] hover:text-white duration-300 transform hover:scale-125 " 
         size={28} 
       />
     ),

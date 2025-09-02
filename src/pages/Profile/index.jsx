@@ -627,16 +627,20 @@ const modelMap = {
   electronika: "electronika",
 };
 
+
+
 const handleDelete = async (ad) => {
   if (!window.confirm("Bu elanı silmək istədiyinizə əminsiniz?")) return;
 
   try {
     console.log("Silinəcək ID:", ad._id);
 
-    await axios.delete(`${process.env.REACT_APP_API_URL}/api/${modelMap[ad.modelName]}/${ad._id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
+    // await axios.delete(`${process.env.REACT_APP_API_URL}/api/${modelMap[ad.modelName]}/${ad._id}`, {
+    //   headers: { Authorization: `Bearer ${token}` },
+    // });
+await axios.delete(`${process.env.REACT_APP_API_URL}/api/my-announcements/${ad.id}`, {
+  headers: { Authorization: `Bearer ${token}` },
+});
     setMyAds((prev) => prev.filter((a) => a._id !== ad._id));
     alert("Elan uğurla silindi!");
   } catch (err) {
@@ -673,12 +677,12 @@ const handleDelete = async (ad) => {
       {userData && (
         <Card sx={{ mb: 6, p: 3, borderRadius: 3, boxShadow: 3 }}>
           <CardContent>
-            <Typography variant="h4" gutterBottom align="center">
+            <Typography variant="h4"  gutterBottom align="center">
               Profil Məlumatları
             </Typography>
-            <Typography variant="body1"><strong>İstifadəçi adı:</strong> {userData.username}</Typography>
-            <Typography variant="body1"><strong>Email:</strong> {userData.email}</Typography>
-            <Typography variant="body1">
+            <Typography variant="body1" className="uppercase"><strong className=""  >İstifadəçi adı:</strong> {userData.username}</Typography>
+            <Typography variant="body1" className="uppercase"><strong>Email:</strong> {userData.email}</Typography>
+            <Typography variant="body1" className="uppercase">
               <strong>Mobil:</strong> {userData.phone || "-"} {userData.phoneVerified && "✅ Təsdiqlənib"}
             </Typography>
             <Button variant="contained" color="error" sx={{ mt: 2 }} onClick={handleLogout}>Çıxış</Button>
@@ -691,14 +695,14 @@ const handleDelete = async (ad) => {
       {myAds.length === 0 ? (
         <Typography align="center" color="text.secondary">Hazırda heç bir elanınız yoxdur.</Typography>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
           {myAds.map((ad) => (
             <div
               key={ad._id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer flex flex-col"
+              className="bg-white w-[180px] h-[250px] max-w-[240px] rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer flex flex-col"
               onClick={() => openAdDetail(ad._id)}
             >
-              <div className="w-full h-48 bg-gray-200">
+              <div className="w-full h-[100px] bg-gray-200">
                 <img
                   src={getAdImage(ad)}
                   alt={ad.title || "Elan"}
@@ -707,8 +711,8 @@ const handleDelete = async (ad) => {
                 />
               </div>
               <div className="p-4 flex flex-col flex-grow">
-                <h2 className="text-lg font-semibold mb-1">{ad.title || "Başlıq yoxdur"}</h2>
-                <p className="text-gray-600 text-sm mb-3 flex-grow">
+                <h2 className="text-lg font-semibold mb-1 truncate w-30">{ad.title || "Başlıq yoxdur"}</h2>
+                <p className="text-gray-600 text-sm mb-3 flex-grow truncate w-30 h-55">
                   {ad.description ? ad.description.slice(0, 100) + "..." : "Təsvir yoxdur"}
                 </p>
                 <div className="flex justify-between items-center mt-auto">

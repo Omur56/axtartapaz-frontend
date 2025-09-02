@@ -175,7 +175,7 @@ const handleDelete = async () => {
 )}
 
           <div className="flex justify-between text-sm text-gray-500 mt-4">
-            <p>Elanın nömrəsi: {ad._id}</p>
+            <p>Elanın nömrəsi: {ad.id}</p>
             <p>{ad.location}, {formatDate(ad.data)}, {getCurrentTime(ad.data)}</p>
           </div>
         </div>

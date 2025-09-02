@@ -376,7 +376,7 @@ const Home = () => {
                 key={i}
                 className=" max-w-[240.4px] h-[210px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
               >
-                <div className="w-[160px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl shadow-md ">
+                <div className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl shadow-md ">
                   <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
                   <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
                   <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
@@ -395,7 +395,7 @@ const Home = () => {
                   key={car.id}
                   to={`/cars/${car._id}`}
                 >
-                  <div className="w-[160px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <div className="w-full h-[100px] bg-gray-100 relative">
                       <img
                         src={car.images[0]}
@@ -429,7 +429,7 @@ const Home = () => {
                   key={post._id}
                   to={`/elan/${post._id}`}
                 >
-                  <div key={post._id} className="w-[160px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={post._id} className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         post.images && post.images.length > 0
@@ -465,7 +465,7 @@ const Home = () => {
                   key={item._id}
                   to={`/PostDetailElectronika/${item._id}`}
                 >
-                  <div key={item._id} className="w-[160px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[170px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -501,7 +501,7 @@ const Home = () => {
                   key={item._id}
                   to={`/PostDetailAcsesuar/${item._id}`}
                 >
-                  <div key={item._id} className="w-[160px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[170px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -537,7 +537,7 @@ const Home = () => {
                   key={item._id}
                   to={`/PostRealEstate/${item._id}`}
                 >
-                  <div key={item._id} className="w-[160px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -571,7 +571,7 @@ const Home = () => {
                   key={item._id}
                   to={`/PostDetailHousehold/${item._id}`}
                 >
-                  <div key={item._id} className="w-[160px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -605,7 +605,7 @@ const Home = () => {
                   key={item._id}
                   to={`/PostDetailPhone/${item._id}`}
                 >
-                  <div key={item._id} className="w-[160px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[170px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -639,7 +639,7 @@ const Home = () => {
                   key={item._id}
                   to={`/PostDetailClothing/${item._id}`}
                 >
-                  <div key={item._id} className="w-[160px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
