@@ -661,7 +661,7 @@ await axios.delete(`${process.env.REACT_APP_API_URL}/api/my-announcements/${ad.i
     return "/no-image.jpg";
   };
 
-  if (loading) return <p className="text-center mt-10">Yüklənir...</p>;
+  if (loading) return <p className="text-center mt-10 min-h-screen">Yüklənir...</p>;
 
 
   const handleLogout = () => {
