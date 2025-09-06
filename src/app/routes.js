@@ -36,6 +36,7 @@ import Profile from "../pages/Profile";
 import Admin from "../pages/AdminPanel";
 import AdsPanel from "../pages/AdsPanel";
 import AdminLogin from "../pages/AdminLogin";
+import Favorites from "../pages/Favorite";
 // import MyHomeAndGarden from "../backend/models/HomeAndGarden";
 import AdDetail from "../pages/AdDetail";
 const router = createBrowserRouter([
@@ -183,6 +184,10 @@ const router = createBrowserRouter([
         path: "/search",
         Component: Search,
       },
+      {
+          path: "/favorites",
+          Component: Favorites,
+      },
 // {
 //         path: "/my-homeAndGarden ",
 //         Component: MyHomeAndGarden,
@@ -201,6 +206,7 @@ const router = createBrowserRouter([
         Component: AdDetail, 
       },
 
+  
       {
         path: "/",
         Component: () => {

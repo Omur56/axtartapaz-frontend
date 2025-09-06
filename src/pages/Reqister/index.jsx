@@ -4,7 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import InputMask from "react-input-mask";
-
+import { SignupFormDemo } from "./SignupFormDemo";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -43,6 +43,7 @@ export default function Register() {
 
   return (
   <div className="min-h-[58.4vh] ">
+  
     <form 
   onSubmit={handleRegister} 
   className="max-w-md mx-auto mt-2 mb-1 bg-white shadow-lg rounded-xl p-8 space-y-5"

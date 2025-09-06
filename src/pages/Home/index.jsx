@@ -6,9 +6,31 @@ import BottomMenu from "../../components/MobileMenu";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import { Heart } from 'lucide-react';
 
 const Home = () => {
   const [cars, setCars] = useState([]);
+const [favorites, setFavorites] = useState([]);
+
+
+ // LocalStorage-dan favorites oxumaq
+  useEffect(() => {
+    const storedFavorites = localStorage.getItem("favorites");
+    if (storedFavorites) setFavorites(JSON.parse(storedFavorites));
+  }, []);
+
+  const toggleFavorite = (item) => {
+    let updatedFavorites;
+    if (favorites.find((fav) => fav._id === item._id)) {
+      // Silmək
+      updatedFavorites = favorites.filter((fav) => fav._id !== item._id);
+    } else {
+      // Əlavə etmək
+      updatedFavorites = [...favorites, item];
+    }
+    setFavorites(updatedFavorites);
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+  };
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -338,7 +360,7 @@ const Home = () => {
                 >
                   <div
                     key={index}
-                    className="border  max-w-[240.4px] h-[210px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
+                    className="border w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
                   >
                     <img
                       src={
@@ -374,28 +396,38 @@ const Home = () => {
             Array.from({ length: 40 }).map((_, i) => (
               <div
                 key={i}
-                className=" max-w-[240.4px] h-[210px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
+                className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
               >
-                <div className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl shadow-md ">
+                <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
                   <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
                   <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
                   <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
                   <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
+                 
+            
+                   <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-2/3 animate-shimmer ">
+              
+            
 
-                  <div className="h-4 mt-[4px] bg-gray-300 rounded w-2/3 animate-shimmer "></div>
+            
+                </div>
+                  
                 </div>
               </div>
             ))
           ) : (
             <>
+    
               {[...cars].map((car) => (
+                <div className="relative">
+                
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
                   key={car.id}
                   to={`/cars/${car._id}`}
-                >
-                  <div className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                > 
+                  <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <div className="w-full h-[100px] bg-gray-100 relative">
                       <img
                         src={car.images[0]}
@@ -417,19 +449,33 @@ const Home = () => {
                         {car.location}, {formatDate(car.data)}{" "}
                         {getCurrentTime(car.data)}
                       </p>
+                      
                     </div>
+    
                   </div>
                 </Link>
+                     <button
+              onClick={() => toggleFavorite(car)}
+              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+                favorites.find((fav) => fav._id === car._id)
+                  ? "bg-red-500 text-white"
+                  : "bg-transparent text-black"
+              }`}
+            >
+              <Heart size={24} color="#000000" strokeWidth={1.75} />
+            </button>
+                </div>
               ))}
 
               {[...homeGarden].map((post) => (
+                <div className="relative">
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
                   key={post._id}
                   to={`/elan/${post._id}`}
                 >
-                  <div key={post._id} className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={post._id} className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         post.images && post.images.length > 0
@@ -456,16 +502,28 @@ const Home = () => {
                     </div>
                   </div>
                 </Link>
+              <button
+              onClick={() => toggleFavorite(post)}
+              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+                favorites.find((fav) => fav._id === post._id)
+                  ? "bg-red-500 text-white"
+                  : "bg-transparent text-black"
+              }`}
+            >
+              <Heart size={24} color="#000000" strokeWidth={1.75} />
+            </button>
+            </div>
               ))}
 
               {[...elektronikaPost].reverse().map((item) => (
+                <div className="relative">
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
                   key={item._id}
                   to={`/PostDetailElectronika/${item._id}`}
                 >
-                  <div key={item._id} className="w-[170px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -492,16 +550,28 @@ const Home = () => {
                     </div>
                   </div>
                 </Link>
+                 <button
+              onClick={() => toggleFavorite(item)}
+              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+                favorites.find((fav) => fav._id === item._id)
+                  ? "bg-red-500 text-white"
+                  : "bg-transparent text-black"
+              }`}
+            >
+              <Heart size={24} color="#000000" strokeWidth={1.75} />
+            </button>
+                </div>
               ))}
 
               {[...accessories].reverse().map((item) => (
+                <div className="relative">
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
                   key={item._id}
                   to={`/PostDetailAcsesuar/${item._id}`}
                 >
-                  <div key={item._id} className="w-[170px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                  <div key={item._id} className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px]  bg-white rounded-2xl  shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <img
                       src={
                         item.images?.[0]?.startsWith("http")
@@ -528,9 +598,21 @@ const Home = () => {
                     </div>
                   </div>
                 </Link>
+                 <button
+              onClick={() => toggleFavorite(item)}
+              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+                favorites.find((fav) => fav._id === item._id)
+                  ? "bg-red-500 text-white"
+                  : "bg-transparent text-black"
+              }`}
+            >
+              <Heart size={24} color="#000000" strokeWidth={1.75} />
+            </button>
+                </div>
               ))}
 
               {[...realEstate].reverse().map((item) => (
+                <div className="relative">
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
@@ -562,9 +644,21 @@ const Home = () => {
                     </div>
                   </div>
                 </Link>
+                 <button
+              onClick={() => toggleFavorite(item)}
+              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+                favorites.find((fav) => fav._id === item._id)
+                  ? "bg-red-500 text-white"
+                  : "bg-transparent text-black"
+              }`}
+            >
+              <Heart size={24} color="#000000" strokeWidth={1.75} />
+            </button>
+                </div>
               ))}
 
               {[...Household].reverse().map((item) => (
+                <div className="relative">
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
@@ -596,9 +690,21 @@ const Home = () => {
                     </div>
                   </div>
                 </Link>
+                 <button
+              onClick={() => toggleFavorite(item)}
+              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+                favorites.find((fav) => fav._id === item._id)
+                  ? "bg-red-500 text-white"
+                  : "bg-transparent text-black"
+              }`}
+            >
+              <Heart size={24} color="#000000" strokeWidth={1.75} />
+            </button>
+                </div>
               ))}
 
               {[...Phone].reverse().map((item) => (
+                <div className="relative">
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
@@ -630,9 +736,21 @@ const Home = () => {
                     </div>
                   </div>
                 </Link>
+                 <button
+              onClick={() => toggleFavorite(item)}
+              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+                favorites.find((fav) => fav._id === item._id)
+                  ? "bg-red-500 text-white"
+                  : "bg-transparent text-black"
+              }`}
+            >
+              <Heart size={24} color="#000000" strokeWidth={1.75} />
+            </button>
+                </div>
               ))}
 
               {[...Clothing].reverse().map((item) => (
+                <div className="relative">
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
@@ -664,6 +782,17 @@ const Home = () => {
                     </div>
                   </div>
                 </Link>
+                 <button
+              onClick={() => toggleFavorite(item)}
+              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+                favorites.find((fav) => fav._id === item._id)
+                  ? "bg-red-500 text-white"
+                  : "bg-transparent text-black"
+              }`}
+            >
+              <Heart size={24} color="#000000" strokeWidth={1.75} />
+            </button>
+                </div>
               ))}
             </>
           )}
