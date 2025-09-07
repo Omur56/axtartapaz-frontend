@@ -42,23 +42,51 @@ export default function AdminPanel() {
   }, [navigate]);
 
   // Reklam əlavə et
-  const handleAddAd = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("title", newAd.title);
-    formData.append("link", newAd.link);
-    formData.append("image", newAd.image);
+  // const handleAddAd = async (e) => {
+  //   e.preventDefault();
+  //   const formData = new FormData();
+  //   formData.append("title", newAd.title);
+  //   formData.append("link", newAd.link);
+  //   formData.append("image", newAd.image);
 
-    try {
-      await axiosInstance.post("/ads", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      alert("Reklam əlavə olundu ✅");
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  //   try {
+  //     await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/ads`, formData, {
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //     });
+  //     alert("Reklam əlavə olundu ✅");
+  //     window.location.reload();
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+
+
+  const handleAddAd = async (newAd, selectedFiles) => {
+  try {
+    const formData = new FormData();
+
+    // şəkillər
+    selectedFiles.forEach((file) => {
+      formData.append("images", file); // ✅ backend ilə eyni ad
+    });
+
+    // digər məlumatlar
+    formData.append("title", newAd.title);
+    formData.append("description", newAd.description);
+    formData.append("link", newAd.link);
+    formData.append("userId", newAd.userId);
+formData.append("user", "62f1c123456789abcdef1234"); // real User ID
+    const res = await axios.post("http://localhost:5000/api/ads", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    console.log("✅ Elan əlavə olundu:", res.data);
+  } catch (err) {
+    console.error("❌ Elan əlavə olunmadı:", err.response?.data || err.message);
+  }
+};
+
 
   // Reklam sil
   const handleDeleteAd = async (id) => {

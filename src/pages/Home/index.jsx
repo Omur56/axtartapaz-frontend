@@ -12,6 +12,22 @@ const Home = () => {
   const [cars, setCars] = useState([]);
 const [favorites, setFavorites] = useState([]);
 
+const getAllSortedAds = () => {
+  const allAds = [
+    ...cars,
+    ...homeGarden,
+    ...elektronikaPost,
+    ...accessories,
+    ...realEstate,
+    ...Household,
+    ...Phone,
+    ...Clothing,
+  ];
+
+  // tarixə görə (ən yenisi əvvəldə)
+  return allAds.sort((a, b) => new Date(b.data) - new Date(a.data));
+};
+
 
  // LocalStorage-dan favorites oxumaq
   useEffect(() => {
@@ -295,6 +311,8 @@ const [favorites, setFavorites] = useState([]);
     fetchAds();
   }, []);
   
+
+  
   return (
 
     
@@ -416,6 +434,7 @@ const [favorites, setFavorites] = useState([]);
               </div>
             ))
           ) : (
+        
             <>
     
               {[...cars].map((car) => (
@@ -429,6 +448,13 @@ const [favorites, setFavorites] = useState([]);
                 > 
                   <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <div className="w-full h-[100px] bg-gray-100 relative">
+                      <div className="absolute flex">
+                     {car.barter && <p className="absolute top-[10px] z-50 left-12 bg-green-400 text-white text-[10px] font-500 p-1 rounded">{car.barter}</p>}
+                     {car.kredit && <p className="absolute top-[10px] z-50 left-2 bg-orange-400 text-white text-[10px] font-500 p-1 rounded">{car.kredit}</p>}
+                     </div>
+                     {car.salon && <p className="absolute top-[75px] z-50 left-2 bg-indigo-500 text-white text-[10px] font-500 p-1 rounded">{car.salon}</p>}
+                      
+                      
                       <img
                         src={car.images[0]}
                         alt={car.brand}
@@ -456,13 +482,13 @@ const [favorites, setFavorites] = useState([]);
                 </Link>
                      <button
               onClick={() => toggleFavorite(car)}
-              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+              className={`absolute top-1 right-1 p-[2px] rounded-full ${
                 favorites.find((fav) => fav._id === car._id)
                   ? "bg-red-500 text-white"
-                  : "bg-transparent text-black"
+                  : "bg-gray-400 text-white"
               }`}
             >
-              <Heart size={24} color="#000000" strokeWidth={1.75} />
+              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}
@@ -504,13 +530,13 @@ const [favorites, setFavorites] = useState([]);
                 </Link>
               <button
               onClick={() => toggleFavorite(post)}
-              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+              className={`absolute top-1 right-1 p-[2px] rounded-full ${
                 favorites.find((fav) => fav._id === post._id)
                   ? "bg-red-500 text-white"
-                  : "bg-transparent text-black"
+                  : "bg-gray-400 text-white"
               }`}
             >
-              <Heart size={24} color="#000000" strokeWidth={1.75} />
+              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
             </div>
               ))}
@@ -552,13 +578,13 @@ const [favorites, setFavorites] = useState([]);
                 </Link>
                  <button
               onClick={() => toggleFavorite(item)}
-              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+              className={`absolute top-1 right-1 p-[2px] rounded-full ${
                 favorites.find((fav) => fav._id === item._id)
                   ? "bg-red-500 text-white"
-                  : "bg-transparent text-black"
+                  : "bg-gray-400 text-white "
               }`}
             >
-              <Heart size={24} color="#000000" strokeWidth={1.75} />
+              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}
@@ -600,13 +626,13 @@ const [favorites, setFavorites] = useState([]);
                 </Link>
                  <button
               onClick={() => toggleFavorite(item)}
-              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+              className={`absolute top-1 right-1 p-[2px] rounded-full ${
                 favorites.find((fav) => fav._id === item._id)
                   ? "bg-red-500 text-white"
-                  : "bg-transparent text-black"
+                  : "bg-gray-400 text-white"
               }`}
             >
-              <Heart size={24} color="#000000" strokeWidth={1.75} />
+              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}
@@ -646,13 +672,13 @@ const [favorites, setFavorites] = useState([]);
                 </Link>
                  <button
               onClick={() => toggleFavorite(item)}
-              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+              className={`absolute top-1 right-1 p-[2px] rounded-full ${
                 favorites.find((fav) => fav._id === item._id)
                   ? "bg-red-500 text-white"
-                  : "bg-transparent text-black"
+                  : "bg-gray-400 text-white "
               }`}
             >
-              <Heart size={24} color="#000000" strokeWidth={1.75} />
+              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}
@@ -692,13 +718,13 @@ const [favorites, setFavorites] = useState([]);
                 </Link>
                  <button
               onClick={() => toggleFavorite(item)}
-              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+              className={`absolute top-1 right-1 p-[2px] rounded-full ${
                 favorites.find((fav) => fav._id === item._id)
                   ? "bg-red-500 text-white"
-                  : "bg-transparent text-black"
+                  : "bg-gray-400 text-white "
               }`}
             >
-              <Heart size={24} color="#000000" strokeWidth={1.75} />
+              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}
@@ -738,13 +764,13 @@ const [favorites, setFavorites] = useState([]);
                 </Link>
                  <button
               onClick={() => toggleFavorite(item)}
-              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+              className={`absolute top-1 right-1 p-[2px] rounded-full ${
                 favorites.find((fav) => fav._id === item._id)
                   ? "bg-red-500 text-white"
-                  : "bg-transparent text-black"
+                  : "bg-gray-400 text-white "
               }`}
             >
-              <Heart size={24} color="#000000" strokeWidth={1.75} />
+              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}
@@ -784,17 +810,19 @@ const [favorites, setFavorites] = useState([]);
                 </Link>
                  <button
               onClick={() => toggleFavorite(item)}
-              className={`absolute top-1 right-1 p-[5px] rounded-full ${
+              className={`absolute top-1 right-1 p-[2px] rounded-full ${
                 favorites.find((fav) => fav._id === item._id)
                   ? "bg-red-500 text-white"
-                  : "bg-transparent text-black"
+                  : "bg-gray-400 text-white "
               }`}
             >
-              <Heart size={24} color="#000000" strokeWidth={1.75} />
+              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}
+             
             </>
+             
           )}
         </div>
       </main>

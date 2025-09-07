@@ -42,9 +42,9 @@ const Favorites = () => {
         <div key={item._id} className="relative border rounded-lg shadow p-2">
           <Link
             to={
-              item.category === "cars"
-                ? `/cars/${item._id}`
-                : `/elan/${item._id}` // kateqoriyaya uyğun route
+              item.category === "item"
+                ? `/${item.category}/${item._id}`
+                : `/${item.category}/${item._id}` // kateqoriyaya uyğun route
             }
           >
             <img

@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { X } from "lucide-react";
 import Swal from "sweetalert2";
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
-
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+import { RefreshCcw } from "lucide-react";
 export default function CreatePost() {
   const [isOpen, setIsOpen] = useState(false);
   const { id } = useParams();
@@ -26,10 +26,11 @@ export default function CreatePost() {
     images: [],
     km: "",
     motor: "",
+    salon: "",
+    default: "",
+    barter: "",
     transmission: "",
-    
- 
-    
+    kredit: "",
     engine: "",
     contact: {
       name: "",
@@ -44,8 +45,6 @@ export default function CreatePost() {
   const [cars, setCars] = useState([]);
 
   const handleChange = (e) => {
-
-
     const { name, value } = e.target;
     if (name.startsWith("contact.")) {
       const field = name.split(".")[1];
@@ -78,63 +77,69 @@ export default function CreatePost() {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
-  if (!token || !userId) {
-    Swal.fire({
-      icon: "warning",
-      title: "Giriş tələb olunur",
-      text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-    });
-    return;
-  }
-
-  const formData = new FormData();
-
-  form.images.forEach((file) => formData.append("images", file));
-
-  Object.entries(form).forEach(([key, value]) => {
-    if (key === "data") return;
-    if (key === "contact") {
-      Object.entries(value).forEach(([k, v]) =>
-        formData.append(`contact.${k}`, v)
-      );
-    } else if (key !== "images") {
-      formData.append(key, value);
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+    if (!token || !userId) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+      });
+      return;
     }
-  });
 
-  formData.append("data", form.data ? form.data.toISOString() : new Date().toISOString());
-  formData.append("userId", userId);
+    const formData = new FormData();
 
-  try {
-    await axios.post(`${process.env.REACT_APP_API_URL}/api/cars`, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
+    form.images.forEach((file) => formData.append("images", file));
+
+    Object.entries(form).forEach(([key, value]) => {
+      if (key === "data") return;
+      if (key === "contact") {
+        Object.entries(value).forEach(([k, v]) =>
+          formData.append(`contact.${k}`, v)
+        );
+      } else if (key !== "images") {
+        formData.append(key, value);
+      } else if (key === "salon") {
+        formData.append(key, value);
+        return <div>{form.salon}</div>;
+      }
     });
 
-    resetForm();
-    fetchCars();
-    Swal.fire({
-      icon: "success",
-      title: "Elanınız uğurla yerləşdirildi!",
-      confirmButtonColor: "#3085d6",
-    });
-  } catch (err) {
-    console.error("Elan yüklənmədi:", err.response?.data || err.message);
-    Swal.fire({
-      icon: "error",
-      title: "Xəta baş verdi",
-      text: err.response?.data?.error || "Server xətası",
-      confirmButtonColor: "#d33",
-    });
-  }
-};
+    formData.append(
+      "data",
+      form.data ? form.data.toISOString() : new Date().toISOString()
+    );
+    formData.append("userId", userId);
+
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/cars`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      resetForm();
+      fetchCars();
+      Swal.fire({
+        icon: "success",
+        title: "Elanınız uğurla yerləşdirildi!",
+        confirmButtonColor: "#3085d6",
+      });
+    } catch (err) {
+      console.error("Elan yüklənmədi:", err.response?.data || err.message);
+      Swal.fire({
+        icon: "error",
+        title: "Xəta baş verdi",
+        text: err.response?.data?.error || "Server xətası",
+        confirmButtonColor: "#d33",
+      });
+    }
+  };
 
   const resetForm = () => {
     setForm({
@@ -150,7 +155,10 @@ const handleSubmit = async (e) => {
       km: "",
       motor: "",
       transmission: "",
-      
+      salon: "",
+      default: "",
+      barter: "",
+      kredit: "",
       engine: "",
       contact: {
         name: "",
@@ -280,22 +288,21 @@ const handleSubmit = async (e) => {
     fetchAll();
   }, []);
 
-
   const token = localStorage.getItem("token");
 
-// Yeni funksiyanı elanı açan buttona əlavə edirik
-const handleOpenForm = () => {
-  if (!token) {
-    Swal.fire({
-      icon: "warning",
-      title: "Giriş tələb olunur",
-      text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-      confirmButtonColor: "#3085d6",
-    });
-    return;
-  }
-  setIsOpen(true);
-};
+  // Yeni funksiyanı elanı açan buttona əlavə edirik
+  const handleOpenForm = () => {
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+        confirmButtonColor: "#3085d6",
+      });
+      return;
+    }
+    setIsOpen(true);
+  };
   return (
     <div className="min-h-screen ">
       <div className="p-6 max-w-5xlplace-items-center mx-auto">
@@ -332,7 +339,6 @@ const handleOpenForm = () => {
           </div>
         </div>
         <Link to="/">
-       
           <button className="flex  items-center gap-2 mt-4 mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -353,7 +359,7 @@ const handleOpenForm = () => {
 
         <div className="p-4">
           <button
-            onClick={handleOpenForm }
+            onClick={handleOpenForm}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md"
           >
             Elan yerləşdirmək üçün formu aç
@@ -398,7 +404,7 @@ const handleOpenForm = () => {
                     required
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                   />
-                   <input
+                  <input
                     value={form.model}
                     name="model"
                     placeholder="Model"
@@ -466,7 +472,46 @@ const handleOpenForm = () => {
                     <option value="Hibrid">Hibrid</option>
                     <option value=" Plug-in Hibrid"> Plug-in Hibrid</option>
                     <option value="Qaz">Qaz</option>
+                  </select>
 
+                  <select
+                    value={form.salon}
+                    name="salon"
+                    onChange={handleChange}
+                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                  >
+                    <option disabled className="bg-transparent" value="">
+                      Salon
+                    </option>
+                    <option value="Salon">Salon</option>
+                    <option value="Rəsmi">Rəsmi</option>
+                    <option value="Sifarişlə">Sifarişlə</option>
+                    <option className="bg-transparent" value="default"></option>
+                  </select>
+
+                  <select
+                    value={form.barter}
+                    name="barter"
+                    onChange={handleChange}
+                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                  >
+                    <option disabled className="bg-transparent" value="">
+                      Barter
+                    </option>
+                    <option value="Barter">Barter</option>
+                    <option value="default"></option>
+                  </select>
+                  <select
+                    value={form.kredit}
+                    name="kredit"
+                    onChange={handleChange}
+                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                  >
+                    <option disabled className="bg-transparent" value="">
+                      Kredit
+                    </option>
+                    <option value="Kredit">Kredit</option>
+                    <option value="default"></option>
                   </select>
                   <input
                     value={form.location}
@@ -533,12 +578,12 @@ const handleOpenForm = () => {
         </div>
 
         <div className="mt-4">
-          {loading && <Box sx={{ display: 'flex' }}>
-      <CircularProgress />
-    </Box>}
-          {loading && results.length === 0 && (
-            <p>Elan Tapılmadı</p>
+          {loading && (
+            <Box sx={{ display: "flex" }}>
+              <CircularProgress />
+            </Box>
           )}
+          {loading && results.length === 0 && <p>Elan Tapılmadı</p>}
 
           {!loading && results.length > 0 && (
             <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -604,8 +649,12 @@ const handleOpenForm = () => {
           ) : (
             <>
               {[...cars].map((car) => (
-                <Link  target="_blank"
-            rel="noopener noreferrer" key={car._id} to={`/cars/${car._id}`}>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  key={car._id}
+                  to={`/cars/${car._id}`}
+                >
                   <div className="  w-[226px] h-[284px]  flex flex-col shadow-xl cursor-pointer bg-white rounded-2xl sm:w-[226px] max-w-[226px] hover:shadow-xl hover:scale-5 transition duration-50">
                     <div className="flex gap-2 rounded-t-sm">
                       {car.images?.[0] && (
@@ -639,6 +688,3 @@ const handleOpenForm = () => {
     </div>
   );
 }
-
-
-
