@@ -7,11 +7,14 @@ import { useNavigate } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { Heart } from 'lucide-react';
-
+import { RefreshCcw, Percent } from 'lucide-react';
 const Home = () => {
   const [cars, setCars] = useState([]);
 const [favorites, setFavorites] = useState([]);
-
+ const [options, setOptions] = useState({
+    kredit: false,
+    barter: false,
+  });
 const getAllSortedAds = () => {
   const allAds = [
     ...cars,
@@ -446,15 +449,18 @@ const getAllSortedAds = () => {
                   key={car.id}
                   to={`/cars/${car._id}`}
                 > 
+               
                   <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <div className="w-full h-[100px] bg-gray-100 relative">
-                      <div className="absolute flex">
-                     {car.barter && <p className="absolute top-[10px] z-50 left-12 bg-green-400 text-white text-[10px] font-500 p-1 rounded">{car.barter}</p>}
-                     {car.kredit && <p className="absolute top-[10px] z-50 left-2 bg-orange-400 text-white text-[10px] font-500 p-1 rounded">{car.kredit}</p>}
-                     </div>
+                     
                      {car.salon && <p className="absolute top-[75px] z-50 left-2 bg-indigo-500 text-white text-[10px] font-500 p-1 rounded">{car.salon}</p>}
                       
-                      
+                        <div className="absolute mt-1 w-full p-1 z-50 top-0 left-0 flex gap-2">
+       
+        {car.kredit && <p className="w-[25px] bg-orange-500 h-[25px] flex p-1 justify-items-center items-center flex rounded-full text-white"> <Percent size={16} strokeWidth={1.5} absoluteStrokeWidth /> </p>} 
+        {car.barter && <p className="w-[25px] bg-green-500 h-[25px] flex p-1 justify-items-center items-center flex rounded-full text-white"><RefreshCcw   size={16} strokeWidth={1.5} absoluteStrokeWidth /></p>}
+        {/* <p>{options.kredit && options.barter }</p> */}
+      </div>
                       <img
                         src={car.images[0]}
                         alt={car.brand}

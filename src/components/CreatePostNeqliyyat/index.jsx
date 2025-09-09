@@ -6,14 +6,20 @@ import { X } from "lucide-react";
 import Swal from "sweetalert2";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { RefreshCcw } from "lucide-react";
+import confetti from "canvas-confetti";
+import Checkbox from '@mui/material/Checkbox';
+
+
+
+
 export default function CreatePost() {
   const [isOpen, setIsOpen] = useState(false);
   const { id } = useParams();
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
   const [editingId, setEditingId] = useState(null);
-
+const [checked, setChecked] = React.useState(true);
+ const [price, setPrice] = useState("");
   const [form, setForm] = useState({
     id: Date.now(),
     category: "",
@@ -42,23 +48,102 @@ export default function CreatePost() {
     data: new Date(),
   });
 
+
+   const [options, setOptions] = useState({
+    kredit: false,
+    barter: false,
+  });
+
+ // Kredit və Barter seçimini idarə edən funksiya
+const handleChangeSelect = (e) => {
+  const { name, checked } = e.target;
+
+  setOptions((prev) => ({
+    ...prev,
+    [name]: checked,
+  }));
+
+  setForm((prev) => ({
+    ...prev,
+    [name]: checked ? "Bəli" : "Xeyr", // true olarsa Bəli, yoxsa Xeyr yazılır
+  }));
+};
+
   const [cars, setCars] = useState([]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name.startsWith("contact.")) {
-      const field = name.split(".")[1];
-      setForm((prev) => ({
-        ...prev,
-        contact: { ...prev.contact, [field]: value },
-      }));
-    } else if (name === "data") {
-      setForm((prev) => ({ ...prev, data: new Date(value) }));
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-    }
-  };
+// const handleChange = (e) => {
+//   const { name, value } = e.target;
 
+//   if (name === "price" || name === "km") {
+//     // yalnız rəqəmləri götür
+//     let cleanedValue = value.replace(/\D/g, "");
+
+//     // minlik formatlama (123456 → 123 456)
+//     let formatted = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+//     setForm((prev) => ({ ...prev, [name]: formatted }));
+//   } 
+//   else if (name.startsWith("contact.")) {
+//     const field = name.split(".")[1];
+//     setForm((prev) => ({
+//       ...prev,
+//       contact: { ...prev.contact, [field]: value },
+//     }));
+//   } 
+//   else if (name === "data") {
+//     setForm((prev) => ({ ...prev, data: new Date(value) }));
+//   } 
+//   else {
+//     setForm((prev) => ({ ...prev, [name]: value }));
+//   }
+// };
+
+
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  // Qiymət və KM üçün minlik formatlama
+  if (name === "price" || name === "km") {
+    let cleanedValue = value.replace(/\D/g, "");
+    let formatted = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    setForm((prev) => ({ ...prev, [name]: formatted }));
+  } 
+  // Mobil nömrə formatlama
+  else if (name === "contact.phone") {
+    // +994 prefiksi hər zaman qalır
+    let digits = value.replace(/\D/g, "").slice(3, 12); // 9 rəqəm
+    // Formatlama: +994-XX-XXX-XX-XX
+    if (digits.length > 0) digits = digits.replace(/^(\d{0,2})/, "$1");
+    if (digits.length > 2) digits = digits.replace(/^(\d{2})(\d{0,3})/, "$1-$2");
+    if (digits.length > 5) digits = digits.replace(/^(\d{2})-(\d{3})(\d{0,2})/, "$1-$2-$3");
+    if (digits.length > 7) digits = digits.replace(/^(\d{2})-(\d{3})-(\d{2})(\d{0,2})/, "$1-$2-$3-$4");
+
+    let formatted = "+994-" + digits;
+    setForm((prev) => ({
+      ...prev,
+      contact: { ...prev.contact, phone: formatted },
+    }));
+  } 
+  // Digər contact inputları
+  else if (name.startsWith("contact.")) {
+    const field = name.split(".")[1];
+    setForm((prev) => ({
+      ...prev,
+      contact: { ...prev.contact, [field]: value },
+    }));
+  } 
+  // Tarix inputu
+  else if (name === "data") {
+    setForm((prev) => ({ ...prev, data: new Date(value) }));
+  } 
+  // Digər inputlar
+  else {
+    setForm((prev) => ({ ...prev, [name]: value }));
+  }
+};
+
+  
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 20) {
@@ -88,6 +173,7 @@ export default function CreatePost() {
         title: "Giriş tələb olunur",
         text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
       });
+       
       return;
     }
 
@@ -129,7 +215,13 @@ export default function CreatePost() {
         icon: "success",
         title: "Elanınız uğurla yerləşdirildi!",
         confirmButtonColor: "#3085d6",
-      });
+      }).then(() => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
+  });
     } catch (err) {
       console.error("Elan yüklənmədi:", err.response?.data || err.message);
       Swal.fire({
@@ -155,6 +247,8 @@ export default function CreatePost() {
       km: "",
       motor: "",
       transmission: "",
+      description: "",
+      
       salon: "",
       default: "",
       barter: "",
@@ -413,15 +507,17 @@ export default function CreatePost() {
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                   />
                   <input
-                    type="number"
+                    type="text"
                     value={form.year}
                     name="year"
                     placeholder="İl"
                     onChange={handleChange}
                     required
+                    maxLength={4}
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                   />
                   <input
+                    type="text"
                     value={form.motor}
                     name="motor"
                     placeholder="Motor"
@@ -430,21 +526,23 @@ export default function CreatePost() {
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                   />
                   <input
-                    type="number"
+                    type="text"
                     value={form.km}
                     name="km"
                     placeholder="KM"
                     onChange={handleChange}
                     required
+                    maxLength={7}
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                   />
                   <input
-                    type="number"
+                    type="text"
                     value={form.price}
                     name="price"
                     placeholder="Qiymət"
                     onChange={handleChange}
                     required
+                    maxLength={7}
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                   />
                   <select
@@ -486,10 +584,10 @@ export default function CreatePost() {
                     <option value="Salon">Salon</option>
                     <option value="Rəsmi">Rəsmi</option>
                     <option value="Sifarişlə">Sifarişlə</option>
-                    <option className="bg-transparent" value="default"></option>
+                   
                   </select>
 
-                  <select
+                  {/* <select
                     value={form.barter}
                     name="barter"
                     onChange={handleChange}
@@ -499,7 +597,7 @@ export default function CreatePost() {
                       Barter
                     </option>
                     <option value="Barter">Barter</option>
-                    <option value="default"></option>
+                   
                   </select>
                   <select
                     value={form.kredit}
@@ -511,8 +609,8 @@ export default function CreatePost() {
                       Kredit
                     </option>
                     <option value="Kredit">Kredit</option>
-                    <option value="default"></option>
-                  </select>
+                    
+                  </select> */}
                   <input
                     value={form.location}
                     name="location"
@@ -521,6 +619,34 @@ export default function CreatePost() {
                     required
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                   />
+
+                     <label className="block mb-2  w-[200px] bg-gray-200 rounded-[10px] p-1 ">
+       
+       
+
+        <Checkbox
+         name="kredit"
+          value={form.kredit}
+          checked={options.kredit}
+          onChange={handleChangeSelect}
+          inputProps={{ 'aria-label': 'controlled' }}
+    
+    /> Kredit ilə satılır
+      </label>
+                   
+      
+      <label className="block mb-2 w-[100px] bg-gray-200 rounded-[10px] p-1 ">
+        <Checkbox
+         name="barter"
+          value={form.barter}
+          checked={options.barter}
+          onChange={handleChangeSelect}
+          inputProps={{ 'aria-label': 'controlled' }}
+    
+    /> 
+        Barter
+      </label>
+
                   <input
                     type="file"
                     multiple
@@ -531,12 +657,14 @@ export default function CreatePost() {
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                   />
                   <input
-                    type="number"
+                    type="text"
                     name="contact.phone"
-                    placeholder="Telefon"
+                    
                     onChange={handleChange}
                     value={form.contact.phone}
                     required
+                      placeholder="+994-XX-XXX-XX-XX"
+  pattern="^\+994-(\d{2})-(\d{3})-(\d{2})-(\d{2})$"
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                   />
                   <input
@@ -555,7 +683,8 @@ export default function CreatePost() {
                     onChange={handleChange}
                     value={form.contact.name}
                     required
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                    
+                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 capitalize"
                   />
                   <textarea
                     value={form.description}
