@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { Heart } from 'lucide-react';
-import { RefreshCcw, Percent } from 'lucide-react';
+import { RefreshCcw, Percent,MapPin } from 'lucide-react';
 const Home = () => {
   const [cars, setCars] = useState([]);
 const [favorites, setFavorites] = useState([]);
@@ -417,18 +417,20 @@ const getAllSortedAds = () => {
             Array.from({ length: 40 }).map((_, i) => (
               <div
                 key={i}
-                className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
+                className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
               >
-                <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
+                <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
+                 
                   <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
+                   <div className="p-1">
                   <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
                   <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
                   <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
-                 
-            
-                   <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-2/3 animate-shimmer ">
-              
-            
+                  
+            <div className="flex items-center justify-between">
+              <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/4 animate-shimmer "></div>
+              <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/2 animate-shimmer "></div>
+            </div>
 
             
                 </div>
@@ -454,20 +456,30 @@ const getAllSortedAds = () => {
                     <div className="w-full h-[100px] bg-gray-100 relative">
                      
                      {car.salon && <p className="absolute top-[75px] z-50 left-2 bg-indigo-500 text-white text-[10px] font-500 p-1 rounded">{car.salon}</p>}
-                      
+                      <div className="flex justify-between z-50 gap-2">
                         <div className="absolute mt-1 w-full p-1 z-50 top-0 left-0 flex gap-2">
        
-        {car.kredit && <p className="w-[25px] bg-orange-500 h-[25px] flex p-1 justify-items-center items-center flex rounded-full text-white"> <Percent size={16} strokeWidth={1.5} absoluteStrokeWidth /> </p>} 
-        {car.barter && <p className="w-[25px] bg-green-500 h-[25px] flex p-1 justify-items-center items-center flex rounded-full text-white"><RefreshCcw   size={16} strokeWidth={1.5} absoluteStrokeWidth /></p>}
+        {car.kredit && <p className="w-[25px] bg-orange-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white"> <Percent size={16} strokeWidth={1.5} absoluteStrokeWidth /> </p>} 
+        {car.barter && <p className="w-[25px] bg-green-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white"><RefreshCcw   size={16} strokeWidth={1.5} absoluteStrokeWidth /></p>}
         {/* <p>{options.kredit && options.barter }</p> */}
       </div>
+       <div className=" mt-1 w-full p-1 z-50 top-1 left-1 flex gap-2">
+                     <button
+              onClick={() => toggleFavorite(car)}
+              className={`absolute   top-1 right-1 p-[2px] rounded-full`}
+            >
+              <Heart fill={favorites.find((fav) => fav._id === car._id) ? "red" : "none"} size={24} color="#ffffff" strokeWidth={1.75} />
+            </button>
+            </div>
+                        </div>
+      
                       <img
                         src={car.images[0]}
                         alt={car.brand}
                         className="absolute top-0 left-0 w-full h-full object-cover rounded-t-[8px]"
                       />
                     </div>
-                    <div className="p-2">
+                    <div className="p-2 ">
                       <h3 className="text-[12px] font-bold font-black text-black">
                         {car.price} AZN ₼
                       </h3>
@@ -477,25 +489,18 @@ const getAllSortedAds = () => {
                       <p className="text-gray-600 truncate w-30">
                         {car.year},{car.motor} {car.km} km
                       </p>
-                      <p className="capitalize text-gray-400 text-[12px]">
-                        {car.location}, {formatDate(car.data)}{" "}
+                      <div className="flex justify-between gap-1 mt-7 ">
+                        <p className="text-[10px] p-1 rounded flex justify-between text-gray-600"><MapPin size={12} color="#75FC56" /> {car.location}</p>
+                      <p className="capitalize text-[12px] p-1 rounded flex justify-between text-gray-600 truncate w-30">
+                       {formatDate(car.data)}{" "}
                         {getCurrentTime(car.data)}
                       </p>
-                      
+                      </div>
                     </div>
     
                   </div>
                 </Link>
-                     <button
-              onClick={() => toggleFavorite(car)}
-              className={`absolute top-1 right-1 p-[2px] rounded-full ${
-                favorites.find((fav) => fav._id === car._id)
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-400 text-white"
-              }`}
-            >
-              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
-            </button>
+               
                 </div>
               ))}
 
@@ -507,7 +512,9 @@ const getAllSortedAds = () => {
                   key={post._id}
                   to={`/elan/${post._id}`}
                 >
+                   
                   <div key={post._id} className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                    
                     <img
                       src={
                         post.images && post.images.length > 0
@@ -527,22 +534,21 @@ const getAllSortedAds = () => {
                         {post.title}
                       </h2>
 
-                      <p className="capitalize text-gray-400 text-[12px] mt-5">
-                        {post.location}, {formatDate(post.data)}{" "}
+                     <div className="flex justify-between gap-1 mt-10 ">
+                        <p className="text-[10px] rounded flex justify-between text-gray-600"><MapPin size={12} color="#75FC56" /> {post.location}</p>
+                      <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
+                       {formatDate(post.data)}{" "}
                         {getCurrentTime(post.data)}
                       </p>
+                      </div>
                     </div>
                   </div>
                 </Link>
               <button
               onClick={() => toggleFavorite(post)}
-              className={`absolute top-1 right-1 p-[2px] rounded-full ${
-                favorites.find((fav) => fav._id === post._id)
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-400 text-white"
-              }`}
+              className={`absolute top-1 right-1 p-[2px] rounded-full `}
             >
-              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
+            <Heart fill={favorites.find((fav) => fav._id === post._id) ? "red" : "#cccccc"} size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
             </div>
               ))}
@@ -575,22 +581,21 @@ const getAllSortedAds = () => {
                       <h3 className="text-[12px] font-semibold truncate w-30">
                         {item.title}
                       </h3>
-                      <p className="capitalize text-gray-400 text-[12px]">
-                        {item.location}, {formatDate(item.data)}{" "}
+                      <div className="flex justify-between gap-1 mt-5 ">
+                        <p className="text-[10px] rounded flex justify-between text-gray-600"><MapPin size={12} color="#75FC56" /> {item.location}</p>
+                      <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
+                       {formatDate(item.data)}{" "}
                         {getCurrentTime(item.data)}
                       </p>
+                      </div>
                     </div>
                   </div>
                 </Link>
                  <button
               onClick={() => toggleFavorite(item)}
-              className={`absolute top-1 right-1 p-[2px] rounded-full ${
-                favorites.find((fav) => fav._id === item._id)
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-400 text-white "
-              }`}
+              className={`absolute top-1 right-1 p-[2px] rounded-full `}
             >
-              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
+              <Heart fill={favorites.find((fav) => fav._id === item._id) ? "red" : "#cccccc"} size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}
@@ -623,22 +628,21 @@ const getAllSortedAds = () => {
                       <h3 className="text-[12px] font-semibold truncate w-30">
                         {item.title}
                       </h3>
-                      <p className="capitalize text-gray-400 text-[12px]">
-                        {item.location}, {formatDate(item.data)}{" "}
+                     <div className="flex justify-between gap-1 mt-10 ">
+                        <p className="text-[10px] rounded flex justify-between text-gray-600"><MapPin size={12} color="#75FC56" /> {item.location}</p>
+                      <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
+                       {formatDate(item.data)}{" "}
                         {getCurrentTime(item.data)}
                       </p>
+                      </div>
                     </div>
                   </div>
                 </Link>
                  <button
               onClick={() => toggleFavorite(item)}
-              className={`absolute top-1 right-1 p-[2px] rounded-full ${
-                favorites.find((fav) => fav._id === item._id)
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-400 text-white"
-              }`}
+              className={`absolute top-1 right-1 p-[2px] rounded-full `}
             >
-              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
+              <Heart fill={favorites.find((fav) => fav._id === item._id) ? "red" : "#cccccc"} size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}
@@ -669,22 +673,21 @@ const getAllSortedAds = () => {
                         {item.title_type}, {item.type_building}, {item.location}
                       </h2>
 
-                      <p className="capitalize text-gray-400 text-[12px]">
-                        {item.location}, {formatDate(item.data)}{" "}
+                     <div className="flex justify-between gap-1 mt-10 ">
+                        <p className="text-[10px] rounded flex justify-between text-gray-600"><MapPin size={12} color="#75FC56" /> {item.location}</p>
+                      <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
+                       {formatDate(item.data)}{" "}
                         {getCurrentTime(item.data)}
                       </p>
+                      </div>
                     </div>
                   </div>
                 </Link>
                  <button
               onClick={() => toggleFavorite(item)}
-              className={`absolute top-1 right-1 p-[2px] rounded-full ${
-                favorites.find((fav) => fav._id === item._id)
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-400 text-white "
-              }`}
+              className={`absolute top-1 right-1 p-[2px] rounded-full `}
             >
-              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
+             <Heart fill={favorites.find((fav) => fav._id === item._id) ? "red" : "none"} size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}
@@ -715,22 +718,21 @@ const getAllSortedAds = () => {
                         {item.title}, {item.category}, {item.location}
                       </h2>
 
-                      <p className="capitalize text-gray-400 text-[12px]">
-                        {item.location}, {formatDate(item.data)}{" "}
+                      <div className="flex justify-between gap-1 mt-10 ">
+                        <p className="text-[10px] rounded flex justify-between text-gray-600"><MapPin size={12} color="#75FC56" /> {item.location}</p>
+                      <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
+                       {formatDate(item.data)}{" "}
                         {getCurrentTime(item.data)}
                       </p>
+                      </div>
                     </div>
                   </div>
                 </Link>
                  <button
               onClick={() => toggleFavorite(item)}
-              className={`absolute top-1 right-1 p-[2px] rounded-full ${
-                favorites.find((fav) => fav._id === item._id)
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-400 text-white "
-              }`}
+              className={`absolute top-1 right-1 p-[2px] rounded-full `}
             >
-              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
+             <Heart fill={favorites.find((fav) => fav._id === item._id) ? "red" : "#cccccc"} size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}
@@ -761,22 +763,21 @@ const getAllSortedAds = () => {
                         {item.title}, {item.brand}, {item.model}
                       </h2>
                       <h3 className="text-[12px] font-semibold truncate w-30"></h3>
-                      <p className="capitalize text-gray-400 text-[12px]">
-                        {item.location}, {formatDate(item.data)}{" "}
+                      <div className="flex justify-between gap-1 mt-2 ">
+                        <p className="text-[10px] rounded flex justify-between text-gray-600"><MapPin size={12} color="#75FC56" /> {item.location}</p>
+                      <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
+                       {formatDate(item.data)}{" "}
                         {getCurrentTime(item.data)}
                       </p>
+                      </div>
                     </div>
                   </div>
                 </Link>
                  <button
               onClick={() => toggleFavorite(item)}
-              className={`absolute top-1 right-1 p-[2px] rounded-full ${
-                favorites.find((fav) => fav._id === item._id)
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-400 text-white "
-              }`}
+              className={`absolute top-1 right-1 p-[2px] rounded-full `}
             >
-              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
+             <Heart fill={favorites.find((fav) => fav._id === item._id) ? "red" : "#cccccc"} size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}
@@ -807,22 +808,21 @@ const getAllSortedAds = () => {
                         {item.title}, {item.brand}, {item.model}
                       </h2>
                       <h3 className="text-[12px] font-semibold truncate w-30"></h3>
-                      <p className="capitalize text-gray-400 text-[12px]">
-                        {item.location}, {formatDate(item.data)}{" "}
+                     <div className="flex justify-between gap-1 mt-2 ">
+                        <p className="text-[10px] rounded flex justify-between text-gray-600"><MapPin size={12} color="#75FC56" /> {item.location}</p>
+                      <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
+                       {formatDate(item.data)}{" "}
                         {getCurrentTime(item.data)}
                       </p>
+                      </div>
                     </div>
                   </div>
                 </Link>
                  <button
               onClick={() => toggleFavorite(item)}
-              className={`absolute top-1 right-1 p-[2px] rounded-full ${
-                favorites.find((fav) => fav._id === item._id)
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-400 text-white "
-              }`}
+              className={`absolute top-1 right-1 p-[2px] rounded-full `}
             >
-              <Heart size={24} color="#ffffff" strokeWidth={1.75} />
+             <Heart fill={favorites.find((fav) => fav._id === item._id) ? "red" : "#cccccc"} size={24} color="#ffffff" strokeWidth={1.75} />
             </button>
                 </div>
               ))}

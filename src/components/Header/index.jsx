@@ -46,11 +46,15 @@ function Header() {
       className="p-1 rounded-full transition-colors duration-300"
     >
       <Heart
-        size={32}
-        color={isFavorite ? "#ce0909" : "#747272"} // kliklənmiş rəng
-        strokeWidth={2}
-        className="hover:text-red-500" // hover zamanı qırmızı
-      />
+      size={32}
+      strokeWidth={2}
+      onClick={() => setIsFavorite(!isFavorite)}
+      className={`cursor-pointer transition-colors duration-200 ${
+        isFavorite ? "text-red-500" : "text-gray-400"
+      } hover:text-red-500`}
+    />
+
+                   
 
     </button>
     </Link>
