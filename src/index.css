@@ -6,5 +6,23 @@
 
 *{
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif;
+    
+}
+
+/* Əsasda (böyük ekranlarda) scrollbar normal işləyir */
+body {
+  overflow-y: auto; /* scroll açıq qalır */
+}
+
+/* Mobil versiya üçün (məs: 768px-dən kiçik) scrollbar gizlət */
+@media (max-width: 768px) {
+  body {
+    -ms-overflow-style: none;  /* IE və köhnə Edge */
+    scrollbar-width: none;     /* Firefox */
+  }
+
+  body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, yeni Edge */
+  }
 }
 

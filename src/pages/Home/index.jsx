@@ -313,7 +313,13 @@ const Home = () => {
         <div className="flex-1 ">
           <div className="max-w-5xl mx-auto p-4  gap-4">
             <div className="w-full justify-center mt-[100px] mx-auto my-auto max-w-[700px] min-w-[200px]">
-              <div className="relative">
+           
+            </div>
+          </div>
+          <BottomMenu />
+          <main className="   max-w-5xl mx-auto ">
+            <Katalog />
+   <div className="relative">
                 <input
                   className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
                   placeholder="AxtarTap..."
@@ -343,12 +349,6 @@ const Home = () => {
                   Axtar
                 </button>
               </div>
-            </div>
-          </div>
-          <BottomMenu />
-          <main className="   max-w-5xl mx-auto ">
-            <Katalog />
-
             <div className="mt-4 ">
               {loading && (
                 <Box sx={{ display: "flex" }}>

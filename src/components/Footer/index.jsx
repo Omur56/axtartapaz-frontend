@@ -85,7 +85,7 @@ function Footer() {
       <div className="border-t border-slate-300 mt-8"></div>
 
       <div className="flex justify-center mt-6">
-        <p className="text-white text-center">© 2025 AxtarTap.az Bütün Hüquqlar Qorunur.</p>
+        <p className="text-white text-center">© 2025 OmurCars.org Bütün Hüquqlar Qorunur.</p>
       </div>
     </footer>
   );

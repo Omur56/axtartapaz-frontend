@@ -8,7 +8,7 @@ import CreatePhone from "../../../components/CreatePhone";
 
 function Telefonlar() {
     return (
-        <div className="mx-auto  my-auto max-w-[1000px]">
+        <div className="mx-auto  my-[80px] max-w-[1000px]">
           
             <Katalog />
             <CreatePhone />

@@ -671,7 +671,7 @@ await axios.delete(`${process.env.REACT_APP_API_URL}/api/my-announcements/${ad.i
   };
 
   return (
-    <Box className="min-h-screen max-w-[1000px] mx-auto p-6 bg-gray-100">
+    <Box className="min-h-screen mt-[80px] max-w-[1000px] mx-auto p-6 bg-gray-100">
        
       {/* Müasir Profil Kartı */}
       {userData && (
