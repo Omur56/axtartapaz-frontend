@@ -30,7 +30,7 @@ function Header() {
   };
     
   return (
-    <header className="header bg-white mx-auto my-auto shadow-[0px_0px_10px_0px_rgba(0,0,0,0.5)] rounded-b-[10px]">  
+    <header className="header h-[80px] mb-[100px] p-2  w-full z-50 fixed top-0 bg-white mx-auto my-auto shadow-[0px_0px_10px_0px_rgba(0,0,0,0.5)] rounded-b-[10px]">  
       <div className="flex justify-between items-center py-4 mx-auto my-auto max-w-[1200px]">
         <TitleLogo />
 
