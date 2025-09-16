@@ -24,7 +24,7 @@ export const categories = [
 
 const Katalog = () => {
   return (
-    <div className="min-h-screen w-full mx-auto py-[30vh] justify-items-center  max-w-7xl mx-auto">
+    <div className="min-h-screen w-full mx-auto py-[10vh] justify-items-center  max-w-7xl mx-auto">
       <h2 className="text-7xl mb-10 font-bold  text-center  text-gray-500 ">Kataloq</h2>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
