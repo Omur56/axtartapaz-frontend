@@ -50,7 +50,7 @@ const handleSubmit = async (e) => {
 };
 
   return (
-    <div className="min-h-[58.4vh]">
+    <div className="min-h-[80.4vh] p-10 justify-items-center mt-[80px] mb-[50px]">
     <form 
   onSubmit={handleSubmit} 
   className="max-w-md    mx-auto mt-16 mb-10 bg-white shadow-lg rounded-xl p-8 space-y-5"

@@ -42,7 +42,7 @@ export default function Register() {
   };
 
   return (
-  <div className="min-h-[58.4vh] ">
+  <div className="min-h-[80.4vh] bg-gray-100 flex items-center justify-center p-5 mt-[80px] mb-[50px]">
   
     <form 
   onSubmit={handleRegister} 

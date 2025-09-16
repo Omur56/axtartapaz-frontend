@@ -20,7 +20,7 @@ const menuItems = [
   {
     id: 2,
     text: "Katalog",
-    url: "/Katalog",
+    url: "/categories",
     icon:<div className="p-2 rounded-lg bg-gray-100 hover:bg-blue-100 cursor-pointer inline-flex items-center justify-center transition-colors duration-300 ease-in-out">
   <IconCategory stroke={2} 
     size={28}

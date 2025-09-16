@@ -15,6 +15,7 @@ const Home = () => {
     kredit: false,
     barter: false,
   });
+
   const getAllSortedAds = () => {
     const allAds = [
       ...cars,
@@ -306,6 +307,33 @@ const Home = () => {
   useEffect(() => {
     fetchAds();
   }, []);
+
+
+  // Pagination üçün state
+const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 20;
+
+// Bütün elanları birləşdiririk
+const allAds = [
+  ...cars,
+  ...homeGarden,
+  ...elektronikaPost,
+  ...accessories,
+  ...realEstate,
+  ...Household,
+  ...Phone,
+  ...Clothing,
+].sort((a, b) => new Date(b.data) - new Date(a.data));
+
+// Cari səhifədə göstəriləcək elanlar
+const indexOfLastItem = currentPage * itemsPerPage;
+const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+const currentAds = allAds.slice(indexOfFirstItem, indexOfLastItem);
+
+// Ümumi səhifə sayı
+const totalPages = Math.ceil(allAds.length / itemsPerPage);
+
+
 
   return (
     <div className="min-h-scree">

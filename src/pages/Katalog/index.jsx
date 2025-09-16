@@ -26,7 +26,7 @@ const Katalog = () => {
   return (
     <div className="">
    
-    <div className="min-h-[100px] p-5  w-full">
+    <div className="mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 justify-items-center  p-2">
     <div className=" justify-center mx-auto  place-items-center  max-w-[800px]  grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-[10px] ">
       {categories.map((cat) => (
         <Link

@@ -33,7 +33,7 @@ const Favorites = () => {
   };
 
   if (favorites.length === 0)
-    return <p  className="text-center mt-10 min-h-screen">Heç bir favoritiniz yoxdur.</p>;
+    return <p  className="text-center p-10 mt-[80px] min-h-screen">Heç bir favoritiniz yoxdur.</p>;
 
   return (
     <div className="min-h-screen mt-[80px] mb-[50px]">
