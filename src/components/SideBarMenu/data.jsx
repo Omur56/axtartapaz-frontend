@@ -1,5 +1,5 @@
 
-import { IconSmartHome, IconCategory,  IconLibraryPlus, IconUserCircle, IconSearch   } from '@tabler/icons-react';
+import { IconSmartHome,IconTriangleSquareCircleFilled,  IconLibraryPlus, IconUserCircle, IconSearch   } from '@tabler/icons-react';
 
 
 
@@ -22,10 +22,10 @@ const menuItems = [
     text: "Katalog",
     url: "/categories",
     icon:<div className="p-2 rounded-lg bg-gray-100 hover:bg-blue-100 cursor-pointer inline-flex items-center justify-center transition-colors duration-300 ease-in-out">
-  <IconCategory stroke={2} 
+  <IconTriangleSquareCircleFilled 
     size={28}
     strokeWidth={0.75}
-    className="text-gray-700 hover:text-blue-600 transition-colors duration-300 ease-in-out"
+    className="text-gray-500 hover:text-blue-600 transition-colors duration-300 ease-in-out"
   />
 </div>
 

@@ -288,7 +288,7 @@ const [progress, setProgress] = React.useState(0);
             <X size={35} />
           </button>
           <button
-            className="absolute left-5 text-white text-3xl font-bold z-50"
+            className="absolute w-10 h-10 left-5 text-white text-8xl font-bold z-50"
             onClick={(e) => {
               e.stopPropagation();
               prevImage();
@@ -306,7 +306,7 @@ const [progress, setProgress] = React.useState(0);
             className="max-w-[90%] max-h-[90%] object-contain rounded-lg"
           />
           <button
-            className="absolute right-5 text-white text-3xl font-bold z-50"
+            className="absolute w-10 h-10 right-5 text-white text-8xl font-bold z-50"
             onClick={(e) => {
               e.stopPropagation();
               nextImage();

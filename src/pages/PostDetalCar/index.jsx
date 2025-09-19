@@ -331,7 +331,7 @@ export default function PostDetailCar() {
             className="max-w-[90%] max-h-[90%] object-contain rounded-lg"
           />
           <button
-            className="absolute  right-5 text-white text-8xl font-500 z-50"
+            className="absolute right-5 w-10 h-10  text-white text-8xl font-500 z-50"
             onClick={(e) => {
               e.stopPropagation();
               nextImage();

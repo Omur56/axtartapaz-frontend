@@ -399,7 +399,7 @@ export default function PostDetailRealEstate() {
             <X size={35} />
           </button>
           <button
-            className="absolute left-5 text-white text-3xl font-bold z-50"
+            className="absolute left-5 w-10 h-10 text-white text-8xl font-bold z-50"
             onClick={(e) => {
               e.stopPropagation();
               prevImage();
@@ -417,7 +417,7 @@ export default function PostDetailRealEstate() {
             className="max-w-[90%] max-h-[90%] object-contain rounded-lg"
           />
           <button
-            className="absolute right-5 text-white text-3xl font-bold z-50"
+            className="absolute right-5 w-10 h-10  text-white text-8xl font-bold z-50"
             onClick={(e) => {
               e.stopPropagation();
               nextImage();

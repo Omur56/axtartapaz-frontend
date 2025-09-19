@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { X } from "lucide-react";
 import Swal from "sweetalert2";
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 
 export default function CreateAccessoryPost() {
   const { id } = useParams();
@@ -58,86 +58,92 @@ export default function CreateAccessoryPost() {
 
   const fetchItems = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/accessories`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/accessories`
+      );
       setAccessoryItems(response.data);
     } catch (error) {
       console.error("Error fetching accessory items:", error);
     }
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const token = localStorage.getItem("token"); // tokeni alırıq
-  if (!token) {
-    Swal.fire({
-      icon: "warning",
-      title: "Giriş tələb olunur",
-      text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-      confirmButtonColor: "#3085d6",
-    });
-    return;
-  }
-
-  const formData = new FormData();
-
-  // Şəkilləri əlavə edirik
-  images.forEach((file) => formData.append("images", file));
-
-  // accessory obyektini formData-ya əlavə edirik
-  Object.entries(accessory).forEach(([key, value]) => {
-    if (key === "images" || key === "data") return; // artıq əlavə olunub və ya handled olunur
-    if (key === "contact") {
-      Object.entries(value).forEach(([k, v]) =>
-        formData.append(`contact.${k}`, v)
-      );
-    } else {
-      formData.append(key, value);
-    }
-  });
-
-  formData.append("data", accessory.data.toISOString());
-
-  try {
-    if (editingId) {
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/accessories/${editingId}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setEditingId(null);
-    } else {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/accessories`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
+    const token = localStorage.getItem("token"); // tokeni alırıq
+    if (!token) {
       Swal.fire({
-        icon: "success",
-        title: "Elanınız uğurla yerləşdirildi!",
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
         confirmButtonColor: "#3085d6",
       });
+      return;
     }
 
-    resetForm();
-    fetchItems();
-  } catch (err) {
-    console.error(err);
-    Swal.fire({
-      icon: "error",
-      title: "Xəta baş verdi",
-      text: err.response?.data?.message || "Server xətası",
-      confirmButtonColor: "#d33",
+    const formData = new FormData();
+
+    // Şəkilləri əlavə edirik
+    images.forEach((file) => formData.append("images", file));
+
+    // accessory obyektini formData-ya əlavə edirik
+    Object.entries(accessory).forEach(([key, value]) => {
+      if (key === "images" || key === "data") return; // artıq əlavə olunub və ya handled olunur
+      if (key === "contact") {
+        Object.entries(value).forEach(([k, v]) =>
+          formData.append(`contact.${k}`, v)
+        );
+      } else {
+        formData.append(key, value);
+      }
     });
-  }
-};
+
+    formData.append("data", accessory.data.toISOString());
+
+    try {
+      if (editingId) {
+        await axios.put(
+          `${process.env.REACT_APP_API_URL}/api/accessories/${editingId}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        setEditingId(null);
+      } else {
+        await axios.post(
+          `${process.env.REACT_APP_API_URL}/api/accessories`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        Swal.fire({
+          icon: "success",
+          title: "Elanınız uğurla yerləşdirildi!",
+          confirmButtonColor: "#3085d6",
+        });
+      }
+
+      resetForm();
+      fetchItems();
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        icon: "error",
+        title: "Xəta baş verdi",
+        text: err.response?.data?.message || "Server xətası",
+        confirmButtonColor: "#d33",
+      });
+    }
+  };
 
   const resetForm = () => {
     setAccessory({
@@ -161,7 +167,9 @@ export default function CreateAccessoryPost() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/accessories/${id}`);
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/api/accessories/${id}`
+      );
       fetchItems();
     } catch (error) {
       console.error("Delete error:", error);
@@ -170,7 +178,9 @@ export default function CreateAccessoryPost() {
 
   const handleFavorite = async (id) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/accessories/${id}/favorite`);
+      await axios.patch(
+        `${process.env.REACT_APP_API_URL}/api/accessories/${id}/favorite`
+      );
       fetchItems();
     } catch (err) {
       console.error(err);
@@ -179,7 +189,9 @@ export default function CreateAccessoryPost() {
 
   const handleLike = async (id) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/accessories/${id}/like`);
+      await axios.patch(
+        `${process.env.REACT_APP_API_URL}/api/accessories/${id}/like`
+      );
       fetchItems();
     } catch (err) {
       console.error(err);
@@ -317,22 +329,21 @@ export default function CreateAccessoryPost() {
     fetchAll();
   }, []);
 
-
   const token = localStorage.getItem("token");
 
-// Yeni funksiyanı elanı açan buttona əlavə edirik
-const handleOpenForm = () => {
-  if (!token) {
-    Swal.fire({
-      icon: "warning",
-      title: "Giriş tələb olunur",
-      text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-      confirmButtonColor: "#3085d6",
-    });
-    return;
-  }
-  setIsOpen(true);
-};
+  // Yeni funksiyanı elanı açan buttona əlavə edirik
+  const handleOpenForm = () => {
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+        confirmButtonColor: "#3085d6",
+      });
+      return;
+    }
+    setIsOpen(true);
+  };
   return (
     <div className="min-h-screen ">
       <div className=" p-6 max-w-5xl mx-auto">
@@ -369,7 +380,6 @@ const handleOpenForm = () => {
           </div>
         </div>
         <Link to="/">
-          
           <button className="flex mb-4 mt-4 items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -397,12 +407,9 @@ const handleOpenForm = () => {
             Elan yerləşdirmək üçün formu aç
           </button>
 
-      
           {isOpen && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-       
               <div className="relative w-[90%] max-w-3xl max-h-[90vh] overflow-y-auto bg-white p-6 rounded-xl shadow-lg">
-          
                 <button
                   onClick={() => setIsOpen(false)}
                   className="absolute top-2 right-2 text-gray-600 hover:text-red-600"
@@ -539,33 +546,33 @@ const handleOpenForm = () => {
         </div>
 
         <div className="mt-4">
-          {loading &&  <Box sx={{ display: 'flex' }}>
-      <CircularProgress />
-    </Box>}
+          {loading && (
+            <Box sx={{ display: "flex" }}>
+              <CircularProgress />
+            </Box>
+          )}
           {loading && results.length === 0 && (
             <div class="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-r from-fuchsia-100 to-violet-200">
-	<h1 class="text-9xl font-extrabold text-white tracking-widest">404</h1>
-	<div class="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
-		Elan Yüklənmədi
-	</div>
-	<button class="mt-5">
-      <a
-        class="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring"
-      >
-        <span
-          class="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"
-        ></span>
+              <h1 class="text-9xl font-extrabold text-white tracking-widest">
+                404
+              </h1>
+              <div class="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
+                Elan Yüklənmədi
+              </div>
+              <button class="mt-5">
+                <a class="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring">
+                  <span class="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"></span>
 
-        <span class="relative block px-8 py-3 bg-[#1A2238] border border-current">
-          <router-link to="/">Əsas səhifə</router-link>
-        </span>
-      </a>
-    </button>
-</div>
+                  <span class="relative block px-8 py-3 bg-[#1A2238] border border-current">
+                    <router-link to="/">Əsas səhifə</router-link>
+                  </span>
+                </a>
+              </button>
+            </div>
           )}
 
           {!loading && results.length > 0 && (
-            <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className=" mt-6  justify-items-center gap-[10px] p-[5px] rounded-[4px] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5  w-full">
               {results.map((item, index) => (
                 <Link
                   key={item.id || item._id}
@@ -573,7 +580,7 @@ const handleOpenForm = () => {
                 >
                   <div
                     key={index}
-                    className="border w-[226px] h-[304px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
+                    className="border w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
                   >
                     <img
                       src={
@@ -614,9 +621,9 @@ const handleOpenForm = () => {
             Array.from({ length: 20 }).map((_, i) => (
               <div
                 key={i}
-                className="w-[226px] h-[304px] bg-white rounded-2xl shadow-md  flex flex-col overflow-hidden relative"
+                className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px]  bg-white rounded-2xl shadow-md  flex flex-col overflow-hidden relative"
               >
-                <div className="w-full h-[171px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
+                <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px]  rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
 
                 <div className="p-4">
                   <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
@@ -635,14 +642,14 @@ const handleOpenForm = () => {
             <>
               {[...accessoryItems].reverse().map((item) => (
                 <Link
-                target="_blank"
-            rel="noopener noreferrer"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   key={item._id || item.id}
                   to={`/PostDetailAcsesuar/${item._id}`}
                 >
                   <div
                     key={item._id || item.id}
-                    className="flex flex-col w-[226px] h-[304px]  shadow-md cursor-pointer rounded-2xl hover:shadow-xl transition-transform duration-200 ease-in-out bg-white"
+                    className="flex flex-col w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] shadow-md cursor-pointer rounded-2xl hover:shadow-xl transition-transform duration-200 ease-in-out bg-white"
                   >
                     <div className="">
                       {item.images && item.images.length > 0 && (
