@@ -8,7 +8,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import confetti from "canvas-confetti";
 import Checkbox from '@mui/material/Checkbox';
-
+import { RefreshCcw, Percent, MapPin } from "lucide-react";
 
 
 
@@ -794,18 +794,24 @@ const handleChange = (e) => {
                         />
                       )}
                     </div>
-                    <div className="p-2">
+                    <div className="p-2 ">
                       <h2 className="text-lg font-bold">{car.price} AZN</h2>
-                      <p className="font-sans capitalize text-[18px] truncate w-50 line-clamp-1">
+                      <p className="font-sans capitalize text-[12px] truncate w-50 ">
                         {car.category} {car.brand} {car.model}
                       </p>
-                      <p className="capitalize text-[14px] font-sans font-[500] truncate w-50 leading-tight">
+                      <p className="capitalize text-[12px] font-sans font-[500] truncate w-50">
                         {car.year}, {car.motor} L, {car.km} km
                       </p>
-                      <p className="capitalize text-gray-400 truncate w-50 text-[16px]">
-                        {car.location}, {formatDate(car.data)}{" "}
-                        {getCurrentTime(car.data)}
-                      </p>
+                       <div className="flex justify-between gap-1  ">
+                              <p className="text-[10px] rounded flex justify-between text-gray-600">
+                                <MapPin size={12} color="#75FC56" />{" "}
+                                {car.location}
+                              </p>
+                              <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
+                                {formatDate(car.data)}{" "}
+                                {getCurrentTime(car.data)}
+                              </p>
+                            </div>
                     </div>
                   </div>
                 </Link>

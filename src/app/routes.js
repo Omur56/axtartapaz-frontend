@@ -38,6 +38,8 @@ import AdsPanel from "../pages/AdsPanel";
 import AdminLogin from "../pages/AdminLogin";
 import Favorites from "../pages/Favorite";
 import Cataloq from "../pages/Katalog/Cateqories/categories";
+import ResetPassword from "../pages/ResetPassword";
+import ForgotPassword from "../pages/ResetPassword/ForgotPassword";
 // import MyHomeAndGarden from "../backend/models/HomeAndGarden";
 import AdDetail from "../pages/AdDetail";
 const router = createBrowserRouter([
@@ -50,7 +52,14 @@ const router = createBrowserRouter([
         index: true,
         Component: Home,
       },
-
+      {
+        path: "/reset-password",
+        Component: ResetPassword,
+      },
+      {
+        path: "/forgot-password",
+        Component: ForgotPassword,
+      },
       {
         path: "/",
         Component: Home,

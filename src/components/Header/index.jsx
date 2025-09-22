@@ -30,7 +30,7 @@ function Header() {
   };
     
   return (
-    <header className="header h-[80px]  p-2  w-full z-50 fixed top-0 bg-white shadow-[0px_0px_10px_0px_rgba(0,0,0,0.5)] rounded-b-[10px]">  
+    <header className="header h-[80px]  p-2  w-full z-50 fixed top-0 bg-gradient-to-r from-blue-500 to-rose-500 shadow-[0px_0px_10px_0px_rgba(0,0,0,0.5)] rounded-b-[10px]">  
       <div className="flex justify-between items-center py-4 mx-auto my-auto max-w-[1200px]">
         <TitleLogo />
 
@@ -95,7 +95,7 @@ function Header() {
           )}
 
           <button
-            className="flex hidden md:flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-[4px] hover:bg-red-400 transition"
+            className="flex hidden md:flex items-center gap-2 bg-gradient-to-r from-sky-600 to-cyan-400 hover:text-black text-white px-4 py-2 rounded-[4px] hover:bg-gradient-to-r hover:from-sky-200 hover:to-cyan-100 transition"
             onClick={() => navigate("/CreateCatalogPost")}
           >
             <FaPlus /> Yeni Elan
