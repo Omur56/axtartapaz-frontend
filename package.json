@@ -2,7 +2,7 @@
   "name": "react-router-nav",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
+  "proxy": "http://localhost:10000",
   "main": "src/backend/server.js",
   "scripts": {
     "start": "react-scripts start",
