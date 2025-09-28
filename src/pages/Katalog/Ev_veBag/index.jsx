@@ -9,7 +9,7 @@ function EvVəBag () {
 
     return (
         
-         <div className="mx-auto  my-[80px] max-w-[1000px]">
+         <div className="mx-auto  my-[50px] max-w-[1000px]">
       
        
 

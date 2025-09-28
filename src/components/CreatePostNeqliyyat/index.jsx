@@ -20,6 +20,7 @@ export default function CreatePost() {
   const [editingId, setEditingId] = useState(null);
 const [checked, setChecked] = React.useState(true);
  const [price, setPrice] = useState("");
+ 
   const [form, setForm] = useState({
     id: Date.now(),
     category: "",
@@ -152,6 +153,9 @@ const handleChange = (e) => {
     }
     setForm((prev) => ({ ...prev, images: files }));
   };
+
+
+
 
   const fetchCars = async () => {
     try {
@@ -656,6 +660,7 @@ const handleChange = (e) => {
                     required
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                   />
+                
                   <input
                     type="text"
                     name="contact.phone"
@@ -757,23 +762,27 @@ const handleChange = (e) => {
         <h3 className="text-xl font-semibold mt-8 mb-4">
           Əlavə olunan Elanlar
         </h3>
-        <div className=" mx-auto   rounded-2xl   grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-4 w-full min-h-screen">
+        <div className=" mx-auto   rounded-2xl   grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-4 w-full min-h-screen">
           {isLoading ? (
             Array.from({ length: 20 }).map((_, i) => (
-              <div
-                key={i}
-                className=" w-[226px] h-[304px] bg-white rounded-2xl shadow-md  flex flex-col overflow-hidden relative"
-              >
-                <div className="w-full h-[171px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
+            <div
+                    key={i}
+                    className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
+                  >
+                    <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
+                      <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
+                      <div className="p-1">
+                        <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
+                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
+                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
 
-                <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
-
-                <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-full animate-shimmer"></div>
-
-                <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
-
-                <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
-              </div>
+                        <div className="flex items-center justify-between">
+                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/4 animate-shimmer "></div>
+                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/2 animate-shimmer "></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
             ))
           ) : (
             <>
@@ -784,13 +793,13 @@ const handleChange = (e) => {
                   key={car._id}
                   to={`/cars/${car._id}`}
                 >
-                  <div className="  w-[226px] h-[284px]  flex flex-col shadow-xl cursor-pointer bg-white rounded-2xl sm:w-[226px] max-w-[226px] hover:shadow-xl hover:scale-5 transition duration-50">
+                  <div className="  w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] flex flex-col shadow-xl cursor-pointer bg-white rounded-2xl sm:w-[226px] max-w-[226px] hover:shadow-xl hover:scale-5 transition duration-50">
                     <div className="flex gap-2 rounded-t-sm">
                       {car.images?.[0] && (
                         <img
                           src={car.images[0]}
                           alt="car"
-                          className="w-full h-[171px] object-cover object-contain rounded-t-2xl"
+                          className="w-full h-[100px] object-cover object-contain rounded-t-2xl"
                         />
                       )}
                     </div>

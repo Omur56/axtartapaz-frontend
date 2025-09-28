@@ -37,15 +37,10 @@ const Katalog = () => {
     <div className="min-w-[370px] max-w-[400px] md:max-w-[600px] lg:max-w-[800px]  mx-auto p-2">
       {/* --- Mobil versiya (slider) --- */}
       <div className="relative block md:hidden">
-        <button
-          onClick={scrollLeft}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md"
-        >
-          ◀
-        </button>
+        
         <div
           ref={sliderRef}
-          className="flex gap-[10px] h-[180px] overflow-x-auto scrollbar-hide scroll-smooth px-12"
+          className="flex gap-[10px] h-[180px] overflow-x-auto scrollbar-hide scroll-smooth "
         >
           {categories.map(({ id, path, label, icon: Icon, bgColor, hover }) => (
             <Link
@@ -58,12 +53,7 @@ const Katalog = () => {
             </Link>
           ))}
         </div>
-        <button
-          onClick={scrollRight}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md"
-        >
-          ▶
-        </button>
+      
       </div>
 
       {/* --- Desktop versiya (grid) --- */}

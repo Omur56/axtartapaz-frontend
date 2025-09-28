@@ -3,7 +3,7 @@ import Katalog from "../../../../src/pages/Katalog";
 
 function Zinət_əşyaları() {
   return (
-    <div className="mx-auto px-5 px-5 my-[80px] max-w-[1200px]">
+    <div className="mx-auto px-5 my-[50px] max-w-[1200px]">
       <TitleLogo />
       <Katalog />
     </div>

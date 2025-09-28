@@ -59,7 +59,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[80.4vh] flex items-center justify-center p-5 mt-[80px] mb-[50px]">
+    <div className="min-h-[80.4vh] flex items-center justify-center p-5 mt-[50px] mb-[50px]">
       <form
         onSubmit={handleRegister}
         className="max-w-md mx-auto mt-2 mb-1 bg-gradient-to-r from-sky-600 to-fuchsia-500 shadow-lg rounded-xl p-8 space-y-5"

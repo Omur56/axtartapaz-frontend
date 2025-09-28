@@ -88,24 +88,24 @@ const [progress, setProgress] = React.useState(0);
   }, []);
 
 
-  if (loading) return <Box className="min-h-screen mt-12" sx={{ width: '100%' }}>
+  if (loading) return <Box className="min-h-screen mt-14" sx={{ width: '100%' }}>
         <LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />
       </Box>;
 
   if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-r from-fuchsia-100 to-violet-200">
-	<h1 class="text-9xl font-extrabold text-white tracking-widest">404</h1>
-	<div class="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
+	<h1 className="text-9xl font-extrabold text-white tracking-widest">404</h1>
+	<div className="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
 		Elan Yüklənmədi
 	</div>
-	<button class="mt-5">
+	<button className="mt-5">
       <a
-        class="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring"
+        className="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring"
       >
         <span
-          class="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"
+          className="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"
         ></span>
 
-        <span class="relative block px-8 py-3 bg-[#1A2238] border border-current">
+        <span className="relative block px-8 py-3 bg-[#1A2238] border border-current">
           <router-link to="/">Əsas səhifə</router-link>
         </span>
       </a>
@@ -152,7 +152,7 @@ const [progress, setProgress] = React.useState(0);
     <div className="post-page max-w-6xl mx-auto p-4">
       <Link to="/Katalog/Geyimlər">
         
-        <button className="flex  items-center gap-2 mt-4 mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
+        <button className="flex  items-center gap-2 mt-12 mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
