@@ -70,7 +70,7 @@ export default function Register() {
 
         {/* Username */}
         <div className="flex flex-col">
-          <label className="mb-1 font-medium text-gray-700">Username</label>
+          <label className="mb-1 font-medium text-gray-700">İstifadəçi Ad</label>
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -119,12 +119,12 @@ export default function Register() {
 
         {/* Password */}
         <div className="flex flex-col relative">
-          <label className="mb-1 font-medium text-gray-700">Password</label>
+          <label className="mb-1 font-medium text-gray-700">Şifrə</label>
           <input
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            placeholder="Şifrə"
             required
             className="border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
@@ -146,7 +146,7 @@ export default function Register() {
             type={showConfirmPassword ? "text" : "password"}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirm Password"
+            placeholder="Təkrar şifrəni yazın"
             required
             className="border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
@@ -166,6 +166,15 @@ export default function Register() {
         >
           Register
         </button>
+        <p className="text-sm text-center text-gray-700">
+          Hesabınız var?{" "}
+          <span
+            onClick={() => navigate("/login")}
+            className="text-blue-600 hover:underline cursor-pointer font-bold"
+          >
+            Daxil olun
+          </span>
+        </p>
       </form>
     </div>
   );

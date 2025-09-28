@@ -111,7 +111,7 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen mt-[80px] mb-[50px] flex items-center justify-center p-5">
+    <div className="min-h-screen mt-[50px] mb-[50px] flex items-center justify-center p-5">
     <div className="max-w-md mx-auto mt-12 p-8  bg-gradient-to-r from-sky-600 to-fuchsia-500 rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold text-center mb-4">Şifrəni Unutdunuz?</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
