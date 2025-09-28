@@ -64,7 +64,7 @@ export default function Register() {
         onSubmit={handleRegister}
         className="max-w-md mx-auto mt-2 mb-1 bg-gradient-to-r from-sky-600 to-fuchsia-500 shadow-lg rounded-xl p-8 space-y-5"
       >
-        <h2 className="text-2xl font-bold text-center text-gray-800">
+        <h2 className="text-2xl font-bold text-center text-white">
           Qeydiyyat
         </h2>
 
@@ -74,7 +74,7 @@ export default function Register() {
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
+            placeholder="İstifadəçi adınızı daxil edin"
             required
             className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
@@ -170,7 +170,7 @@ export default function Register() {
           Hesabınız var?{" "}
           <span
             onClick={() => navigate("/login")}
-            className="text-blue-600 hover:underline cursor-pointer font-bold"
+            className="text-white hover:underline cursor-pointer font-bold"
           >
             Daxil olun
           </span>

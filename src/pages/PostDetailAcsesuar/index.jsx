@@ -86,7 +86,7 @@ const [progress, setProgress] = React.useState(0);
   }, []);
 
 
-  if (loading) return  <Box className="min-h-screen mt-14" sx={{ width: '100%' }}>
+  if (loading) return  <Box className="min-h-screen mt-14 " sx={{ width: '100%' }}>
         <LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />
       </Box>;
       

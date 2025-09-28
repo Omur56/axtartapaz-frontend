@@ -73,7 +73,7 @@ const Search = () => {
   };
 
   return (
-    <div className="min-h-screen mt-[80px] mb-[50px]">
+    <div className="min-h-screen mt-[50px] mb-[50px]">
     <div className="max-w-5xl mx-auto p-4 flex flex-col gap-4 justify-center">
       <div className="my-auto mx-auto p-4 flex flex-col gap-4 max-w-[1000px] ">
         <div className="w-full justify-center mx-auto my-auto max-w-[700px] min-w-[200px]">

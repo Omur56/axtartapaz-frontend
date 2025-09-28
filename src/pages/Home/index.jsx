@@ -340,7 +340,7 @@ const totalPages = Math.ceil(allAds.length / itemsPerPage);
       <div className="flex  justify-between gap-4">
         <div className="flex-1 ">
           <div className="max-w-5xl mx-auto p-4  gap-4">
-            <div className="w-full justify-center mt-[100px] mx-auto my-auto max-w-[700px] min-w-[200px]">
+            <div className="w-full justify-center  mx-auto my-auto max-w-[700px] min-w-[200px]">
            
             </div>
           </div>

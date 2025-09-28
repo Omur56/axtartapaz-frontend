@@ -34,9 +34,9 @@ const Katalog = () => {
   };
 
   return (
-    <div className="min-w-[370px] max-w-[400px] md:max-w-[600px] lg:max-w-[800px]  mx-auto p-2">
+    <div className="min-w-[370px]  max-w-[400px] md:max-w-[600px] lg:max-w-[800px]   mx-auto mb-4 ">
       {/* --- Mobil versiya (slider) --- */}
-      <div className="relative block md:hidden">
+      <div className="relative block md:hidden mt-[30px] ">
         
         <div
           ref={sliderRef}
@@ -57,7 +57,7 @@ const Katalog = () => {
       </div>
 
       {/* --- Desktop versiya (grid) --- */}
-      <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center mt-4">
+      <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center ">
         {categories.map((cat) => {
           const Icon = cat.icon;
           return (
@@ -66,7 +66,7 @@ const Katalog = () => {
               onClick={() => handleCategoryClick(cat.id, cat.path)}
               className="w-[100px] text-center"
             >
-              <div>
+              <div className="mt-4" >
                 <button
                   className={`${cat.bgColor} transform hover:scale-105 border w-[100px] h-[30px] rounded-[10px] flex justify-center items-center shadow transition-all duration-200`}
                 >

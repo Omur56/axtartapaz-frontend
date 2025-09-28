@@ -403,7 +403,7 @@ const handleChange = (e) => {
   };
   return (
     <div className="min-h-screen ">
-      <div className="p-6 max-w-5xlplace-items-center mx-auto">
+      <div className="p-6 max-w-5xl mx-auto">
         <div className="w-full justify-center  mx-auto my-auto max-w-[700px] min-w-[200px]">
           <div className="relative">
             <input
@@ -762,7 +762,7 @@ const handleChange = (e) => {
         <h3 className="text-xl font-semibold mt-8 mb-4">
           Əlavə olunan Elanlar
         </h3>
-        <div className=" mx-auto   rounded-2xl   grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-4 w-full min-h-screen">
+        <div className=" mx-auto   rounded-2xl   grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-4 w-full min-h-screen">
           {isLoading ? (
             Array.from({ length: 20 }).map((_, i) => (
             <div
@@ -793,7 +793,7 @@ const handleChange = (e) => {
                   key={car._id}
                   to={`/cars/${car._id}`}
                 >
-                  <div className="  w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] flex flex-col shadow-xl cursor-pointer bg-white rounded-2xl sm:w-[226px] max-w-[226px] hover:shadow-xl hover:scale-5 transition duration-50">
+                  <div className="  w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <div className="flex gap-2 rounded-t-sm">
                       {car.images?.[0] && (
                         <img
