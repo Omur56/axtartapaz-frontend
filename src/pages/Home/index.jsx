@@ -308,78 +308,73 @@ const Home = () => {
     fetchAds();
   }, []);
 
-
   // Pagination üçün state
-const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 20;
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
-// Bütün elanları birləşdiririk
-const allAds = [
-  ...cars,
-  ...homeGarden,
-  ...elektronikaPost,
-  ...accessories,
-  ...realEstate,
-  ...Household,
-  ...Phone,
-  ...Clothing,
-].sort((a, b) => new Date(b.data) - new Date(a.data));
+  // Bütün elanları birləşdiririk
+  const allAds = [
+    ...cars,
+    ...homeGarden,
+    ...elektronikaPost,
+    ...accessories,
+    ...realEstate,
+    ...Household,
+    ...Phone,
+    ...Clothing,
+  ].sort((a, b) => new Date(b.data) - new Date(a.data));
 
-// Cari səhifədə göstəriləcək elanlar
-const indexOfLastItem = currentPage * itemsPerPage;
-const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-const currentAds = allAds.slice(indexOfFirstItem, indexOfLastItem);
+  // Cari səhifədə göstəriləcək elanlar
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentAds = allAds.slice(indexOfFirstItem, indexOfLastItem);
 
-// Ümumi səhifə sayı
-const totalPages = Math.ceil(allAds.length / itemsPerPage);
-
-
+  // Ümumi səhifə sayı
+  const totalPages = Math.ceil(allAds.length / itemsPerPage);
 
   return (
     <div className="min-h-scree">
       <div className="flex  justify-between gap-4">
         <div className="flex-1 ">
           <div className="max-w-5xl mx-auto p-4  gap-4">
-            <div className="w-full justify-center  mx-auto my-auto max-w-[700px] min-w-[200px]">
-           
-            </div>
+            <div className="w-full justify-center  mx-auto my-auto max-w-[700px] min-w-[200px]"></div>
           </div>
           <BottomMenu />
           <main className="   max-w-5xl mx-auto ">
-            <div className="p-[18px]">
-<Katalog />
-            </div>
+           
+              <Katalog />
             
-   <div className="relative">
-                <input
-                  className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                  placeholder="AxtarTap..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSearch();
-                  }}
-                />
-                <button
-                  className="absolute top-1 right-1 flex items-center rounded bg-green-500 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-blue-700 focus:shadow-none active:bg-slate-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                  type="button"
-                  onClick={handleSearch}
+
+            <div className="relative">
+              <input
+                className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                placeholder="AxtarTap..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSearch();
+                }}
+              />
+              <button
+                className="absolute top-1 right-1 flex items-center rounded bg-green-500 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-blue-700 focus:shadow-none active:bg-slate-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                type="button"
+                onClick={handleSearch}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-4 h-4 mr-2"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-4 h-4 mr-2"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Axtar
-                </button>
-              </div>
+                  <path
+                    fillRule="evenodd"
+                    d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Axtar
+              </button>
+            </div>
             <div className="mt-4 ">
               {loading && (
                 <Box sx={{ display: "flex" }}>
@@ -493,7 +488,6 @@ const totalPages = Math.ceil(allAds.length / itemsPerPage);
                                 )}
                                 {/* <p>{options.kredit && options.barter }</p> */}
                               </div>
-                             
                             </div>
 
                             <img
@@ -525,38 +519,34 @@ const totalPages = Math.ceil(allAds.length / itemsPerPage);
                           </div>
                         </div>
                       </Link>
-                       <div className=" mt-1 w-full p-1 z-50 top-1 left-1 flex gap-2">
-                                <button
-                                  onClick={() => toggleFavorite(car)}
-                                  className={`absolute   top-1 right-1 p-[2px] rounded-full`}
-                                >
-                                  <Heart
-                                    fill={
-                                      favorites.find(
-                                        (fav) => fav._id === car._id
-                                      )
-                                        ? "red"
-                                        : "none"
-                                    }
-                                    size={24}
-                                    color="#ffffff"
-                                    strokeWidth={1.75}
-                                  />
-                                </button>
-                              </div>
+                      <div className=" mt-1 w-full p-1 z-50 top-1 left-1 flex gap-2">
+                        <button
+                          onClick={() => toggleFavorite(car)}
+                          className={`absolute   top-1 right-1 p-[2px] rounded-full`}
+                        >
+                          <Heart
+                            fill={
+                              favorites.find((fav) => fav._id === car._id)
+                                ? "red"
+                                : "none"
+                            }
+                            size={24}
+                            color="#ffffff"
+                            strokeWidth={1.75}
+                          />
+                        </button>
+                      </div>
                     </div>
                   ))}
 
                   {[...homeGarden].map((post) => (
                     <div className="relative">
-                     
                       <Link
                         target="_blank"
                         rel="noopener noreferrer"
                         key={post._id}
                         to={`/elan/${post._id}`}
                       >
-                        
                         <div
                           key={post._id}
                           className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300"
@@ -593,7 +583,7 @@ const totalPages = Math.ceil(allAds.length / itemsPerPage);
                           </div>
                         </div>
                       </Link>
-                       <button
+                      <button
                         onClick={() => toggleFavorite(post)}
                         className={`absolute top-1 right-1 p-[2px] rounded-full `}
                       >
