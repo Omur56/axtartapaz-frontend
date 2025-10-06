@@ -77,7 +77,7 @@ export default function AdminPanel() {
     formData.append("link", newAd.link);
     formData.append("userId", newAd.userId);
 formData.append("user", "62f1c123456789abcdef1234"); // real User ID
-    const res = await axios.post("http://localhost:5000/api/ads", formData, {
+    const res = await axios.post("REACT_APP_API_URL/api/ads", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
@@ -105,7 +105,7 @@ formData.append("user", "62f1c123456789abcdef1234"); // real User ID
   };
 
   return (
-    <div className="p-6 max-w-[1000px] min-h-screen mx-auto">
+    <div className="p-6 mt-[50px] max-w-[1000px] min-h-screen mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Admin Panel</h1>

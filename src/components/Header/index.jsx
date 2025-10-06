@@ -50,8 +50,8 @@ function Header() {
       strokeWidth={2}
       onClick={() => setIsFavorite(!isFavorite)}
       className={`cursor-pointer transition-colors duration-200 ${
-        isFavorite ? "text-red-500" : "text-gray-400"
-      } hover:text-red-500`}
+        isFavorite ? "text-white" : "text-white"
+      } hover:text-blue-500`}
     />
 
                    

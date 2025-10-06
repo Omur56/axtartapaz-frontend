@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 import Swal from "sweetalert2";
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-
+import { RefreshCcw, Percent, MapPin } from "lucide-react";
 export default function CreatePhone() {
   const { id } = useParams();
   const [isOpen, setIsOpen] = useState(false);
@@ -632,21 +632,27 @@ const handleOpenForm = () => {
           <div className=" ring-2 w-full my-4"></div>
         </div>
         <h3 className="text-xl font-semibold mb-4">Əlavə olunan Elanlar</h3>
-        <div className="rounded-2xl grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4">
+        <div className="mx-auto   rounded-2xl   grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-4 w-full min-h-screen">
           {isLoading ? (
             Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="w-[226px] h-[304px] bg-white rounded-2xl shadow-md  flex flex-col overflow-hidden relative"
-              >
-                <div className="w-full h-[171px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
+            <div
+                    key={i}
+                    className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
+                  >
+                    <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
+                      <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
+                      <div className="p-1">
+                        <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
+                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
+                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
 
-                <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
-
-                <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-full animate-shimmer"></div>
-
-                <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
-              </div>
+                        <div className="flex items-center justify-between">
+                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/4 animate-shimmer "></div>
+                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/2 animate-shimmer "></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
             ))
           ) : (
             <>
@@ -656,32 +662,38 @@ const handleOpenForm = () => {
                   key={item._id || item.id}
                   to={`/PostDetailPhone/${item._id}`}
                 >
-                  <div className="flex flex-col w-[226px] h-[304px] mt-10  shadow-md cursor-pointer rounded-2xl hover:shadow-xl transition-transform duration-200 ease-in-out bg-white">
-                    <div className="">
+                  <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
+                    <div className="flex gap-2 rounded-t-sm">
                       {item.images && item.images.length > 0 && (
                         <img
                           src={item.images[0]}
                           alt={item.title}
-                          className="w-full h-[171px] object-cover object-contain rounded-t-2xl"
+                          className="w-full h-[100px] object-cover object-contain rounded-t-2xl"
                         />
                       )}
                     </div>
-                    <div className="p-4">
-                      <p className="text-xl font-bold truncate w-62">
+                    <div className="p-2">
+                      <p className="text-lg font-bold">
                         {item.price} AZN
                       </p>
-                      <p className="text-lg font-semibold truncate w-62">
+                      <p className="font-sans capitalize text-[12px] truncate w-50 ">
                         {item.brand}, {item.model} {item.rom} GB -
                         {item.storage} GB
                       </p>
- <p className="text-lg font-semibold truncate w-62">
+ <p className="capitalize text-[12px] font-sans font-[500] truncate w-50">
                          {item.rom} GB -
                         {item.storage} GB
                       </p>
-                      <p className="text-gray-500 text-sm mt-1 truncate w-62">
-                        {item.location}, {formatDate(item.data)},
-                        {getCurrentTime(item.data)}
-                      </p>
+                       <div className="flex justify-between gap-1  ">
+                                                    <p className="text-[10px] rounded flex justify-between text-gray-600">
+                                                      <MapPin size={12} color="#75FC56" />{" "}
+                                                      {item.location}
+                                                    </p>
+                                                    <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
+                                                      {formatDate(item.data)}{" "}
+                                                      {getCurrentTime(item.data)}
+                                                    </p>
+                                                  </div>
                     </div>
                   </div>
                 </Link>
