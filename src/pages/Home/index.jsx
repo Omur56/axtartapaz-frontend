@@ -430,18 +430,18 @@ const Home = () => {
                 Array.from({ length: 40 }).map((_, i) => (
                   <div
                     key={i}
-                    className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
+                    className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 animate-[shimmer_1.5s_infinite]"
                   >
                     <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
-                      <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
+                      <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 animate-shimmer"></div>
                       <div className="p-1">
-                        <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
+                        <div className="h-6 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 rounded mb-1 w-3/4 animate-shimmerh-6 bg-teal-900 rounded mb-1 w-3/4 animate-shimmer"></div>
+                        <div className="h-4 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 rounded mb-1 w-2/3 animate-shimmer"></div>
+                        <div className="h-4 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 rounded w-1/2 animate-shimmer"></div>
 
                         <div className="flex items-center justify-between">
-                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/4 animate-shimmer "></div>
-                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/2 animate-shimmer "></div>
+                          <div className="h-4 mt-4 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 bg-teal-900 rounded w-1/4 animate-shimmer "></div>
+                          <div className="h-4 mt-4 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 bg-teal-900 rounded w-1/2 animate-shimmer "></div>
                         </div>
                       </div>
                     </div>
@@ -458,7 +458,7 @@ const Home = () => {
                         to={`/cars/${car._id}`}
                       >
                         <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
-                          <div className="w-full h-[100px] bg-gray-100 relative">
+                          <div className="w-full h-[100px] rounded-t-[8px] relative">
                             {car.salon && (
                               <p className="absolute top-[75px] z-50 left-2 bg-indigo-500 text-white text-[10px] font-500 p-1 rounded">
                                 {car.salon}

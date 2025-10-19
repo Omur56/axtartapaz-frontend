@@ -60,33 +60,33 @@ export default function AdminPanel() {
   //   }
   // };
 
-
-
   const handleAddAd = async (newAd, selectedFiles) => {
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    // şəkillər
-    selectedFiles.forEach((file) => {
-      formData.append("images", file); // ✅ backend ilə eyni ad
-    });
+      // şəkillər
+      selectedFiles.forEach((file) => {
+        formData.append("images", file); // ✅ backend ilə eyni ad
+      });
 
-    // digər məlumatlar
-    formData.append("title", newAd.title);
-    formData.append("description", newAd.description);
-    formData.append("link", newAd.link);
-    formData.append("userId", newAd.userId);
-formData.append("user", "62f1c123456789abcdef1234"); // real User ID
-    const res = await axios.post("REACT_APP_API_URL/api/ads", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+      // digər məlumatlar
+      formData.append("title", newAd.title);
+      formData.append("description", newAd.description);
+      formData.append("link", newAd.link);
+      formData.append("userId", newAd.userId);
+      formData.append("user", "62f1c123456789abcdef1234"); // real User ID
+      const res = await axios.post("REACT_APP_API_URL/api/ads", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-    console.log("✅ Elan əlavə olundu:", res.data);
-  } catch (err) {
-    console.error("❌ Elan əlavə olunmadı:", err.response?.data || err.message);
-  }
-};
-
+      console.log("✅ Elan əlavə olundu:", res.data);
+    } catch (err) {
+      console.error(
+        "❌ Elan əlavə olunmadı:",
+        err.response?.data || err.message
+      );
+    }
+  };
 
   // Reklam sil
   const handleDeleteAd = async (id) => {
@@ -177,13 +177,13 @@ formData.append("user", "62f1c123456789abcdef1234"); // real User ID
                 <div className="grid grid-col-1 sm:grid-col-2">
                   <h3 className="font-semibold">{ad.title}</h3>
                   <a
-  href={ad.link}
-  target="_blank"
-  rel="noreferrer"
-  className="text-blue-500 text-sm truncate"
->
-  Link Click
-</a>
+                    href={ad.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-500 text-sm truncate"
+                  >
+                    Link Click
+                  </a>
                 </div>
                 <button
                   onClick={() => handleDeleteAd(ad._id)}
