@@ -23,8 +23,20 @@ module.exports = {
       backgroundSize: {
         'shimmer': '900px 100%',
       },
+
+      "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    }
+  }
     },
+
+    
+    
+
   },
+  
   plugins: [],
 }
 

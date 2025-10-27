@@ -66,7 +66,7 @@ const handleDelete = async (ad) => {
     // await axios.delete(`${process.env.REACT_APP_API_URL}/api/${modelMap[ad.modelName]}/${ad._id}`, {
     //   headers: { Authorization: `Bearer ${token}` },
     // });
-await axios.delete(`${process.env.REACT_APP_API_URL}/api/my-announcements/${ad.id}`, {
+await axios.delete(`${process.env.REACT_APP_API_URL}/api/announcements/${ad.id}`, {
   headers: { Authorization: `Bearer ${token}` },
 });
     setMyAds((prev) => prev.filter((a) => a._id !== ad._id));
@@ -90,7 +90,7 @@ await axios.delete(`${process.env.REACT_APP_API_URL}/api/my-announcements/${ad.i
   };
 
   if (loading) return (
-    <div className="flex justify-center items-center h-screen"> 
+    <div className="flex  justify-center items-center h-screen"> 
     <Box sx={{ display: 'flex' }}>
       <CircularProgress />
     </Box>
@@ -105,7 +105,7 @@ await axios.delete(`${process.env.REACT_APP_API_URL}/api/my-announcements/${ad.i
   };
 
   return (
-    <Box className="min-h-screen mt-12 max-w-[1000px] mx-auto p-6 ">
+    <Box className="min-h-screen mt-12 max-w-[1000px]  mx-auto p-6 ">
        
       {/* Müasir Profil Kartı */}
       {userData && (
@@ -122,7 +122,7 @@ await axios.delete(`${process.env.REACT_APP_API_URL}/api/my-announcements/${ad.i
     >
       <Card
         sx={{
-          width: { xs: "90%", sm: 400 },
+          width: { xs: "100%", md: "50%", sm: 400 },
           borderRadius: 4,
           boxShadow: "0 8px 25px rgba(0,0,0,0.2)",
           bgcolor: "rgba(255,255,255,0.95)",

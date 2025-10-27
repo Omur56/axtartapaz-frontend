@@ -7,7 +7,7 @@ function Xidmetler() {
   <h2 className="text-4xl font-extrabold text-gray-800 mb-8 text-center">Xidmətlərimiz</h2>
 
   <p className="text-gray-700 text-lg leading-relaxed text-center mb-10">
-    AxtarTap.az istifadəçilərinə geniş çeşidli xidmətlər təqdim edir ki, həm elan yerləşdirmə, həm də məhsul alqı-satqısı rahat və təhlükəsiz olsun.
+    OmurCars.org istifadəçilərinə geniş çeşidli xidmətlər təqdim edir ki, həm elan yerləşdirmə, həm də məhsul alqı-satqısı rahat və təhlükəsiz olsun.
   </p>
 
   <div className="grid md:grid-cols-3 gap-8 text-center">

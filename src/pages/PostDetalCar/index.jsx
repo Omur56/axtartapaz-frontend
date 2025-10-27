@@ -6,6 +6,18 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { X } from "lucide-react";
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+
+
+
+
+
 export default function PostDetailCar() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
@@ -17,6 +29,17 @@ export default function PostDetailCar() {
  const [progress, setProgress] = React.useState(0);
   const [buffer, setBuffer] = React.useState(10);
 
+function createData(name, calories, fat, carbs, protein) {
+  return { name, calories, fat, carbs, protein };
+}
+
+const rows = [
+  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+  createData('Eclair', 262, 16.0, 24, 6.0),
+  createData('Cupcake', 305, 3.7, 67, 4.3),
+  createData('Gingerbread', 356, 16.0, 49, 3.9),
+];
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/api/cars`)
@@ -189,9 +212,9 @@ export default function PostDetailCar() {
           <p className="text-3xl font-bold text-black mt-4">
             {post.price} AZN
           </p>
-
-          <ul className="text-sm text-gray-700 space-y-1 mt-4">
-            <li>
+          <div className="border-t pt-4">
+          <ul className="text-sm text-gray-700 space-y-1 mt-4 justify-between grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            <li >
               <span className="font-bold">Ban:</span> {post.ban_type}
             </li>
             <li>
@@ -213,11 +236,15 @@ export default function PostDetailCar() {
             <li>
               <span className="font-bold">Yerləşmə:</span> {post.location}
             </li>
-            <li className="line-clamp-4">
+           
+          </ul>
+          <div className="w-full h-[1px] border rounded-1 bg-black mb-2"></div>
+          <ul className="text-sm text-gray-700 gap-2">
+             <li className="">
               <span className="font-bold">Qeyd:</span> {post?.description}
             </li>
           </ul>
-
+</div>
           <div className="flex justify-between text-sm text-gray-500 mt-4">
             <p>Elanın nömrəsi: {post.id}</p>
             <p>
@@ -250,15 +277,19 @@ export default function PostDetailCar() {
               <span className="font-semibold">Şəhər:</span> {post.location}
             </p>
           </div>
+          
+        </div>
+        <div className=" flex flex-col  items-center w-full h-[100px]  gap-[20px] sticky bottom-0 z-50 left-0  px-5 pb-5 ">
           <a
             href={`tel:${post?.contact?.phone}`}
-            className="text-white font-bold ml-1"
+            className="text-white font-bold ml-1 flex w-full h-[50px] gap-[20px] items-center"
           >
-            <button className="w-full mt-6 py-3 bg-green-500 hover:bg-red-700 text-white font-bold rounded-lg transition">
+            <button className="w-[150px] mt-4 py-3 bg-green-500 hover:bg-red-700 text-white font-bold rounded-lg transition">
               Zəng et
             </button>
+            <button className="w-[150px] mt-4 py-3 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg transition">Mesaj göndər</button>
           </a>
-        </div>
+          </div>
       </div>
 
       <h2 className="text-[22px] font-bold text-gray-700 mt-10 mb-4">
