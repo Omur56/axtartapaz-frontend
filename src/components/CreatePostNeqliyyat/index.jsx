@@ -116,9 +116,9 @@ const handleChange = (e) => {
     let digits = value.replace(/\D/g, "").slice(3, 12); // 9 rəqəm
     // Formatlama: +994-XX-XXX-XX-XX
     if (digits.length > 0) digits = digits.replace(/^(\d{0,2})/, "$1");
-    if (digits.length > 2) digits = digits.replace(/^(\d{2})(\d{0,3})/, "$1-$2");
-    if (digits.length > 5) digits = digits.replace(/^(\d{2})-(\d{3})(\d{0,2})/, "$1-$2-$3");
-    if (digits.length > 7) digits = digits.replace(/^(\d{2})-(\d{3})-(\d{2})(\d{0,2})/, "$1-$2-$3-$4");
+    if (digits.length > 2) digits = digits.replace(/^(\d{2})(\d{0,3})/, "$1 $2");
+    if (digits.length > 5) digits = digits.replace(/^(\d{2})-(\d{3})(\d{0,2})/, "$1 $2 $3");
+    if (digits.length > 7) digits = digits.replace(/^(\d{2})-(\d{3})-(\d{2})(\d{0,2})/, "$1 $2 $3 $4");
 
     let formatted = "+994-" + digits;
     setForm((prev) => ({
@@ -668,7 +668,7 @@ const handleChange = (e) => {
                     onChange={handleChange}
                     value={form.contact.phone}
                     required
-                      placeholder="+994-XX-XXX-XX-XX"
+                      placeholder="+994 XX XXX XX XX"
   pattern="^\+994 (\d{2}) (\d{3}) (\d{2}) (\d{2})$"
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                   />
