@@ -279,7 +279,7 @@ const rows = [
           </div>
           
         </div>
-        <div className=" flex flex-col  items-center w-full h-[100px]  gap-[20px] sticky bottom-0 z-50 left-0  px-5 pb-5 ">
+        <div className=" flex mx-auto my-auto items-center max-w-[400px] justify-center h-[100px]  gap-[20px] sticky bottom-[80px] z-50 left-0  px-5 pb-5 ">
           <a
             href={`tel:${post?.contact?.phone}`}
             className="text-white font-bold ml-1 flex w-full h-[50px] gap-[20px] items-center"
@@ -287,8 +287,12 @@ const rows = [
             <button className="w-[150px] mt-4 py-3 bg-green-500 hover:bg-red-700 text-white font-bold rounded-lg transition">
               Zəng et
             </button>
-            <button className="w-[150px] mt-4 py-3 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg transition">Mesaj göndər</button>
+           
           </a>
+          <a
+            href={`https://api.whatsapp.com/send?phone=${post?.contact?.phone}`}
+            className="text-white font-bold ml-1 flex w-full h-[50px] gap-[20px] items-center"
+          > <button className="w-[150px] mt-4 py-3 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg transition">Mesaj göndər</button> </a>
           </div>
       </div>
 

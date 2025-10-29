@@ -57,19 +57,45 @@ const modelMap = {
 
 
 
+// const handleDelete = async (ad) => {
+//   if (!window.confirm("Bu elanı silmək istədiyinizə əminsiniz?")) return;
+
+//   try {
+//     console.log("Silinəcək ID:", ad._id);
+
+//     // await axios.delete(`${process.env.REACT_APP_API_URL}/api/${modelMap[ad.modelName]}/${ad._id}`, {
+//     //   headers: { Authorization: `Bearer ${token}` },
+//     // });
+// // await axios.delete(`${process.env.REACT_APP_API_URL}/api/announcements/${ad.id}`, {
+// //   headers: { Authorization: `Bearer ${token}` },
+// // });
+
+// await axios.delete(`http://localhost:10000/api/${post.modelName}/${post._id}`, {
+//   headers: { Authorization: `Bearer ${token}` },
+// });
+
+//     setMyAds((prev) => prev.filter((a) => a._id !== ad._id));
+//     alert("Elan uğurla silindi!");
+//   } catch (err) {
+//     console.error("Elan silinmədi:", err.response?.data || err);
+//     alert("Elan silinmədi. Backend-də problem var.");
+//   }
+// };
+
+
 const handleDelete = async (ad) => {
   if (!window.confirm("Bu elanı silmək istədiyinizə əminsiniz?")) return;
 
   try {
-    console.log("Silinəcək ID:", ad._id);
+    console.log("Silinəcək ID:", ad._id, "MODEL:", ad.modelName);
 
-    // await axios.delete(`${process.env.REACT_APP_API_URL}/api/${modelMap[ad.modelName]}/${ad._id}`, {
-    //   headers: { Authorization: `Bearer ${token}` },
-    // });
-await axios.delete(`${process.env.REACT_APP_API_URL}/api/announcements/${ad.id}`, {
-  headers: { Authorization: `Bearer ${token}` },
-});
+    await axios.delete(`http://localhost:10000/api/${ad.modelName}/${ad._id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // UI-dən sil
     setMyAds((prev) => prev.filter((a) => a._id !== ad._id));
+
     alert("Elan uğurla silindi!");
   } catch (err) {
     console.error("Elan silinmədi:", err.response?.data || err);
