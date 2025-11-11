@@ -36,7 +36,7 @@ const Katalog = () => {
   };
 
   return (
-    <div className="min-w-[500px]  max-w-[400px] md:max-w-[600px] lg:max-w-[700px]   mx-auto mb-4 ">
+    <div className="min-w-[380px]  max-w-[400px] md:max-w-[600px] lg:max-w-[700px]   mx-auto mb-4 ">
       {/* <Breadcrumb /> */}
       {/* --- Mobil versiya (slider) --- */}
       <div className="relative block md:hidden mt-[30px] ">

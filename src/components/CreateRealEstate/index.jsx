@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { X } from "lucide-react";
 import Swal from "sweetalert2";
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 import { RefreshCcw, Percent, MapPin } from "lucide-react";
 
 export default function CreateRealEstate() {
@@ -64,7 +64,9 @@ export default function CreateRealEstate() {
 
   const fetchItems = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/RealEstate`);
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/RealEstate`
+      );
       setRealEstateList(res.data);
     } catch (err) {
       console.error(err);
@@ -98,88 +100,89 @@ export default function CreateRealEstate() {
     setEditingId(null);
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!token) {
-    Swal.fire({
-      icon: "warning",
-      title: "Giriş tələb olunur",
-      text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-      confirmButtonColor: "#3085d6",
-    });
-    return;
-  }
-
-  const formData = new FormData();
-
-  // Şəkilləri əlavə et
-  images.forEach((file) => formData.append("images", file));
-
-  // Digər sahələri əlavə et
-  Object.entries(realEstatePost).forEach(([key, value]) => {
-    if (key === "data") return;
-    if (key === "contact") {
-      Object.entries(value).forEach(([k, v]) =>
-        formData.append(`contact.${k}`, v)
-      );
-    } else {
-      formData.append(key, value);
-    }
-  });
-
-  // Tarixi ISO formatında əlavə et
-  formData.append("data", realEstatePost.data.toISOString());
-
-  try {
-    if (editingId) {
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/realEstate/${editingId}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setEditingId(null);
-    } else {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/realEstate`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+    if (!token) {
       Swal.fire({
-        icon: "success",
-        title: "Elanınız uğurla yerləşdirildi!",
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
         confirmButtonColor: "#3085d6",
       });
+      return;
     }
 
-    resetForm();
-    fetchItems();
-  } catch (err) {
-    console.error(err);
-    Swal.fire({
-      icon: "error",
-      title: "Xəta baş verdi",
-      text: err.response?.data?.message || "Server xətası",
-      confirmButtonColor: "#d33",
-    });
-  }
-};
+    const formData = new FormData();
 
+    // Şəkilləri əlavə et
+    images.forEach((file) => formData.append("images", file));
+
+    // Digər sahələri əlavə et
+    Object.entries(realEstatePost).forEach(([key, value]) => {
+      if (key === "data") return;
+      if (key === "contact") {
+        Object.entries(value).forEach(([k, v]) =>
+          formData.append(`contact.${k}`, v)
+        );
+      } else {
+        formData.append(key, value);
+      }
+    });
+
+    // Tarixi ISO formatında əlavə et
+    formData.append("data", realEstatePost.data.toISOString());
+
+    try {
+      if (editingId) {
+        await axios.put(
+          `${process.env.REACT_APP_API_URL}/api/realEstate/${editingId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setEditingId(null);
+      } else {
+        await axios.post(
+          `${process.env.REACT_APP_API_URL}/api/realEstate`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        Swal.fire({
+          icon: "success",
+          title: "Elanınız uğurla yerləşdirildi!",
+          confirmButtonColor: "#3085d6",
+        });
+      }
+
+      resetForm();
+      fetchItems();
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        icon: "error",
+        title: "Xəta baş verdi",
+        text: err.response?.data?.message || "Server xətası",
+        confirmButtonColor: "#d33",
+      });
+    }
+  };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/realEstate/${id}`);
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/api/realEstate/${id}`
+      );
       fetchItems();
     } catch (err) {
       console.error("Delete error:", err);
@@ -188,7 +191,9 @@ const handleSubmit = async (e) => {
 
   const handleFavorite = async (id) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/realEstate/${id}/favorite`);
+      await axios.patch(
+        `${process.env.REACT_APP_API_URL}/api/realEstate/${id}/favorite`
+      );
       fetchItems();
     } catch (err) {
       console.error(err);
@@ -198,7 +203,9 @@ const handleSubmit = async (e) => {
   // Like
   const handleLike = async (id) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/realEstate/${id}/like`);
+      await axios.patch(
+        `${process.env.REACT_APP_API_URL}/api/realEstate/${id}/like`
+      );
       fetchItems();
     } catch (err) {
       console.error(err);
@@ -214,7 +221,9 @@ const handleSubmit = async (e) => {
     setEditingId(item._id);
     setPreview(
       item.images
-        ? item.images.map((img) => `${process.env.REACT_APP_API_URL}/uploads/${img}`)
+        ? item.images.map(
+            (img) => `${process.env.REACT_APP_API_URL}/uploads/${img}`
+          )
         : []
     );
   };
@@ -325,23 +334,21 @@ const handleSubmit = async (e) => {
     fetchAll();
   }, []);
 
-
-
   const token = localStorage.getItem("token");
 
-// Yeni funksiyanı elanı açan buttona əlavə edirik
-const handleOpenForm = () => {
-  if (!token) {
-    Swal.fire({
-      icon: "warning",
-      title: "Giriş tələb olunur",
-      text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-      confirmButtonColor: "#3085d6",
-    });
-    return;
-  }
-  setIsOpen(true);
-};
+  // Yeni funksiyanı elanı açan buttona əlavə edirik
+  const handleOpenForm = () => {
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+        confirmButtonColor: "#3085d6",
+      });
+      return;
+    }
+    setIsOpen(true);
+  };
   return (
     <div className="min-h-screen ">
       <div className="p-6 max-w-5xl mx-auto">
@@ -555,29 +562,29 @@ const handleOpenForm = () => {
           )}
         </div>
         <div className="mt-4">
-          {loading &&  <Box sx={{ display: 'flex' }}>
-      <CircularProgress />
-    </Box>}
+          {loading && (
+            <Box sx={{ display: "flex" }}>
+              <CircularProgress />
+            </Box>
+          )}
           {loading && results.length === 0 && (
-           <div class="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-r from-fuchsia-100 to-violet-200">
-	<h1 className="text-9xl font-extrabold text-white tracking-widest">404</h1>
-	<div className="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
-		Elan Yüklənmədi
-	</div>
-	<button className="mt-5">
-      <a
-        className="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring"
-      >
-        <span
-          className="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"
-        ></span>
+            <div class="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-r from-fuchsia-100 to-violet-200">
+              <h1 className="text-9xl font-extrabold text-white tracking-widest">
+                404
+              </h1>
+              <div className="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
+                Elan Yüklənmədi
+              </div>
+              <button className="mt-5">
+                <a className="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring">
+                  <span className="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"></span>
 
-        <span className="relative block px-8 py-3 bg-[#1A2238] border border-current">
-          <router-link to="/">Əsas səhifə</router-link>
-        </span>
-      </a>
-    </button>
-</div>
+                  <span className="relative block px-8 py-3 bg-[#1A2238] border border-current">
+                    <router-link to="/">Əsas səhifə</router-link>
+                  </span>
+                </a>
+              </button>
+            </div>
           )}
 
           {!loading && results.length > 0 && (
@@ -627,31 +634,31 @@ const handleOpenForm = () => {
         <div className="mx-auto   rounded-2xl   grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-4 w-full min-h-screen ">
           {isLoading ? (
             Array.from({ length: 20 }).map((_, i) => (
-               <div
-                    key={i}
-                    className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
-                  >
-                    <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
-                      <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
-                      <div className="p-1">
-                        <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
+              <div
+                key={i}
+                className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
+              >
+                <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
+                  <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
+                  <div className="p-1">
+                    <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
+                    <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
+                    <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
 
-                        <div className="flex items-center justify-between">
-                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/4 animate-shimmer "></div>
-                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/2 animate-shimmer "></div>
-                        </div>
-                      </div>
+                    <div className="flex items-center justify-between">
+                      <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/4 animate-shimmer "></div>
+                      <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/2 animate-shimmer "></div>
                     </div>
                   </div>
+                </div>
+              </div>
             ))
           ) : (
             <>
               {[...realEstateList].reverse().map((item) => (
                 <Link
-                target="_blank"
-            rel="noopener noreferrer"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   key={item._id || item.id}
                   to={`/PostRealEstate/${item._id}`}
                 >
@@ -679,16 +686,14 @@ const handleOpenForm = () => {
                       <p className="capitalize text-[12px] font-sans font-[500] truncate w-50">
                         Otaq Sayı: {item.number_of_rooms}
                       </p>
-                     <div className="flex justify-between gap-1  ">
-                              <p className="text-[10px] rounded flex justify-between text-gray-600">
-                                <MapPin size={12} color="#75FC56" />{" "}
-                                {item.location}
-                              </p>
-                              <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
-                                {formatDate(item.data)}{" "}
-                                {getCurrentTime(item.data)}
-                              </p>
-                            </div>
+                      <div className="flex justify-between gap-1  ">
+                        <p className="text-[10px] rounded flex justify-between text-gray-600">
+                          <MapPin size={12} color="#75FC56" /> {item.location}
+                        </p>
+                        <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
+                          {formatDate(item.data)} {getCurrentTime(item.data)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </Link>
