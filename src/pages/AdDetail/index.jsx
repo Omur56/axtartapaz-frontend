@@ -114,7 +114,7 @@ const handleDelete = async (ad) => {
 
   if (loading)
     return (
-      <Box className="min-h-screen mt-12" sx={{ width: "100%" }}>
+      <Box className="min-h-screen mt-20" sx={{ width: "100%" }}>
         <LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />
       </Box>
     );
@@ -158,7 +158,7 @@ const handleDelete = async (ad) => {
     setZoomIndex((prev) => (prev === imageArray.length - 1 ? 0 : prev + 1));
 
   return (
-    <div className="max-w-6xl min-h-screen mx-auto p-4">
+    <div className="max-w-6xl min-h-screen mx-auto p-4 mt-6 mb-10">
       <Link
         to="/profile"
         className="flex items-center gap-2 mt-4 mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md"
@@ -265,7 +265,7 @@ const handleDelete = async (ad) => {
       </div>
 
       <h2 className="text-[22px] font-bold text-gray-700 mt-10 mb-4">Bənzər elanlar</h2>
-      <div className="p-4 grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[15px] w-full">
+      <div className="p-4 grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[15px] w-full">
         {allAds.map((item) => (
           <Link key={item._id} to={`/ads/${item._id}`} className="w-full">
             <div className="bg-white rounded-2xl sm:w-[240px] max-w-[240px] h-[300px] shadow-md hover:shadow-xl transition duration-200">

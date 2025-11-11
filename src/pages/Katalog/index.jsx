@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { categories } from "../Katalog/Cateqories";
 import { Link } from "react-router-dom";
+// import Breadcrumb from "../../components/Breadcrumb"; 
+
 
 const Katalog = () => {
   const [activeId, setActiveId] = useState(null);
@@ -34,7 +36,8 @@ const Katalog = () => {
   };
 
   return (
-    <div className="min-w-[370px]  max-w-[400px] md:max-w-[600px] lg:max-w-[800px]   mx-auto mb-4 ">
+    <div className="min-w-[500px]  max-w-[400px] md:max-w-[600px] lg:max-w-[700px]   mx-auto mb-4 ">
+      {/* <Breadcrumb /> */}
       {/* --- Mobil versiya (slider) --- */}
       <div className="relative block md:hidden mt-[30px] ">
         

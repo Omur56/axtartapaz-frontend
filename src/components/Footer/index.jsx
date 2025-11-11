@@ -3,7 +3,7 @@ import TitleLogo from "../TitleLogo";
 
 function Footer() {
   return (
-    <footer className="px-5 sm:px-5 py-5  bg-[#1E1E1E] rounded-t-[10px]">
+    <footer className="bg-gray-800 py-8 px-4">
       <div className="mx-auto max-w-[1200px] flex flex-col md:flex-row justify-between gap-2">
         
         <div className="flex justify-start max-h-[20px] md:justify-start">

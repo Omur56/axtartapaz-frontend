@@ -6,13 +6,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { X } from "lucide-react";
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import { RefreshCcw, Percent, MapPin } from "lucide-react";
 
 
 
@@ -213,7 +207,7 @@ const rows = [
             {post.price} AZN
           </p>
           <div className="border-t pt-4">
-          <ul className="text-sm text-gray-700 space-y-1 mt-4 justify-between grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+          <ul className="text-sm text-gray-700 space-y-1 mt-4 justify-between grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2">
             <li >
               <span className="font-bold">Ban:</span> {post.ban_type}
             </li>
@@ -279,7 +273,7 @@ const rows = [
           </div>
           
         </div>
-        <div className=" flex mx-auto my-auto items-center max-w-[400px] justify-center h-[100px]  gap-[20px] sticky bottom-[80px] z-50 left-0  px-5 pb-5 ">
+        <div className=" right-10 my-auto mx-auto justify-between items-center grid grid-cols-2 max-w-[400px] h-[100px]  gap-[20px] sticky bottom-0 z-50 ">
           <a
             href={`tel:${post?.contact?.phone}`}
             className="text-white font-bold ml-1 flex w-full h-[50px] gap-[20px] items-center"
@@ -299,37 +293,41 @@ const rows = [
       <h2 className="text-[22px] font-bold text-gray-700 mt-10 mb-4">
         Bənzər elanlar
       </h2>
-      <div className="p-4 grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[15px] w-full">
+      <div className="p-4 grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[15px] w-full">
         {[...cars].map((car) => (
           <Link  target="_blank"
             rel="noopener noreferrer" key={car._id || car.id} to={`/cars/${car._id}` }>
-            <div className="bg-white rounded-2xl sm:w-[240.4px] max-w-[240.4px] h-[300px] shadow-md hover:shadow-xl transition duration-200">
-              <div className="w-full h-[178.5px] bg-gray-100 relative">
+            <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-sm transform  transition-all duration-300">
+              <div className="w-full h-[100px] rounded-t-[8px] relative">
                 <img
-                  src={
-                    car.images?.[0]?.startsWith("http")
-                      ? car.images[0]
-                      : "/no-image.jpg"
-                  }
-                  alt={car.brand}
+                 
+                  src={car.mainImage || car.images[0]}
+  alt={car.brand}
+                  
                   className="absolute top-0 left-0 w-full h-full object-cover rounded-t-2xl"
                   onClick={() => openZoom(0)}
                 />
               </div>
               <div className="p-2">
-                <h3 className="text-xl font-bold text-black">
+                <h3 className="text-[18px] font-bold font-black text-black">
                   {car.price} AZN ₼
                 </h3>
-                <h2 className="text-lg truncate w-50">
+                <h2 className="text-[12px] truncate w-30">
                   {car.category}, {car.brand}, {car.model}
                 </h2>
-                <p className="text-gray-600 truncate w-64">
+                <p className="text-gray-600 truncate w-30">
                   {car.year}, {car.km} km
                 </p>
-                <p className="capitalize text-gray-400 text-[14px]">
-                  {car.location}, {formatDate(car.data)}{" "}
-                  {getCurrentTime(car.data)}
-                </p>
+                <div className="flex justify-between gap-1 mt-7 ">
+                              <p className="text-[10px] p-1 rounded flex justify-between text-gray-600">
+                                <MapPin size={12} color="#75FC56" />{" "}
+                                {car.location}
+                              </p>
+                              <p className="capitalize text-[12px] p-1 rounded flex justify-between text-gray-600 truncate w-30">
+                                {formatDate(car.data)}{" "}
+                                {getCurrentTime(car.data)}
+                              </p>
+                            </div>
               </div>
             </div>
           </Link>

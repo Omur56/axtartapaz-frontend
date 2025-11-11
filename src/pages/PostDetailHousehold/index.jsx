@@ -6,7 +6,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { X } from "lucide-react";
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
-
+import Breadcrumb from "../../components/Breadcrumb"; 
 
 export default function PostDetailHousehold() {
   const { id } = useParams();
@@ -132,6 +132,7 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
 
   return (
     <div className="max-w-6xl mx-auto p-4">
+      
       <Link to="/Katalog/Məişət_Texnikası">
        
         <button className="flex  items-center gap-2 mt-12 mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
@@ -150,8 +151,9 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
           Geri
         </button>
       </Link>
-
+<Breadcrumb />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-white shadow-lg rounded-xl p-6">
+        
         <div className="lg:col-span-2 space-y-4">
           <h1 className="text-2xl font-bold mb-4 capitalize">
             {post.category} {post.brand} {post.model}
