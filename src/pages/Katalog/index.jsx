@@ -128,30 +128,38 @@ const Katalog = () => {
   };
 
   return (
-    <div className="min-w-[500px] max-w-[500px] md:max-w-[600px] lg:max-w-[1000px] mx-auto mb-4">
+    <div className="min-w-[400px] max-w-[500px] md:max-w-[600px] lg:max-w-[1000px] mx-auto mb-4">
       
       {/* --- Mobil versiya (slider) --- */}
-      <div className="relative block md:hidden mt-[30px]">
-        <div
-          ref={sliderRef}
-          className="flex gap-[10px] w-[500px]  h-[50px] overflow-x-auto scrollbar-hide scroll-smooth"
-        >
-          {categories.map(({ id, path, label, icon, bgColor, hover }) => (
-            <Link
-              key={id}
-              to={`/katalog/${path}`}
-              className={`flex flex-col  w-[150px] h-[50px] items-center justify-center   rounded-[5px]  transition-all ${bgColor} ${hover}`}
-            >
-              {typeof icon === "string" ? (
-                <img src={icon} alt={label} className="w-180 h-180 mb-[-15px] ml-[-2px]" />
-              ) : (
-                <icon className="w-80 h-80  text-white" />
-              )}
-            
-            </Link>
-          ))}
-        </div>
-      </div>
+  <div className="relative block md:hidden mt-6">
+  <div
+    ref={sliderRef}
+    className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-4"
+  >
+    {categories.map(({ id, path, icon, bgColor, hover }) => (
+      <Link
+        key={id}
+        to={`/katalog/${path}`}
+        className={`relative min-w-[100px] h-[80px] rounded-lg shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover}`}
+      >
+        {typeof icon === "string" ? (
+          <img
+            src={icon}
+            alt=""
+            className="w-[110px] h-[80px]"
+            style={{ position: "absolute", bottom: 0, right: 0 }}
+          />
+        ) : (
+          <icon
+            className="w-[50px] h-[50px] text-white"
+            style={{ position: "absolute", bottom: 0, right: 0 }}
+          />
+        )}
+      </Link>
+    ))}
+  </div>
+</div>
+
 
       {/* --- Desktop versiya (grid) --- */}
       <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
