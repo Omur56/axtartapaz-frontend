@@ -472,7 +472,7 @@ if (mainImageIndex !== null) {
 
           {isOpen && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="relative w-[90%] max-w-3xl max-h-[90vh] overflow-y-auto bg-white p-6 rounded-xl shadow-lg">
+              <div className="relative w-[90%] max-w-3xl max-h-[100vh] overflow-y-auto bg-white p-6 rounded-xl shadow-lg">
                 <button
                   onClick={() => setIsOpen(false)}
                   className="absolute top-2 right-2 text-gray-600 hover:text-red-600"
@@ -566,6 +566,9 @@ if (mainImageIndex !== null) {
                     <option value="">Transmissiya</option>
                     <option value="Avtomat">Avtomat</option>
                     <option value="Mexanika">Mexanika</option>
+                    <option value="Robot">Robot</option>
+                    
+
                   </select>
                   <select
                     value={form.engine}
@@ -658,7 +661,7 @@ if (mainImageIndex !== null) {
         Barter
       </label>
 
-                  <input
+                  {/* <input
                     type="file"
                     multiple
                     name="images"
@@ -666,7 +669,7 @@ if (mainImageIndex !== null) {
                     onChange={handleFileChange}
                     required
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
+                  /> */}
                 <div className="col-span-2">
   <label className="block font-semibold mb-2">Şəkillər:</label>
   <input
