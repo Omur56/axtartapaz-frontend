@@ -2,16 +2,12 @@ import { NavLink } from "react-router-dom";
 
 function TitleLogo() {
   return (
-    <div className="title-logo justify-center mt-[-10px]  p-2 w-[100px] h-[30px] flex  items-center   cursor-pointer">
-      <NavLink className={`w-[100px] h-[30px]`} to={"/"}>
-        <p className="flex gap-1 text-red-500 text-[18px] font-bold font-sans">
-          
-          Omur
-          <span className="text-red-500 font-bold  text-[18px]">Cars.org</span>
-        </p>
+    <div className="title-logo justify-center mt-[-20px]  p-2  flex  items-center   cursor-pointer">
+      <NavLink className={`w-[240px] h-[90px]`} to={"/"}>
+        
+       <img className="w-[240px] h-[90px]" src="/assets/TitleLogoImg/proelan.svg" alt="TezTap" /> 
       </NavLink>
 
-      {/* <img src="/assets/TitleLogoImg/titleLogoAxtar.png" alt="TezTap" /> */}
     </div>
   );
 }

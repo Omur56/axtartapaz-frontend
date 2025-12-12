@@ -336,16 +336,16 @@ const Home = () => {
   const totalPages = Math.ceil(allAds.length / itemsPerPage);
 
   return (
-    <div className="min-h-scree">
+    <div className="min-h-scree max-w-[1000px] mx-auto mb-10 mt-10">
       <div className="flex  justify-between gap-4">
         <div className="flex-1 ">
           <div className="max-w-5xl mx-auto p-4  gap-4">
-            <div className="w-full justify-center  mx-auto my-auto max-w-[700px] min-w-[200px]"></div>
+            <div className="flex justify-center  mx-auto my-auto  "></div>
           </div>
           {/* <BottomMenu /> */}
-          <main className="  min-h-screen max-w-5xl mx-auto ">
+          <main className="  min-h-screen w-full mx-auto ">
             <div className="mt-[18px] ">
-              <Katalog />
+              
             </div>
             <div className="relative">
               <input
@@ -427,8 +427,15 @@ const Home = () => {
               )}
               <div className=" border bg-slate-400 h-[1px] mb-6 w-full"></div>
             </div>
-
-            <div className=" mt-6  justify-items-center gap-[10px] p-[5px] rounded-[4px] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5  w-full">
+<Katalog />
+            <div className="mt-6   grid justify-items-center gap-4 p-2 rounded-md 
+    grid-cols-2
+    sm:grid-cols-2
+    md:grid-cols-3
+    lg:grid-cols-4
+    xl:grid-cols-5
+    
+  ">
               {isLoading ? (
                 Array.from({ length: 40 }).map((_, i) => (
                   <div

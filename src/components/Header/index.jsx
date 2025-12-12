@@ -36,7 +36,7 @@ function Header() {
   };
     
   return (
-    <header className="header h-[50px]  p-2  w-full z-50 fixed top-0 bg-white border-b border-gray-200 rounded-b-[10px]">  
+    <header className="header h-[90px]  p-2  w-full z-50 fixed top-0 bg-black border-b border-gray-200 rounded-b-[10px]">  
       <div className="flex justify-between   items-center py-4 mx-auto my-auto max-w-[1200px]">
         
     
@@ -87,7 +87,7 @@ function Header() {
           {isLoggedIn && (
             <>
             <button
-  className="flex hidden md:flex transform ease-in-out w-[80px] h-8 duration-500 items-center text-[10px] font-[500] gap-2 bg-transparent border border-blue-500 text-blue-600 hover:text-white px-2 py-2 rounded-[4px] hover:bg-blue-500"
+  className="flex hidden md:flex transform ease-in-out w-[80px] h-8 duration-500 items-center text-[10px] font-[500] gap-2  bg-sky-600 border border-blue-500  text-white hover:text-white px-2 py-2 rounded-[4px] hover:bg-blue-500"
   onClick={() => navigate("/profile")}
 >
   <User className="transition-colors duration-300 ease-in-out" /> Profil

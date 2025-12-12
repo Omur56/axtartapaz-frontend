@@ -2,8 +2,7 @@
 // import { useNavigate } from "react-router";
 // import { categories } from "../Katalog/Cateqories";
 // import { Link } from "react-router-dom";
-// // import Breadcrumb from "../../components/Breadcrumb"; 
-
+// // import Breadcrumb from "../../components/Breadcrumb";
 
 // const Katalog = () => {
 //   const [activeId, setActiveId] = useState(null);
@@ -40,7 +39,7 @@
 //       {/* <Breadcrumb /> */}
 //       {/* --- Mobil versiya (slider) --- */}
 //       <div className="relative block md:hidden mt-[30px] ">
-        
+
 //         <div
 //           ref={sliderRef}
 //           className="flex gap-[10px] h-[180px] overflow-x-auto scrollbar-hide scroll-smooth "
@@ -56,7 +55,7 @@
 //             </Link>
 //           ))}
 //         </div>
-      
+
 //       </div>
 
 //       {/* --- Desktop versiya (grid) --- */}
@@ -91,7 +90,6 @@
 
 // export default Katalog;
 
-
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { categories } from "../Katalog/Cateqories";
@@ -117,49 +115,53 @@ const Katalog = () => {
 
   const scrollLeft = () => {
     if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: -sliderRef.current.clientWidth / 2, behavior: "smooth" });
+      sliderRef.current.scrollBy({
+        left: -sliderRef.current.clientWidth / 2,
+        behavior: "smooth",
+      });
     }
   };
 
   const scrollRight = () => {
     if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: sliderRef.current.clientWidth / 2, behavior: "smooth" });
+      sliderRef.current.scrollBy({
+        left: sliderRef.current.clientWidth / 2,
+        behavior: "smooth",
+      });
     }
   };
 
   return (
-    <div className="min-w-[400px] max-w-[500px] md:max-w-[600px] lg:max-w-[1000px] mx-auto mb-4">
-      
+    <div className="min-w-screen max-w-[650px] md:max-w-[700px] lg:max-w-[1000px] mx-auto mb-4">
       {/* --- Mobil versiya (slider) --- */}
-  <div className="relative block md:hidden mt-6">
-  <div
-    ref={sliderRef}
-    className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-4"
-  >
-    {categories.map(({ id, path, icon, bgColor, hover }) => (
-      <Link
-        key={id}
-        to={`/katalog/${path}`}
-        className={`relative min-w-[100px] h-[80px] rounded-lg shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover}`}
-      >
-        {typeof icon === "string" ? (
-          <img
-            src={icon}
-            alt=""
-            className="w-[110px] h-[80px]"
-            style={{ position: "absolute", bottom: 0, right: 0 }}
-          />
-        ) : (
-          <icon
-            className="w-[50px] h-[50px] text-white"
-            style={{ position: "absolute", bottom: 0, right: 0 }}
-          />
-        )}
-      </Link>
-    ))}
-  </div>
-</div>
-
+      <div className="relative block md:hidden mt-6">
+        <div
+          ref={sliderRef}
+          className="flex gap-4  overflow-x-auto scrollbar-hide scroll-smooth px-4"
+        >
+          {categories.map(({ id, path, icon, bgColor, hover }) => (
+            <Link
+              key={id}
+              to={`/katalog/${path}`}
+              className={`relative min-w-[100px] h-[80px] rounded-lg shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover}`}
+            >
+              {typeof icon === "string" ? (
+                <img
+                  src={icon}
+                  alt=""
+                  className="w-[110px] h-[80px]"
+                  style={{ position: "absolute", bottom: 0, right: 0 }}
+                />
+              ) : (
+                <icon
+                  className="w-[50px] h-[50px] text-white"
+                  style={{ position: "absolute", bottom: 0, right: 0 }}
+                />
+              )}
+            </Link>
+          ))}
+        </div>
+      </div>
 
       {/* --- Desktop versiya (grid) --- */}
       <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
@@ -175,7 +177,11 @@ const Katalog = () => {
                   className={`${cat.bgColor} transform hover:scale-105 border w-[150px] h-[100px] rounded-[7px] flex justify-center items-center shadow transition-all duration-200`}
                 >
                   {typeof cat.icon === "string" ? (
-                    <img src={cat.icon} alt={cat.label} className="mb-[-13px] ml-[-2px] text-white" />
+                    <img
+                      src={cat.icon}
+                      alt={cat.label}
+                      className="mb-[-13px] ml-[-2px] text-white"
+                    />
                   ) : (
                     <cat.icon className="w-[50px] h-[50px] text-white" />
                   )}
