@@ -40,7 +40,7 @@ const Katalog = () => {
       </h2>
 
       {/* --- Mobil slider --- */}
-      <div className="relative block md:hidden mb-6">
+      <div className="relative block md:hidden mb-6 max-w-full">
         <button
           onClick={scrollLeft}
           className="absolute left-0 top-1/2 -translate-y-1/2 bg-gray-200 rounded-full p-2 z-10 shadow"

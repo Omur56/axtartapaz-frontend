@@ -132,12 +132,12 @@ const Katalog = () => {
   };
 
   return (
-    <div className="min-w-screen max-w-[650px] md:max-w-[700px] lg:max-w-[1000px] mx-auto mb-4">
+    <div className="min-w-screen max-w-[440px]  md:max-w-[700px] lg:max-w-[1000px] mx-auto mb-4">
       {/* --- Mobil versiya (slider) --- */}
       <div className="relative block md:hidden mt-6">
         <div
           ref={sliderRef}
-          className="flex gap-4  overflow-x-auto scrollbar-hide scroll-smooth px-4"
+          className="flex gap-4  overflow-x-auto scrollbar-hide  scroll-smooth px-4"
         >
           {categories.map(({ id, path, icon, bgColor, hover }) => (
             <Link

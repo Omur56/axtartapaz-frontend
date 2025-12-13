@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Katalog from "../Katalog";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -336,7 +336,7 @@ const Home = () => {
   const totalPages = Math.ceil(allAds.length / itemsPerPage);
 
   return (
-    <div className="min-h-screen max-w-[1000px] mx-auto mb-10 mt-10">
+    <div className="min-h-screen max-w-full max-w-[240px] mx-auto mb-10 mt-10">
       <div className="flex  justify-between gap-4">
         <div className="flex-1 ">
           <div className="max-w-5xl mx-auto p-4  gap-4">
@@ -396,7 +396,7 @@ const Home = () => {
                     >
                       <div
                         key={index}
-                        className="border w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
+                        className="border w-full max-w-[240px] h-auto  max-w-full max-w-[240px] max-h-auto rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
                       >
                         <img
                           src={
@@ -407,7 +407,7 @@ const Home = () => {
                               : "/placeholder.png"
                           }
                           alt={item.title || "Image"}
-                          className="w-full h-[100px] object-cover"
+                          className="w-full h-auto object-cover"
                         />
                         <div className="p-4">
                           <h2 className="text-lg font-semibold mb-1">
@@ -425,21 +425,20 @@ const Home = () => {
                   ))}
                 </div>
               )}
-              <div className=" border bg-slate-400 h-[1px] mb-6 w-full"></div>
+              <div className=" border bg-slate-400 h-auto mb-6 w-full"></div>
             </div>
 <Katalog />
-            <div className="mt-4 p-4 mb-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 place-items-center
-
+            <div className="mt-4  mb-10 flex grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5  justify-center items-center gap-2
     
   ">
               {isLoading ? (
                 Array.from({ length: 40 }).map((_, i) => (
                   <div
                     key={i}
-                    className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 animate-[shimmer_1.5s_infinite]"
+                    className=" w-full max-w-[240px] h-auto  max-w-full max-w-[240px] max-h-auto rounded-2xl shadow-md bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 animate-[shimmer_1.5s_infinite]"
                   >
-                    <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
-                      <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 animate-shimmer"></div>
+                    <div className=" w-full max-w-[240px] h-auto  max-w-full max-w-[240px] max-h-auto bg-white rounded-2xl shadow-md ">
+                      <div className="w-full h-auto rounded-t-[8px] mb-2 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 animate-shimmer"></div>
                       <div className="p-1">
                         <div className="h-6 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 rounded mb-1 w-3/4 animate-shimmerh-6 bg-teal-900 rounded mb-1 w-3/4 animate-shimmer"></div>
                         <div className="h-4 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 rounded mb-1 w-2/3 animate-shimmer"></div>
@@ -463,8 +462,8 @@ const Home = () => {
                         key={car.id}
                         to={`/cars/${car._id}`}
                       >
-                        <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-sm transform  transition-all duration-300">
-                          <div className="w-full h-[100px] rounded-t-[8px] relative">
+                        <div className="w-full max-w-[240px] h-auto  max-w-full max-w-[240px] max-h-auto bg-white rounded-2xl shadow-sm transform  transition-all duration-300">
+                          <div className="w-full h-auto rounded-t-[8px] relative">
                             {car.salon && (
                               <p className="absolute top-[75px] z-50 left-2 bg-indigo-500 text-white text-[10px] font-500 p-1 rounded">
                                 {car.salon}
@@ -473,7 +472,7 @@ const Home = () => {
                             <div className="flex justify-between z-50 gap-2">
                               <div className="absolute mt-1 w-full p-1 z-50 top-0 left-0 flex gap-2">
                                 {car.kredit && (
-                                  <p className="w-[25px] bg-orange-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
+                                  <p className="w-full max-w-[240px] bg-orange-500 h-auto p-1 justify-items-center  flex rounded-full text-white">
                                     {" "}
                                     <Percent
                                       size={16}
@@ -483,7 +482,7 @@ const Home = () => {
                                   </p>
                                 )}
                                 {car.barter && (
-                                  <p className="w-[25px] bg-green-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
+                                  <p className="w-full max-w-[240px] bg-green-500 h-auto p-1 justify-items-center  flex rounded-full text-white">
                                     <RefreshCcw
                                       size={16}
                                       strokeWidth={1.5}
@@ -554,7 +553,7 @@ const Home = () => {
                       >
                         <div
                           key={post._id}
-                          className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-sm transform  transition-all duration-300"
+                          className="w-full max-w-[240px] h-auto  max-w-full max-w-[240px] max-h-auto bg-white rounded-2xl shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -565,7 +564,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={post.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-auto object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-[12px] font-bold text-black truncate w-30 ">
@@ -616,7 +615,7 @@ const Home = () => {
                       >
                         <div
                           key={item._id}
-                          className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
+                          className="w-full max-w-[240px] h-auto  max-w-full max-w-[240px] max-h-auto bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -625,7 +624,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={item.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-auto object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-xl font-bold text-black">
@@ -678,7 +677,7 @@ const Home = () => {
                       >
                         <div
                           key={item._id}
-                          className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px]  bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
+                          className="w-full max-w-[240px] h-auto  max-w-full max-w-[240px] max-h-auto  bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -687,7 +686,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={item.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-auto object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-[12px] font-bold text-black">
@@ -740,7 +739,7 @@ const Home = () => {
                       >
                         <div
                           key={item._id}
-                          className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
+                          className="w-full max-w-[240px]  max-w-full max-w-[240px] h-auto bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -749,7 +748,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={item.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-auto object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-[12px] font-bold text-black">
@@ -801,7 +800,7 @@ const Home = () => {
                       >
                         <div
                           key={item._id}
-                          className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
+                          className="w-full max-w-[240px]  max-w-full max-w-[240px] h-auto bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -810,7 +809,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={item.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-auto object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-[12px] font-bold text-black truncate w-30">
@@ -861,7 +860,7 @@ const Home = () => {
                       >
                         <div
                           key={item._id}
-                          className="w-[170px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
+                          className="w-full max-w-[240px]  max-w-full max-w-[240px] h-auto  bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -870,7 +869,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={item.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-auto object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-xl font-bold text-black">
@@ -921,7 +920,7 @@ const Home = () => {
                       >
                         <div
                           key={item._id}
-                          className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
+                          className="w-full max-w-[240px]  max-w-full max-w-[240px] h-auto bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -930,7 +929,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={item.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-auto object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-xl font-bold text-black">
