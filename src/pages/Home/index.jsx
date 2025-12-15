@@ -436,9 +436,9 @@ const Home = () => {
                 Array.from({ length: 40 }).map((_, i) => (
                   <div
                     key={i}
-                    className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 animate-[shimmer_1.5s_infinite]"
+                    className=" w-[185.7px] h-[222.6px]  max-w-[220.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 animate-[shimmer_1.5s_infinite]"
                   >
-                    <div className=" w-[222.7px] mb-10 h-[229.6px] bg-white rounded-2xl shadow-md ">
+                    <div className=" w-[185.7px] sm:w-[225.7px] md:w-[225.7px] lg:w-[225.7px] mb-10 h-[229.6px] bg-white rounded-2xl shadow-md ">
                       <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 animate-shimmer"></div>
                       <div className="p-1">
                         <div className="h-6 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 rounded mb-1 w-3/4 animate-shimmerh-6 bg-teal-900 rounded mb-1 w-3/4 animate-shimmer"></div>

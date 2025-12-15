@@ -111,27 +111,33 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen mt-[50px] mb-[50px] flex items-center justify-center p-5">
-    <div className="max-w-md mx-auto mt-12 p-8  bg-gradient-to-r from-sky-600 to-fuchsia-500 rounded-xl shadow-lg">
-      <h2 className="text-2xl font-bold text-center mb-4">Şifrəni Unutdunuz?</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="email"
-          placeholder="Emailinizi daxil edin"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full border px-4 py-2 rounded"
-          required
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-        >
-          Kod Göndər
-        </button>
-      </form>
-    </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 px-4">
+      <div className="w-full max-w-md bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8 animate-fade-in">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Şifrəni Unutdunuz?</h2>
+        <p className="text-center text-gray-600 text-sm mb-6">Emailinizi daxil edin və şifrə sıfırlama kodunu alın</p>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="email"
+            placeholder="Emailinizi daxil edin"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-400 transition duration-300 shadow-sm hover:shadow-md"
+          />
+          <button
+            type="submit"
+            className="w-full bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition duration-300 shadow-lg hover:shadow-xl text-lg"
+          >
+            Kod Göndər
+          </button>
+        </form>
+        <p className="text-center text-sm text-gray-700 mt-4">
+          Hesabınız var?{" "}
+          <span className="text-purple-700 font-bold hover:underline cursor-pointer" onClick={() => window.location.href="/login"}>
+            Daxil olun
+          </span>
+        </p>
+      </div>
     </div>
   );
 }
-

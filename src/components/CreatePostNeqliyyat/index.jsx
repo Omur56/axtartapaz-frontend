@@ -768,7 +768,7 @@ if (mainImageIndex !== null) {
           {loading && results.length === 0 && <p>Elan Tapılmadı</p>}
 
           {!loading && results.length > 0 && (
-            <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2  sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {results.map((item, index) => (
                 <Link
                   key={item.id || item._id}
@@ -810,7 +810,7 @@ if (mainImageIndex !== null) {
         <h3 className="text-xl font-semibold mt-8 mb-4">
           Əlavə olunan Elanlar
         </h3>
-        <div className=" mx-auto   rounded-2xl   grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-4 w-full min-h-screen">
+        <div className=" mx-auto   rounded-2xl   grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-4 w-full min-h-screen">
           {isLoading ? (
             Array.from({ length: 20 }).map((_, i) => (
             <div

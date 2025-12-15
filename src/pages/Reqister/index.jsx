@@ -1,23 +1,24 @@
 import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import InputMask from "react-input-mask";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 export default function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // ✅ təkrar şifrə
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // ✅ şifrəni göstər/gizlət
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // ✅ ikinci üçün də
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    // ✅ Şifrələrin eyniliyini yoxla
     if (password !== confirmPassword) {
       Swal.fire({
         icon: "error",
@@ -29,15 +30,12 @@ export default function Register() {
     }
 
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/reqister`,
-        {
-          username,
-          email,
-          password,
-          phone: `+994${phone}`,
-        }
-      );
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/reqister`, {
+        username,
+        email,
+        password,
+        phone: `+994${phone}`,
+      });
 
       Swal.fire({
         icon: "success",
@@ -46,9 +44,8 @@ export default function Register() {
         confirmButtonColor: "#3085d6",
       });
 
-      navigate("/profile");
+      navigate("/login");
     } catch (err) {
-      console.error(err.response?.data || err.message);
       Swal.fire({
         icon: "error",
         title: "Xəta baş verdi",
@@ -59,30 +56,29 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[80.4vh] flex items-center justify-center p-5 mt-[50px] mb-[50px]">
+    <div className="min-h-screen mt-12 flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 px-4">
       <form
         onSubmit={handleRegister}
-        className="max-w-md mx-auto mt-2 mb-1 bg-gradient-to-r from-sky-600 to-fuchsia-500 shadow-lg rounded-xl p-8 space-y-5"
+        className="w-full max-w-md bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8 space-y-6 animate-fade-in"
       >
-        <h2 className="text-2xl font-bold text-center text-white">
-          Qeydiyyat
-        </h2>
+        <h2 className="text-3xl font-bold text-center text-gray-800 tracking-wide">Qeydiyyat</h2>
+        <p className="text-center text-gray-600 text-sm">Yeni hesab yaradın və davam edin</p>
 
         {/* Username */}
         <div className="flex flex-col">
-          <label className="mb-1 font-medium text-gray-700">İstifadəçi Ad</label>
+          <label className="mb-2 font-medium text-gray-700">İstifadəçi Ad</label>
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="İstifadəçi adınızı daxil edin"
             required
-            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-400 transition duration-300 shadow-sm hover:shadow-md"
           />
         </div>
 
         {/* Telefon */}
         <div className="flex flex-col">
-          <label className="mb-1 font-medium text-gray-700">Mobil Nömrə</label>
+          <label className="mb-2 font-medium text-gray-700">Mobil Nömrə</label>
           <InputMask
             mask="99 999 99 99"
             value={phone}
@@ -96,8 +92,8 @@ export default function Register() {
                 </span>
                 <input
                   {...inputProps}
-                  className="border border-gray-300 rounded-r px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                required
+                  className="border border-gray-300 rounded-r px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-purple-400 transition duration-300 shadow-sm hover:shadow-md"
+                  required
                 />
               </div>
             )}
@@ -106,74 +102,71 @@ export default function Register() {
 
         {/* Email */}
         <div className="flex flex-col">
-          <label className="mb-1 font-medium text-gray-700">Email</label>
+          <label className="mb-2 font-medium text-gray-700">Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             required
-            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-400 transition duration-300 shadow-sm hover:shadow-md"
           />
         </div>
 
         {/* Password */}
         <div className="flex flex-col relative">
-          <label className="mb-1 font-medium text-gray-700">Şifrə</label>
+          <label className="mb-2 font-medium text-gray-700">Şifrə</label>
           <input
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Şifrə"
             required
-            className="border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="border border-gray-300 rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-400 transition duration-300 shadow-sm hover:shadow-md"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-9 text-gray-600 hover:text-gray-900"
+            className="absolute right-3 top-1/2 transform -translate-y-1/8 text-gray-600 hover:text-gray-900"
           >
-            {showPassword ? "👁" : "🙈"}
+            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
           </button>
         </div>
 
         {/* Confirm Password */}
         <div className="flex flex-col relative">
-          <label className="mb-1 font-medium text-gray-700">
-            Şifrəni təkrar yazın
-          </label>
+          <label className="mb-2 font-medium text-gray-700">Şifrəni təkrar yazın</label>
           <input
             type={showConfirmPassword ? "text" : "password"}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Təkrar şifrəni yazın"
             required
-            className="border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="border border-gray-300 rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-400 transition duration-300 shadow-sm hover:shadow-md"
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-9 text-gray-600 hover:text-gray-900"
+            className="absolute right-3 top-1/2 transform -translate-y-1/8 text-gray-600 hover:text-gray-900"
           >
-            {showConfirmPassword ? "👁" : "🙈"}
+            <FontAwesomeIcon icon={showConfirmPassword ? faEye : faEyeSlash} />
           </button>
         </div>
 
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition shadow-md hover:shadow-lg"
+          className="w-full bg-purple-600 text-white font-semibold py-3 rounded-xl hover:bg-purple-700 transition duration-300 shadow-lg hover:shadow-xl text-lg"
         >
-          Register
+          Qeydiyyatdan keç
         </button>
-        <p className="text-sm text-center text-gray-700">
+
+        {/* Login link */}
+        <p className="text-center text-sm text-gray-700">
           Hesabınız var?{" "}
-          <span
-            onClick={() => navigate("/login")}
-            className="text-white hover:underline cursor-pointer font-bold"
-          >
+          <Link to="/login" className="text-purple-700 font-bold hover:underline">
             Daxil olun
-          </span>
+          </Link>
         </p>
       </form>
     </div>

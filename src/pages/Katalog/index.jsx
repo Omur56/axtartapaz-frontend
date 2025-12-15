@@ -94,6 +94,11 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { categories } from "../Katalog/Cateqories";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+
+// import Breadcrumb from "../../components/Breadcrumb";
 
 const Katalog = () => {
   const [activeId, setActiveId] = useState(null);
@@ -137,7 +142,7 @@ const Katalog = () => {
       <div className="relative block md:hidden mt-6">
         <div
           ref={sliderRef}
-          className="flex gap-4  overflow-x-auto scrollbar-hide  scroll-smooth px-4"
+          className="flex gap-4 mt-24   overflow-x-auto overflow-y-hidden scrollbar-hide   scroll-smooth px-4"
         >
           {categories.map(({ id, path, icon, bgColor, hover }) => (
             <Link
@@ -161,10 +166,28 @@ const Katalog = () => {
             </Link>
           ))}
         </div>
+
+       <button
+  onClick={scrollLeft}
+  className="absolute left-0 top-1/2 -translate-y-1/2 bg-gray-200 rounded-full p-2 z-10 shadow"
+>
+  <FontAwesomeIcon icon={faChevronLeft} />
+</button>
+
+<button
+  onClick={scrollRight}
+  className="absolute right-0 top-1/2 -translate-y-1/2 bg-gray-200 rounded-full p-2 z-10 shadow"
+>
+  <FontAwesomeIcon icon={faChevronRight} />
+</button>
+
+         
+ 
+
       </div>
 
       {/* --- Desktop versiya (grid) --- */}
-      <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
+      <div className="hidden  md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
         {categories.map((cat) => {
           return (
             <Link
