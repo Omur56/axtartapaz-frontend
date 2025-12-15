@@ -36,7 +36,7 @@ function Header() {
   };
     
   return (
-    <header className="header h-[60px]  p-2  w-full z-50 fixed top-0 bg-stone-900 shadow-md">  
+    <header className="header h-[60px]  p-2  w-full z-50 fixed top-0 bg-gray-900 border-b border-gray-500 shadow-md">  
       <div className="flex justify-between   items-center py-4 mx-auto my-auto max-w-[1200px]">
         
     

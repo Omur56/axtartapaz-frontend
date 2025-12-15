@@ -132,7 +132,7 @@ const Katalog = () => {
   };
 
   return (
-    <div className="min-w-screen max-w-[440px]  md:max-w-[700px] lg:max-w-[1000px] mx-auto mb-4">
+    <div className="min-w-screen max-w-[400px]  md:max-w-[700px] lg:max-w-[1000px] mx-auto mb-4">
       {/* --- Mobil versiya (slider) --- */}
       <div className="relative block md:hidden mt-6">
         <div
@@ -143,7 +143,7 @@ const Katalog = () => {
             <Link
               key={id}
               to={`/katalog/${path}`}
-              className={`relative min-w-[100px] h-[80px] rounded-lg shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover}`}
+              className={`relative min-w-[110px] h-[80px] rounded-lg shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover}`}
             >
               {typeof icon === "string" ? (
                 <img

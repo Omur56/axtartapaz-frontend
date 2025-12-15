@@ -3,9 +3,9 @@ import TitleLogo from "../TitleLogo";
 
 function Footer() {
   return (
-    <footer className="w-full bg-gray-800 py-10 px-4 sm:px-6 lg:px-8 mt-10 rounded-t-[10px]">
+    <footer className="w-full    bg-gray-800 py-10 px-4 sm:px-6 lg:px-8 mt-10 rounded-t-[10px]">
       {/* MAIN GRID CONTAINER */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-10 ">
+      <div className=" mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-10 ">
         
         {/* Logo */}
         <div className="flex justify-center md:justify-start w-full">

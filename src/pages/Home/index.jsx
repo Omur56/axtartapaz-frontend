@@ -428,7 +428,7 @@ const Home = () => {
               <div className=" border bg-slate-400 h-[1px] mb-6 w-full"></div>
             </div>
 <Katalog />
-            <div className="mt-4 p-4 mb-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 place-items-center
+            <div className="mt-4 p-4 mb-10  grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 place-items-center  
 
     
   ">
@@ -438,7 +438,7 @@ const Home = () => {
                     key={i}
                     className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 animate-[shimmer_1.5s_infinite]"
                   >
-                    <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
+                    <div className=" w-[222.7px] mb-10 h-[229.6px] bg-white rounded-2xl shadow-md ">
                       <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 animate-shimmer"></div>
                       <div className="p-1">
                         <div className="h-6 bg-gradient-to-r from-teal-900 via-gray-400 to-teal-900 rounded mb-1 w-3/4 animate-shimmerh-6 bg-teal-900 rounded mb-1 w-3/4 animate-shimmer"></div>
@@ -463,10 +463,10 @@ const Home = () => {
                         key={car.id}
                         to={`/cars/${car._id}`}
                       >
-                        <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-sm transform  transition-all duration-300">
-                          <div className="w-full h-[100px] rounded-t-[8px] relative">
+                        <div className="w-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px]   max-w-[240.4px] max-h-[368.8px] bg-gray-50 rounded-[5px] shadow-sm transform  transition-all duration-300">
+                          <div className="w-[185.7px] h-[229.6px] sm:w-[268.75px] sm:h-[268.6px] max-w-[240.4px] max-h-[150px] rounded-t-[8px] relative">
                             {car.salon && (
-                              <p className="absolute top-[75px] z-50 left-2 bg-indigo-500 text-white text-[10px] font-500 p-1 rounded">
+                              <p className="absolute top-[125px] z-50 left-2 bg-indigo-500 text-white text-[10px] font-500 p-1 rounded">
                                 {car.salon}
                               </p>
                             )}
@@ -554,7 +554,7 @@ const Home = () => {
                       >
                         <div
                           key={post._id}
-                          className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-sm transform  transition-all duration-300"
+                          className="w-[185.7px] h-[222.w-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px]   max-w-[240.4px] max-h-[368.8px] bg-gray-50 rounded-[5px] shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -565,7 +565,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={post.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-[147px] object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-[12px] font-bold text-black truncate w-30 ">
@@ -575,7 +575,7 @@ const Home = () => {
                               {post.title}
                             </h2>
 
-                            <div className="flex justify-between gap-1 mt-10 ">
+                            <div className="flex justify-between gap-1 mt-8 ">
                               <p className="text-[10px] rounded flex justify-between text-gray-600">
                                 <MapPin size={12} color="#75FC56" />{" "}
                                 {post.location}
@@ -616,7 +616,7 @@ const Home = () => {
                       >
                         <div
                           key={item._id}
-                          className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
+                          className="w-[185.7px] h-[222.6w-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px]   max-w-[240.4px] max-h-[368.8px] bg-gray-50 rounded-[5px] shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -625,7 +625,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={item.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-[147px] object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-xl font-bold text-black">
@@ -637,7 +637,7 @@ const Home = () => {
                             <h3 className="text-[12px] font-semibold truncate w-30">
                               {item.title}
                             </h3>
-                            <div className="flex justify-between gap-1 mt-5 ">
+                            <div className="flex justify-between gap-1 mt-8 ">
                               <p className="text-[10px] rounded flex justify-between text-gray-600">
                                 <MapPin size={12} color="#75FC56" />{" "}
                                 {item.location}
@@ -678,7 +678,7 @@ const Home = () => {
                       >
                         <div
                           key={item._id}
-                          className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px]  bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
+                          className="w-[185.7px] h-[222.6pw-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px]   max-w-[240.4px] max-h-[368.8px] bg-gray-50 rounded-[5px] shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -687,7 +687,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={item.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-[147px] object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-[12px] font-bold text-black">
@@ -699,7 +699,7 @@ const Home = () => {
                             <h3 className="text-[12px] font-semibold truncate w-30">
                               {item.title}
                             </h3>
-                            <div className="flex justify-between gap-1 mt-10 ">
+                            <div className="flex justify-between gap-1 mt-8 ">
                               <p className="text-[10px] rounded flex justify-between text-gray-600">
                                 <MapPin size={12} color="#75FC56" />{" "}
                                 {item.location}
@@ -740,7 +740,7 @@ const Home = () => {
                       >
                         <div
                           key={item._id}
-                          className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
+                          className="w-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px]   max-w-[240.4px] max-h-[368.8px] bg-gray-50 rounded-[5px] shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -749,7 +749,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={item.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-[147px] object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-[12px] font-bold text-black">
@@ -760,7 +760,7 @@ const Home = () => {
                               {item.location}
                             </h2>
 
-                            <div className="flex justify-between gap-1 mt-10 ">
+                            <div className="flex justify-between gap-1 mt-8 ">
                               <p className="text-[10px] rounded flex justify-between text-gray-600">
                                 <MapPin size={12} color="#75FC56" />{" "}
                                 {item.location}
@@ -801,7 +801,7 @@ const Home = () => {
                       >
                         <div
                           key={item._id}
-                          className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
+                          className="w-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px]   max-w-[240.4px] max-h-[368.8px] bg-gray-50 rounded-[5px] shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -810,7 +810,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={item.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-[147px] object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-[12px] font-bold text-black truncate w-30">
@@ -820,7 +820,7 @@ const Home = () => {
                               {item.title}, {item.category}, {item.location}
                             </h2>
 
-                            <div className="flex justify-between gap-1 mt-10 ">
+                            <div className="flex justify-between gap-1 mt-8 ">
                               <p className="text-[10px] rounded flex justify-between text-gray-600">
                                 <MapPin size={12} color="#75FC56" />{" "}
                                 {item.location}
@@ -861,7 +861,7 @@ const Home = () => {
                       >
                         <div
                           key={item._id}
-                          className="w-[170px]  max-w-[240.4px] h-[210px]  bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
+                          className="ww-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px]   max-w-[240.4px] max-h-[368.8px] bg-gray-50 rounded-[5px] shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -870,7 +870,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={item.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-[147px] object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-xl font-bold text-black">
@@ -880,7 +880,7 @@ const Home = () => {
                               {item.title}, {item.brand}, {item.model}
                             </h2>
                             <h3 className="text-[12px] font-semibold truncate w-30"></h3>
-                            <div className="flex justify-between gap-1 mt-2 ">
+                            <div className="flex justify-between gap-1 mt-8 ">
                               <p className="text-[10px] rounded flex justify-between text-gray-600">
                                 <MapPin size={12} color="#75FC56" />{" "}
                                 {item.location}
@@ -921,7 +921,7 @@ const Home = () => {
                       >
                         <div
                           key={item._id}
-                          className="w-[170px]  max-w-[240.4px] h-[210px] bg-white rounded-2xl  shadow-sm transform  transition-all duration-300"
+                          className="w-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px]   max-w-[240.4px] max-h-[368.8px] bg-gray-50 rounded-[5px] shadow-sm transform  transition-all duration-300"
                         >
                           <img
                             src={
@@ -930,7 +930,7 @@ const Home = () => {
                                 : "/no-image.jpg"
                             }
                             alt={item.title}
-                            className="w-full h-[100px] object-cover rounded-t-[8px]"
+                            className="w-full h-[147px] object-cover rounded-t-[8px]"
                           />
                           <div className="p-4">
                             <h3 className="text-xl font-bold text-black">
@@ -940,7 +940,7 @@ const Home = () => {
                               {item.title}, {item.brand}, {item.model}
                             </h2>
                             <h3 className="text-[12px] font-semibold truncate w-30"></h3>
-                            <div className="flex justify-between gap-1 mt-2 ">
+                            <div className="flex justify-between gap-1 mt-8 ">
                               <p className="text-[10px] rounded flex justify-between text-gray-600">
                                 <MapPin size={12} color="#75FC56" />{" "}
                                 {item.location}
