@@ -142,7 +142,7 @@ const Katalog = () => {
       <div className="relative block md:hidden mt-6">
         <div
           ref={sliderRef}
-          className="flex gap-4 mt-24   overflow-x-auto overflow-y-hidden scrollbar-hide   scroll-smooth px-4"
+          className="flex gap-4 mt-[70px]   overflow-x-auto overflow-y-hidden scrollbar-hide   scroll-smooth px-4"
         >
           {categories.map(({ id, path, icon, bgColor, hover }) => (
             <Link

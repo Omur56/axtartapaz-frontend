@@ -9,7 +9,55 @@ import Box from "@mui/material/Box";
 import { Heart } from "lucide-react";
 import { RefreshCcw, Percent, MapPin } from "lucide-react";
 const Home = () => {
-  const [cars, setCars] = useState([]);
+  const [homeGarden, setHomeGarden] = useState([]);
+ const [accessories, setAccessories] = useState([]);
+  const [elektronikaPost, setElektronikaPost] = useState([]);
+const [realEstate, setRealEstate] = useState([]);
+const [Household, setHousehold] = useState([]);
+const [Phone, setPhone] = useState([]);
+const [Clothing, setClothing] = useState([]);
+const [cars, setCars] = useState([]);
+
+  const ITEMS_PER_LOAD = 8;
+const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
+
+const allAds = [
+  ...cars.map((i) => ({ ...i, __type: "cars" })),
+  ...homeGarden.map((i) => ({ ...i, __type: "homeGarden" })),
+  ...elektronikaPost.map((i) => ({ ...i, __type: "electronika" })),
+  ...accessories.map((i) => ({ ...i, __type: "accessories" })),
+  ...realEstate.map((i) => ({ ...i, __type: "realEstate" })),
+  ...Household.map((i) => ({ ...i, __type: "household" })),
+  ...Phone.map((i) => ({ ...i, __type: "phone" })),
+  ...Clothing.map((i) => ({ ...i, __type: "clothing" })),
+].sort((a, b) => new Date(b.data) - new Date(a.data));
+
+const visibleAds = allAds.slice(0, visibleCount);
+
+
+useEffect(() => {
+  if (allAds.length === 0) return;
+
+  const handleScroll = () => {
+    const scrollBottom =
+      window.innerHeight + window.scrollY >=
+      document.documentElement.scrollHeight - 300;
+
+    if (scrollBottom) {
+      setVisibleCount((prev) => {
+        if (prev >= allAds.length) return prev;
+        return prev + ITEMS_PER_LOAD;
+      });
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, [allAds.length]);
+
+
+
+  
   const [favorites, setFavorites] = useState([]);
   const [options, setOptions] = useState({
     kredit: false,
@@ -18,6 +66,10 @@ const Home = () => {
   
 
   
+
+
+
+
 
   const getAllSortedAds = () => {
     const allAds = [
@@ -54,111 +106,154 @@ const Home = () => {
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
 
+  // useEffect(() => {
+  //   const fetchCars = async () => {
+  //     try {
+  //       const res = await axios.get(
+  //         `${process.env.REACT_APP_API_URL}/api/cars`
+  //       );
+  //       setCars(res.data);
+  //     } catch (err) {
+  //       console.error("Elanlar yüklənmədi:", err);
+  //     }
+  //   };
+
+  //   fetchCars();
+  // }, []);
+
+
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`${process.env.REACT_APP_API_URL}/api/homGarden`)
+  //     .then((res) => {
+  //       setHomeGarden(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Xəta baş verdi:", err);
+  //     });
+  // }, []);
+
+
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`${process.env.REACT_APP_API_URL}/api/electronika`)
+  //     .then((res) => {
+  //       setElektronikaPost(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Xəta baise verdi:", err);
+  //     });
+  // }, []);
+
+ 
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`${process.env.REACT_APP_API_URL}/api/accessories`)
+  //     .then((res) => {
+  //       setAccessories(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Xəta baise verdi:", err);
+  //     });
+  // }, []);
+
+  
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`${process.env.REACT_APP_API_URL}/api/realEstate`)
+  //     .then((res) => {
+  //       setRealEstate(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Xəta baise verdi:", err);
+  //     });
+  // }, []);
+
+  
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`${process.env.REACT_APP_API_URL}/api/Household`)
+  //     .then((res) => {
+  //       setHousehold(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Xəta baise verdi:", err);
+  //     });
+  // }, []);
+
+  
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`${process.env.REACT_APP_API_URL}/api/Phone`)
+  //     .then((res) => {
+  //       setPhone(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Xəta baise verdi:", err);
+  //     });
+  // }, []);
+
+  
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`${process.env.REACT_APP_API_URL}/api/Clothing`)
+  //     .then((res) => {
+  //       setClothing(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Xəta baise verdi:", err);
+  //     });
+  // }, []);
+
+
+
   useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/cars`
-        );
-        setCars(res.data);
-      } catch (err) {
-        console.error("Elanlar yüklənmədi:", err);
-      }
-    };
+  const fetchAll = async () => {
+    setIsLoading(true);
+    try {
+      const [
+        carsRes,
+        homeGardenRes,
+        elektronikaRes,
+        accessoriesRes,
+        realEstateRes,
+        householdRes,
+        phoneRes,
+        clothingRes,
+      ] = await Promise.all([
+        axios.get(`${process.env.REACT_APP_API_URL}/api/cars`),
+        axios.get(`${process.env.REACT_APP_API_URL}/api/homGarden`),
+        axios.get(`${process.env.REACT_APP_API_URL}/api/electronika`),
+        axios.get(`${process.env.REACT_APP_API_URL}/api/accessories`),
+        axios.get(`${process.env.REACT_APP_API_URL}/api/realEstate`),
+        axios.get(`${process.env.REACT_APP_API_URL}/api/Household`),
+        axios.get(`${process.env.REACT_APP_API_URL}/api/Phone`),
+        axios.get(`${process.env.REACT_APP_API_URL}/api/Clothing`),
+      ]);
 
-    fetchCars();
-  }, []);
+      setCars(carsRes.data);
+      setHomeGarden(homeGardenRes.data);
+      setElektronikaPost(elektronikaRes.data);
+      setAccessories(accessoriesRes.data);
+      setRealEstate(realEstateRes.data);
+      setHousehold(householdRes.data);
+      setPhone(phoneRes.data);
+      setClothing(clothingRes.data);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const [homeGarden, setHomeGarden] = useState([]);
+  fetchAll();
+}, []);
 
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/homGarden`)
-      .then((res) => {
-        setHomeGarden(res.data);
-      })
-      .catch((err) => {
-        console.error("Xəta baş verdi:", err);
-      });
-  }, []);
-
-  const [elektronikaPost, setElektronikaPost] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/electronika`)
-      .then((res) => {
-        setElektronikaPost(res.data);
-      })
-      .catch((err) => {
-        console.error("Xəta baise verdi:", err);
-      });
-  }, []);
-
-  const [accessories, setAccessories] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/accessories`)
-      .then((res) => {
-        setAccessories(res.data);
-      })
-      .catch((err) => {
-        console.error("Xəta baise verdi:", err);
-      });
-  }, []);
-
-  const [realEstate, setRealEstate] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/realEstate`)
-      .then((res) => {
-        setRealEstate(res.data);
-      })
-      .catch((err) => {
-        console.error("Xəta baise verdi:", err);
-      });
-  }, []);
-
-  const [Household, setHousehold] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/Household`)
-      .then((res) => {
-        setHousehold(res.data);
-      })
-      .catch((err) => {
-        console.error("Xəta baise verdi:", err);
-      });
-  }, []);
-
-  const [Phone, setPhone] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/Phone`)
-      .then((res) => {
-        setPhone(res.data);
-      })
-      .catch((err) => {
-        console.error("Xəta baise verdi:", err);
-      });
-  }, []);
-
-  const [Clothing, setClothing] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/Clothing`)
-      .then((res) => {
-        setClothing(res.data);
-      })
-      .catch((err) => {
-        console.error("Xəta baise verdi:", err);
-      });
-  }, []);
 
   const formatDate = (dateString) => {
     const postDate = new Date(dateString);
@@ -313,28 +408,26 @@ const Home = () => {
 
   // Pagination üçün state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const itemsPerPage = 8;
 
   // Bütün elanları birləşdiririk
-  const allAds = [
-    ...cars,
-    ...homeGarden,
-    ...elektronikaPost,
-    ...accessories,
-    ...realEstate,
-    ...Household,
-    ...Phone,
-    ...Clothing,
-  ].sort((a, b) => new Date(b.data) - new Date(a.data));
+  // const allAds = [
+  //   ...cars,
+  //   ...homeGarden,
+  //   ...elektronikaPost,
+  //   ...accessories,
+  //   ...realEstate,
+  //   ...Household,
+  //   ...Phone,
+  //   ...Clothing,
+  // ].sort((a, b) => new Date(b.data) - new Date(a.data));
 
   // Cari səhifədə göstəriləcək elanlar
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentAds = allAds.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Ümumi səhifə sayı
-  const totalPages = Math.ceil(allAds.length / itemsPerPage);
-
+  
   return (
     <div className="min-h-screen max-w-[1000px] mx-auto mb-10 mt-10">
       <div className="flex  justify-between gap-4">
@@ -428,7 +521,8 @@ const Home = () => {
               <div className=" border bg-slate-400 h-[1px] mb-6 w-full"></div>
             </div>
 <Katalog />
-            <div className="mt-4 p-4 mb-10  grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 place-items-center  
+<div className=" border bg-slate-400 h-[1px] mb-6 w-full"></div>
+            <div className="mt-4 p-4 mb-10  grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 place-items-center  shadow-md bg-slate-100
 
     
   ">
@@ -455,7 +549,9 @@ const Home = () => {
                 ))
               ) : (
                 <>
-                  {[...cars].map((car) => (
+                  {visibleAds
+  .filter((item) => item.__type === "cars")
+  .map((car) => (
                     <div className="relative">
                       <Link
                         target="_blank"
@@ -463,7 +559,7 @@ const Home = () => {
                         key={car.id}
                         to={`/cars/${car._id}`}
                       >
-                        <div className="w-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px]   max-w-[240.4px] max-h-[368.8px] bg-gray-50 rounded-[5px] shadow-sm transform  transition-all duration-300">
+                        <div className="w-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px]   max-w-[240.4px] max-h-[368.8px] bg-gray-50 rounded-[8px]  hover:shadow-2xl transition transform shake  transition-all duration-100">
                           <div className="w-[185.7px] h-[229.6px] sm:w-[268.75px] sm:h-[268.6px] max-w-[240.4px] max-h-[150px] rounded-t-[8px] relative">
                             {car.salon && (
                               <p className="absolute top-[125px] z-50 left-2 bg-indigo-500 text-white text-[10px] font-500 p-1 rounded">
@@ -544,7 +640,9 @@ const Home = () => {
                     </div>
                   ))}
 
-                  {[...homeGarden].map((post) => (
+                  {visibleAds
+  .filter((item) => item.__type === "homeGarden")
+  .map((post) => (
                     <div className="relative">
                       <Link
                         target="_blank"
@@ -606,7 +704,9 @@ const Home = () => {
                     </div>
                   ))}
 
-                  {[...elektronikaPost].reverse().map((item) => (
+                  {visibleAds
+  .filter((item) => item.__type === "electronika")
+  .map((item) =>  (
                     <div className="relative">
                       <Link
                         target="_blank"
@@ -668,7 +768,9 @@ const Home = () => {
                     </div>
                   ))}
 
-                  {[...accessories].reverse().map((item) => (
+                  {visibleAds
+  .filter((item) => item.__type === "accessories")
+  .map((item) => (
                     <div className="relative">
                       <Link
                         target="_blank"
@@ -730,7 +832,9 @@ const Home = () => {
                     </div>
                   ))}
 
-                  {[...realEstate].reverse().map((item) => (
+                  {visibleAds
+  .filter((item) => item.__type === "realEstate")
+  .map((item) =>(
                     <div className="relative">
                       <Link
                         target="_blank"
@@ -791,7 +895,9 @@ const Home = () => {
                     </div>
                   ))}
 
-                  {[...Household].reverse().map((item) => (
+                  {visibleAds
+  .filter((item) => item.__type === "household")
+  .map((item) =>(
                     <div className="relative">
                       <Link
                         target="_blank"
@@ -851,7 +957,9 @@ const Home = () => {
                     </div>
                   ))}
 
-                  {[...Phone].reverse().map((item) => (
+                  {visibleAds
+  .filter((item) => item.__type === "phone")
+  .map((item) =>(
                     <div className="relative">
                       <Link
                         target="_blank"
@@ -911,7 +1019,9 @@ const Home = () => {
                     </div>
                   ))}
 
-                  {[...Clothing].reverse().map((item) => (
+                  {visibleAds
+  .filter((item) => item.__type === "clothing")
+  .map((item) => (
                     <div className="relative">
                       <Link
                         target="_blank"
@@ -972,7 +1082,14 @@ const Home = () => {
                   ))}
                 </>
               )}
+         
             </div>
+                 {/* {!isLoading && (
+  <div className="w-full flex justify-center py-6">
+    
+    <CircularProgress size={28} />
+  </div>
+)} */}
           </main>
         </div>
       </div>

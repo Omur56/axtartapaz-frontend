@@ -8,12 +8,12 @@ const About = () => {
           </h2>
 
           <p className="text-gray-700 text-lg leading-relaxed text-center">
-            OmurCars.org layihəsi Azərbaycanda özəl elanlar üçün universal
+            ProElan.az layihəsi Azərbaycanda özəl elanlar üçün universal
             meydança təşkil etmək məqsədi ilə yaradılıb. Hər bir kəs saytdan
             istifadə etməklə geyim və mebeldən tutmuş elektronika və
-            avtomobilədək hər şey ala və sata bilər. OmurCars.org-a əsasən
+            avtomobilədək hər şey ala və sata bilər. ProElan.az-a əsasən
             ayrıca fərdlər elan yerləşdirir, lakin sayt şirkət və fərdi
-            sahibkarlar üçün də maraq kəsb edir, buna görə AxtarTap.az-da təkcə
+            sahibkarlar üçün də maraq kəsb edir, buna görə ProElan.az-da təkcə
             işlənmiş deyil, eləcə də yeni məhsullar da əldə etmək olar.
           </p>
         </div>

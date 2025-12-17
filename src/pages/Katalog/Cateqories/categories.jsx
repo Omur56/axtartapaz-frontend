@@ -34,7 +34,7 @@ const Katalog = () => {
   };
 
   return (
-    <div className="min-h-screen w-full max-w-7xl mx-auto py-10">
+    <div className="min-h-screen mt-10 w-full max-w-7xl mx-auto py-10">
       <h2 className="text-5xl md:text-7xl mb-10 font-bold text-center text-blue-700">
         Kataloq
       </h2>
@@ -50,20 +50,20 @@ const Katalog = () => {
 
         <div
           ref={sliderRef}
-          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-4"
+          className="flex gap-4 overflow-x-auto   h-[80px] scrollbar-hide scroll-smooth px-2"
         >
           {categories.map(({ id, path, label, icon, iconSize, bgColor, hover }) => (
             <Link
               key={id}
               to={`/katalog/${path}`}
-              className={`flex flex-col items-center justify-center min-w-[100px] p-4 rounded-lg shadow-md transition-all ${bgColor} ${hover}`}
+              className={`flex flex-col min-w-[100px]   rounded-lg shadow-md transition-all ${bgColor} ${hover}`}
             >
-              <img src={icon} alt={label} className={`${iconSize} mb-2`} />
-              <span className="text-xs font-medium text-white text-center">
-                {label}
-              </span>
+              <img src={icon} alt={label} className={`${iconSize} mb-[-32px] ml-5`} />
+             
             </Link>
+            
           ))}
+          
         </div>
 
         <button
@@ -87,6 +87,7 @@ const Katalog = () => {
           </Link>
         ))}
       </div>
+ 
     </div>
   );
 };

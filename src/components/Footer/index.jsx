@@ -68,7 +68,7 @@ function Footer() {
       {/* Copyright */}
       <div className="flex justify-center mt-6">
         <p className="text-white text-center text-sm sm:text-base">
-          © 2025 OmurCars.org Bütün Hüquqlar Qorunur.
+          © 2025 ProElan.az - Bütün Hüquqlar Qorunur.
         </p>
       </div>
     </footer>

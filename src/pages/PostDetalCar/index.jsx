@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import { RefreshCcw, Percent, MapPin } from "lucide-react";
+import { Avatar } from "@mui/material";
 
 
 
@@ -248,12 +249,18 @@ const rows = [
           </div>
         </div>
 
-        <div className="bg-gray-50 border rounded-xl shadow-md p-5 h-fit">
+        <div className="bg-gray-50 w-full border rounded-xl shadow-md p-5 h-fit">
           <h2 className="text-xl font-bold mb-4">Əlaqə məlumatı</h2>
           <div className="space-y-2 text-gray-700">
-            <p>
-              <span className="font-semibold">Ad:</span> {post?.contact?.name}
+            <div className="w-full h-[1px] border rounded-1 bg-black mb-2"></div>
+
+            <div className="flex justify-between h-[100px] w-full items-center gap-3">
+              
+            <p className="flex  gap-2 justify-items-centerh-5 w-full text-center">
+              <span className="font-semibold justify-center items-center">Ad:</span> {post?.contact?.name}
             </p>
+            <Avatar alt={post?.contact?.name} src="/broken-image.jpg" />
+            </div>
             <p>
               <span className="font-semibold">Telefon:</span>{" "}
               <a

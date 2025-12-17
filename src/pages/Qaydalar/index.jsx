@@ -43,7 +43,7 @@ const Qaydalar = () => {
     <div className="bg-white p-6 rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
       <h3 className="text-xl font-semibold mb-2">5. Saytın istifadəsi</h3>
       <p>
-        OmurCars.org yalnız şəxsi və kommersiya məqsədləri üçün istifadə edilə bilər. Sistemə zərər verən hərəkətlər qadağandır.
+        ProElan.az yalnız şəxsi və kommersiya məqsədləri üçün istifadə edilə bilər. Sistemə zərər verən hərəkətlər qadağandır.
       </p>
     </div>
   </div>
