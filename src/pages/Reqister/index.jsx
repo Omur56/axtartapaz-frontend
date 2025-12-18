@@ -30,12 +30,15 @@ export default function Register() {
     }
 
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/reqister`, {
-        username,
-        email,
-        password,
-        phone: `+994${phone}`,
-      });
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/reqister`,
+        {
+          username,
+          email,
+          password,
+          phone: `+994${phone}`,
+        }
+      );
 
       Swal.fire({
         icon: "success",
@@ -61,12 +64,18 @@ export default function Register() {
         onSubmit={handleRegister}
         className="w-full max-w-md bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8 space-y-6 animate-fade-in"
       >
-        <h2 className="text-3xl font-bold text-center text-gray-800 tracking-wide">Qeydiyyat</h2>
-        <p className="text-center text-gray-600 text-sm">Yeni hesab yaradın və davam edin</p>
+        <h2 className="text-3xl font-bold text-center text-gray-800 tracking-wide">
+          Qeydiyyat
+        </h2>
+        <p className="text-center text-gray-600 text-sm">
+          Yeni hesab yaradın və davam edin
+        </p>
 
         {/* Username */}
         <div className="flex flex-col">
-          <label className="mb-2 font-medium text-gray-700">İstifadəçi Ad</label>
+          <label className="mb-2 font-medium text-gray-700">
+            İstifadəçi Ad
+          </label>
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -135,7 +144,9 @@ export default function Register() {
 
         {/* Confirm Password */}
         <div className="flex flex-col relative">
-          <label className="mb-2 font-medium text-gray-700">Şifrəni təkrar yazın</label>
+          <label className="mb-2 font-medium text-gray-700">
+            Şifrəni təkrar yazın
+          </label>
           <input
             type={showConfirmPassword ? "text" : "password"}
             value={confirmPassword}
@@ -164,7 +175,10 @@ export default function Register() {
         {/* Login link */}
         <p className="text-center text-sm text-gray-700">
           Hesabınız var?{" "}
-          <Link to="/login" className="text-purple-700 font-bold hover:underline">
+          <Link
+            to="/login"
+            className="text-purple-700 font-bold hover:underline"
+          >
             Daxil olun
           </Link>
         </p>
