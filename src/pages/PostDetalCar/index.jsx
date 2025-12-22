@@ -3,8 +3,9 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { X, MapPin } from "lucide-react";
+import { X, MapPin, Phone } from "lucide-react";
 import { Box, LinearProgress, Avatar } from "@mui/material";
+
 
 export default function PostDetailCar() {
   const { id } = useParams();
@@ -15,6 +16,10 @@ export default function PostDetailCar() {
   const [zoomIndex, setZoomIndex] = useState(null);
   const [progress, setProgress] = useState(0);
   const [buffer, setBuffer] = useState(10);
+ const [showPhone, setShowPhone] = useState(false);
+ const phone = post?.contact?.phone;  
+
+
 
   const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
 
@@ -148,6 +153,9 @@ export default function PostDetailCar() {
 
   const openZoom = (index) => setZoomIndex(index);
 
+
+
+
   return (
     <div className="max-w-6xl min-h-screen mx-auto p-4">
       {/* Back button */}
@@ -224,37 +232,62 @@ export default function PostDetailCar() {
 
       {/* Zoom modal */}
       {zoomIndex !== null && imageArray[zoomIndex] && (
-        <div className="fixed inset-0 flex flex-col bg-black bg-opacity-90 justify-center items-center z-50" onClick={() => setZoomIndex(null)}>
-          
-          <div className="absolute   top-0 w-full h-[55px] flex  dark:bg-neutral-800 ">
-            <div className="w-[400px] gap-5 text-center justify-start h-[55px] absolute top-0 left-0 flex items-center pl-5 ">
+      
+                 
+        <div className="fixed inset-0 flex flex-col bg-black bg-opacity-90 justify-center items-center z-50" >
+            <div className="w-[50px] h-[50px]  rounded-[50%] dark:bg-zinc-800 bg-opacity-50 absolute   z-50 mt-[100%]  right-[80%]">
+              <button className="bg-green-500 rounded-[50%]  flex justify-center items-center  w-full h-full  hover:bg-green-600 text-white"><a href={`tel:${post?.contact?.phone}`} className="text-white font-bold text-center justify-center items-center"><Phone /></a></button>
+            </div>
+          <div className="absolute   top-0 w-full h-[55px]   dark:bg-neutral-800 ">
+            <div className="w-[700px] gap-5 text-center justify-start h-[55px] absolute top-0 left-0 flex  items-center pl-5 ">
               
-               
+             
               
-              <span className="text-[16px] top-2  h-2 font-sans mb-4 capitalize justify-center items-center text-white">{post.category} {post.brand} {post.model}</span>
-            <div className="w-[1px] h-[16px] border rounded-1 dark:bg-zinc-800 bg-opacity-50 mb-2"></div>
-            <span className="text-[16px] top-2  h-2 font-sans mb-4 capitalize justify-center items-center text-white">{post.price} AZN</span>
+              <span className="text-xs sm:text-xl top-2  h-2 font-sans mb-4 capitalize  justify-center items-center text-white">{post.category} {post.brand} {post.model}</span>
+            <div className="w-[1px] h-[25px] border rounded-1 dark:bg-zinc-600 bg-opacity-50 mb-2"></div>
+            <span className="text-xs sm:text-xl top-2  h-2 font-sans mb-4 capitalize justify-center items-center text-white">{post.price} AZN</span>
            </div>
-          <a href={`tel:${post.contact?.phone}`} onClick={() => setZoomIndex(null)} className="absolute top-2 right-60 text-white w-[200px] h-10 rounded-[8px] flex justify-center items-center bg-green-400 hover:bg-green-500">{post.contact?.phone}</a>
+  <a 
+      href={showPhone ? `tel:${phone}` : "#"}
+      onClick={(e) => {
+        if (!showPhone) {
+          e.preventDefault(); // ilk klikdə zəng getməsin
+          setShowPhone(true);
+          setTimeout(() => setShowPhone(false), 10000);
+          
+        }
+      }}
+      className="absolute hidden md:flex gap-2 top-2 right-60
+                 text-white w-[200px] h-10 rounded-[8px]
+                 flex justify-center items-center
+                 bg-green-400 hover:bg-green-500 transition"
+                 
+    >
+           <Phone className="w-4 h-4 text-white" />
+ {showPhone ? phone : "Nömrəni göstər"}
+    </a>
+
+  
             <button onClick={() => setZoomIndex(null)} className="absolute top-2 right-5 text-white w-10 h-10 rounded-[8px] flex justify-center items-center hover:bg-gray-700">
             <X size={24} />
           </button>
           
           </div>
-          
-          <button className="absolute left-5 text-white text-8xl w-10 h-10 font-500 z-50" onClick={(e) => { e.stopPropagation(); prevImage(); }}>‹</button>
+        
+          <button className="absolute mt-[-20%]  left-2 text-white text-8xl w-10 h-10 font-500 z-50" onClick={(e) => { e.stopPropagation(); prevImage(); }}>‹</button>
           <img
             src={imageArray[zoomIndex].startsWith("http") ? imageArray[zoomIndex] : `${BASE_URL}/uploads/${imageArray[zoomIndex]}`}
             alt="Zoomed"
             className="max-w-[75%] max-h-[75%] object-contain rounded-lg"
           />
-          <button className="absolute right-5 w-10 h-10 text-white text-8xl font-500 z-50" onClick={(e) => { e.stopPropagation(); nextImage(); }}>›</button>
+          <button className="absolute mt-[-20%] right-2 w-10 h-10 text-white text-8xl font-500 z-50" onClick={(e) => { e.stopPropagation(); nextImage(); }}>›</button>
 
           <div className="absolute mb-[-35%] text-white bg-gray-600 p-2 bg-opacity-50 rounded-[8px] max-w-[30%] max-h-[25px] text-sm justify-center items-center flex">
             {zoomIndex + 1}/{imageArray.length}
           </div>
-
+  
           <div className="w-full flex gap-2 p-2 justify-center items-center absolute bottom-[40px] overflow-x-auto">
+          
             {imageArray.map((img, index) => (
               <div
                 key={index}
@@ -275,6 +308,8 @@ export default function PostDetailCar() {
           </div>
           
         </div>
+  
+        
       )}
 
       {/* Similar cars */}
