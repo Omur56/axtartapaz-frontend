@@ -4,14 +4,14 @@ import React from "react";
 const Yardim = () => {
     return (
       <div className="min-h-screen ">
-<div className="max-w-5xl min-h-screen mx-auto p-8 mt-12 mb-12 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 rounded-3xl shadow-2xl">
+<div className="max-w-5xl min-h-screen mx-auto p-8 mt-[150px] mb-12 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 rounded-3xl shadow-2xl">
   <h2 className="text-4xl font-extrabold text-gray-800 mb-8 text-center">Yardım və Dəstək</h2>
 
   <p className="text-gray-700 text-lg leading-relaxed text-center mb-10">
-    Sizə kömək etmək üçün buradayıq! AxtarTap.az-da elan yerləşdirmə, hesab idarəsi və digər suallarınız üçün aşağıdakı üsullardan istifadə edə bilərsiniz.
+    Sizə kömək etmək üçün buradayıq! ProElan.az-da elan yerləşdirmə, hesab idarəsi və digər suallarınız üçün aşağıdakı üsullardan istifadə edə bilərsiniz.
   </p>
 
-  <div className="grid md:grid-cols-3 gap-8 text-center">
+  <div className="grid md:grid-cols-3 mt-[100px] gap-8 text-center">
 
     <div className="bg-white rounded-2xl p-6 shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
       <div className="text-yellow-500 text-5xl mb-4 flex justify-center">❓</div>

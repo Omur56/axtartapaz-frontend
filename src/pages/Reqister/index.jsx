@@ -59,10 +59,10 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen mt-12 flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 px-4">
+    <div className="min-h-screen mt-12  flex flex-col w-full items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 px-4">
       <form
         onSubmit={handleRegister}
-        className="w-full max-w-md bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8 space-y-6 animate-fade-in"
+        className="w-full flex flex-col max-w-md min-h-[600px] bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8 space-y-6 animate-fade-in"
       >
         <h2 className="text-3xl font-bold text-center text-gray-800 tracking-wide">
           Qeydiyyat

@@ -522,7 +522,7 @@ useEffect(() => {
             </div>
 <Katalog />
 <div className=" border bg-slate-400 h-[1px] mb-6 w-full"></div>
-            <div className="mt-4 p-4 mb-10  grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 place-items-center  shadow-b-md bg-slate-100 rounded-lg">
+            <div className="mt-4 p-4 mb-10  grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 place-items-center  shadow-b-md bg-gray-50 rounded-lg">
               {isLoading ? (
                 Array.from({ length: 40 }).map((_, i) => (
                   <div

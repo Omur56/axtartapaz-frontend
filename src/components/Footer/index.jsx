@@ -3,7 +3,7 @@ import TitleLogo from "../TitleLogo";
 
 function Footer() {
   return (
-    <footer className="w-full    bg-gray-800 py-10 px-4 sm:px-6 lg:px-8 mt-10 rounded-t-[10px]">
+    <footer className="w-full    bg-[#0f172a] py-10 px-4 sm:px-6 lg:px-8  ">
       {/* MAIN GRID CONTAINER */}
       <div className=" mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-10 ">
         
@@ -15,7 +15,7 @@ function Footer() {
         </div>
 
         {/* Links */}
-        <div className="text-white flex justify-center w-full">
+        <div className="text-gray-400 flex justify-center w-full">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 text-center">
             <Link className="hover:text-[#43D262] hover:underline" to="/about">
               Haqqımızda
@@ -36,7 +36,7 @@ function Footer() {
         </div>
 
         {/* Social + Phone */}
-        <div className="flex flex-col items-center md:items-end gap-4 w-full">
+        <div className="flex flex-col text-gray-400 items-center md:items-end gap-4 w-full">
           <div className="flex gap-4 justify-center md:justify-end flex-wrap">
             <Link to="https://github.com/omur56">
               <img className="w-8 h-8" src="/assets/SocialMediaIcon/github_3291695-removebg-preview.png" />
@@ -53,7 +53,7 @@ function Footer() {
           </div>
 
           <a
-            className="text-white text-sm flex items-center gap-2 hover:underline hover:text-sky-400"
+            className="text-gray-400  text-sm flex items-center gap-2 hover:underline hover:text-sky-400"
             href="tel:+994559138099"
           >
             <img className="w-6 h-6" src="/assets/SocialMediaIcon/telephoneicon.png" />
@@ -67,7 +67,7 @@ function Footer() {
 
       {/* Copyright */}
       <div className="flex justify-center mt-6">
-        <p className="text-white text-center text-sm sm:text-base">
+        <p className="text-gray-400 text-center text-sm sm:text-base">
           © 2025 ProElan.az - Bütün Hüquqlar Qorunur.
         </p>
       </div>

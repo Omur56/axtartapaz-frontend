@@ -366,10 +366,10 @@ export default function PostDetailCar() {
             </div>
         </div>
 
-
-         <div className="w-[450px] sm:hidden 
-          fixed bottom-12 z-50  gap-5 flex h-[50px]   my-4">
-            <button className="bg-green-500 sm:w-[200px]    w-[120px] h-8  sm:h-10 rounded-[8px] flex justify-center items-center hover:bg-green-600 text-white">
+              <div className="w-full flex justify-center items-center">
+         <div className="max-w-[450px]  justify-between items-center  sm:hidden 
+          fixed bottom-12 z-50  gap-5 flex  h-[50px]   my-4">
+            <button className="bg-green-500 sm:w-[200px]    min-w-[225px] h-[40px]  sm:h-10 rounded-[8px] flex justify-center items-center hover:bg-green-600 text-white">
               <a
                 href={`tel:${post?.contact?.phone}`}
                 className="text-white flex gap-2 font-[14px] text-center justify-center items-center"
@@ -378,7 +378,7 @@ export default function PostDetailCar() {
               </a>
             </button>
 
-            <button className="bg-blue-500  w-[120px] h-8 sm:h-10 sm:w-[200px] rounded-[8px] flex justify-center items-center hover:bg-blue-600 text-white"> 
+            <button className="bg-blue-500  min-w-[225px] h-[40px] sm:h-10 sm:w-[200px] rounded-[8px] flex justify-center items-center hover:bg-blue-600 text-white"> 
               <a
                 href={`https://wa.me/${post?.contact?.phone}`}
                 target="_blank"
@@ -388,6 +388,7 @@ export default function PostDetailCar() {
                 <MessageCircleMore className=" w-4 h-4 " size={28} fill="white"  stroke="#4C88F9"  /> Mesaj göndər
               </a>
             </button>
+          </div>
           </div>
       </div>
 

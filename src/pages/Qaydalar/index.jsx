@@ -6,7 +6,7 @@ import React from "react";
 const Qaydalar = () => {
     return (
       <div className="min-h-screen ">
-        <div className="max-w-5xl mx-auto p-8 mt-12 mb-12 bg-gradient-to-r from-yellow-50 via-orange-50 to-pink-50 rounded-3xl shadow-2xl">
+        <div className="max-w-5xl mx-auto p-8 mt-[120px] mb-12 bg-gradient-to-r from-yellow-50 via-orange-50 to-pink-50 rounded-3xl shadow-2xl">
   <h2 className="text-4xl font-extrabold text-gray-800 mb-8 text-center">İstifadə Qaydaları</h2>
 
   <div className="space-y-6 text-gray-700 text-lg leading-relaxed">

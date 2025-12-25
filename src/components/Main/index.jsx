@@ -11,7 +11,7 @@ const RootLayout = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white min-h-screen flex flex-col">
+    <div className="bg-gray-50 min-h-screen flex flex-col">
      
       
       <Header />
@@ -20,7 +20,7 @@ const RootLayout = () => {
       {/* 🔹 Breadcrumb burada */}
      
 
-      <main className="flex-grow">
+      <main className="flex-grow bg-gray-50 min-h-screen w-full mx-auto ">
         
         <Outlet />
          
