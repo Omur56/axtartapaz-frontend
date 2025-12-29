@@ -34,7 +34,8 @@
     "react-router": "^6.14.2",
     "react-router-dom": "^6.30.1",
     "sharp": "^0.34.5",
-    "sweetalert2": "^11.22.4"
+    "sweetalert2": "^11.22.4",
+    "tailwind-scrollbar-hide": "^4.0.0"
   },
   "devDependencies": {
     "concurrently": "^9.2.0",

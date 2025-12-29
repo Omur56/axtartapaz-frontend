@@ -4,6 +4,7 @@ import TitleLogo from "../TitleLogo";
 import { FaSignInAlt, FaUserPlus, FaPlus, FaUser, FaSignOutAlt } from "react-icons/fa";
 import { User, Heart  } from 'lucide-react';
 import { Link } from "react-router-dom";
+import DownNavbar from "../../pages/Katalog/downNavbar";
 
 
 
@@ -39,9 +40,13 @@ function Header() {
     <header className="header h-[60px]  p-2   z-50 fixed top-0 bg-[#0f172a] mb-6 w-full" style={{boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'}}>  
       <div className="flex justify-between   items-center py-4 mx-auto my-auto max-w-[1200px]">
         
-    
-        <TitleLogo   />
-
+      
+       
+       <div className="flex h-[20px]  gap-20  items-center">
+         <TitleLogo  />
+        <DownNavbar />
+      </div>
+       
         <div className="flex gap-3 mt-[-10px]">
            <Link
                   

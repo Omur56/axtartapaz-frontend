@@ -249,147 +249,156 @@ export default function PostDetailCar() {
         {/* Right / Contact column */}
         <div className="bg-gray-50 w-full h-fit sticky top-0 border rounded-xl shadow-md p-5 ">
           <div className="w-full h-[20px]  k ">
-                  <span className="font-bold text-xl"> <span className="text-xl font-bold">≈</span> {post.price} AZN</span>
-                </div>
-            <div className="flex mt-2 w-full h-[100px]  gap-2">
-                
-                  
+            <span className="font-bold text-xl">
+              {" "}
+              <span className="text-xl font-bold">≈</span> {post.price} AZN
+            </span>
+          </div>
+          <div className="flex mt-2 w-full h-[100px]  gap-2">
+            <div className="  w-full h-[50px] p-1  flex gap-2">
+              {post.kredit && (
+                <div className="w-[100px h-[50px] flex gap-2">
+                  <div className="flex w-full h-[40px] gap-2  bg-white rounded-lg p-2 shadow-md">
+                    <p className="w-[25px] bg-orange-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
+                      {" "}
+                      <Percent
+                        size={16}
+                        strokeWidth={1.5}
+                        absoluteStrokeWidth
+                      />{" "}
+                    </p>
 
-                              <div className="  w-full h-[50px] p-1  flex gap-2">
-                                
-                                {post.kredit && (
-                                 <div className="w-[100px h-[50px] flex gap-2">
-                                  <div className="flex w-full h-[40px] gap-2  bg-white rounded-lg p-2 shadow-md">
-                                   <p className="w-[25px] bg-orange-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
-                                    {" "}
-                                    <Percent
-                                      size={16}
-                                      strokeWidth={1.5}
-                                      absoluteStrokeWidth
-                                    />{" "}
-                                    
-                                  </p>
-                                  
-                                  <span className="text-sm text-gray-400 font-semibold mt-1">
-                                    Kredit
-                                  </span>
-                                  </div>
-                                  <div className="w-full h-[40px] flex gap-2 bg-white rounded-lg p-2 shadow-md">
-                                  {post.barter && (
-                                  <p className="w-[25px] bg-green-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
-                                    <RefreshCcw
-                                      size={16}
-                                      strokeWidth={1.5}
-                                      absoluteStrokeWidth
-                                    />
-                                    
-                                  </p>
-                                )}
-                                <span className="text-sm text-gray-400 font-semibold mt-1">
-                                  Barter
-                                </span>
-                                </div>
-                                  </div>
-                                )}
-                                
-                              
-                              </div>
-                            </div>
-          
+                    <span className="text-sm text-gray-400 font-semibold mt-1">
+                      Kredit
+                    </span>
+                  </div>
+                  <div className="w-full h-[40px] flex gap-2 bg-white rounded-lg p-2 shadow-md">
+                    {post.barter && (
+                      <p className="w-[25px] bg-green-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
+                        <RefreshCcw
+                          size={16}
+                          strokeWidth={1.5}
+                          absoluteStrokeWidth
+                        />
+                      </p>
+                    )}
+                    <span className="text-sm text-gray-400 font-semibold mt-1">
+                      Barter
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
           <h2 className="text-xl font-bold mb-4">Əlaqə məlumatı</h2>
           <div className="space-y-2 text-gray-700">
             <div className="w-full h-[1px] border rounded-1 bg-black mb-2"></div>
             <div className="flex justify-between h-[100px] w-full items-center gap-3">
-
               <div className="w-full h-[100px]  block ">
-              <div className="flex gap-3 items-center">
-                <Avatar
-                alt={post?.contact?.name}
-                src="/broken-image.jpg"
-                className="w-[50px] h-[50px] border-blue-400 border-2"
-              />
-                <span className="font-semibold justify-center items-center">
-                
-                </span>{" "}
-                {post?.contact?.name}
+                <div className="flex gap-3 items-center">
+                  <Avatar
+                    alt={post?.contact?.name}
+                    src="/broken-image.jpg"
+                    className="w-[50px] h-[50px] border-blue-400 border-2"
+                  />
+                  <span className="font-semibold justify-center items-center"></span>{" "}
+                  {post?.contact?.name}
+                </div>
+
+                <div
+                  className="w-full gap-5 hidden sm:flex 
+           flex-col  h-[280px]   my-4"
+                >
+                  <button className="bg-green-500 w-full h-[50px]   rounded-[8px] flex justify-center items-center hover:bg-green-600 text-white">
+                    <a
+                      href={showPhone ? `tel:${phone}` : "#"}
+                      onClick={(e) => {
+                        if (!showPhone) {
+                          e.preventDefault(); // ilk klikdə zəng getməsin
+                          setShowPhone(true);
+                          setTimeout(() => setShowPhone(false), 10000);
+                        }
+                      }}
+                      className="text-white flex gap-2 font-[14px] text-center justify-center items-center"
+                    >
+                      <Phone
+                        className="w-4 h-4  bg-transparent"
+                        stroke="red"
+                        fill="red"
+                      />
+                      {showPhone ? phone : "Nömrəni göstər"}
+                    </a>
+                  </button>
+
+                  <button className="bg-blue-500  w-full h-8  rounded-[8px] flex justify-center items-center hover:bg-blue-600 text-white">
+                    <a
+                      href={`https://wa.me/${post?.contact?.phone}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white flex gap-2 text-[14px] font-sans text-center justify-center items-center"
+                    >
+                      <MessageCircleMore
+                        className=" w-4 h-4 "
+                        size={28}
+                        fill="white"
+                        stroke="#4C88F9"
+                      />{" "}
+                      Mesaj göndər
+                    </a>
+                  </button>
+                </div>
               </div>
-
-
-<div className="w-full gap-5 hidden sm:flex 
-           flex-col  h-[280px]   my-4">
-            <button className="bg-green-500 w-full h-[50px]   rounded-[8px] flex justify-center items-center hover:bg-green-600 text-white">
-             <a
-              href={showPhone ? `tel:${phone}` : "#"}
-              onClick={(e) => {
-                if (!showPhone) {
-                  e.preventDefault(); // ilk klikdə zəng getməsin
-                  setShowPhone(true);
-                  setTimeout(() => setShowPhone(false), 10000);
-                }
-              }}
-              className="text-white flex gap-2 font-[14px] text-center justify-center items-center"
-            >
-              <Phone className="w-4 h-4  bg-transparent" stroke="red" fill="red" />
-              {showPhone ? phone : "Nömrəni göstər"}
-            </a>
-            </button>
-
-            <button className="bg-blue-500  w-full h-8  rounded-[8px] flex justify-center items-center hover:bg-blue-600 text-white"> 
-              <a
-                href={`https://wa.me/${post?.contact?.phone}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white flex gap-2 text-[14px] font-sans text-center justify-center items-center"
-              >
-                <MessageCircleMore className=" w-4 h-4 " size={28} fill="white"  stroke="#4C88F9"  /> Mesaj göndər
-              </a>
-            </button>
+            </div>
           </div>
-              
-            </div>
-            
-            </div>
-            
-           
-            
-          </div>
-          <div className="w-full hidden sm:block h-[1px] border rounded-1 mt-24 bg-black mb-2">
-            </div>
+          <div className="w-full hidden sm:block h-[1px] border rounded-1 mt-24 bg-black mb-2"></div>
           <div className="text-gray-700 mt-4 gap-5">
             <span className="font-bold">{post?.contact?.name}</span>
             <span className="block">{post?.location}</span>
           </div>
-         <div className="text-gray-700 mt-4">
-              
-              <span className="font-bold">{post?.description}</span> 
-              
-            </div>
+          <div className="text-gray-700 mt-4">
+            <span className="font-bold">{post?.description}</span>
+          </div>
         </div>
 
-              <div className="w-full flex justify-center items-center">
-         <div className="max-w-[450px]  justify-between items-center  sm:hidden 
-          fixed bottom-16 z-50  gap-5 flex  h-[50px]   my-4">
+        <div className="w-full flex justify-center items-center">
+          <div
+            className="max-w-[450px]  justify-between items-center  sm:hidden 
+          fixed bottom-16 z-50  gap-5 flex  h-[50px]   my-4"
+          >
             <button className="bg-green-500 sm:w-[200px]    min-w-[170px] h-[40px]  sm:h-10 rounded-[8px] flex justify-center items-center hover:bg-green-600 text-white">
               <a
                 href={`tel:${post?.contact?.phone}`}
                 className="text-white flex gap-2 font-[14px] text-center justify-center items-center"
               >
-                <Phone className=" w-4 h-4 " size={28} fill="white"  stroke="white"  /> Zəng et
+                <Phone
+                  className=" w-4 h-4 "
+                  size={28}
+                  fill="white"
+                  stroke="white"
+                />{" "}
+                Zəng et
               </a>
             </button>
 
-            <button className="bg-blue-500  min-w-[170px] h-[40px] sm:h-10 sm:w-[200px] rounded-[8px] flex justify-center items-center hover:bg-blue-600 text-white"> 
+            <button className="bg-blue-500  min-w-[170px] h-[40px] sm:h-10 sm:w-[200px] rounded-[8px] flex justify-center items-center hover:bg-blue-600 text-white">
               <a
                 href={`https://wa.me/${post?.contact?.phone}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white flex gap-2 text-[14px] font-sans text-center justify-center items-center"
               >
-                <MessageCircleMore className=" w-4 h-4 " size={28} fill="white"  stroke="#4C88F9"  /> Mesaj göndər
+                <MessageCircleMore
+                  className=" w-4 h-4 "
+                  size={28}
+                  fill="white"
+                  stroke="#4C88F9"
+                />{" "}
+                Mesaj göndər
               </a>
             </button>
           </div>
-          </div>
+        </div>
       </div>
 
       {/* Zoom modal */}

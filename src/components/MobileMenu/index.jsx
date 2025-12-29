@@ -27,7 +27,7 @@ const BottomMenu = () => {
 
   return (
     <div
-      className={`md:hidden fixed bottom-0 left-0 w-full rounded-t-[10px] bg-white text-gray-500 flex justify-around items-center  z-50 shadow-lg border-t border-gray-300 transition-transform duration-300 ${
+      className={`md:hidden h-[40px] fixed bottom-0 left-0 w-full rounded-t-[10px] bg-transparent text-gray-500 flex justify-around items-center  z-50 shadow-lg border-t-[5px] opacity-100 border-white  transition-transform duration-300 ${
         showNavbar ? "translate-y-0" : "translate-y-full"
       }`}
     >
@@ -37,7 +37,7 @@ const BottomMenu = () => {
           to={item.url}
           className="flex flex-col items-center text-xs hover:text-[#1c04f7] transition-colors"
         >
-          <div className="text-[32px]">{item.icon}</div>
+          <div className="text-[20px]">{item.icon}</div>
           <span className="text-[10px]">{item.text}</span>
         </Link>
       ))}

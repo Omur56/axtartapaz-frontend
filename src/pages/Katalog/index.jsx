@@ -137,7 +137,7 @@ const Katalog = () => {
   };
 
   return (
-    <div className="min-w-screen max-w-[400px]  md:max-w-[700px] lg:max-w-[1000px] mx-auto mb-4">
+    <div className="min-w-screen max-w-[400px]  md:max-w-[700px] lg:max-w-[1000px] mx-auto mb-4 mt-20">
       {/* --- Mobil versiya (slider) --- */}
       <div className="relative block md:hidden mt-6">
         <div
@@ -210,7 +210,7 @@ const Katalog = () => {
                   )}
                 </button>
                 <div className="mt-2">
-                  <span className="text-[10px] text-black font-bold leading-tight block">
+                  <span className="text-[10px] text-white font-bold leading-tight block">
                     {cat.label}
                   </span>
                 </div>

@@ -430,7 +430,7 @@ useEffect(() => {
   
   return (
     <div className="min-h-screen max-w-[1000px] mx-auto mb-10 mt-10">
-      <div className="flex  justify-between gap-4">
+      <div className="flex  justify-between gap-4 mt-5">
         <div className="flex-1 ">
           <div className="max-w-5xl mx-auto p-4  gap-4">
             <div className="flex justify-center  mx-auto my-auto  "></div>
@@ -522,7 +522,7 @@ useEffect(() => {
             </div>
 <Katalog />
 <div className=" border bg-slate-400 h-[1px] mb-6 w-full"></div>
-            <div className="mt-4 p-4 mb-10  grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 place-items-center  shadow-b-md bg-gray-50 rounded-lg">
+            <div className="mt-4 p-4 mb-10  grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 place-items-center  shadow-b-md bg-white rounded-lg">
               {isLoading ? (
                 Array.from({ length: 40 }).map((_, i) => (
                   <div
@@ -555,7 +555,7 @@ useEffect(() => {
                         rel="noopener noreferrer"
                         key={car.id}
                         to={`/cars/${car._id}`}>
-                        <div className="w-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px]   max-w-[240.4px] max-h-[368.8px] bg-gray-50 rounded-[8px]  hover:shadow-2xl transform shake  transition-all duration-100">
+                        <div className="w-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px]   max-w-[240.4px] max-h-[368.8px] bg-gray-100 rounded-[20px]  hover:shadow-2xl transform shake  transition-all duration-100">
                           <div className="w-[185.7px] h-[229.6px] sm:w-[268.75px] sm:h-[268.6px] max-w-[240.4px] max-h-[150px] rounded-t-[8px] relative">
                             {car.salon && (
                               <p className="absolute top-[125px] z-50 left-2 bg-indigo-500 text-white text-[10px] font-500 p-1 rounded">
@@ -590,7 +590,7 @@ useEffect(() => {
                             <img
                                src={car.mainImage || car.images[0]}
   alt={car.brand}
-                              className="absolute top-0 left-0 w-full h-full object-cover rounded-t-[8px]"
+                              className="absolute top-0 left-0 w-full h-full object-cover rounded-t-[20px]"
                             />
                           </div>
                           <div className="p-2 ">
