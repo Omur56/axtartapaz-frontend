@@ -20,7 +20,7 @@ const RootLayout = () => {
       {/* 🔹 Breadcrumb burada */}
      
 
-      <main className="flex-grow bg-sky-950 min-h-screen w-full mx-auto ">
+      <main className="flex-grow bg-gray-50 min-h-screen w-full mx-auto ">
         
         <Outlet />
          

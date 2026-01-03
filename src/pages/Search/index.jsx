@@ -220,25 +220,37 @@ const Search = () => {
   );
 
   /* ------------------ LOAD DATA ONCE ------------------ */
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const responses = await Promise.all(apiUrls.map((u) => axios.get(u)));
-        const merged = responses.flatMap((r) =>
-          Array.isArray(r.data) ? r.data : []
-        );
-        setAllData(merged);
-        setResults(merged);
-      } catch (err) {
-        console.error("API xətası:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const responses = await Promise.all(
+        apiUrls.map((u) => axios.get(u))
+      );
 
-    fetchData();
-  }, [apiUrls]);
+      const merged = responses.flatMap((r, index) =>
+        Array.isArray(r.data)
+          ? r.data.map(item => ({
+              ...item,
+              source: apiUrls[index].split("/api/")[1]
+            }))
+          : []
+      );
+
+      setAllData(merged);
+      setResults(merged);
+    } catch (err) {
+      console.error("API xətası:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [apiUrls]);
+
+
+
 
   /* ------------------ FILTER ENGINE ------------------ */
   useEffect(() => {
@@ -291,6 +303,8 @@ const Search = () => {
   const handleFilterChange = (e) =>
     setFilters({ ...filters, [e.target.name]: e.target.value });
 
+  
+
   /* ------------------ UI ------------------ */
   return (
     <div className="min-h-screen bg-gray-50 py-10">
@@ -340,7 +354,7 @@ const Search = () => {
         {!loading && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4">
             {results.map((item, i) => (
-              <Link key={i} to={`/details/${item.id || item._id}`}>
+              <Link key={i} to={`/${item.source}/${item._id || item.id}`}>
                 <div className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden">
                   <img
                     src={item.images?.[0] || "/placeholder.png"}

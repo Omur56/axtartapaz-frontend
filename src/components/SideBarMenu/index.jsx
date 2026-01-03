@@ -11,7 +11,7 @@ const TopBarMenu = () => {
   const [isOpen, setIsOpen] = React.useState(true); 
 
   return (
-    <div className="hidden md:flex  rounded-t-[10px] top-0  w-full z-50 bg-white shadow-md">
+    <div className="hidden md:flex  rounded-t-[10px] top-0  w-full z-50  ">
       <div className="flex items-center justify-between px-4 py-2 w-full">
      
         <button

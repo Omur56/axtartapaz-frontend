@@ -17,18 +17,18 @@ export default function PostDetailPhone() {
  const [progress, setProgress] = React.useState(0);
   const [buffer, setBuffer] = React.useState(10);
 
-
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/Phone/`)
+      .get(`${BASE_URL}/api/Phone/`)
       .then((res) => setPhone(res.data))
       .catch((err) => console.error("Xəta:", err));
-  }, []);
+  }, [BASE_URL]);
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/Phone/${id}`)
+      .get(`${BASE_URL}/api/Phone/${id}`)
       .then((res) => setPost(res.data))
       .catch((err) => console.error("Xəta:", err));
   }, [id]);

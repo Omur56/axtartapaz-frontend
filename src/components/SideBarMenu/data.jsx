@@ -14,11 +14,14 @@ const menuItems = [
     text: "Əsas",
     url: "/",
     icon: (
-      <div className="p-2 rounded-lg bg-blue-200 hover:bg-blue-500 cursor-pointer inline-flex items-center justify-center transition-colors duration-300 ease-in-out">
+      <div className="p-2 rounded-lg  cursor-pointer inline-flex items-center justify-center transition-colors duration-300 ease-in-out">
         <IconSmartHome
           stroke={2}
-          size={28}
-          className="text-blue-600 hover:text-white transition-colors duration-300 ease-in-out"
+          size={22}
+          className="text-blue-600 transition-colors duration-300 ease-in-out"
+          strokeWidth={1.5}
+          
+         
         />
       </div>
     ),
@@ -28,11 +31,11 @@ const menuItems = [
     text: "Katalog",
     url: "/categories",
     icon: (
-      <div className="p-2 rounded-lg bg-gray-200 hover:bg-blue-500 cursor-pointer inline-flex items-center justify-center transition-colors duration-300 ease-in-out">
+      <div className="p-2 rounded-lg  cursor-pointer inline-flex items-center justify-center transition-colors duration-300 ease-in-out">
         <IconTriangleSquareCircleFilled
-          size={28}
+          size={22}
           strokeWidth={1.5}
-          className="text-blue-600 hover:text-white transition-colors duration-300 ease-in-out"
+          className="text-blue-600  transition-colors duration-300 ease-in-out"
         />
       </div>
     ),
@@ -42,12 +45,12 @@ const menuItems = [
     text: "Yeni Elan",
     url: "/CreateCatalogPost",
     icon: (
-      <div className="p-3 rounded-full bg-gray-100 hover:bg-red-500 cursor-pointer inline-flex items-center justify-center transition-colors duration-300 ease-in-out">
+      <div className="p-3 rounded-full  cursor-pointer inline-flex items-center justify-center transition-colors duration-300 ease-in-out">
         <IconLibraryPlus
           stroke={2}
-          size={40}
+          size={35}
           strokeWidth={1.5}
-          className="text-blue-600 hover:text-white transition-colors duration-300 ease-in-out"
+          className="text-blue-600  transition-colors duration-300 ease-in-out"
         />
       </div>
     ),
@@ -57,12 +60,12 @@ const menuItems = [
     text: "Profil",
     url: "/profile",
     icon: (
-      <div className="p-2 rounded-lg bg-gray-100 hover:bg-blue-500 cursor-pointer inline-flex items-center justify-center transition-colors duration-300 ease-in-out">
+      <div className="p-2 rounded-lg   cursor-pointer inline-flex items-center justify-center transition-colors duration-300 ease-in-out">
         <IconUserCircle
           stroke={2}
-          size={28}
+          size={22}
           strokeWidth={1.5}
-          className="text-blue-600 hover:text-white transition-colors duration-300 ease-in-out"
+          className="text-blue-600  transition-colors duration-300 ease-in-out"
         />
       </div>
     ),
@@ -72,12 +75,12 @@ const menuItems = [
     text: "Axtarış",
     url: "/search",
     icon: (
-      <div className="p-2 rounded-lg bg-gray-100 hover:bg-blue-500 cursor-pointer inline-flex items-center justify-center transition-colors duration-300 ease-in-out">
+      <div className="p-2 rounded-lg cursor-pointer inline-flex items-center justify-center transition-colors duration-300 ease-in-out">
         <IconSearch
           stroke={2}
-          size={28}
+          size={22}
           strokeWidth={1.5}
-          className="text-blue-600 hover:text-white transition-colors duration-300 ease-in-out"
+          className="text-blue-600  transition-colors duration-300 ease-in-out"
         />
       </div>
     ),

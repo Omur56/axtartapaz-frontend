@@ -69,7 +69,15 @@ const router = createBrowserRouter([
         path: "/AdsPanel",
         Component: AdsPanel,
       },
-     
+      {
+        path: "/Search",
+        Component: Search,
+      },
+      {
+  path: "/ads/:id",
+  Component: AdDetail,
+},
+
       {
         path: "/Katalog",
         Component: Katalog,
@@ -95,6 +103,80 @@ const router = createBrowserRouter([
         path: "/elan/:id",
         Component: PostDetail,
       },
+      {
+        path: "/ads/homGarden/:id",
+        Component: PostDetailHome,
+      },
+      {
+        path: "/ads/Clothing/:id",
+        Component: PostDetailClothing,
+      },
+      {
+        path: "/ads/Phone/:id",
+        Component: PostDetailPhone,
+      },
+      {
+        path: "/ads/Household/:id",
+        Component: PostDetailHousehold,
+      },
+      {
+        path: "/ads/Zinet/:id",
+        Component: PostDetailJewelry,
+      },
+      {
+        path: "/ads/realEstate/:id",
+        Component: PostRealEstate,
+      },
+      {
+        path: "/ads/accessories/:id",
+        Component: PostDetailAcsesuar,
+      },
+      {
+        path: "/ads/electronika/:id",
+        Component: PostDetailElectronika,
+      },
+      {
+        path: "/ads/cars/:id",
+        Component: PostDetalCar,
+      },
+
+      {
+  path: "/cars/:id",
+  Component: PostDetalCar,
+},
+{
+  path: "/electronika/:id",
+  Component: PostDetailElectronika,
+},
+{
+  path: "/accessories/:id",
+  Component: PostDetailAcsesuar,
+},
+{
+  path: "/realEstate/:id",
+  Component: PostRealEstate,
+},
+{
+  path: "/Household/:id",
+  Component: PostDetailHousehold,
+},
+{
+  path: "/Phone/:id",
+  Component: PostDetailPhone,
+},
+{
+  path: "/Clothing/:id",
+  Component: PostDetailClothing,
+},
+{
+  path: "/homGarden/:id",
+  Component: PostDetailHome,
+},
+{
+  path: "/Zinet/:id",
+  Component: PostDetailJewelry,
+},
+
       {
         path: "/PostDetalCar/:id",
         Component: PostDetalCar,
@@ -212,11 +294,7 @@ const router = createBrowserRouter([
         path: "/admin/login",
          Component: AdminLogin,
       },
-      {
-        path: "/ads/:id",
-        Component: AdDetail, 
-      },
-
+   
   
       {
         path: "/",
