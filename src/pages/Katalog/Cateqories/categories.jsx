@@ -40,25 +40,29 @@ const Katalog = () => {
       </h2>
 
       {/* --- Mobil slider --- */}
-      <div className="relative block md:hidden mb-6 max-w-full">
-        <button
+      <div className="relative w-full h-[500px] flex flex-col  md:hidden mb-6 max-w-full ">
+        {/* <button
           onClick={scrollLeft}
           className="absolute left-0 top-1/2 -translate-y-1/2 bg-gray-200 rounded-full p-2 z-10 shadow"
         >
           &#8592;
-        </button>
+        </button> */}
 
         <div
           ref={sliderRef}
-          className="flex gap-4 overflow-x-auto   h-[80px] scrollbar-hide scroll-smooth px-2"
+          className="grid grid-cols-4  gap-4 overflow-x-auto   h-[300px]  px-2"
         >
           {categories.map(({ id, path, label, icon, iconSize, bgColor, hover }) => (
             <Link
               key={id}
               to={`/katalog/${path}`}
-              className={`flex flex-col min-w-[100px]   rounded-lg shadow-md transition-all ${bgColor} ${hover}`}
+              className={` min-w-[100px]   items-center justify-center  rounded-lg shadow-md transition-all ${bgColor} ${hover}`}
             >
-              <img src={icon} alt={label} className={`${iconSize} mb-[-32px] ml-5`} />
+              <img src={icon} alt={label} className={`${iconSize} mt-[60px] ml-[19px]`} />
+             
+              
+               
+              
              
             </Link>
             
@@ -66,12 +70,12 @@ const Katalog = () => {
           
         </div>
 
-        <button
+        {/* <button
           onClick={scrollRight}
           className="absolute right-0 top-1/2 -translate-y-1/2 bg-gray-200 rounded-full p-2 z-10 shadow"
         >
           &#8594;
-        </button>
+        </button> */}
       </div>
 
       {/* --- Desktop grid --- */}

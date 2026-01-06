@@ -22,14 +22,14 @@ const [progress, setProgress] = React.useState(0);
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/homGarden/`)
+      .get(`${process.env.REACT_APP_API_URL}/api/homeGarden/`)
       .then((res) => setHome(res.data))
       .catch((err) => console.error("Xəta:", err));
   }, []);
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/homGarden/${id}`)
+      .get(`${process.env.REACT_APP_API_URL}/api/homeGarden/${id}`)
       .then((res) => setPost(res.data))
       .catch((err) => console.error("Xəta:", err));
   }, [id]);

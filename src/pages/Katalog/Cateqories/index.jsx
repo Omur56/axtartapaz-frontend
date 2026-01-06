@@ -126,7 +126,7 @@ const Katalog = () => {
                   className={`object-contain   ${iconSize.width} ${iconSize.height}`}
                 />
               </div>
-              <span className="font-medium text-white text-center text-sm md:text-base">
+              <span className="font-medium text-neutral-800 text-center text-sm md:text-base">
                 {label}
               </span>
             </Link>

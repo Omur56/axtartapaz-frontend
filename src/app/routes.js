@@ -104,7 +104,7 @@ const router = createBrowserRouter([
         Component: PostDetail,
       },
       {
-        path: "/ads/homGarden/:id",
+        path: "/ads/homeGarden/:id",
         Component: PostDetailHome,
       },
       {
@@ -169,7 +169,7 @@ const router = createBrowserRouter([
   Component: PostDetailClothing,
 },
 {
-  path: "/homGarden/:id",
+  path: "/homeGarden/:id",
   Component: PostDetailHome,
 },
 {

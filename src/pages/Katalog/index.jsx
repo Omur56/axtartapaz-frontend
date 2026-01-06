@@ -99,6 +99,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 // import Breadcrumb from "../../components/Breadcrumb";
+import { Label } from './../../components/ui/label';
 
 const Katalog = () => {
   const [activeId, setActiveId] = useState(null);
@@ -144,11 +145,11 @@ const Katalog = () => {
           ref={sliderRef}
           className="flex gap-4 mt-[70px]   overflow-x-auto overflow-y-hidden scrollbar-hide   scroll-smooth px-4"
         >
-          {categories.map(({ id, path, icon, bgColor, hover }) => (
+          {categories.map(({ id, path, icon, bgColor, hover, label }) => (
             <Link
               key={id}
               to={`/katalog/${path}`}
-              className={`relative min-w-[110px] h-[80px] rounded-lg shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover}`}
+              className={`relative min-w-[120px] h-[100px] rounded-lg shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover}`}
             >
               {typeof icon === "string" ? (
                 <img
@@ -163,6 +164,10 @@ const Katalog = () => {
                   style={{ position: "absolute", bottom: 0, right: 0 }}
                 />
               )}
+              <div className="z-50  w-[110px] h-full mt-0  p-1 flex   rounded-lg">
+                <span className="text-white text-[10px] font-bold">{label}</span>
+              </div>
+              
             </Link>
           ))}
         </div>
@@ -195,10 +200,15 @@ const Katalog = () => {
               onClick={() => handleCategoryClick(cat.id, cat.path)}
               className="w-[100px] text-center"
             >
-              <div className="mt-4">
+              <div className="mt-4 ">
                 <button
-                  className={`${cat.bgColor} transform hover:scale-105 border w-[150px] h-[100px] rounded-[7px] flex justify-center items-center shadow transition-all duration-200`}
+                  className={`${cat.bgColor} h- ring-2 ring-blue-500 flex-col transform hover:scale-105 border w-[150px] h-[100px] rounded-[7px] flex justify-center items-center shadow transition-all duration-200`}
                 >
+                  
+                  <div className="absolute top-2 right-2 opacity-50 ">
+                    <FontAwesomeIcon icon={faChevronRight} className="text-white" />
+                  </div>
+                  <div className="h-[20px] w-full flex flex-col items-center justify-center relative">
                   {typeof cat.icon === "string" ? (
                     <img
                       src={cat.icon}
@@ -208,12 +218,10 @@ const Katalog = () => {
                   ) : (
                     <cat.icon className="w-[50px] h-[50px] text-white" />
                   )}
+                  <p className="z-50 absolute p-1  mt-[-40px] color:red text-[10px] text-white font-bold">{cat.label}</p>
+                  </div>
                 </button>
-                <div className="mt-2">
-                  <span className="text-[10px] text-white font-bold leading-tight block">
-                    {cat.label}
-                  </span>
-                </div>
+               
               </div>
             </Link>
           );

@@ -27,7 +27,7 @@ const BottomMenu = () => {
 
   return (
     <div
-      className={`md:hidden h-[30px] rounded-t-[10px] bg-white fixed bottom-0 left-0 w-full  text-gray-500 flex justify-around items-center  z-50 opacity-100   transition-transform duration-300 ${
+      className={`md:hidden h-[50px] rounded-t-[10px] bg-white fixed bottom-0 left-0 w-full  text-gray-500 flex justify-around items-center  z-50 opacity-100   transition-transform duration-300 ${
         showNavbar ? "translate-y-0" : "translate-y-full"
       }`}
     >
@@ -38,6 +38,7 @@ const BottomMenu = () => {
           className="flex flex-col items-center text-xs hover:text-[#1c04f7] transition-colors"
         >
           <div className="text-[15px] ">{item.icon}</div>
+          
          
         </Link>
       ))}

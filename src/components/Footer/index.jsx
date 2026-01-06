@@ -68,7 +68,7 @@ function Footer() {
       {/* Copyright */}
       <div className="flex justify-center mt-6">
         <p className="text-gray-400 text-center text-sm sm:text-base">
-          © 2025 ProElan.az - Bütün Hüquqlar Qorunur.
+          © 2026 ProElan.az - Bütün Hüquqlar Qorunur.
         </p>
       </div>
     </footer>

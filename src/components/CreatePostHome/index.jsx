@@ -14,7 +14,7 @@ import { RefreshCcw, Percent, MapPin } from "lucide-react";
 export default function CreatePostForHomeAndGarden() {
   const { id } = useParams();
   const [isOpen, setIsOpen] = useState(false);
-  const [homGardenForm, setHomGardenForm] = useState({
+  const [homeGardenForm, setHomeGardenForm] = useState({
    
     category: "",
     title: "",
@@ -29,7 +29,7 @@ export default function CreatePostForHomeAndGarden() {
     
   });
 
-  const [homGardenItems, setHomGardenItems] = useState([]);
+  const [homeGardenItems, setHomeGardenItems] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
@@ -50,20 +50,20 @@ export default function CreatePostForHomeAndGarden() {
     const { name, value } = e.target;
     if (name.startsWith("contact.")) {
       const field = name.split(".")[1];
-      setHomGardenForm((prev) => ({
+      setHomeGardenForm((prev) => ({
         ...prev,
         contact: { ...prev.contact, [field]: value },
       }));
     } else {
-      setHomGardenForm((prev) => ({ ...prev, [name]: value }));
+      setHomeGardenForm((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   // Backenddən elanları gətirmək
   const fetchItems = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/homGarden/`);
-      setHomGardenItems(res.data);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/homeGarden/`);
+      setHomeGardenItems(res.data);
     } catch (err) {
       console.error(err);
     }
@@ -73,7 +73,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   const formData = new FormData();
 
-  Object.entries(homGardenForm).forEach(([key, value]) => {
+  Object.entries(homeGardenForm).forEach(([key, value]) => {
     if (key === "data") {
       formData.append("data", value.toISOString());
     } else if (key === "contact") {
@@ -92,7 +92,7 @@ const handleSubmit = async (e) => {
   try {
     if (editingId) {
       await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/homGarden/${editingId}`,
+        `${process.env.REACT_APP_API_URL}/api/homeGarden/${editingId}`,
         formData,
         {
           headers: {
@@ -103,7 +103,7 @@ const handleSubmit = async (e) => {
       );
       setEditingId(null);
     } else {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/homGarden`, formData, {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/homeGarden`, formData, {
         headers: {
           Authorization: `Bearer ${token}`, // token əlavə olunur
           "Content-Type": "multipart/form-data",
@@ -116,7 +116,7 @@ const handleSubmit = async (e) => {
       });
     }
 
-    setHomGardenForm({
+    setHomeGardenForm({
       
      category: "",
   title: "",
@@ -148,7 +148,7 @@ const handleSubmit = async (e) => {
   // Sil
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/homGarden/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/homeGarden/${id}`);
       fetchItems();
     } catch (err) {
       console.error("Delete error:", err);
@@ -157,7 +157,7 @@ const handleSubmit = async (e) => {
 
   // Edit
   const handleEdit = (item) => {
-    setHomGardenForm({
+    setHomeGardenForm({
       category: item.category || "",
       title: item.title || "",
       description: item.description || "",
@@ -176,7 +176,7 @@ const handleSubmit = async (e) => {
 
   const handleLike = async (id) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/homGarden/${id}/like`);
+      await axios.patch(`${process.env.REACT_APP_API_URL}/api/homeGarden/${id}/like`);
       fetchItems();
     } catch (err) {
       console.error(err);
@@ -185,7 +185,7 @@ const handleSubmit = async (e) => {
 
   const handleFavorite = async (id) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/homGarden/${id}/favorite`);
+      await axios.patch(`${process.env.REACT_APP_API_URL}/api/homeGarden/${id}/favorite`);
       fetchItems();
     } catch (err) {
       console.error(err);
@@ -222,7 +222,7 @@ const handleSubmit = async (e) => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/homGarden`];
+  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/homeGarden`];
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -284,7 +284,7 @@ const handleSubmit = async (e) => {
       setIsLoading(true);
       try {
         const [homeGarden] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/api/homGarden`),
+          axios.get(`${process.env.REACT_APP_API_URL}/api/homeGarden`),
         ]);
 
         setHomeGarden(homeGarden.data);
@@ -394,7 +394,7 @@ const handleOpenForm = () => {
                     type="text"
                     name="title"
                     placeholder="Başlıq"
-                    value={homGardenForm.title}
+                    value={homeGardenForm.title}
                     onChange={handleChange}
                     required
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
@@ -403,7 +403,7 @@ const handleOpenForm = () => {
                     type="text"
                     name="description"
                     placeholder="Təsvir"
-                    value={homGardenForm.description}
+                    value={homeGardenForm.description}
                     onChange={handleChange}
                     required
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
@@ -412,7 +412,7 @@ const handleOpenForm = () => {
                     type="text"
                     name="brand"
                     placeholder="Brend"
-                    value={homGardenForm.brand}
+                    value={homeGardenForm.brand}
                     onChange={handleChange}
                     required
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
@@ -421,7 +421,7 @@ const handleOpenForm = () => {
                     type="text"
                     name="price"
                     placeholder="Qiymət"
-                    value={homGardenForm.price}
+                    value={homeGardenForm.price}
                     onChange={handleChange}
                     required
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
@@ -430,7 +430,7 @@ const handleOpenForm = () => {
                     type="text"
                     name="location"
                     placeholder="Ünvan"
-                    value={homGardenForm.location}
+                    value={homeGardenForm.location}
                     onChange={handleChange}
                     required
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
@@ -439,7 +439,7 @@ const handleOpenForm = () => {
                     type="text"
                     name="contact.name"
                     placeholder="Əlaqəli Şəxs"
-                    value={homGardenForm.contact.name}
+                    value={homeGardenForm.contact.name}
                     onChange={handleChange}
                     required
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
@@ -448,7 +448,7 @@ const handleOpenForm = () => {
                     type="email"
                     name="contact.email"
                     placeholder="Email"
-                    value={homGardenForm.contact.email}
+                    value={homeGardenForm.contact.email}
                     onChange={handleChange}
                     required
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
@@ -457,7 +457,7 @@ const handleOpenForm = () => {
                     type="number"
                     name="contact.phone"
                     placeholder="Telefon"
-                    value={homGardenForm.contact.phone}
+                    value={homeGardenForm.contact.phone}
                     onChange={handleChange}
                     required
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
@@ -527,7 +527,7 @@ const handleOpenForm = () => {
           )}
 
           {!loading && results.length > 0 && (
-            <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div key={results.id} className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {results.map((item, index) => (
                 <Link
                   key={item.id || item._id}
@@ -567,7 +567,7 @@ const handleOpenForm = () => {
         </div>
 
         <h3 className="text-xl font-semibold mb-4">Əlavə olunan Elanlar</h3>
-        <div className="mx-auto   rounded-2xl   grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-4 w-full min-h-screen">
+        <div key={results.id} className="mx-auto   rounded-2xl   grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-4 w-full min-h-screen">
           {isLoading ? (
             Array.from({ length: 8 }).map((_, i) => (
               <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
@@ -586,7 +586,7 @@ const handleOpenForm = () => {
             ))
           ) : (
             <>
-              {homGardenItems.map((item) => (
+              {homeGardenItems.map((item) => (
                 <Link target="_blank"
             rel="noopener noreferrer" key={item._id} to={`/PostDetailHome/${item._id}`}>
                   <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
