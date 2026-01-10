@@ -12,6 +12,7 @@ import {
   Avatar,
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
+import BottomMenu from "../../components/MobileMenu";
 export default function Profile() {
   const [myAds, setMyAds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -283,6 +284,7 @@ export default function Profile() {
           ))}
         </div>
       )}
+      <BottomMenu />
     </Box>
   );
 }

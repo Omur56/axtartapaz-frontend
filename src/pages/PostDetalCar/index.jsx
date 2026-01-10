@@ -5,7 +5,8 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { X, MapPin, Phone, MessageCircleMore } from "lucide-react";
 import { Box, LinearProgress, Avatar } from "@mui/material";
-import { Percent, RefreshCcw } from "lucide-react";
+import { Percent, RefreshCcw, CarFront   } from "lucide-react";
+
 
 export default function PostDetailCar() {
   const { id } = useParams();
@@ -154,9 +155,9 @@ export default function PostDetailCar() {
   const openZoom = (index) => setZoomIndex(index);
 
   return (
-    <div className="max-w-6xl min-h-screen mx-auto p-4">
+    <div className="max-w-6xl min-h-screen mx-auto ">
       {/* Back button */}
-      <Link to="/Katalog/Nəqliyyat">
+      <Link to="/Katalog/Nəqliyyat" className="p-4 ">
         <button className="flex items-center gap-2 mt-12 mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -175,34 +176,49 @@ export default function PostDetailCar() {
       </Link>
 
       {/* Main content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-white shadow-lg rounded-xl p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-white shadow-lg rounded-xl sm:p-6 ">
         {/* Left / Main column */}
-        <div className="lg:col-span-2 space-y-4">
-          <h1 className="text-2xl font-bold mb-4 capitalize">
+        <div className="lg:col-span-2 space-y-4 ">
+          <h1 className="text-2xl font-bold mb-4 capitalize p-2">
             {post.category} {post.brand} {post.model}
           </h1>
 
           <Carousel showThumbs showStatus={false} autoPlay infiniteLoop>
-            {imageArray.map((img, index) => (
-              <div
-                key={index}
-                className="w-full h-[400px] cursor-pointer"
-                onClick={() => openZoom(index)}
-              >
-                <img
-                  src={
-                    img.startsWith("http") ? img : `${BASE_URL}/uploads/${img}`
-                  }
-                  alt={`Şəkil ${index + 1}`}
-                  className="w-full h-full object-contain rounded-lg"
-                />
-              </div>
-            ))}
-          </Carousel>
+  {imageArray.map((img, index) => {
+    const imageSrc = img.startsWith("http")
+      ? img
+      : `${BASE_URL}/uploads/${img}`;
 
-          <p className="text-3xl font-bold text-black mt-4">{post.price} AZN</p>
+    return (
+      <div
+        key={index}
+        className="relative w-full h-[400px] overflow-hidden cursor-pointer"
+        onClick={() => openZoom(index)}
+      >
+        {/* 🔵 Blur background */}
+        <div
+          className="absolute inset-0 bg-center bg-cover blur-xl scale-110"
+          style={{ backgroundImage: `url(${imageSrc})` }}
+        />
 
-          <div className="border-t pt-4">
+        {/* ⚫ Overlay (istəyə görə qaraldır) */}
+        <div className="absolute inset-0 bg-black/20" />
+
+        {/* 🖼️ Main image */}
+        <img
+          src={imageSrc}
+          alt={`Şəkil ${index + 1}`}
+          className="relative z-10 w-full h-full object-contain rounded-lg"
+        />
+      </div>
+    );
+  })}
+</Carousel>
+
+
+          <p className="text-3xl font-bold text-black mt-4 p-2">{post.price} AZN</p>
+
+          <div className="border-t pt-4 p-2">
             <ul className="text-sm text-gray-700 space-y-1 mt-4 justify-between grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2">
               <li>
                 <span className="font-bold">Ban:</span> {post.ban_type}
@@ -237,7 +253,7 @@ export default function PostDetailCar() {
             </ul>
           </div>
 
-          <div className="flex justify-between text-sm text-gray-500 mt-4">
+          <div className="flex justify-between text-sm text-gray-500 mt-4 p-2">
             <p>Elanın nömrəsi: {post.id}</p>
             <p>
               {post.location}, {formatDate(post.data)},{" "}
@@ -257,7 +273,7 @@ export default function PostDetailCar() {
           <div className="flex mt-2 w-full h-[100px]  gap-2">
             <div className="  w-full h-[50px] p-1  flex gap-2">
               {post.kredit && (
-                <div className="w-[100px h-[50px] flex gap-2">
+                <div className="w-[100px] h-[50px] flex gap-2">
                   <div className="flex w-full h-[40px] gap-2  bg-white rounded-lg p-2 shadow-md">
                     <p className="w-[25px] bg-orange-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
                       {" "}
@@ -286,6 +302,18 @@ export default function PostDetailCar() {
                       Barter
                     </span>
                   </div>
+                 {post.salon === "Salon" && (
+  <div className="w-full h-[40px] flex  text-white bg-blue-500 rounded-lg p-2 shadow-md">
+    <span className="w-[25px] bg-blue-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
+    <CarFront size={16} strokeWidth={1.5} absoluteStrokeWidth  />
+    </span>
+    <span className="text-sm text-white font-semibold">
+      
+       Salon
+    </span>
+  </div>
+)}
+
                 </div>
               )}
             </div>
@@ -364,7 +392,7 @@ export default function PostDetailCar() {
         <div className="w-full flex justify-center items-center">
           <div
             className="max-w-[450px]  justify-between items-center  sm:hidden 
-          fixed bottom-16 z-50  gap-5 flex  h-[50px]   my-4"
+          fixed bottom-0 z-50  gap-5 flex  h-[50px]   my-4"
           >
             <button className="bg-green-500 sm:w-[200px]    min-w-[170px] h-[40px]  sm:h-10 rounded-[8px] flex justify-center items-center hover:bg-green-600 text-white">
               <a

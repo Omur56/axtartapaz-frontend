@@ -171,7 +171,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-
+import BottomMenu from "../../components/MobileMenu";
 /* ------------------ DEBOUNCE HOOK ------------------ */
 const useDebounce = (value, delay = 500) => {
   const [debounced, setDebounced] = useState(value);
@@ -382,6 +382,7 @@ useEffect(() => {
           </p>
         )}
       </div>
+      <BottomMenu />
     </div>
   );
 };

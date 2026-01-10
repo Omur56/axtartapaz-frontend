@@ -4,7 +4,7 @@ import CreateRealEstate from "../../../components/CreateRealEstate";
 function Daşınmaz_əmlak() {
   return (
     <div className="mx-auto  my-[50px]  max-w-[1000px]">
-      <Katalog />
+      {/* <Katalog /> */}
       <CreateRealEstate />
     </div>
   );

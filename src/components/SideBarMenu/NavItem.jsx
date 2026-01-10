@@ -1,14 +1,20 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const NavItem = ({ icon, text, url, isOpen }) => {
   return (
-    <Link
+    <NavLink
       to={url}
-      className="flex items-center gap-4 text-gray-400 hover:bg-[#01D063] p-2 rounded transition duration-200"
+      className={({ isActive }) =>
+        `flex items-center gap-4 p-2 rounded transition duration-200 ${
+          isActive
+            ? "bg-[#01D063] text-white" // aktiv olanda rənglər
+            : "text-gray-400 hover:bg-[#01D063] hover:text-white" // normal
+        }`
+      }
     >
-      <span className="text-[15px] text-gray-400 text-orange-600 ">{icon}</span>
-      {isOpen && <div className="text-[15px] text-gray-400 text-orange-600">{text}</div>}
-    </Link>
+      <span className="text-[15px] ">{icon}</span>
+      {isOpen && <div className="text-[15px]">{text}</div>}
+    </NavLink>
   );
 };
 

@@ -145,6 +145,7 @@ import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import BottomMenu from "../../components/MobileMenu";
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -223,6 +224,7 @@ export default function Login({ onLogin }) {
           <Link to="/reqister" className="hover:underline hover:text-purple-800">Qeydiyyatdan keçin</Link>
         </div>
       </form>
+      <BottomMenu />
     </div>
   );
 }

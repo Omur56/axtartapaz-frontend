@@ -10,6 +10,7 @@ import Dasinmaz from "../../../icon_nav/dasinmaz.png";
 import Meiset from "../../../icon_nav/meiset.png";
 import Telefon from "../../../icon_nav/telefon.png";
 import Geyim from "../../../icon_nav/geyim.png";
+import BottomMenu from "../../../components/MobileMenu";
 
 // Kategoriyalar
 export const categories = [
@@ -91,7 +92,7 @@ const Katalog = () => {
           </Link>
         ))}
       </div>
- 
+ <BottomMenu />
     </div>
   );
 };

@@ -13,7 +13,7 @@ function EvVəBag () {
       
        
 
-        < Katalog />
+        {/* < Katalog /> */}
         <CreatePostForHomeAndGarden  />
        
     </div>

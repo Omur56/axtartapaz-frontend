@@ -97,9 +97,11 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import "../../styles/scrolbarr.css";
 
 // import Breadcrumb from "../../components/Breadcrumb";
 import { Label } from './../../components/ui/label';
+import BottomMenu from "../../components/MobileMenu";
 
 const Katalog = () => {
   const [activeId, setActiveId] = useState(null);
@@ -138,18 +140,18 @@ const Katalog = () => {
   };
 
   return (
-    <div className="min-w-screen max-w-[400px]  md:max-w-[700px] lg:max-w-[1000px] mx-auto mb-4 mt-20">
+    <div className="min-w-screen max-w-[400px]  md:max-w-[700px] lg:max-w-[1000px] mx-auto mb-4 p-2 " >
       {/* --- Mobil versiya (slider) --- */}
-      <div className="relative block md:hidden mt-6">
+      <div className="relative block md:hidden "  >
         <div
           ref={sliderRef}
-          className="flex gap-4 mt-[70px]   overflow-x-auto overflow-y-hidden scrollbar-hide   scroll-smooth px-4"
+          className="flex  scrollbar-hide gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory"
         >
           {categories.map(({ id, path, icon, bgColor, hover, label }) => (
             <Link
               key={id}
               to={`/katalog/${path}`}
-              className={`relative min-w-[120px] h-[100px] rounded-lg shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover}`}
+              className={`relative min-w-[120px] h-[100px] rounded-[10px] shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover}`}
             >
               {typeof icon === "string" ? (
                 <img
@@ -172,7 +174,7 @@ const Katalog = () => {
           ))}
         </div>
 
-       <button
+       {/* <button
   onClick={scrollLeft}
   className="absolute left-0 top-1/2 -translate-y-1/2 bg-gray-200 rounded-full p-2 z-10 shadow"
 >
@@ -184,7 +186,7 @@ const Katalog = () => {
   className="absolute right-0 top-1/2 -translate-y-1/2 bg-gray-200 rounded-full p-2 z-10 shadow"
 >
   <FontAwesomeIcon icon={faChevronRight} />
-</button>
+</button> */}
 
          
  
@@ -227,6 +229,7 @@ const Katalog = () => {
           );
         })}
       </div>
+      <BottomMenu />
     </div>
   );
 };

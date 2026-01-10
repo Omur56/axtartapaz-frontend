@@ -1,7 +1,7 @@
 import { Outlet, useNavigate } from "react-router";
 import React from "react";
 import Footer from "../Footer";
-import BottomMenu from "../MobileMenu";
+
 import Header from "../Header";
 
 
@@ -27,7 +27,7 @@ const RootLayout = () => {
       </main>
 
       <Footer />
-      <BottomMenu />
+    
     </div>
   );
 };

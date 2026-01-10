@@ -37,12 +37,12 @@ function Header() {
   };
     
   return (
-    <header className="header h-[60px]  p-2   z-50 fixed top-0 bg-[#0f172a] mb-6 w-full" style={{boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'}}>  
+    <header className="header h-[60px]  p-2   z-50 fixed top-0 bg-white mb-6 w-full" style={{boxShadow: '0 4px 4px rgba(0, 0, 0, 0.2)'}}>  
       <div className="flex justify-between   items-center py-4 mx-auto my-auto max-w-[1200px]">
         
       
        
-       <div className="flex h-[20px]  gap-20  items-center">
+       <div className="flex w-full h-[20px]  gap-20  justify-items-center">
          <TitleLogo  />
         <DownNavbar />
       </div>
@@ -63,7 +63,7 @@ function Header() {
       strokeWidth={2}
       onClick={() => setIsFavorite(!isFavorite)}
       className={`cursor-pointer transition-colors duration-200 ${
-        isFavorite ? "text-white" : "text-white"
+        isFavorite ? "text-red-500" : "text-red-500"
       } hover:text-blue-500`}
     />
 
