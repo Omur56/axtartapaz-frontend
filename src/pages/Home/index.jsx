@@ -178,7 +178,7 @@ const Home = () => {
 
   /* ================= RENDER ================= */
   return (
-    <div className="min-h-screen max-w-[1000px] mx-auto mt-[80px] mb-10 p-2">
+    <div className="min-h-screen max-w-[1000px] mx-auto mt-[80px] mb-10">
       {/* SEARCH */}
       <input
         value={query}
@@ -214,7 +214,7 @@ const Home = () => {
       <Katalog />
 
       {/* CARDS (DESIGN SAXLANILIB) */}
-      <div className=" p-4 justify-items-center grid bg-gray-50 grid-cols-2 justify-center items-center sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-6">
+      <div className=" p-4  justify-items-center grid bg-gray-50 grid-cols-2 justify-center items-center sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-6">
         {isLoading
           ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
           : visibleAds.map((item) => (

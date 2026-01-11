@@ -33,7 +33,9 @@ export default function AdsPanel() {
       </div>
 
       {/* Orta məzmun */}
-      <div className="flex-1 ">  </div>
+      <div className="flex-1 ">
+        <Home />
+      </div>
 
       {/* Sağ panel */}
       <div className="w-1/6 sticky top-4 h-screen b p-2">

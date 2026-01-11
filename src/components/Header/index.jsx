@@ -37,7 +37,7 @@ function Header() {
   };
     
   return (
-    <header className="header h-[60px]  p-2   z-50 fixed top-0 bg-white mb-6 w-full" style={{boxShadow: '0 4px 4px rgba(0, 0, 0, 0.2)'}}>  
+    <header className="header h-[60px]  p-2   z-50 fixed top-0 bg-[#FFFFFF] mb-6 w-full border-b border-gray-200" >  
       <div className="flex justify-between   items-center py-4 mx-auto my-auto max-w-[1200px]">
         
       
