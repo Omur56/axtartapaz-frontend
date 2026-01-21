@@ -214,18 +214,18 @@ const Home = () => {
       <Katalog />
 
       {/* CARDS (DESIGN SAXLANILIB) */}
-      <div className=" p-4  justify-items-center grid bg-gray-50 grid-cols-2 justify-center items-center sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-6">
+      <div className="  p-4 justify-items-center grid bg-white grid-cols-2 justify-center items-center sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-6">
         {isLoading
           ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
           : visibleAds.map((item) => (
               <div key={item._id} className="relative">
                 <Link target="_blank" to={`/${item.__type}/${item._id}`}>
-                  <div className="bg-gray-50 w-[185.7px] mb-10 h-[268.6px] sm:w-[268.75px] sm:h-[268.6px] max-w-[240.4px] max-h-[368.8px] rounded-[4px] shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out overflow-hidden">
+                  <div className="bg-gray-50 w-[185.7px] mb-10 h-[280.6px] sm:w-[280.75px] sm:h-[300.6px] max-w-[240.4px] max-h-[368.8px] rounded-[4px] shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out overflow-hidden">
                     {/* ICONS */}
                     
 
                     {/* IMAGE */}
-                    <div className="relative">
+                    <div className="relative ">
                       <div className="absolute mt-1 w-full p-1 top-0 left-0 flex gap-2 ">
                       {item.kredit && (
                         <div className="w-[25px] h-[25px] flex items-center justify-center bg-orange-500 rounded-full text-white">
@@ -240,7 +240,7 @@ const Home = () => {
                     </div>
                     <img
                       src={item.images?.[0] || "/no-image.jpg"}
-                      className="h-[147px] w-full object-cover"
+                      className="h-[170px] w-full object-cover"
                       alt={item.title}
                     />
 

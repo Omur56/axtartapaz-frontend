@@ -42,7 +42,7 @@ function Header() {
         
       
        
-       <div className="flex w-full h-[20px]  gap-20  justify-items-center">
+       <div className="flex w-[100px] h-[20px]  gap-10  justify-items-center">
          <TitleLogo  />
         <DownNavbar />
       </div>
@@ -75,13 +75,13 @@ function Header() {
             <>
           
               <button
-                className="flex hidden md:flex transform ease-in-out w-[80px] h-8 duration-500 items-center text-[10px] font-[500] gap-2 bg-transparent border border-blue-500 text-white hover:text-white px-2 py-2 rounded-[4px] hover:bg-blue-500"
+                className="flex hidden md:flex transform ease-in-out w-[80px] h-8 duration-500 items-center text-[10px] font-[500] gap-2 bg-transparent border border-blue-500 text-blue-500 hover:text-white px-2 py-2 rounded-[4px] hover:bg-blue-500"
                 onClick={() => navigate("/login")}
               >
                 <FaSignInAlt /> Daxil ol
               </button>
               <button
-                className="flex hidden md:flex transform ease-in-out w-[80px] h-8 duration-500 items-center text-[10px] font-[500] gap-2 bg-transparent border border-blue-500 text-white hover:text-white px-2 py-2 rounded-[4px] hover:bg-blue-500"
+                className="flex hidden md:flex transform ease-in-out w-[80px] h-8 duration-500 items-center text-[10px] font-[500] gap-2 bg-transparent border border-blue-500 text-blue-500 hover:text-white px-2 py-2 rounded-[4px] hover:bg-blue-500"
                 onClick={() => navigate("/reqister")}
               >
                 <FaUserPlus /> Qeydiyyat

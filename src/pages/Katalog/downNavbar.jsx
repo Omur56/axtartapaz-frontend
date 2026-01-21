@@ -37,16 +37,16 @@ const DownNavbar = () => {
   return (
     <>
       {/* HEADER */}
-      <nav onClick={scrollTop} className={`mt-[-10px] w-[80px] h-[20px] sm:min-w-[250px] sm:min-h-[40px] rounded-[15px] transition duration-300 hover:border-green-500 border-[3px] flex bg-white  px-4 py-3 relative z-50 ${open ? "border-green-500" : "shadow"}`}>
+      <nav onClick={scrollTop} className={`mt-[-15px]  w-[80px] h-[30px] sm:min-w-[200px] sm:min-h-[40px] rounded-[8px] transition duration-300 hover:border-green-500 border-[1px] flex bg-white  px-2 py-2 relative z-50 ${open ? "border-green-500" : "shadow"}`}>
         <div className="flex items-center max-w-screen-xl mx-auto">
           <button
             onClick={() => setOpen(!open)}
 
             type="button"
 
-            className={`z-0 w-[80px] h-[10px] flex gap-2 text-black sm:min-w-[250px] sm:min-h-[20px] items-center font-medium hover:text-green-500 transition duration-300 ${open ? "text-black" : ""}`}
+            className={`z-0 w-[80px] h-[10px] flex gap-2 text-gray-500   sm:min-w-[250px] sm:min-h-[20px] items-center font-semibold hover:text-green-500 transition duration-300 ${open ? "text-black" : ""}`}
           >
-            <Grip className="text-gray-500" /><span className="hidden md:inline">Bütün kateqoriyalar </span> 
+            <Grip className="text-gray-500" /><span className="hidden md:inline sm:text-[12px]">Bütün kateqoriyalar </span> 
             <ChevronUp className={`absolute right-4 text-green-500 transition-transform duration-300 ${open ? "rotate-0" : "rotate-180"}`} />
           </button>
 

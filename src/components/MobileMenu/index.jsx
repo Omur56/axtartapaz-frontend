@@ -12,7 +12,7 @@ const BottomMenu = () => {
       const currentScrollY = window.scrollY;
 
       if (currentScrollY > lastScrollY + 10) {
-        setShowNavbar(false); // aşağı scroll → gizlət
+        setShowNavbar(true); // aşağı scroll → gizlət
       } else {
         setShowNavbar(true);  // yuxarı scroll → göstər
       }
@@ -26,7 +26,9 @@ const BottomMenu = () => {
 
   return (
     <div
-      className={`md:hidden fixed bottom-0 left-0 w-full h-[63px] bg-white shadow-t-xl flex justify-around items-center z-50 transition-transform duration-300 ${
+      className={`md:hidden fixed bottom-3 max-w-[250px] m-auto left-0 right-0   h-[40px] bg-[#003089]   shadow-box shadow-[0_0_25px_rgba(9,99,219,0.8)] 
+            
+            rounded-[50px]  flex justify-around items-center z-50 transition-transform duration-300 ${
         showNavbar ? "translate-y-0" : "translate-y-full"
       }`}
     >
@@ -42,27 +44,27 @@ const BottomMenu = () => {
           >
             {/* Icon bubble */}
             <div
-              className={`w-[40px] h-[40px] rounded-[8px] flex items-center justify-center mb-1 transition-all duration-300 ${
-                isActive ? "bg-red-500" : "bg-gray-200 hover:bg-blue-100"
+              className={`w-[30px] h-[30px]  rounded-[50px] flex items-center justify-center   transition-all duration-300 ${
+                isActive ? "bg-green-500 transform  transition-all duration-300" : " hover:bg-blue-100"
               }`}
             >
               <Icon
-                size={24}
+                size={20}
                 strokeWidth={1.5}
-                className={`transition-colors duration-300 ${
+                className={`transition-all duration-300 ${
                   isActive ? "text-white" : "text-gray-500"
                 }`}
               />
             </div>
 
             {/* Text */}
-            <span
+            {/* <span
               className={`text-[12px] font-semibold transition-colors duration-300 ${
                 isActive ? "text-red-500" : "text-gray-500 hover:text-blue-500"
               }`}
             >
               {item.text}
-            </span>
+            </span> */}
           </NavLink>
         );
       })}

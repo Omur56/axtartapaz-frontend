@@ -166,7 +166,7 @@ const Katalog = () => {
                   style={{ position: "absolute", bottom: 0, right: 0 }}
                 />
               )}
-              <div className="z-50  w-[110px] h-full mt-0  p-1 flex   rounded-lg">
+              <div className="  w-[110px] h-full mt-0  p-1 flex   rounded-lg">
                 <span className="text-white text-[10px] font-bold">{label}</span>
               </div>
               

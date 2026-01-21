@@ -192,7 +192,7 @@ export default function PostDetailCar() {
     return (
       <div
         key={index}
-        className="relative w-full h-[400px] overflow-hidden cursor-pointer"
+        className="relative max-w-full max-h-[400px] sm:w-full sm:h-[400px] overflow-hidden cursor-pointer"
         onClick={() => openZoom(index)}
       >
         {/* 🔵 Blur background */}
@@ -263,7 +263,7 @@ export default function PostDetailCar() {
         </div>
 
         {/* Right / Contact column */}
-        <div className="bg-gray-50 w-full h-fit sticky top-0 border rounded-xl shadow-md p-5 ">
+        <div className="bg-gray-50  w-full h-fit sticky top-0 border-blue-500 border-2 rounded-[4px] shadow-md p-5 ">
           <div className="w-full h-[20px]  k ">
             <span className="font-bold text-xl">
               {" "}
