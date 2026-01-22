@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import TitleLogo from "../TitleLogo";
 import { FaSignInAlt, FaUserPlus, FaPlus, FaUser, FaSignOutAlt } from "react-icons/fa";
@@ -11,7 +11,7 @@ import DownNavbar from "../../pages/Katalog/downNavbar";
 function Header() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const headerRef = useRef(null);
 
 
 
@@ -35,9 +35,29 @@ function Header() {
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
   };
-    
+  
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        header.classList.add("bg-white/70", "shadow-md");
+        header.classList.remove("bg-white/20", "shadow-none");
+      } else {
+        header.classList.add("bg-white/20", "shadow-none");
+        header.classList.remove("bg-white/70", "shadow-md");
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  
   return (
-    <header className="header h-[60px]  p-2   z-50 fixed top-0 bg-[#FFFFFF] mb-6 w-full border-b border-gray-200" >  
+    <header ref={headerRef} className="header h-[60px]  p-2   z-50 fixed top-0 backdrop-blur-md bg-white/10 text-gray-800 shadow-none  transition-all duration-300 mb-6 w-full border-b border-gray-200" >  
       <div className="flex justify-between   items-center py-4 mx-auto my-auto max-w-[1200px]">
         
       

@@ -59,6 +59,15 @@ function Footer() {
             <img className="w-6 h-6" src="/assets/SocialMediaIcon/telephoneicon.png" />
             +994 55 913 80 99
           </a>
+          Çalışma saatları: Hər gün 09:00 - 18:00
+          <a
+            className="text-gray-400  text-sm flex items-center gap-2 hover:underline hover:text-sky-400"
+            href="emailto:omur199624@gmail.com"
+          >
+            <img className="w-6 h-6" src="/assets/SocialMediaIcon/icons8-gmail-48.png" />
+            omur199624@gmail.com
+          </a>
+          <p className="text-gray-400 text-sm">Site by<span className="text-[#43D262] text-wrap font-bold"> Ömürxan Abdullayev</span></p>
         </div>
       </div>
 

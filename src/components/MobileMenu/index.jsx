@@ -1,36 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import menuItems from "../SideBarMenu/data"; // menuItems içində yalnız component saxla
 
 const BottomMenu = () => {
   const [showNavbar, setShowNavbar] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollY = useRef(0); // state əvəzinə ref
   const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      if (currentScrollY > lastScrollY + 10) {
-        setShowNavbar(true); // aşağı scroll → gizlət
-      } else {
-        setShowNavbar(true);  // yuxarı scroll → göstər
+      if (currentScrollY > lastScrollY.current + 10) {
+        setShowNavbar(false); // aşağı scroll → gizlət
+      } else if (currentScrollY < lastScrollY.current - 10) {
+        setShowNavbar(true); // yuxarı scroll → göstər
       }
 
-      setLastScrollY(currentScrollY);
+      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll);
+
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []); // dependency array boş → listener yalnız mount/unmount
 
   return (
     <div
-      className={`md:hidden fixed bottom-5 min-w-[200px] m-auto left-0 right-0   h-[50px] bg-[#003089]   shadow-box shadow-[0_0_25px_rgba(9,99,219,0.8)] 
-            
-            rounded-[50px]  flex justify-around items-center z-50 transition-transform duration-300 ${
-        showNavbar ? "translate-y-0" : "translate-y-full"
-      }`}
+      className={`md:hidden fixed bottom-3 min-w-[150px] m-auto left-0 right-0 h-[50px] 
+        bg-white/20 backdrop-blur-md shadow-md shadow-blue-400/50
+        rounded-[50px] flex justify-around items-center z-50
+        transition-transform duration-300 ${
+          showNavbar ? "translate-y-0" : "translate-y-full"
+        }`}
     >
       {menuItems.slice(0, 5).map((item) => {
         const Icon = item.icon; // component-i al
@@ -44,8 +46,10 @@ const BottomMenu = () => {
           >
             {/* Icon bubble */}
             <div
-              className={`w-[30px] h-[30px]  rounded-[50px] flex items-center justify-center   transition-all duration-300 ${
-                isActive ? "bg-green-500 transform  transition-all duration-300" : " hover:bg-blue-100"
+              className={`w-[30px] h-[30px] rounded-[50px] flex items-center justify-center transition-all duration-300 ${
+                isActive
+                  ? "bg-green-500 transform transition-all duration-300"
+                  : "hover:bg-blue-100"
               }`}
             >
               <Icon
@@ -57,7 +61,7 @@ const BottomMenu = () => {
               />
             </div>
 
-            {/* Text */}
+            {/* Text (opsional) */}
             {/* <span
               className={`text-[12px] font-semibold transition-colors duration-300 ${
                 isActive ? "text-red-500" : "text-gray-500 hover:text-blue-500"
