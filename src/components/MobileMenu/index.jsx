@@ -12,7 +12,7 @@ const BottomMenu = () => {
       const currentScrollY = window.scrollY;
 
       if (currentScrollY > lastScrollY + 10) {
-        setShowNavbar(false); // aşağı scroll → gizlət
+        setShowNavbar(true); // aşağı scroll → gizlət
       } else {
         setShowNavbar(true);  // yuxarı scroll → göstər
       }
@@ -26,7 +26,7 @@ const BottomMenu = () => {
 
   return (
     <div
-      className={`md:hidden fixed bottom-0 min-w-[280px] m-auto left-0 right-0   h-[50px] bg-[#003089]   shadow-box shadow-[0_0_25px_rgba(9,99,219,0.8)] 
+      className={`md:hidden fixed bottom-5 min-w-[200px] m-auto left-0 right-0   h-[50px] bg-[#003089]   shadow-box shadow-[0_0_25px_rgba(9,99,219,0.8)] 
             
             rounded-[50px]  flex justify-around items-center z-50 transition-transform duration-300 ${
         showNavbar ? "translate-y-0" : "translate-y-full"

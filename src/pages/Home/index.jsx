@@ -220,7 +220,7 @@ const Home = () => {
           : visibleAds.map((item) => (
               <div key={item._id} className="relative">
                 <Link target="_blank" to={`/${item.__type}/${item._id}`}>
-                  <div className="bg-gray-50 w-[185.7px] mb-10 h-[280.6px] sm:w-[280.75px] sm:h-[300.6px] max-w-[240.4px] max-h-[368.8px] rounded-[4px] shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out overflow-hidden">
+                  <div className="bg-white w-[185.7px] mb-10 h-[280.6px] sm:w-[280.75px] sm:h-[300.6px] max-w-[240.4px] max-h-[368.8px] rounded-[4px] shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out overflow-hidden">
                     {/* ICONS */}
                     
 
