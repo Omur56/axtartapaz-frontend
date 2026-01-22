@@ -12,7 +12,7 @@ const BottomMenu = () => {
       const currentScrollY = window.scrollY;
 
       if (currentScrollY > lastScrollY + 10) {
-        setShowNavbar(true); // aşağı scroll → gizlət
+        setShowNavbar(false); // aşağı scroll → gizlət
       } else {
         setShowNavbar(true);  // yuxarı scroll → göstər
       }
