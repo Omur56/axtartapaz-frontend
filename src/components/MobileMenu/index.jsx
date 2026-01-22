@@ -27,7 +27,7 @@ const BottomMenu = () => {
 
   return (
     <div
-      className={`md:hidden fixed bottom-3 max-w-[340px] m-auto left-0 right-0 h-[50px] 
+      className={`md:hidden fixed bottom-3 max-w-[340px] m-auto left-0 right-0 h-[60px] 
         bg-white/20 backdrop-blur-md shadow-md shadow-blue-400/50
         rounded-[50px] flex justify-around items-center z-50
         transition-transform duration-300 ${
