@@ -59,7 +59,8 @@ function Footer() {
             <img className="w-6 h-6" src="/assets/SocialMediaIcon/telephoneicon.png" />
             +994 55 913 80 99
           </a>
-          Çalışma saatları: Hər gün 09:00 - 18:00
+          İş saatları: 
+          Hər gün 09:00 - 18:00
           <a
             className="text-gray-400  text-sm flex items-center gap-2 hover:underline hover:text-sky-400"
             href="emailto:omur199624@gmail.com"
