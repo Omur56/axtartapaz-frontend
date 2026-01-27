@@ -15,8 +15,8 @@ function Footer() {
         </div>
 
         {/* Links */}
-        <div className="text-gray-400 flex justify-center w-full">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 text-center">
+        <div className="text-gray-400  sm:max-h-[80px] flex justify-center w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 text-center sm:max-h-[20px]">
             <Link className="hover:text-[#43D262] hover:underline" to="/about">
               Haqqımızda
             </Link>
