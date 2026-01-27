@@ -51,7 +51,7 @@ const AdCard = ({ item, favorites, toggleFavorite }) => {
   const getCurrentTime = (d) => new Date(d).toTimeString().slice(0, 5);
 
   return (
-    <div className="relative w-[220px] h-[380px]">
+    <div className="relative w-[130px] h-[380px]  sm:w-[220px] md:w-[220px] lg:w-[220px] xl:w-[220px]  rounded-xl   transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
       
       <Link target="_blank" to={`/${item.__type}/${item._id}`}>
      <div className=" w-full sm:w-[220px] md:w-[220px] lg:w-[220px] xl:w-[220px] h-[380px] rounded-xl   transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col relative">
@@ -191,7 +191,7 @@ const AdCard = ({ item, favorites, toggleFavorite }) => {
       {/* FAVORITE */}
       <button
         onClick={() => toggleFavorite(item)}
-        className=" absolute z-10 top-2 right-2 p-1 transition duration-300 ease-in-out"
+        className=" absolute z-10 top-2 right-2  p-1 transition duration-300 ease-in-out"
         
       >
         <Heart
