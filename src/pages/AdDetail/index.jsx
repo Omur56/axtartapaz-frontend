@@ -46,7 +46,7 @@ export default function AdDetail() {
     "Ev və Mebel": "household",
     Elektronika: "electronika",
     Aksesuar: "accessories",
-    "Home & Garden": "homGarden",
+    "Home & Garden": "homeGarden",
     "Köhnə daşınmaz əmlak": "realEstate",
   };
 
@@ -94,16 +94,21 @@ export default function AdDetail() {
 const handleDelete = async (ad) => {
   if (!window.confirm("Bu elanı silmək istədiyinizdən əminsiniz?")) return;
 
-  try {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  const modelName = modelMap[ad.category];
 
-    // UUID / custom id ilə DELETE request
-    await axios.delete(`${process.env.REACT_APP_API_URL}/api/${ad.category}/${ad.id}`, {
+  if (!modelName) {
+    alert(`Model undefined (${ad.category}), silmək mümkün deyil`);
+    return;
+  }
+
+  try {
+    await axios.delete(`${process.env.REACT_APP_API_URL}/api/${modelName}/${ad._id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
     alert("Elan uğurla silindi!");
-    window.location.reload(); // və ya navigate("/profile") ilə yönləndir
+    window.location.reload(); // və ya navigate("/profile")
   } catch (err) {
     console.error("Elan silinmədi:", err.response?.data || err);
     alert("Elan silinərkən xəta baş verdi!");
@@ -246,7 +251,7 @@ const handleDelete = async (ad) => {
           )}
 
           <div className="flex justify-between text-sm text-gray-500 mt-4">
-            <p>Elanın nömrəsi: {ad.id}</p>
+            <p>Elanın nömrəsi: {ad._id}</p>
             <p>
               {ad.location}, {formatDate(ad.createdAt)}, {getCurrentTime(ad.createdAt)}
             </p>

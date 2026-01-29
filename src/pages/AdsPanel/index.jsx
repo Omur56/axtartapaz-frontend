@@ -6,7 +6,7 @@ export default function AdsPanel() {
 
   const fetchAds = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/ads`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/ads/`);
       setAds(res.data);
     } catch (err) {
       console.error("Reklamları gətirərkən xəta:", err);

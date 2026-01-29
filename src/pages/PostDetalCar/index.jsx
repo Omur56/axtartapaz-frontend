@@ -6,7 +6,8 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { X, MapPin, Phone, MessageCircleMore } from "lucide-react";
 import { Box, LinearProgress, Avatar } from "@mui/material";
 import { Percent, RefreshCcw, CarFront   } from "lucide-react";
-
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import { Link as MuiLink} from '@mui/material/Link';
 
 export default function PostDetailCar() {
   const { id } = useParams();
@@ -154,8 +155,16 @@ export default function PostDetailCar() {
 
   const openZoom = (index) => setZoomIndex(index);
 
+
+  // sayt xeritesi 
+function handleClick(event) {
+  event.preventDefault();
+  console.info('You clicked a breadcrumb.');
+}
   return (
     <div className="max-w-6xl min-h-screen mx-auto ">
+
+
       {/* Back button */}
       <Link to="/Katalog/Nəqliyyat" className="p-4 ">
         <button className="flex items-center gap-2 mt-12 mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
@@ -174,6 +183,29 @@ export default function PostDetailCar() {
           Geri
         </button>
       </Link>
+
+      <div role="presentation" onClick={handleClick}>
+      <Breadcrumbs aria-label="breadcrumb">
+        <Link underline="hover" color="inherit" href="/">
+          Ana Səhifə
+        </Link>
+        <Link
+          underline="hover"
+          color="inherit"
+          href="/cars"
+        >
+          Nəqliyyat
+        </Link>
+        <Link
+          underline="hover"
+          color="text.primary"
+          href="/cars/id"
+          aria-current="page"
+        >
+          {post.category} {post.brand} {post.model}
+        </Link>
+      </Breadcrumbs>
+    </div>
 
       {/* Main content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-white shadow-lg rounded-xl sm:p-6 ">

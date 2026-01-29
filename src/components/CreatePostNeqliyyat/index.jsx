@@ -9,7 +9,8 @@ import Box from "@mui/material/Box";
 import confetti from "canvas-confetti";
 import Checkbox from '@mui/material/Checkbox';
 import { RefreshCcw, Percent, MapPin } from "lucide-react";
-
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import { Link as MuiLink } from '@mui/material';
 
 
 export default function CreatePost() {
@@ -22,6 +23,8 @@ const [checked, setChecked] = React.useState(true);
  const [price, setPrice] = useState("");
  const [mainImageIndex, setMainImageIndex] = useState(null)
  
+
+
   const [form, setForm] = useState({
     id: Date.now(),
     category: "",
@@ -408,10 +411,21 @@ if (mainImageIndex !== null) {
     }
     setIsOpen(true);
   };
+
+function handleClick(event) {
+  event.preventDefault();
+ 
+}
+
   return (
     <div className="min-h-screen ">
       <div className="p-6 max-w-5xl mx-auto">
         <div className="w-full justify-center  mx-auto my-auto max-w-[700px] min-w-[200px]">
+
+
+
+
+
           <div className="relative">
             <input
               className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
@@ -461,7 +475,29 @@ if (mainImageIndex !== null) {
           </button>
         </Link>
         <h2 className="text-2xl font-bold mb-4">Yeni Nəqliyyat Elanı</h2>
-
+<div role="presentation" onClick={handleClick}>
+      <Breadcrumbs aria-label="breadcrumb">
+        <Link underline="hover" color="inherit" href="/">
+          Ana Səhifə
+        </Link>
+        <Link
+          underline="hover"
+          color="inherit"
+          href="/Katalog"
+        >
+         Katalog
+         
+        </Link>
+        <Link
+          underline="hover"
+          color="inherit"
+          href="/Nəqliyyat"
+        >
+          Nəqliyyat
+        </Link>
+      
+      </Breadcrumbs>
+    </div>
         <div className="p-4">
           <button
             onClick={handleOpenForm}

@@ -57,7 +57,7 @@ function Header() {
 
   
   return (
-    <header ref={headerRef} className="header h-[60px]  p-2   z-50 fixed top-0 backdrop-blur-md bg-white/10 text-gray-800 shadow-none  transition-all duration-300 mb-6 w-full border-b border-gray-200" >  
+    <header ref={headerRef} className="header h-[60px]  p-2   z-50 fixed top-0 backdrop-blur-md bg-white/10 text-gray-800 shadow-none  transition-all duration-300 mb-6 w-full  " >  
       <div className="flex justify-between   items-center py-4 mx-auto my-auto max-w-[1200px]">
         
       

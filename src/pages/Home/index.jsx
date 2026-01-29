@@ -9,11 +9,20 @@ import Katalog from "../Katalog/index";
 import Swal from "sweetalert2";
 import { User } from "lucide-react";
 import { Mail } from "lucide-react";
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Button from '@mui/material/Button';
+import {Link as MuiLink} from '@mui/material/Link';
+
 
 // ==================== CONSTANTS ====================
 
 const ITEMS_PER_LOAD = 8;
 
+
+  function handleClick(event) {
+  event.preventDefault();
+  console.info('You clicked a breadcrumb.');
+}
 
 const CATEGORIES = {
   cars: "/api/cars",
@@ -51,8 +60,10 @@ const AdCard = ({ item, favorites, toggleFavorite }) => {
   const getCurrentTime = (d) => new Date(d).toTimeString().slice(0, 5);
 
   return (
-    <div className="relative w-[200px] h-[380px] max-w-[240px]  sm:w-[220px] md:w-[220px] lg:w-[220px] xl:w-[220px]  rounded-xl   transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
+    <div className="relative  w-[200px] h-[380px] max-w-[240px]  sm:w-[220px] md:w-[220px] lg:w-[220px] xl:w-[220px]  rounded-xl   transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
       
+    
+
       <Link target="_blank" to={`/${item.__type}/${item._id}`}>
      <div className=" w-full max-w-[240px] sm:w-[220px] md:w-[220px] lg:w-[220px] xl:w-[220px] h-[380px] rounded-xl   transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col relative">
   {/* ICONS */}
@@ -70,7 +81,7 @@ const AdCard = ({ item, favorites, toggleFavorite }) => {
   </div>
 
   {/* IMAGE */}
-  <div className="relative w-[220px] h-[150px] overflow-hidden rounded">
+  <div className="relative w-[200px] h-[150px] overflow-hidden rounded">
     <div className="w-full h-full overflow-hidden rounded-[10px]">
     <img
       src={item.images?.[0] || "/no-image.jpg"}
@@ -87,7 +98,7 @@ const AdCard = ({ item, favorites, toggleFavorite }) => {
   </div>
 
   {/* CONTENT */}
-  <div className="flex-1 p-2  h-[150px] flex flex-col justify-between">
+  <div className="flex-1 p-2  h-[150px] flex flex-col">
     
       <h3 className="font-bold text-base sm:text-lg truncate-overflow">
         {item.price} AZN ₼
@@ -191,13 +202,14 @@ const AdCard = ({ item, favorites, toggleFavorite }) => {
       {/* FAVORITE */}
       <button
         onClick={() => toggleFavorite(item)}
-        className=" absolute z-10 top-2 right-2  p-1 transition duration-300 ease-in-out"
+        className=" absolute z-10 top-2 right-5 w-8 h-8 flex items-center justify-center  p-1 transition duration-300 ease-in-out"
         
       >
         <Heart
           size={22}
           fill={favorites.some((f) => f._id === item._id) ? "red" : "none"}
           color="#fff"
+          className="drop-shadow-lg w-6 h-6 bg-black/20 rounded-full p-1" 
         />
       </button>
     </div>
@@ -369,11 +381,22 @@ const Home = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, [allAds.length, visibleCount]);
 
+
+
+ 
   /* ================= RENDER ================= */
   return (
     <div className="min-h-screen max-w-[1200px] mx-auto mt-[80px] mb-10 p-2">
+      <div role="presentation" onClick={handleClick}>
+      <Breadcrumbs aria-label="breadcrumb">
+        <Link underline="hover" color="inherit" href="*" to="/">
+          Ana Səhifə
+        </Link>
+        
+      </Breadcrumbs>
+    </div>
       {/* SEARCH */}
-      <input className="border border border-gray-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition mb-6"
+      <input className="border mt-6 border-gray-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition mb-6"
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -398,7 +421,7 @@ const Home = () => {
         <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-5 gap-4 mb-6">
           {results.map((item) => (
             <Link key={item._id} to={`/ads/${item.source}/${item._id}`}>
-              <div className="border rounded-[10px] shadow w-full h-[320px] rounded-[10px] bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
+              <div className="border border-gray-300 shadow w-full h-[320px] rounded-[10px] bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
                
                 <img
                   src={item.images?.[0] || "/no-image.jpg"}
@@ -428,7 +451,9 @@ const Home = () => {
 
 
       {/* MAIN CARDS */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+      <div className="grid justify-items-center grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+
+        
         {isLoading
           ? Array.from({ length: ITEMS_PER_LOAD }).map((_, i) => (
               <SkeletonCard key={i} />
@@ -442,7 +467,8 @@ const Home = () => {
               />
             ))}
       </div>
-    
+   
+  
 
       <BottomMenu />
     </div>
