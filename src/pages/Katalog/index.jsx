@@ -140,13 +140,13 @@ const Katalog = ({ className, width, height, marginTop }) => {
   };
 
   return (
-    <div className={`${className} flex flex-col gap-4 justify-items-center max-h-[300px]    md:max-w-[700px] lg:max-w-[1000px] mx-auto  p-2 `}
+    <div className={`${className} flex flex-col gap-4  justify-items-center max-h-[300px]    md:max-w-[700px] lg:max-w-[1000px] mx-auto  p-2 `}
     style={{ width: width || "100%", height: height || "100px", marginTop: marginTop  || "20%" }} >
       {/* --- Mobil versiya (slider) --- */}
       <div className="relative block md:hidden "  >
         <div
           ref={sliderRef}
-          className=" scrollbar-hide gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory grid grid-cols-2 auto-cols-[120px] "
+          className=" scrollbar-hide justify-items-center gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory grid grid-cols-2 auto-cols-[120px] "
         >
           {categories.map(({ id, path, icon, bgColor, hover, label }) => (
             <Link
@@ -223,7 +223,7 @@ const Katalog = ({ className, width, height, marginTop }) => {
                   )}
                  
                   </div>
-                   <p className="z-50 left-2 absolute p-1  mt-[-40px] color:red text-[10px] text-white font-bold">{cat.label}</p>
+                   <p className="z-50 left-2 absolute p-1  mt-[-40px]  color:red text-[10px] text-white font-bold">{cat.label}</p>
                 </button>
                
               </div>

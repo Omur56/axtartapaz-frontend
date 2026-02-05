@@ -246,9 +246,10 @@ export default function Login({ onLogin }) {
           </Link>
         </div>
       </form>
-      <BottomMenu />
+      
     </div>
     </BubbleBackground>
+    <BottomMenu />
     </div>
   );
 }

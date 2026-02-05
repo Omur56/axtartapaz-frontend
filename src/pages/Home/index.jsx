@@ -699,7 +699,7 @@ const Home = () => {
       <Katalog   className="mt-1" width="100%" height="500px" marginTop="10px"  />
 
       {/* CARDS (DESIGN SAXLANILIB) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-6 justify-items-center">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-[180px] sm:mt-[20px] md:mt-[20px] lg:mt-[20px] xl:mt-[20px] 2xl:mt-[20px] justify-items-center">
   {isLoading
     ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
     : visibleAds.map((item) => (
