@@ -140,59 +140,57 @@ const Katalog = ({ className, width, height, marginTop }) => {
   };
 
   return (
-    <div className={`${className} flex flex-col gap-4  justify-items-center max-h-[300px]    md:max-w-[700px] lg:max-w-[1000px] mx-auto  p-2 `}
+    <div className={`${className} filex flex-col md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4  justify-items-center max-h-[300px]    md:max-w-[700px] lg:max-w-[1000px] mx-auto  p-2 `}
     style={{ width: width || "100%", height: height || "100px", marginTop: marginTop  || "20%" }} >
       {/* --- Mobil versiya (slider) --- */}
-      <div className="relative block md:hidden "  >
-        <div
-          ref={sliderRef}
-          className=" scrollbar-hide justify-items-center gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory grid grid-cols-2 auto-cols-[120px] "
-        >
-          {categories.map(({ id, path, icon, bgColor, hover, label }) => (
-            <Link
-              key={id}
-              to={`/katalog/${path}`}
-              className={`relative min-w-[20px] h-[100px] max-w-[120px] rounded-[10px] shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover}`}
-            >
-              {typeof icon === "string" ? (
-                <img
-                  src={icon}
-                  alt=""
-                  className="w-[110px] h-[80px]"
-                  style={{ position: "absolute", bottom: 0, right: 0 }}
-                />
-              ) : (
-                <icon
-                  className="w-[50px] h-[50px] text-white"
-                  style={{ position: "absolute", bottom: 0, right: 0 }}
-                />
-              )}
-              <div className="justify-items-start text-start  w-[110px] h-full mt-0  p-1 flex   rounded-lg">
-                <span className="text-white justify-items-start text-[10px] font-bold">{label}</span>
-              </div>
-              
-            </Link>
-          ))}
-        </div>
-
-       {/* <button
-  onClick={scrollLeft}
-  className="absolute left-0 top-1/2 -translate-y-1/2 bg-gray-200 rounded-full p-2 z-10 shadow"
->
-  <FontAwesomeIcon icon={faChevronLeft} />
-</button>
-
-<button
-  onClick={scrollRight}
-  className="absolute right-0 top-1/2 -translate-y-1/2 bg-gray-200 rounded-full p-2 z-10 shadow"
->
-  <FontAwesomeIcon icon={faChevronRight} />
-</button> */}
-
-         
- 
-
+      <div
+      className="relative block md:hidden mx-auto p-2  "
+      style={{ width: width || "100%", height: height || "150px", marginTop: marginTop || "20px" }}
+    >
+      {/* Slider container */}
+      <div
+        ref={sliderRef}
+        className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory"
+      >
+        {categories.map(({ id, path, icon, bgColor, hover, label }) => (
+          <Link
+            key={id}
+            to={`/katalog/${path}`}
+            className={`relative min-w-[100px] max-w-[120px] h-[120px] rounded-[10px] shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover} snap-start`}
+          >
+            {typeof icon === "string" ? (
+              <img
+                src={icon}
+                alt=""
+                className="w-[100px] h-[80px] object-cover absolute bottom-0 right-0"
+              />
+            ) : (
+              <icon
+                className="w-[50px] h-[50px] text-white absolute bottom-0 right-0"
+              />
+            )}
+            <div className="w-full text-start p-1 flex items-start rounded-lg">
+              <span className="text-white text-[10px] font-bold">{label}</span>
+            </div>
+          </Link>
+        ))}
       </div>
+
+      {/* Scroll buttons */}
+      {/* <button
+        onClick={scrollLeft}
+        className="absolute left-1 top-1/2 -translate-y-1/2 bg-gray-200/80 hover:bg-gray-300 rounded-full p-2 z-10 shadow transition"
+      >
+        <FontAwesomeIcon icon={faChevronLeft} />
+      </button>
+
+      <button
+        onClick={scrollRight}
+        className="absolute right-1 top-1/2 -translate-y-1/2 bg-gray-200/80 hover:bg-gray-300 rounded-full p-2 z-10 shadow transition"
+      >
+        <FontAwesomeIcon icon={faChevronRight} />
+      </button> */}
+    </div>
 
       {/* --- Desktop versiya (grid) --- */}
       <div className="hidden top-[100px] min-h-[200px] w-full md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
@@ -223,7 +221,7 @@ const Katalog = ({ className, width, height, marginTop }) => {
                   )}
                  
                   </div>
-                   <p className="z-50 left-2 absolute p-1  mt-[-40px]  color:red text-[10px] text-white font-bold">{cat.label}</p>
+                   <p className="z-50 left-2 absolute p-1  mt-[40px]  color:red text-[10px] text-white font-bold">{cat.label}</p>
                 </button>
                
               </div>
