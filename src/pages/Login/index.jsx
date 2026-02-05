@@ -21,7 +21,6 @@
 //           password,
 //         }
 
-        
 //       );
 
 //       // Token və user məlumatlarını localStorage-a yaz
@@ -138,7 +137,6 @@
 //   );
 // }
 
-
 import { useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
@@ -146,6 +144,7 @@ import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import BottomMenu from "../../components/MobileMenu";
+import BubbleBackground from "../../components/ui/BubbleBackground";
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -156,14 +155,19 @@ export default function Login({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, { email, password });
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/login`,
+        { email, password },
+      );
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", res.data.userId);
       localStorage.setItem("username", res.data.username);
       navigate("/profile");
     } catch (err) {
       if (err.response?.status === 400 || err.response?.status === 401) {
-        Swal.fire("Email və ya şifrə səhvdir. Zəhmət olmasa düzgün daxil edin.");
+        Swal.fire(
+          "Email və ya şifrə səhvdir. Zəhmət olmasa düzgün daxil edin.",
+        );
       } else {
         Swal.fire("Xəta baş verdi. Zəhmət olmasa bir azdan yenidən cəhd edin.");
       }
@@ -171,13 +175,21 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 px-4">
+    <div className="w-full h-screen">
+       <BubbleBackground>
+    <div className="min-h-screen flex items-center justify-center  px-4">
+
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8 space-y-6 animate-fade-in"
       >
-        <h2 className="text-3xl font-bold text-center text-gray-800 tracking-wide">Xoş Gəlmisiniz</h2>
-        <p className="text-center text-gray-600 text-sm">Hesabınıza daxil olun və davam edin</p>
+        <BubbleBackground interactive={true} />
+        <h2 className="text-3xl font-bold text-center text-gray-800 tracking-wide">
+          Xoş Gəlmisiniz
+        </h2>
+        <p className="text-center text-gray-600 text-sm">
+          Hesabınıza daxil olun və davam edin
+        </p>
 
         {/* Email */}
         <div className="flex flex-col">
@@ -192,23 +204,23 @@ export default function Login({ onLogin }) {
         </div>
 
         {/* Şifrə */}
-         <div className="flex flex-col relative">
-  <label className="mb-1 font-medium text-gray-700">Şifrə</label>
-  <input
-    type={showPassword ? "text" : "password"}
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-    placeholder="Şifrə"
-    className="border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-  />
-  <button
-    type="button"
-    onClick={() => setShowPassword(!showPassword)}
-    className="absolute right-3 top-1/2 transform -translate-y-1/8 text-gray-600 hover:text-gray-900"
-  >
-    <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
-  </button>
-</div>
+        <div className="flex flex-col relative">
+          <label className="mb-1 font-medium text-gray-700">Şifrə</label>
+          <input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Şifrə"
+            className="border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/8 text-gray-600 hover:text-gray-900"
+          >
+            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+          </button>
+        </div>
 
         {/* Giriş düyməsi */}
         <button
@@ -220,11 +232,23 @@ export default function Login({ onLogin }) {
 
         {/* Qeydiyyat və şifrə */}
         <div className="flex justify-between text-sm text-gray-700">
-          <Link to="/forgot-password" className="hover:underline hover:text-purple-800">Şifrəni unutdum?</Link>
-          <Link to="/reqister" className="hover:underline hover:text-purple-800">Qeydiyyatdan keçin</Link>
+          <Link
+            to="/forgot-password"
+            className="hover:underline hover:text-purple-800"
+          >
+            Şifrəni unutdum?
+          </Link>
+          <Link
+            to="/reqister"
+            className="hover:underline hover:text-purple-800"
+          >
+            Qeydiyyatdan keçin
+          </Link>
         </div>
       </form>
       <BottomMenu />
+    </div>
+    </BubbleBackground>
     </div>
   );
 }

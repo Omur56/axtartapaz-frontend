@@ -103,7 +103,7 @@ import "../../styles/scrolbarr.css";
 import { Label } from './../../components/ui/label';
 import BottomMenu from "../../components/MobileMenu";
 
-const Katalog = () => {
+const Katalog = ({ className, width, height, marginTop }) => {
   const [activeId, setActiveId] = useState(null);
   const navigate = useNavigate();
   const sliderRef = useRef(null);
@@ -140,18 +140,19 @@ const Katalog = () => {
   };
 
   return (
-    <div className="min-w-screen max-w-[400px]  md:max-w-[700px] lg:max-w-[1000px] mx-auto mb-4 p-2 " >
+    <div className={`${className} flex flex-col gap-4 justify-items-center max-h-[300px]    md:max-w-[700px] lg:max-w-[1000px] mx-auto  p-2 `}
+    style={{ width: width || "100%", height: height || "100px", marginTop: marginTop  || "20%" }} >
       {/* --- Mobil versiya (slider) --- */}
       <div className="relative block md:hidden "  >
         <div
           ref={sliderRef}
-          className="flex  scrollbar-hide gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory"
+          className=" scrollbar-hide gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory grid grid-cols-2 auto-cols-[120px] "
         >
           {categories.map(({ id, path, icon, bgColor, hover, label }) => (
             <Link
               key={id}
               to={`/katalog/${path}`}
-              className={`relative min-w-[120px] h-[100px] rounded-[10px] shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover}`}
+              className={`relative min-w-[20px] h-[100px] max-w-[120px] rounded-[10px] shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover}`}
             >
               {typeof icon === "string" ? (
                 <img
@@ -166,8 +167,8 @@ const Katalog = () => {
                   style={{ position: "absolute", bottom: 0, right: 0 }}
                 />
               )}
-              <div className="  w-[110px] h-full mt-0  p-1 flex   rounded-lg">
-                <span className="text-white text-[10px] font-bold">{label}</span>
+              <div className="justify-items-start text-start  w-[110px] h-full mt-0  p-1 flex   rounded-lg">
+                <span className="text-white justify-items-start text-[10px] font-bold">{label}</span>
               </div>
               
             </Link>
@@ -194,13 +195,13 @@ const Katalog = () => {
       </div>
 
       {/* --- Desktop versiya (grid) --- */}
-      <div className="hidden  md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
+      <div className="hidden top-[100px] min-h-[200px] w-full md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
         {categories.map((cat) => {
           return (
             <Link
               key={cat.id}
               onClick={() => handleCategoryClick(cat.id, cat.path)}
-              className="w-[100px] text-center"
+              className="w-[150px] h-[90px] text-center"
             >
               <div className="mt-4 ">
                 <button
@@ -220,8 +221,9 @@ const Katalog = () => {
                   ) : (
                     <cat.icon className="w-[50px] h-[50px] text-white" />
                   )}
-                  <p className="z-50 absolute p-1  mt-[-40px] color:red text-[10px] text-white font-bold">{cat.label}</p>
+                 
                   </div>
+                   <p className="z-50 left-2 absolute p-1  mt-[-40px] color:red text-[10px] text-white font-bold">{cat.label}</p>
                 </button>
                
               </div>

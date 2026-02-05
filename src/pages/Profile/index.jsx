@@ -37,9 +37,11 @@ export default function Profile() {
   };
 
   const fetchMyAds = async () => {
+    console.log("API:", process.env.REACT_APP_API_URL);
     try {
       const res = await axios.get(
         `${process.env.REACT_APP_API_URL}/api/my-announcements`,
+        
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -47,15 +49,20 @@ export default function Profile() {
       setMyAds(res.data);
     } catch (err) {
       console.error("Elanları gətirərkən xəta:", err);
+      console.error("STATUS:", err.response?.status);
+  console.error("DATA:", err.response?.data);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchUser();
-    fetchMyAds();
-  }, []);
+useEffect(() => {
+  const init = async () => {
+    await fetchUser();
+    await fetchMyAds();
+  };
+  init();
+}, []);
 
   const modelMap = {
     homGarden: "homGarden",
@@ -99,12 +106,18 @@ export default function Profile() {
     try {
       console.log("Silinəcək ID:", ad._id, "MODEL:", ad.modelName);
 
+      // await axios.delete(
+      //   `http://localhost:10000/api/${ad.modelName}/${ad._id}`,
+      //   {
+      //     headers: { Authorization: `Bearer ${token}` },
+      //   }
+      // );
       await axios.delete(
-        `http://localhost:10000/api/${ad.modelName}/${ad._id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+  `${process.env.REACT_APP_API_URL}/api/announcements/${ad._id}`,
+  {
+    headers: { Authorization: `Bearer ${token}` },
+  }
+);
 
       // UI-dən sil
       setMyAds((prev) => prev.filter((a) => a._id !== ad._id));

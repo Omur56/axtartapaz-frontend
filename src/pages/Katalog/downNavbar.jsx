@@ -15,15 +15,15 @@ const DownNavbar = () => {
   const [open, setOpen] = useState(false);
 
   const categories = [
-    { id: 0, icon: List ,   name: "Bütün katalog", path: "/Katalog" },
-    { id: 1, icon: Car1 , name: "Nəqliyyat", path: "Katalog/Nəqliyyat" },
-    { id: 2, icon: EvBag  , name: "Ev və Bağ üçün", path: "/Katalog/Ev_veBag" },
-    { id: 3, icon: Elektronika , name: "Elektronika", path: "/Katalog/Elektronika" },
-    { id: 4, icon: Ehtiyyat , name: "Ehtiyyat hissələri", path: "/Katalog/Ehtiyyat_hissələri_ve_aksesuarlar" },
-    { id: 5, icon: Dasinmaz , name: "Daşınmaz əmlak", path: "/Katalog/Daşınmaz_əmlak" },
-    { id: 6, icon: Meiset , name: "Məişət Texnikası", path: "/Katalog/Məişət_Texnikası" },
-    { id: 7, icon: Telefon , name: "Telefonlar", path: "/Katalog/Telefonlar" },
-    { id: 8, icon: Geyim , name: "Geyimlər", path: "/Katalog/Geyimlər" },
+    { id: 0, icon: List , iconSize: "w-20 h-20", bg: "bg-red-200", textColor: "text-[#FF0000]", name: "Bütün katalog", path: "/Katalog" },
+    { id: 1, icon: Car1 , bg: "bg-green-500", textColor: "text-white", name: "Nəqliyyat", path: "Katalog/Nəqliyyat" },
+    { id: 2, icon: EvBag  , bg: "bg-yellow-500", textColor: "text-white", name: "Ev və Bağ üçün", path: "/Katalog/Ev_veBag" },
+    { id: 3, icon: Elektronika , bg: "bg-blue-600",textColor: "text-white", name: "Elektronika", path: "/Katalog/Elektronika" },
+    { id: 4, icon: Ehtiyyat , bg: "bg-red-400", textColor: "text-white", name: "Ehtiyyat hissələri", path: "/Katalog/Ehtiyyat_hissələri_ve_aksesuarlar" },
+    { id: 5, icon: Dasinmaz , bg: "bg-gray-600", textColor: "text-white", name: "Daşınmaz əmlak", path: "/Katalog/Daşınmaz_əmlak" },
+    { id: 6, icon: Meiset , bg: "bg-orange-600", textColor: "text-white", name: "Məişət Texnikası", path: "/Katalog/Məişət_Texnikası" },
+    { id: 7, icon: Telefon , bg: "bg-indigo-600", textColor: "text-white", name: "Telefonlar", path: "/Katalog/Telefonlar" },
+    { id: 8, icon: Geyim , bg: "bg-pink-600", textColor: "text-white", name: "Geyimlər", path: "/Katalog/Geyimlər" },
   ];
 
   const close = () => {
@@ -70,7 +70,7 @@ const DownNavbar = () => {
 
         {/* TOP PANEL */}
         <div
-          className={`absolute top-0 left-0 w-full bg-white shadow-xl
+          className={`absolute min-h-screen  top-0 left-0 w-full bg-white shadow-xl
           transform transition-transform duration-300
           ${open ? "translate-y-0" : "-translate-y-full"}`}
         >
@@ -86,23 +86,30 @@ const DownNavbar = () => {
           </div>
 
           {/* Categories */}
-          <div className="flex flex-col max-w-[500px]  text-start sm:text-center items-start justify-start gap-4 p-4 max-h-[80vh] scroll-m-1 overflow-y-auto">
+          <div className="flex flex-col w-[50%] text-start sm:text-center items-start justify-start gap-4 p-4 max-h-[80vh] scroll-m-1 overflow-y-auto">
             {categories.map((cat) => (
-              <Link
+              <div key={cat.id} className="w-full" >
+
+              
+              <Link 
                 key={cat.id}
                 to={cat.path}
+               
 
                 onClick={() => {
                   setOpen(false);
                   scrollTop();
                 }}
-                className="flex items-center justify-center
-                 p-3 text-center
-                hover:text-green-500  transition duration-300 "
+                className={`flex min-w-[10px] min-h-[10px] max-h-[50px] w-full items-center justify-start ${cat.bg} ${cat.textColor} hover:bg-gray-100 rounded-lg
+                 p-2 text-center
+                hover:text-green-500  transition duration-300 `}
               >
-                <img src={cat.icon} alt={cat.name} className="w-[60px] h-[40px] mr-3" />
-                <span className="text-sm font-medium">{cat.name}</span>
+                
+                <img src={cat.icon} alt={cat.name}  className="w-[20px] h-[20px] sm:w-[20px] sm:h-[20px] md:w-[20px] md:h-[20px] xl:w-[30px] xl:h-[30px] xxl:w-[40px] xxl:h-[40px] mr-3" />
+                <span className="grid grid-cols-1 sm:inline sm:text-sm font-medium text-[10px] ">{cat.name}</span>
+                
               </Link>
+              </div>
             ))}
           </div>
         </div>

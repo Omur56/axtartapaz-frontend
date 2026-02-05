@@ -1,7 +1,7 @@
 import { Outlet, useNavigate } from "react-router";
 import React from "react";
 import Footer from "../Footer";
-
+import BubbleBackground from "../ui/BubbleBackground";
 import Header from "../Header";
 
 
@@ -13,7 +13,7 @@ const RootLayout = () => {
   return (
     <div className=" min-h-screen flex flex-col">
      
-      
+      <BubbleBackground interactive={true} />
       <Header />
       
 

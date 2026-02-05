@@ -7,7 +7,9 @@ import { X, MapPin, Phone, MessageCircleMore } from "lucide-react";
 import { Box, LinearProgress, Avatar } from "@mui/material";
 import { Percent, RefreshCcw, CarFront   } from "lucide-react";
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import { Link as MuiLink} from '@mui/material/Link';
+import { Link as RouterLink } from "react-router-dom";
+
+
 
 export default function PostDetailCar() {
   const { id } = useParams();
@@ -186,24 +188,28 @@ function handleClick(event) {
 
       <div role="presentation" onClick={handleClick}>
       <Breadcrumbs aria-label="breadcrumb">
-        <Link underline="hover" color="inherit" href="/">
+        <Link
+        component={RouterLink} underline="hover"className="capitalize hover:underline hover:text-[#43D262]"  href="*" to="/">
           Ana Səhifə
         </Link>
         <Link
+        component={RouterLink}
+        to={`/Katalog/Nəqliyyat`}
           underline="hover"
-          color="inherit"
-          href="/cars"
+          className="capitalize hover:underline hover:text-[#43D262]"
         >
           Nəqliyyat
         </Link>
         <Link
-          underline="hover"
-          color="text.primary"
-          href="/cars/id"
-          aria-current="page"
-        >
-          {post.category} {post.brand} {post.model}
-        </Link>
+  component={RouterLink}     // React Router Link istifadə et
+  to={`/cars/${post._id}`}    // klik edəndə yönləndirəcək
+  className="capitalize hover:underline hover:text-[#43D262]"
+  underline="hover"
+  
+>
+  {post.brand} {post.model}
+</Link>
+
       </Breadcrumbs>
     </div>
 
