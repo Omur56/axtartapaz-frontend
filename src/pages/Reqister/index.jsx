@@ -5,6 +5,8 @@ import { useNavigate, Link } from "react-router-dom";
 import InputMask from "react-input-mask";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import BottomMenu from "../../components/MobileMenu";
+import BubbleBackground from "../../components/ui/BubbleBackground";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -59,7 +61,9 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen mt-12  flex flex-col w-full items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 px-4">
+    <>
+    <BubbleBackground>
+    <div className="min-h-screen mt-12  flex flex-col w-full items-center justify-center px-4">
       <form
         onSubmit={handleRegister}
         className="w-full flex flex-col max-w-md min-h-[600px] bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8 space-y-6 animate-fade-in"
@@ -118,7 +122,7 @@ export default function Register() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             required
-            className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-400 transition duration-300 shadow-sm hover:shadow-md"
+            className="border border-gray-300 rounded-xl px-4 py-3 pr-10 h-12 focus:outline-none focus:ring-2 focus:ring-purple-400 transition duration-300 shadow-sm hover:shadow-md"
           />
         </div>
 
@@ -184,5 +188,7 @@ export default function Register() {
         </p>
       </form>
     </div>
+    </BubbleBackground>
+    </>
   );
 }

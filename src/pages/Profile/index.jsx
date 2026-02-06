@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import BottomMenu from "../../components/MobileMenu";
+import BubbleBackground from "../../components/ui/BubbleBackground";
 export default function Profile() {
   const [myAds, setMyAds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -120,7 +121,7 @@ useEffect(() => {
 );
 
       // UI-dən sil
-      setMyAds((prev) => prev.filter((a) => a._id !== ad._id));
+      setMyAds((prev) => prev.filter((a) => a._id !== ad._id || a.id !== ad.id));
 
       alert("Elan uğurla silindi!");
     } catch (err) {
@@ -156,6 +157,8 @@ useEffect(() => {
   };
 
   return (
+  <>
+  <BubbleBackground>
     <Box className="min-h-screen mt-12 max-w-[1000px]  mx-auto p-6 ">
       {/* Müasir Profil Kartı */}
       {userData && (
@@ -172,13 +175,16 @@ useEffect(() => {
         >
           <Card
             sx={{
-              width: { xs: "100%", md: "50%", sm: 400 },
+              width: "100%",
+              height: "auto",
+              backgroundColor: "transparent",
               borderRadius: 4,
               boxShadow: "0 8px 25px rgba(0,0,0,0.2)",
-              bgcolor: "rgba(255,255,255,0.95)",
-              backdropFilter: "blur(10px)",
-              transition: "transform 0.3s ease",
-              "&:hover": { transform: "translateY(-5px)" },
+              transition: "transform 0.3s, box-shadow 0.3s",
+              "&:hover": {
+                transform: "translateY(-5px)",
+                boxShadow: "0 12px 30px rgba(0,0,0,0.3)",
+              },
             }}
           >
             <CardContent sx={{ textAlign: "center", p: 4 }}>
@@ -299,5 +305,7 @@ useEffect(() => {
       )}
       <BottomMenu />
     </Box>
+    </BubbleBackground>
+    </>
   );
 }

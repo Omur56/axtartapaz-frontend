@@ -199,7 +199,7 @@ export default function Login({ onLogin }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
-            className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-400 transition duration-300 shadow-sm hover:shadow-md"
+            className="border border-gray-300 rounded-lg px-4 py-2 pr-10 h-10 focus:outline-none focus:ring-2 focus:ring-purple-400 transition duration-300 shadow-sm hover:shadow-md"
           />
         </div>
 
@@ -211,7 +211,7 @@ export default function Login({ onLogin }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Şifrə"
-            className="border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="border border-gray-300 rounded-lg px-4 py-2 pr-10 h-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
           <button
             type="button"

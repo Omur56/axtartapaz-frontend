@@ -14,7 +14,7 @@ function CreateCatalogPost() {
                               Geri
                             </button></Link>
             <Katalog />
-            <h1 className=' text-[20px] text-center mt-5 sm:text-[30px] text:sm'>Əlavə edəcəyiniz elana uyğun bölməni seçib elanınızı rahatlıqla yerləşdirə bilərsiniz</h1>
+            <h1 className=' text-[20px] text-center mt-[20%] sm:text-[30px] text:sm'>Əlavə edəcəyiniz elana uyğun bölməni seçib elanınızı rahatlıqla yerləşdirə bilərsiniz</h1>
         <BottomMenu />
         </div>
     )

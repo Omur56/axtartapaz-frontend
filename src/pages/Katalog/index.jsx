@@ -99,6 +99,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import "../../styles/scrolbarr.css";
 
+
 // import Breadcrumb from "../../components/Breadcrumb";
 import { Label } from './../../components/ui/label';
 import BottomMenu from "../../components/MobileMenu";
@@ -140,17 +141,17 @@ const Katalog = ({ className, width, height, marginTop }) => {
   };
 
   return (
-    <div className={`${className} filex flex-col md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4  justify-items-center max-h-[300px]    md:max-w-[700px] lg:max-w-[1000px] mx-auto  p-2 `}
-    style={{ width: width || "100%", height: height || "100px", marginTop: marginTop  || "20%" }} >
+    <div className={`${className}  gap-6 scrollbar-hide    mx-auto  p-2 `}
+    style={{ width: width || "100%", height: height || "100px", marginTop: marginTop  || "80px" }} >
       {/* --- Mobil versiya (slider) --- */}
       <div
-      className="relative block md:hidden mx-auto p-2  "
+      className="relative scrollbar-hide block md:hidden mx-auto p-2 scrollbar-hide "
       style={{ width: width || "100%", height: height || "150px", marginTop: marginTop || "20px" }}
     >
       {/* Slider container */}
       <div
         ref={sliderRef}
-        className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory"
+        className="flex gap-[10px] h-[120px] overflow-x-auto scrollbar-hide scroll-smooth"
       >
         {categories.map(({ id, path, icon, bgColor, hover, label }) => (
           <Link
@@ -169,8 +170,8 @@ const Katalog = ({ className, width, height, marginTop }) => {
                 className="w-[50px] h-[50px] text-white absolute bottom-0 right-0"
               />
             )}
-            <div className="w-full text-start p-1 flex items-start rounded-lg">
-              <span className="text-white text-[10px] font-bold">{label}</span>
+            <div className="text-[10px] w-full h-[20px]  text-white font-bold leading-tight block z-10">
+              <span className="z-50 left-2 absolute p-1 mt-[-80px]   color:red text-[10px] text-white font-bold leading-tight">{label}</span>
             </div>
           </Link>
         ))}
@@ -193,7 +194,7 @@ const Katalog = ({ className, width, height, marginTop }) => {
     </div>
 
       {/* --- Desktop versiya (grid) --- */}
-      <div className="hidden top-[100px] min-h-[200px] w-full md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
+      <div className="hidden  min-h-[200px] w-full md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
         {categories.map((cat) => {
           return (
             <Link
@@ -221,7 +222,7 @@ const Katalog = ({ className, width, height, marginTop }) => {
                   )}
                  
                   </div>
-                   <p className="z-50 left-2 absolute p-1  mt-[40px]  color:red text-[10px] text-white font-bold">{cat.label}</p>
+                   <p className="z-50 left-2 absolute p-1 mt-[-50px]   color:red text-[10px] text-white font-bold">{cat.label}</p>
                 </button>
                
               </div>
