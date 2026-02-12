@@ -109,7 +109,7 @@ const DownNavbar = () => {
                 
                 <img src={cat.icon} alt={cat.name}  className="w-[20px] h-[20px] sm:w-[20px] sm:h-[20px] md:w-[20px] md:h-[20px] xl:w-[30px] xl:h-[30px] xxl:w-[40px] xxl:h-[40px] mr-3" />
                 <span className="grid grid-cols-1 sm:inline sm:text-sm font-medium text-[10px] justify-between ">{cat.name} </span>
-                <svg data-prefix="fas" data-icon="chevron-right" className="svg-inline--fa justify-end gap-10 fa-chevron-right text-white" role="img" viewBox="0 0 320 512" aria-hidden="true"><path fill="currentColor" d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"></path></svg>
+                {/* <svg data-prefix="fas" data-icon="chevron-right"  className="svg-inline--fa justify-end gap-10 fa-chevron-right text-white" role="img" viewBox="0 0 320 512" aria-hidden="true"><path fill="currentColor" d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"></path></svg> */}
                 
               </Link>
               </div>

@@ -602,6 +602,7 @@ const Home = () => {
           item.city,
           item.location,
           item.description,
+          
         ]
           .filter(Boolean)
           .some((v) => v.toLowerCase().includes(q))

@@ -200,6 +200,7 @@ function handleClick(event) {
         >
           Nəqliyyat
         </Link>
+        
         <Link
   component={RouterLink}     // React Router Link istifadə et
   to={`/cars/${post._id}`}    // klik edəndə yönləndirəcək
@@ -258,36 +259,55 @@ function handleClick(event) {
 
           <div className="border-t pt-4 p-2">
             <ul className="text-sm text-gray-700 space-y-1 mt-4 justify-between grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2">
+             <li>
+              <span className="font-bold">Marka:</span> {post.brand}
+             </li>
               <li>
-                <span className="font-bold">Ban:</span> {post.ban_type}
+                <span className="font-bold">Model:</span> {post.model}
+              </li>
+              <li>
+             <span className="font-bold">Rəngi:</span> {post.color}
               </li>
               <li>
                 <span className="font-bold">İl:</span> {post.year}
               </li>
               <li>
-                <span className="font-bold">Yürüş:</span> {post.km} km
+                <span className="font-bold">Km:</span> {post.km}
               </li>
               <li>
-                <span className="font-bold">Motor:</span> {post.motor}
+                <span className="font-bold">Ban tipi:</span> {post.ban_type}
+              </li>
+
+              <li>
+                <span className="font-bold">Mühərrik:</span> {post.motor}
               </li>
               <li>
-                <span className="font-bold">Mühərrik növü:</span> {post.engine}
+                <span className="font-bold">Sürətlər qutusu:</span> {post.transmission}
               </li>
               <li>
-                <span className="font-bold">Transmissiya:</span>{" "}
-                {post.transmission}
+                <span className="font-bold">Modfikasiyya:</span> {post.modfikasiya}
               </li>
               <li>
-                <span className="font-bold">Yerləşmə:</span> {post.location}
+             <span className="font-bold">Yanacaq Növü:</span> {post.engine}
+              </li>
+           <li>
+             <span className="font-bold">Şəhər:</span> {post.location}
               </li>
             </ul>
 
+
+ 
+    
+  
+    
+   
             <div className="w-full h-[1px] border rounded-1 bg-black mb-2"></div>
 
             <ul className="text-sm text-gray-700 gap-2">
               <li>
                 <span className="font-bold">Qeyd:</span> {post?.description}
               </li>
+
             </ul>
           </div>
 
@@ -423,7 +443,7 @@ function handleClick(event) {
             <span className="block">{post?.location}</span>
           </div>
           <div className="text-gray-700 mt-4">
-            <span className="font-bold">{post?.description}</span>
+            <span className="font-bold">Qeyd:</span> <span className="font-semibold">{post?.description}</span>
           </div>
         </div>
 

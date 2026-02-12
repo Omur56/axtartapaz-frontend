@@ -7,10 +7,11 @@ import Swal from "sweetalert2";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import confetti from "canvas-confetti";
-import Checkbox from '@mui/material/Checkbox';
+import Checkbox from "@mui/material/Checkbox";
 import { RefreshCcw, Percent, MapPin } from "lucide-react";
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import { Link as MuiLink } from '@mui/material';
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import { Link as MuiLink } from "@mui/material";
+import CitySelect from "./CitySelect";
 
 
 export default function CreatePost() {
@@ -19,14 +20,17 @@ export default function CreatePost() {
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
   const [editingId, setEditingId] = useState(null);
-const [checked, setChecked] = React.useState(true);
- const [price, setPrice] = useState("");
- const [mainImageIndex, setMainImageIndex] = useState(null)
- 
+  const [checked, setChecked] = React.useState(true);
+  const [price, setPrice] = useState("");
+  const [mainImageIndex, setMainImageIndex] = useState(null);
+const [selectedCity, setSelectedCity] = useState("");
 
 
   const [form, setForm] = useState({
     id: Date.now(),
+    modfikasiya: "",
+    color: "",
+    city: "",
     category: "",
     brand: "",
     model: "",
@@ -53,102 +57,858 @@ const [checked, setChecked] = React.useState(true);
     data: new Date(),
   });
 
-
-   const [options, setOptions] = useState({
+  const [options, setOptions] = useState({
     kredit: false,
     barter: false,
   });
 
- // Kredit və Barter seçimini idarə edən funksiya
-const handleChangeSelect = (e) => {
-  const { name, checked } = e.target;
+  const carData = {
+    Chevrolet: [
+      {
+        model: "Aveo",
+        motor: "1.6",
+        ban_type: ["Sedan", "Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Camaro",
+        motor: "2.0",
+        ban_type: ["Coupe", "Hatchback", "Sedan"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön", "Arxa"],
+      },
+      {
+        model: "Malibu",
+        motor: "1.6",
+        ban_type: ["Sedan", "Hatchback", "MPV"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Niva",
+        motor: "1.7",
+        ban_type: ["SUV"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin", "Dizel"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Tam"],
+      },
+      {
+        model: "Tahoe",
+        motor: "5.3",
+        ban_type: ["SUV"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin", "Dizel"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Tracker",
+        motor: "1.4",
+        ban_type: ["SUV"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin", "Dizel"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Trailblazer",
+        motor: "2.8",
+        ban_type: ["SUV"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin", "Dizel"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Traverse",
+        motor: "3.6",
+        ban_type: ["SUV"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin", "Dizel"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Trax",
+        motor: "1.4",
+        ban_type: ["SUV"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Volt",
+        motor: "1.5",
+        ban_type: ["Hatchback"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü"],
+        year: ["2015"],
+        engine: ["Elektrik"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Spark",
+        motor: "1.4",
+        ban_type: ["Hatchback"],
+        transmission: ["Mexanika"],
+        color: ["Ağ", "Qara"],
+        year: ["2015"],
+        engine: ["Benzin"],
+        salon: ["Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Orlando",
+        motor: "1.8",
+        ban_type: ["MPV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2023",
+          "  ̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈  ۲۰۲۴ ",
+          "۲۰۲۵",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Spin",
+        motor: "1.8",
+        ban_type: ["MPV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2023",
+          "  ̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈  ۲۰۲۴ ",
+          "۲۰۲۵",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Sail",
+        motor: "1.5",
+        ban_type: ["Sedan"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Cobalt",
+        motor: "1.5",
+        ban_type: ["Sedan"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Lacetti",
+        motor: "1.6",
+        ban_type: ["Sedan"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "  ̈̈̈̈̈̈̈̈̈̈̈̈̈̈  ۲۰۲۴ ",
+          "۲۰۲۵",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Rezzo",
+        motor: "1.8",
+        ban_type: ["MPV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "  ̈̈̈̈̈̈̈̈̈̈̈  ۲۰۲۴ ",
+          "۲۰۲۵",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Epica",
+        motor: "2.0",
+        ban_type: ["Sedan"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["2015", "2016", "2017", "2018", "2019"],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Captiva",
+        motor: "2.4",
+        ban_type: ["SUV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara"],
+        year: ["  ̈̈̈̈  ۲۰۲۴ ", "۲۰۲۵"],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Cruze",
+        motor: ["1.4 Turbo", "1.6", "1.8", "2.0"],
+        ban_type: ["Sedan", "Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["  ̈̈  ٢٠٢٤ ", "٢٠٢٥"],
+        engine: ["Benzin", "Dizel"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Cavalier",
+        motor: "1.6",
+        ban_type: ["Sedan"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Lanos",
+        motor: "1.5",
+        ban_type: ["Sedan"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara"],
+        year: ["2015"],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Nexia",
+        motor: "1.5",
+        ban_type: ["Sedan"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["2015", "2016", "2017", "2018", "2019"],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Rezzo",
+        motor: "1.8",
+        ban_type: ["MPV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["  ̈̈  ٢٠٢٤ ", "٢٠٢٥"],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Orlando",
+        motor: "1.8",
+        ban_type: ["MPV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["  ̈̈  ٢٠٢٤ ", "٢٠٢٥"],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Spin",
+        motor: "1.8",
+        ban_type: ["MPV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["  ̈̈  ٢٠٢٤ ", "٢٠٢٥"],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Sail",
+        motor: "1.5",
+        ban_type: ["Sedan"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["  ̈̈  ٢٠٢٤ ", "٢٠٢٥"],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+    ],
+    Ford: [
+      {
+        model: "Focus",
+        motor: "1.5",
+        ban_type: ["Sedan", "Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        ic_salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Mustang",
+        motor: "5.0",
+        ban_type: ["Coupe"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        ic_salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Fiesta",
+        motor: "1.0",
+        ban_type: ["Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        ic_salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Explorer",
+        motor: "3.5",
+        ban_type: ["SUV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        ic_salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Escape",
+        motor: "2.5",
+        ban_type: ["SUV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        ic_salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Edge",
+        motor: "2.0",
+        ban_type: ["SUV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        ic_salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+    ],
+    Toyota: [
+      {
+        model: "Corolla",
+        motor: "1.6",
+        ban_type: ["Sedan"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        ic_salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Camry",
+        motor: "2.5",
+        ban_type: ["Sedan"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        ic_salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "RAV4",
+        motor: "2.0",
+        ban_type: ["SUV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        ic_salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Hilux",
+        motor: "2.4",
+        ban_type: ["Pickup"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        ic_salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Yaris",
+        motor: "1.5",
+        ban_type: ["Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin"],
+        ic_salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+    ],
+  };
 
-  setOptions((prev) => ({
-    ...prev,
-    [name]: checked,
-  }));
 
-  setForm((prev) => ({
-    ...prev,
-    [name]: checked ? "Bəli" : "Xeyr", // true olarsa Bəli, yoxsa Xeyr yazılır
-  }));
-};
+  const handleChangeSelect = (e) => {
+    const { name, checked } = e.target;
+
+    setOptions((prev) => ({
+      ...prev,
+      [name]: checked,
+    }));
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: checked ? "Bəli" : "Xeyr",
+    }));
+  };
+
 
   const [cars, setCars] = useState([]);
 
-// const handleChange = (e) => {
-//   const { name, value } = e.target;
 
-//   if (name === "price" || name === "km") {
-//     // yalnız rəqəmləri götür
-//     let cleanedValue = value.replace(/\D/g, "");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-//     // minlik formatlama (123456 → 123 456)
-//     let formatted = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    // Qiymət və KM üçün minlik formatlama
+    if (name === "price" || name === "km") {
+      let cleanedValue = value.replace(/\D/g, "");
+      let formatted = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+      setForm((prev) => ({ ...prev, [name]: formatted }));
+    }
+    // Mobil nömrə formatlama
+    else if (name === "contact.phone") {
+      // +994 prefiksi hər zaman qalır
+      let digits = value.replace(/\D/g, "").slice(3, 12); // 9 rəqəm
+      // Formatlama: +994-XX-XXX-XX-XX
+      if (digits.length > 0) digits = digits.replace(/^(\d{0,2})/, "$1");
+      if (digits.length > 2)
+        digits = digits.replace(/^(\d{2})(\d{0,3})/, "$1-$2");
+      if (digits.length > 5)
+        digits = digits.replace(/^(\d{2})-(\d{3})(\d{0,2})/, "$1-$2-$3");
+      if (digits.length > 7)
+        digits = digits.replace(
+          /^(\d{2})-(\d{3})-(\d{2})(\d{0,2})/,
+          "$1-$2-$3-$4",
+        );
 
-//     setForm((prev) => ({ ...prev, [name]: formatted }));
-//   } 
-//   else if (name.startsWith("contact.")) {
-//     const field = name.split(".")[1];
-//     setForm((prev) => ({
-//       ...prev,
-//       contact: { ...prev.contact, [field]: value },
-//     }));
-//   } 
-//   else if (name === "data") {
-//     setForm((prev) => ({ ...prev, data: new Date(value) }));
-//   } 
-//   else {
-//     setForm((prev) => ({ ...prev, [name]: value }));
-//   }
-// };
+      let formatted = "+994-" + digits;
+      setForm((prev) => ({
+        ...prev,
+        contact: { ...prev.contact, phone: formatted },
+      }));
+    }
+    // Digər contact inputları
+    else if (name.startsWith("contact.")) {
+      const field = name.split(".")[1];
+      setForm((prev) => ({
+        ...prev,
+        contact: { ...prev.contact, [field]: value },
+      }));
+    }
+    // Tarix inputu
+    else if (name === "data") {
+      setForm((prev) => ({ ...prev, data: new Date(value) }));
+    }
+    // Digər inputlar
+    else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
+  };
 
-
-
-const handleChange = (e) => {
-  const { name, value } = e.target;
-
-  // Qiymət və KM üçün minlik formatlama
-  if (name === "price" || name === "km") {
-    let cleanedValue = value.replace(/\D/g, "");
-    let formatted = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    setForm((prev) => ({ ...prev, [name]: formatted }));
-  } 
-  // Mobil nömrə formatlama
-  else if (name === "contact.phone") {
-    // +994 prefiksi hər zaman qalır
-    let digits = value.replace(/\D/g, "").slice(3, 12); // 9 rəqəm
-    // Formatlama: +994-XX-XXX-XX-XX
-    if (digits.length > 0) digits = digits.replace(/^(\d{0,2})/, "$1");
-    if (digits.length > 2) digits = digits.replace(/^(\d{2})(\d{0,3})/, "$1-$2");
-    if (digits.length > 5) digits = digits.replace(/^(\d{2})-(\d{3})(\d{0,2})/, "$1-$2-$3");
-    if (digits.length > 7) digits = digits.replace(/^(\d{2})-(\d{3})-(\d{2})(\d{0,2})/, "$1-$2-$3-$4");
-
-    let formatted = "+994-" + digits;
-    setForm((prev) => ({
-      ...prev,
-      contact: { ...prev.contact, phone: formatted },
-    }));
-  } 
-  // Digər contact inputları
-  else if (name.startsWith("contact.")) {
-    const field = name.split(".")[1];
-    setForm((prev) => ({
-      ...prev,
-      contact: { ...prev.contact, [field]: value },
-    }));
-  } 
-  // Tarix inputu
-  else if (name === "data") {
-    setForm((prev) => ({ ...prev, data: new Date(value) }));
-  } 
-  // Digər inputlar
-  else {
-    setForm((prev) => ({ ...prev, [name]: value }));
-  }
-};
-
-  
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 20) {
@@ -158,9 +918,6 @@ const handleChange = (e) => {
     setForm((prev) => ({ ...prev, images: files }));
     setMainImageIndex(0);
   };
-
-
-
 
   const fetchCars = async () => {
     try {
@@ -182,7 +939,7 @@ const handleChange = (e) => {
         title: "Giriş tələb olunur",
         text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
       });
-       
+
       return;
     }
 
@@ -190,28 +947,38 @@ const handleChange = (e) => {
 
     form.images.forEach((file) => formData.append("images", file));
 
+    if (mainImageIndex !== null) {
+      formData.append("mainImageIndex", mainImageIndex);
+    }
 
-if (mainImageIndex !== null) {
-  formData.append("mainImageIndex", mainImageIndex);
-}
+    // Object.entries(form).forEach(([key, value]) => {
+    //   if (key === "data") return;
+    //   if (key === "contact") {
+    //     Object.entries(value).forEach(([k, v]) =>
+    //       formData.append(`contact.${k}`, v),
+    //     );
+    //   } else if (key !== "images") {
+    //     formData.append(key, value);
+    //   } else if (key === "salon") {
+    //     formData.append(key, value);
+    //     return <div>{form.salon}</div>;
+    //   }
+    // });
 
     Object.entries(form).forEach(([key, value]) => {
-      if (key === "data") return;
-      if (key === "contact") {
-        Object.entries(value).forEach(([k, v]) =>
-          formData.append(`contact.${k}`, v)
-        );
-      } else if (key !== "images") {
-        formData.append(key, value);
-      } else if (key === "salon") {
-        formData.append(key, value);
-        return <div>{form.salon}</div>;
-      }
-    });
+  if (key === "images" || key === "data") return;
+  if (key === "contact") {
+    Object.entries(value).forEach(([k, v]) =>
+      formData.append(`contact.${k}`, v)
+    );
+  } else {
+    formData.append(key, value); // <--- location, salon, brand, model, və s. buradan gedəcək
+  }
+});
 
     formData.append(
       "data",
-      form.data ? form.data.toISOString() : new Date().toISOString()
+      form.data ? form.data.toISOString() : new Date().toISOString(),
     );
     formData.append("userId", userId);
 
@@ -230,12 +997,12 @@ if (mainImageIndex !== null) {
         title: "Elanınız uğurla yerləşdirildi!",
         confirmButtonColor: "#3085d6",
       }).then(() => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
-  });
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      });
     } catch (err) {
       console.error("Elan yüklənmədi:", err.response?.data || err.message);
       Swal.fire({
@@ -250,6 +1017,9 @@ if (mainImageIndex !== null) {
   const resetForm = () => {
     setForm({
       id: Date.now(),
+      modfikasiya: "",
+      color: "",
+      city: "",
       category: "",
       brand: "",
       model: "",
@@ -262,7 +1032,7 @@ if (mainImageIndex !== null) {
       motor: "",
       transmission: "",
       description: "",
-      
+
       salon: "",
       default: "",
       barter: "",
@@ -412,20 +1182,14 @@ if (mainImageIndex !== null) {
     setIsOpen(true);
   };
 
-function handleClick(event) {
-  event.preventDefault();
- 
-}
+  function handleClick(event) {
+    event.preventDefault();
+  }
 
   return (
     <div className="min-h-screen ">
       <div className="p-6 max-w-5xl mx-auto">
         <div className="w-full justify-center  mx-auto my-auto max-w-[700px] min-w-[200px]">
-
-
-
-
-
           <div className="relative">
             <input
               className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
@@ -475,29 +1239,19 @@ function handleClick(event) {
           </button>
         </Link>
         <h2 className="text-2xl font-bold mb-4">Yeni Nəqliyyat Elanı</h2>
-<div role="presentation" onClick={handleClick}>
-      <Breadcrumbs aria-label="breadcrumb">
-        <Link underline="hover" color="inherit" href="/">
-          Ana Səhifə
-        </Link>
-        <Link
-          underline="hover"
-          color="inherit"
-          href="/Katalog"
-        >
-         Katalog
-         
-        </Link>
-        <Link
-          underline="hover"
-          color="inherit"
-          href="/Nəqliyyat"
-        >
-          Nəqliyyat
-        </Link>
-      
-      </Breadcrumbs>
-    </div>
+        <div role="presentation" onClick={handleClick}>
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link underline="hover" color="inherit" href="/">
+              Ana Səhifə
+            </Link>
+            <Link underline="hover" color="inherit" href="/Katalog">
+              Katalog
+            </Link>
+            <Link underline="hover" color="inherit" href="/Nəqliyyat">
+              Nəqliyyat
+            </Link>
+          </Breadcrumbs>
+        </div>
         <div className="p-4">
           <button
             onClick={handleOpenForm}
@@ -517,160 +1271,240 @@ function handleClick(event) {
                 </button>
 
                 <form
-                  onSubmit={handleSubmit}
-                  className="grid grid-cols-2 gap-4 p-2"
-                >
-                  <input
-                    type="text"
-                    value={form.category}
-                    name="category"
-                    placeholder="Kateqoriya"
-                    onChange={handleChange}
-                    required
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
-                  <input
-                    value={form.brand}
-                    name="brand"
-                    placeholder="Marka"
-                    onChange={handleChange}
-                    required
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
-                  <input
-                    value={form.ban_type}
-                    name="ban_type"
-                    placeholder="Ban Növü"
-                    onChange={handleChange}
-                    required
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
-                  <input
-                    value={form.model}
-                    name="model"
-                    placeholder="Model"
-                    onChange={handleChange}
-                    required
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
-                  <input
-                    type="text"
-                    value={form.year}
-                    name="year"
-                    placeholder="İl"
-                    onChange={handleChange}
-                    required
-                    maxLength={4}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
-                  <input
-                    type="text"
-                    value={form.motor}
-                    name="motor"
-                    placeholder="Motor"
-                    onChange={handleChange}
-                    required
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
-                  <input
-                    type="text"
-                    value={form.km}
-                    name="km"
-                    placeholder="KM"
-                    onChange={handleChange}
-                    required
-                    maxLength={7}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
-                  <input
-                    type="text"
-                    value={form.price}
-                    name="price"
-                    placeholder="Qiymət"
-                    onChange={handleChange}
-                    required
-                    maxLength={7}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
-                  <select
-                    value={form.transmission}
-                    name="transmission"
-                    onChange={handleChange}
-                    required
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  >
-                    <option value="">Transmissiya</option>
-                    <option value="Avtomat">Avtomat</option>
-                    <option value="Mexanika">Mexanika</option>
-                    <option value="Robot">Robot</option>
-                    
+  onSubmit={handleSubmit}
+  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-white shadow-md rounded-xl"
+>
+  {/* Marka */}
+  <select
+    name="brand"
+    value={form.brand}
+    onChange={handleChange}
+    required
+    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+  >
+    <option value="">Marka seçin</option>
+    {Object.keys(carData).map((brand) => (
+      <option key={brand} value={brand}>{brand}</option>
+    ))}
+  </select>
 
-                  </select>
-                  <select
-                    value={form.engine}
-                    name="engine"
-                    onChange={handleChange}
-                    required
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  >
-                    <option value="">Mühərrik</option>
-                    <option value="Dizel">Dizel</option>
-                    <option value="Benzin">Benzin</option>
-                    <option value="Elektrik">Elektrik</option>
-                    <option value="Hibrid">Hibrid</option>
-                    <option value=" Plug-in Hibrid"> Plug-in Hibrid</option>
-                    <option value="Qaz">Qaz</option>
-                  </select>
+  {/* Model */}
+  <select
+    name="model"
+    value={form.model}
+    onChange={handleChange}
+    disabled={!form.brand}
+    required
+    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+  >
+    <option value="">Model seçin</option>
+    {form.brand &&
+      carData[form.brand].map((item) => (
+        <option key={item.model} value={item.model}>{item.model}</option>
+      ))}
+  </select>
 
-                  <select
-                    value={form.salon}
-                    name="salon"
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  >
-                    <option disabled className="bg-transparent" value="">
-                      Salon
-                    </option>
-                    <option value="Salon">Salon</option>
-                    <option value="Rəsmi">Rəsmi</option>
-                    <option value="Sifarişlə">Sifarişlə</option>
-                   
-                  </select>
+  <select
+    name="color"
+    value={form.color}
+    onChange={handleChange}
+    disabled={!form.model}
+    required
+    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+  >
+    <option value="">Rəng seçin</option>
+    {form.brand &&
+      form.model &&
+      carData[form.brand]
+        .filter((item) => item.model === form.model)
+        .flatMap((item) => item.color)
+        .map((color) => <option key={color} value={color}>{color}</option>)}
+  </select>
 
-                  {/* <select
-                    value={form.barter}
-                    name="barter"
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  >
-                    <option disabled className="bg-transparent" value="">
-                      Barter
-                    </option>
-                    <option value="Barter">Barter</option>
-                   
-                  </select>
-                  <select
-                    value={form.kredit}
-                    name="kredit"
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  >
-                    <option disabled className="bg-transparent" value="">
-                      Kredit
-                    </option>
-                    <option value="Kredit">Kredit</option>
-                    
-                  </select> */}
-                  <input
-                    value={form.location}
-                    name="location"
-                    placeholder="Şəhər/Rayon"
-                    onChange={handleChange}
-                    required
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
+  {/* Ban növü */}
+  <select
+    name="ban_type"
+    value={form.ban_type}
+    onChange={handleChange}
+    disabled={!form.color}
+    required
+    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+  >
+    <option value="">Ban növü seçin</option>
+    {form.brand &&
+      form.model &&
+      carData[form.brand]
+        .filter((item) => item.model === form.model)
+        .flatMap((item) => item.ban_type)
+        .map((type) => <option key={type} value={type}>{type}</option>)}
+  </select>
 
-                     <label className="block mb-2  w-[200px] bg-gray-200 rounded-[10px] p-1 ">
+  {/* Motor */}
+  
+<select
+  name="motor"
+  value={form.motor}
+  onChange={handleChange}
+  disabled={!form.ban_type}
+  required
+  className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+>
+  <option value="">Motor seçin</option>
+  {form.brand &&
+    form.model &&
+    carData[form.brand]
+      .filter((item) => item.model === form.model)
+      .map((item) =>
+        item.motor.map((motorOption) => (
+          <option key={motorOption} value={motorOption}>
+            {motorOption}
+          </option>
+        ))
+      )}
+</select>
+
+  {/* İl */}
+  <select
+    name="year"
+    value={form.year}
+    onChange={handleChange}
+    disabled={!form.motor}
+    required
+    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+  >
+    <option value="">İl seçin</option>
+    {Array.from({ length: 80 }, (_, i) => {
+      const year = new Date().getFullYear() - i;
+      return <option key={year} value={year}>{year}</option>;
+    })}
+  </select>
+
+  {/* KM */}
+  <input
+    type="text"
+    value={form.km}
+    name="km"
+    placeholder="KM"
+    onChange={handleChange}
+    disabled={!form.year}
+    required
+    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+  />
+
+  {/* Qiymət */}
+  <input
+    type="text"
+    value={form.price}
+    name="price"
+    placeholder="Qiymət"
+    onChange={handleChange}
+    disabled={!form.km}
+    required
+    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+  />
+
+  {/* Transmissiya */}
+  <select
+    name="transmission"
+    value={form.transmission}
+    onChange={handleChange}
+    disabled={!form.price}
+    required
+    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+  >
+    <option value="">Transmissiya seçin</option>
+    {form.brand &&
+      form.model &&
+      carData[form.brand]
+        .filter((item) => item.model === form.model)
+        .map((item) =>
+          item.transmission.map((trans) => <option key={trans} value={trans}>{trans}</option>)
+        )}
+  </select>
+
+  <select 
+  name="engine"
+  value={form.engine}
+  onChange={handleChange}
+  disabled={!form.transmission}
+  requerd
+  className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+  >
+    <option value="">Yanacaq Növü</option>
+    {form.brand &&
+      form.model &&
+      carData[form.brand]
+        .filter((engitem) => engitem.model === form.model)
+        .map((engitem) =>
+          engitem.engine.map((eng) => <option key={eng} value={eng}>{eng}</option>)
+        )}
+  </select>
+
+
+
+  {/* Modifikasiya */}
+  <select
+    name="modfikasiya"
+    value={form.modfikasiya}
+    onChange={handleChange}
+    disabled={!form.engine}
+    required
+    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+  >
+    <option value="">Modifikasiya seçin</option>
+    {form.brand &&
+      form.model &&
+      carData[form.brand]
+        .filter((item) => item.model === form.model)
+        .map((item) =>
+          item.modfikasiya.map((mod) => <option key={mod} value={mod}>{mod}</option>)
+        )}
+  </select>
+
+  <CitySelect
+  selectedCity={form.location}
+  setSelectedCity={(city) =>
+    setForm((prev) => ({ ...prev, location: city }))
+  }
+/>
+
+  {/* Şəkillər */}
+  <div className="col-span-1 sm:col-span-2 lg:col-span-3">
+    <label className="block mb-2 font-semibold">Şəkillər:</label>
+    <input
+      type="file"
+      multiple
+      accept="image/*"
+      onChange={handleFileChange}
+      disabled={!form.modfikasiya}
+      className="p-3 border rounded-xl w-full cursor-pointer"
+    />
+    {form.images.length > 0 && (
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
+        {form.images.map((img, index) => {
+          const url = URL.createObjectURL(img);
+          return (
+            <div
+              key={index}
+              className={`relative border rounded-lg overflow-hidden cursor-pointer ${
+                mainImageIndex === index ? "ring-4 ring-green-500" : ""
+              }`}
+              onClick={() => setMainImageIndex(index)}
+            >
+              <img src={url} alt={`Şəkil ${index + 1}`} className="object-cover w-full h-24" />
+              {mainImageIndex === index && (
+                <div className="absolute bottom-0 left-0 right-0 bg-green-600 text-white text-center text-xs py-1">
+                  Əsas şəkil
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </div>
+
+       <label className="block mb-2  w-[200px] bg-gray-200 rounded-[10px] p-1 ">
        
        
 
@@ -697,99 +1531,61 @@ function handleClick(event) {
         Barter
       </label>
 
-                  {/* <input
-                    type="file"
-                    multiple
-                    name="images"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    required
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  /> */}
-                <div className="col-span-2">
-  <label className="block font-semibold mb-2">Şəkillər:</label>
+
+  {/* Kontakt məlumatları */}
   <input
-    type="file"
-    multiple
-    accept="image/*"
-    onChange={handleFileChange}
-    className="border p-2 rounded-lg w-full"
+    type="text"
+    name="contact.phone"
+    value={form.contact.phone}
+    onChange={handleChange}
+    placeholder="+994-XX-XXX-XX-XX"
+    
+    disabled={!form.modfikasiya}
+    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
   />
 
-  {/* Əgər şəkillər varsa, onları göstər */}
-  {form.images.length > 0 && (
-    <div className="grid grid-cols-4 gap-3 mt-3">
-      {form.images.map((img, index) => {
-        const url = URL.createObjectURL(img);
-        return (
-          <div
-            key={index}
-            className={`relative border rounded-lg overflow-hidden cursor-pointer ${
-              mainImageIndex === index ? "ring-4 ring-green-500" : ""
-            }`}
-            onClick={() => setMainImageIndex(index)}
-          >
-            <img
-              src={url}
-              alt={`Şəkil ${index + 1}`}
-              className="object-cover w-full h-24"
-            />
-            {mainImageIndex === index && (
-              <div className="absolute bottom-0 left-0 right-0 bg-green-600 text-white text-center text-xs py-1">
-                Əsas şəkil
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  )}
-</div>
-                  <input
-                    type="text"
-                    name="contact.phone"
-                    
-                    onChange={handleChange}
-                    value={form.contact.phone}
-                    required
-                      placeholder="+994-XX-XXX-XX-XX"
-  pattern="^\+994-(\d{2})-(\d{3})-(\d{2})-(\d{2})$"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
-                  <input
-                    type="email"
-                    name="contact.email"
-                    placeholder="Email"
-                    onChange={handleChange}
-                    value={form.contact.email}
-                    required
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
-                  <input
-                    type="text"
-                    name="contact.name"
-                    placeholder="Ad"
-                    onChange={handleChange}
-                    value={form.contact.name}
-                    required
-                    
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 capitalize"
-                  />
-                  <textarea
-                    value={form.description}
-                    name="description"
-                    placeholder="Əlavə Qeydlər"
-                    onChange={handleChange}
-                    required
-                    className="col-span-2 border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
-                  <button
-                    type="submit"
-                    className="col-span-2 bg-blue-500 text-white px-4 py-2 rounded-[10px] hover:bg-blue-600"
-                  >
-                    Əlavə et
-                  </button>
-                </form>
+  <input
+    type="email"
+    name="contact.email"
+    value={form.contact.email}
+    onChange={handleChange}
+    placeholder="Email"
+   
+    disabled={!form.modfikasiya}
+    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+  />
+
+  <input
+    type="text"
+    name="contact.name"
+    value={form.contact.name}
+    onChange={handleChange}
+    placeholder="Ad"
+    
+    disabled={!form.modfikasiya}
+    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition capitalize"
+  />
+
+  {/* Əlavə qeydlər */}
+  <textarea
+    name="description"
+    value={form.description}
+    onChange={handleChange}
+    placeholder="Əlavə Qeydlər"
+   
+    disabled={!form.modfikasiya}
+    className="col-span-1 sm:col-span-2 lg:col-span-3 p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+  />
+
+  {/* Submit düyməsi */}
+  <button
+    type="submit"
+    className="col-span-1 sm:col-span-2 lg:col-span-3 bg-blue-500 text-white p-3 rounded-xl hover:bg-blue-600 transition"
+  >
+    Əlavə et
+  </button>
+</form>
+
               </div>
             </div>
           )}
@@ -819,8 +1615,8 @@ function handleClick(event) {
                         item.images && item.images.length > 0
                           ? item.images[0]
                           : item.imageUrls && item.imageUrls.length > 0
-                          ? item.imageUrls[0]
-                          : "/placeholder.png"
+                            ? item.imageUrls[0]
+                            : "/placeholder.png"
                       }
                       alt={item.title || "Image"}
                       className="w-full h-48 object-cover"
@@ -849,24 +1645,24 @@ function handleClick(event) {
         <div className=" mx-auto   rounded-2xl   grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-4 w-full min-h-screen">
           {isLoading ? (
             Array.from({ length: 20 }).map((_, i) => (
-            <div
-                    key={i}
-                    className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
-                  >
-                    <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
-                      <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
-                      <div className="p-1">
-                        <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
+              <div
+                key={i}
+                className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
+              >
+                <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
+                  <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
+                  <div className="p-1">
+                    <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
+                    <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
+                    <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
 
-                        <div className="flex items-center justify-between">
-                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/4 animate-shimmer "></div>
-                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/2 animate-shimmer "></div>
-                        </div>
-                      </div>
+                    <div className="flex items-center justify-between">
+                      <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/4 animate-shimmer "></div>
+                      <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/2 animate-shimmer "></div>
                     </div>
                   </div>
+                </div>
+              </div>
             ))
           ) : (
             <>
@@ -882,7 +1678,7 @@ function handleClick(event) {
                       {car.images?.[0] && (
                         <img
                           src={car.mainImage || car.images[0]}
-  alt={car.brand}
+                          alt={car.brand}
                           className="w-full h-[100px] object-cover object-contain rounded-t-2xl"
                         />
                       )}
@@ -895,16 +1691,14 @@ function handleClick(event) {
                       <p className="capitalize text-[12px] font-sans font-[500] truncate w-50">
                         {car.year}, {car.motor} L, {car.km} km
                       </p>
-                       <div className="flex justify-between gap-1  ">
-                              <p className="text-[10px] rounded flex justify-between text-gray-600">
-                                <MapPin size={12} color="#75FC56" />{" "}
-                                {car.location}
-                              </p>
-                              <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
-                                {formatDate(car.data)}{" "}
-                                {getCurrentTime(car.data)}
-                              </p>
-                            </div>
+                      <div className="flex justify-between gap-1  ">
+                        <p className="text-[10px] rounded flex justify-between text-gray-600">
+                          <MapPin size={12} color="#75FC56" /> {car.location}
+                        </p>
+                        <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
+                          {formatDate(car.data)} {getCurrentTime(car.data)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </Link>
