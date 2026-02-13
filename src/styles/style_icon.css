@@ -1,0 +1,13 @@
+.icon-category path {
+  fill: none; /* seçilməmiş vəziyyət */
+  stroke: #670fff;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: all 0.3s ease;
+}
+
+.icon-category.active path {
+  fill: #670fff; /* seçilmiş vəziyyət */
+  stroke: #670fff; /* optional */
+}

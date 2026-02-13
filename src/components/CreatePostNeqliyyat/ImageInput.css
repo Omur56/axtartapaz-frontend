@@ -1,0 +1,35 @@
+.single-file-input-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 15px 0;
+}
+
+.single-file-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border: 2px dashed #670fff;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.single-file-input:hover {
+  background: rgba(103, 15, 255, 0.05);
+}
+
+.single-file-input input[type="file"] {
+  display: none;
+}
+
+.single-file-input span {
+  font-weight: 600;
+  color: #670fff;
+}
+
+.single-file-input.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

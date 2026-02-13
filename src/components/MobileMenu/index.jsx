@@ -27,9 +27,9 @@ const BottomMenu = () => {
 
   return (
     <div
-      className={` md:hidden fixed bottom-2 max-w-[340px] m-auto left-0 right-0 h-[60px] 
+      className={` md:hidden fixed bottom-0 max-w-full m-auto left-0 right-0 h-[60px] 
         bg-white/20 backdrop-blur-md shadow-md shadow-blue-400/50
-        rounded-[50px] flex justify-around items-center z-50
+         flex justify-around items-center z-50
         transition-transform duration-300 ${
           showNavbar ? "translate-y-0" : "translate-y-full"
         }`}
@@ -46,17 +46,17 @@ const BottomMenu = () => {
           >
             {/* Icon bubble */}
             <div
-              className={`w-[30px] h-[30px] rounded-[50px] flex items-center justify-center transition-all duration-300 ${
+              className={`w-[50px] h-[50px] rounded-[15px] flex items-center justify-center transition-all duration-300 ${
                 isActive
-                  ? "bg-green-500 transform transition-all duration-300"
+                  ? "bg-blue-200 transform transition-all duration-300"
                   : "hover:bg-blue-100"
               }`}
             >
               <Icon
-                size={20}
+                size={30}
                 strokeWidth={1.5}
                 className={`transition-all duration-300 ${
-                  isActive ? "text-white" : "text-gray-500"
+                  isActive ? "fill-red-500" : "text-gray-500"
                 }`}
               />
             </div>

@@ -623,8 +623,8 @@ const handleRemoveImage = (indexToRemove) => {
           </button>
 
           {isOpen && (
-            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 " >
-              <div className="relative max-w-[90%] max-h-[80vh] overflow-y-auto bg-white p-6 rounded-xl shadow-lg mb-4 mt-4">
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 w-[full " >
+              <div className="relative max-w-full max-h-full overflow-y-auto bg-white p-6 rounded-xl shadow-lg mb-4 mt-4">
                 <button
                   onClick={() => setIsOpen(false)}
                   className="absolute top-2 right-2 text-gray-600 hover:text-red-600"
@@ -674,7 +674,7 @@ const handleRemoveImage = (indexToRemove) => {
     
     className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
-    <option value="">Rəng seçin</option>
+    <option className="text-gray-400" value="">Rəng seçin</option>
     {form.brand &&
       form.model &&
       carData[form.brand]

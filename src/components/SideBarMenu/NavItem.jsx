@@ -7,8 +7,8 @@ const NavItem = ({ icon, text, url, isOpen }) => {
       className={({ isActive }) =>
         `flex items-center gap-4 p-2 rounded transition duration-200 ${
           isActive
-            ? "bg-[#01D063] text-white" // aktiv olanda rənglər
-            : "text-gray-400 hover:bg-[#01D063] hover:text-white" // normal
+            ? "bg-blue-500 text-[#670fff]" // aktiv olanda rənglər
+            : "text-gray-400  hover:text-white" // normal
         }`
       }
     >
