@@ -24,7 +24,7 @@ export default function CreatePost() {
   const [price, setPrice] = useState("");
   const [mainImageIndex, setMainImageIndex] = useState(null);
 const [selectedCity, setSelectedCity] = useState("");
-
+const [imageClose, setImageClose] = useState(false);
 
   const [form, setForm] = useState({
     id: Date.now(),
@@ -63,783 +63,119 @@ const [selectedCity, setSelectedCity] = useState("");
   });
 
   const carData = {
-    Chevrolet: [
-      {
-        model: "Aveo",
-        motor: "1.6",
-        ban_type: ["Sedan", "Hatchback"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin", "Dizel", "Hibrid"],
-        salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Camaro",
-        motor: "2.0",
-        ban_type: ["Coupe", "Hatchback", "Sedan"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2022",
-          "2023",
-          "2024",
-          "2025",
-        ],
-        engine: ["Benzin", "Dizel", "Hibrid"],
-        salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön", "Arxa"],
-      },
-      {
-        model: "Malibu",
-        motor: "1.6",
-        ban_type: ["Sedan", "Hatchback", "MPV"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin", "Dizel", "Hibrid"],
-        salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Niva",
-        motor: "1.7",
-        ban_type: ["SUV"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2022",
-          "2023",
-          "2024",
-          "2025",
-        ],
-        engine: ["Benzin", "Dizel"],
-        salon: ["Dəri", "Parça"],
-        modfikasiya: ["Tam"],
-      },
-      {
-        model: "Tahoe",
-        motor: "5.3",
-        ban_type: ["SUV"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2022",
-          "2023",
-          "2024",
-          "2025",
-        ],
-        engine: ["Benzin", "Dizel"],
-        salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Tracker",
-        motor: "1.4",
-        ban_type: ["SUV"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2022",
-          "2023",
-          "2024",
-          "2025",
-        ],
-        engine: ["Benzin", "Dizel"],
-        salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Trailblazer",
-        motor: "2.8",
-        ban_type: ["SUV"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2022",
-          "2023",
-          "2024",
-          "2025",
-        ],
-        engine: ["Benzin", "Dizel"],
-        salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Traverse",
-        motor: "3.6",
-        ban_type: ["SUV"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2022",
-          "2023",
-          "2024",
-          "2025",
-        ],
-        engine: ["Benzin", "Dizel"],
-        salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Trax",
-        motor: "1.4",
-        ban_type: ["SUV"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2022",
-          "2023",
-          "2024",
-          "2025",
-        ],
-        engine: ["Benzin"],
-        salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Volt",
-        motor: "1.5",
-        ban_type: ["Hatchback"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü"],
-        year: ["2015"],
-        engine: ["Elektrik"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Spark",
-        motor: "1.4",
-        ban_type: ["Hatchback"],
-        transmission: ["Mexanika"],
-        color: ["Ağ", "Qara"],
-        year: ["2015"],
-        engine: ["Benzin"],
-        salon: ["Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Orlando",
-        motor: "1.8",
-        ban_type: ["MPV"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2023",
-          "  ̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈  ۲۰۲۴ ",
-          "۲۰۲۵",
-        ],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Spin",
-        motor: "1.8",
-        ban_type: ["MPV"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2023",
-          "  ̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈̈  ۲۰۲۴ ",
-          "۲۰۲۵",
-        ],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Sail",
-        motor: "1.5",
-        ban_type: ["Sedan"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Cobalt",
-        motor: "1.5",
-        ban_type: ["Sedan"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Lacetti",
-        motor: "1.6",
-        ban_type: ["Sedan"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "  ̈̈̈̈̈̈̈̈̈̈̈̈̈̈  ۲۰۲۴ ",
-          "۲۰۲۵",
-        ],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Rezzo",
-        motor: "1.8",
-        ban_type: ["MPV"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "  ̈̈̈̈̈̈̈̈̈̈̈  ۲۰۲۴ ",
-          "۲۰۲۵",
-        ],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Epica",
-        motor: "2.0",
-        ban_type: ["Sedan"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: ["2015", "2016", "2017", "2018", "2019"],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Captiva",
-        motor: "2.4",
-        ban_type: ["SUV"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara"],
-        year: ["  ̈̈̈̈  ۲۰۲۴ ", "۲۰۲۵"],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Cruze",
-        motor: ["1.4 Turbo", "1.6", "1.8", "2.0"],
-        ban_type: ["Sedan", "Hatchback"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: ["  ̈̈  ٢٠٢٤ ", "٢٠٢٥"],
-        engine: ["Benzin", "Dizel"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Cavalier",
-        motor: "1.6",
-        ban_type: ["Sedan"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Lanos",
-        motor: "1.5",
-        ban_type: ["Sedan"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara"],
-        year: ["2015"],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Nexia",
-        motor: "1.5",
-        ban_type: ["Sedan"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: ["2015", "2016", "2017", "2018", "2019"],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Rezzo",
-        motor: "1.8",
-        ban_type: ["MPV"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: ["  ̈̈  ٢٠٢٤ ", "٢٠٢٥"],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Orlando",
-        motor: "1.8",
-        ban_type: ["MPV"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: ["  ̈̈  ٢٠٢٤ ", "٢٠٢٥"],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Spin",
-        motor: "1.8",
-        ban_type: ["MPV"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: ["  ̈̈  ٢٠٢٤ ", "٢٠٢٥"],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Sail",
-        motor: "1.5",
-        ban_type: ["Sedan"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: ["  ̈̈  ٢٠٢٤ ", "٢٠٢٥"],
-        engine: ["Benzin"],
-        salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-    ],
-    Ford: [
-      {
-        model: "Focus",
-        motor: "1.5",
-        ban_type: ["Sedan", "Hatchback"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        ic_salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Mustang",
-        motor: "5.0",
-        ban_type: ["Coupe"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        ic_salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Fiesta",
-        motor: "1.0",
-        ban_type: ["Hatchback"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        ic_salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Explorer",
-        motor: "3.5",
-        ban_type: ["SUV"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        ic_salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Escape",
-        motor: "2.5",
-        ban_type: ["SUV"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        ic_salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Edge",
-        motor: "2.0",
-        ban_type: ["SUV"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        ic_salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-    ],
-    Toyota: [
-      {
-        model: "Corolla",
-        motor: "1.6",
-        ban_type: ["Sedan"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        ic_salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Camry",
-        motor: "2.5",
-        ban_type: ["Sedan"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        ic_salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "RAV4",
-        motor: "2.0",
-        ban_type: ["SUV"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        ic_salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Hilux",
-        motor: "2.4",
-        ban_type: ["Pickup"],
-        transmission: ["Avtomat"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        ic_salon: ["Dəri"],
-        modfikasiya: ["Ön"],
-      },
-      {
-        model: "Yaris",
-        motor: "1.5",
-        ban_type: ["Hatchback"],
-        transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
-        engine: ["Benzin"],
-        ic_salon: ["Dəri", "Parça"],
-        modfikasiya: ["Ön"],
-      },
-    ],
-  };
+  Chevrolet: [
+    {
+      model: "Aveo",
+      motor: ["1.4", "1.6", "1.8"],
+      ban_type: ["Sedan", "Hatchback"],
+      transmission: ["Avtomat", "Mexanika"],
+      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+      year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
+      engine: ["Benzin", "Dizel", "Hibrid"],
+      salon: ["Dəri", "Parça"],
+      modfikasiya: ["Ön"],
+    },
+    {
+      model: "Camaro",
+      motor: ["2.0", "3.0", "5.0"],
+      ban_type: ["Coupe"],
+      transmission: ["Avtomat", "Mexanika"],
+      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+      year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"],
+      engine: ["Benzin"],
+      salon: ["Dəri", "Parça"],
+      modfikasiya: ["Arxa"],
+    },
+    {
+      model: "Malibu",
+      motor: ["1.5", "2.0", "2.5"],
+      ban_type: ["Sedan"],
+      transmission: ["Avtomat", "Mexanika"],
+      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+      year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
+      engine: ["Benzin", "Hibrid"],
+      salon: ["Dəri", "Parça"],
+      modfikasiya: ["Ön"],
+    },
+    {
+      model: "Niva",
+      motor: ["1.5", "1.7"],
+      ban_type: ["SUV"],
+      transmission: ["Mexanika"],
+      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+      year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"],
+      engine: ["Benzin"],
+      salon: ["Parça"],
+      modfikasiya: ["Tam"],
+    },
+    {
+      model: "Tahoe",
+      motor: ["5.3", "6.2"],
+      ban_type: ["SUV"],
+      transmission: ["Avtomat"],
+      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+      year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"],
+      engine: ["Benzin"],
+      salon: ["Dəri"],
+      modfikasiya: ["Tam"],
+    },
+    {
+      model: "Tracker",
+      motor: ["1.4", "1.6"],
+      ban_type: ["SUV"],
+      transmission: ["Avtomat", "Mexanika"],
+      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+      year: ["2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"],
+      engine: ["Benzin"],
+      salon: ["Parça"],
+      modfikasiya: ["Ön"],
+    },
+    {
+      model: "Orlando",
+      motor: ["1.8"],
+      ban_type: ["MPV"],
+      transmission: ["Avtomat"],
+      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+      year: ["2015","2016","2017","2018","2019","2020","2021","2023","2024","2025"],
+      engine: ["Benzin"],
+      salon: ["Dəri"],
+      modfikasiya: ["Ön"],
+    },
+    {
+      model: "Spin",
+      motor: ["1.8"],
+      ban_type: ["MPV"],
+      transmission: ["Avtomat"],
+      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+      year: ["2015","2016","2017","2018","2019","2020","2021","2023","2024","2025"],
+      engine: ["Benzin"],
+      salon: ["Dəri"],
+      modfikasiya: ["Ön"],
+    },
+    {
+      model: "Sail",
+      motor: ["1.5"],
+      ban_type: ["Sedan"],
+      transmission: ["Avtomat", "Mexanika"],
+      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+      year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2024","2025"],
+      engine: ["Benzin"],
+      salon: ["Dəri", "Parça"],
+      modfikasiya: ["Ön"],
+    },
+    {
+      model: "Rezzo",
+      motor: ["1.8"],
+      ban_type: ["MPV"],
+      transmission: ["Avtomat"],
+      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+      year: ["2015","2016","2017","2018","2019","2020","2024","2025"],
+      engine: ["Benzin"],
+      salon: ["Dəri"],
+      modfikasiya: ["Ön"],
+    }
+  ]
+};
 
 
   const handleChangeSelect = (e) => {
@@ -909,15 +245,54 @@ const [selectedCity, setSelectedCity] = useState("");
     }
   };
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 20) {
+const handleFileChange = (e) => {
+  const files = Array.from(e.target.files);
+
+  setForm((prev) => {
+    const totalImages = [...prev.images, ...files];
+
+    if (totalImages.length > 20) {
       alert("Ən çoxu 20 şəkil yükləyə bilərsiniz.");
-      return;
+      return prev; // əvvəlki state qalır
     }
-    setForm((prev) => ({ ...prev, images: files }));
+
+    return {
+      ...prev,
+      images: totalImages, // əvvəlkilərin üstünə əlavə edir
+    };
+  });
+
+  // Əgər ilk dəfə şəkil seçilirsə
+  if (form.images.length === 0 && files.length > 0) {
     setMainImageIndex(0);
-  };
+  }
+
+  e.target.value = null; // eyni şəkli yenidən seçə bilmək üçün
+};
+
+
+const handleRemoveImage = (indexToRemove) => {
+  setForm((prev) => {
+    const updatedImages = prev.images.filter(
+      (_, index) => index !== indexToRemove
+    );
+
+    return {
+      ...prev,
+      images: updatedImages,
+    };
+  });
+
+  // Əgər silinən şəkil əsas idisə
+  if (mainImageIndex === indexToRemove) {
+    setMainImageIndex(null);
+  }
+  // Əgər əsas şəkildən əvvəlki silindisə index düzəlt
+  else if (mainImageIndex > indexToRemove) {
+    setMainImageIndex((prev) => prev - 1);
+  }
+};
+
 
   const fetchCars = async () => {
     try {
@@ -951,20 +326,7 @@ const [selectedCity, setSelectedCity] = useState("");
       formData.append("mainImageIndex", mainImageIndex);
     }
 
-    // Object.entries(form).forEach(([key, value]) => {
-    //   if (key === "data") return;
-    //   if (key === "contact") {
-    //     Object.entries(value).forEach(([k, v]) =>
-    //       formData.append(`contact.${k}`, v),
-    //     );
-    //   } else if (key !== "images") {
-    //     formData.append(key, value);
-    //   } else if (key === "salon") {
-    //     formData.append(key, value);
-    //     return <div>{form.salon}</div>;
-    //   }
-    // });
-
+ 
     Object.entries(form).forEach(([key, value]) => {
   if (key === "images" || key === "data") return;
   if (key === "contact") {
@@ -1261,8 +623,8 @@ const [selectedCity, setSelectedCity] = useState("");
           </button>
 
           {isOpen && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="relative w-[90%] max-w-3xl max-h-[100vh] overflow-y-auto bg-white p-6 rounded-xl shadow-lg">
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 " >
+              <div className="relative max-w-[90%] max-h-[80vh] overflow-y-auto bg-white p-6 rounded-xl shadow-lg mb-4 mt-4">
                 <button
                   onClick={() => setIsOpen(false)}
                   className="absolute top-2 right-2 text-gray-600 hover:text-red-600"
@@ -1272,19 +634,19 @@ const [selectedCity, setSelectedCity] = useState("");
 
                 <form
   onSubmit={handleSubmit}
-  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-white shadow-md rounded-xl"
+  className="w-full max-h-[80vh] px-2 py-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto bg-white shadow-md rounded-xl"
 >
   {/* Marka */}
   <select
     name="brand"
     value={form.brand}
     onChange={handleChange}
-    required
+    
     className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
   >
     <option value="">Marka seçin</option>
-    {Object.keys(carData).map((brand) => (
-      <option key={brand} value={brand}>{brand}</option>
+    {Object.keys(carData).map((brand, index) => (
+      <option key={`brand-${index}`}  value={brand}>{brand}</option>
     ))}
   </select>
 
@@ -1294,13 +656,13 @@ const [selectedCity, setSelectedCity] = useState("");
     value={form.model}
     onChange={handleChange}
     disabled={!form.brand}
-    required
+    
     className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">Model seçin</option>
     {form.brand &&
       carData[form.brand].map((item) => (
-        <option key={item.model} value={item.model}>{item.model}</option>
+        <option key={`model-${item.model}`} value={item.model}>{item.model}</option>
       ))}
   </select>
 
@@ -1309,7 +671,7 @@ const [selectedCity, setSelectedCity] = useState("");
     value={form.color}
     onChange={handleChange}
     disabled={!form.model}
-    required
+    
     className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">Rəng seçin</option>
@@ -1318,7 +680,7 @@ const [selectedCity, setSelectedCity] = useState("");
       carData[form.brand]
         .filter((item) => item.model === form.model)
         .flatMap((item) => item.color)
-        .map((color) => <option key={color} value={color}>{color}</option>)}
+        .map((color) => <option key={`color-${color}`} value={color}>{color}</option>)}
   </select>
 
   {/* Ban növü */}
@@ -1327,7 +689,7 @@ const [selectedCity, setSelectedCity] = useState("");
     value={form.ban_type}
     onChange={handleChange}
     disabled={!form.color}
-    required
+    
     className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">Ban növü seçin</option>
@@ -1336,7 +698,7 @@ const [selectedCity, setSelectedCity] = useState("");
       carData[form.brand]
         .filter((item) => item.model === form.model)
         .flatMap((item) => item.ban_type)
-        .map((type) => <option key={type} value={type}>{type}</option>)}
+        .map((type) => <option key={`ban-type-${type}`} value={type}>{type}</option>)}
   </select>
 
   {/* Motor */}
@@ -1346,7 +708,7 @@ const [selectedCity, setSelectedCity] = useState("");
   value={form.motor}
   onChange={handleChange}
   disabled={!form.ban_type}
-  required
+  
   className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
 >
   <option value="">Motor seçin</option>
@@ -1356,7 +718,7 @@ const [selectedCity, setSelectedCity] = useState("");
       .filter((item) => item.model === form.model)
       .map((item) =>
         item.motor.map((motorOption) => (
-          <option key={motorOption} value={motorOption}>
+          <option key={`motor-${motorOption}`} value={motorOption}>
             {motorOption}
           </option>
         ))
@@ -1369,13 +731,13 @@ const [selectedCity, setSelectedCity] = useState("");
     value={form.year}
     onChange={handleChange}
     disabled={!form.motor}
-    required
+    
     className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">İl seçin</option>
     {Array.from({ length: 80 }, (_, i) => {
       const year = new Date().getFullYear() - i;
-      return <option key={year} value={year}>{year}</option>;
+      return <option key={`year-${year}`} value={year}>{year}</option>;
     })}
   </select>
 
@@ -1387,7 +749,7 @@ const [selectedCity, setSelectedCity] = useState("");
     placeholder="KM"
     onChange={handleChange}
     disabled={!form.year}
-    required
+    
     className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   />
 
@@ -1399,7 +761,7 @@ const [selectedCity, setSelectedCity] = useState("");
     placeholder="Qiymət"
     onChange={handleChange}
     disabled={!form.km}
-    required
+  
     className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   />
 
@@ -1409,7 +771,7 @@ const [selectedCity, setSelectedCity] = useState("");
     value={form.transmission}
     onChange={handleChange}
     disabled={!form.price}
-    required
+   
     className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">Transmissiya seçin</option>
@@ -1418,7 +780,7 @@ const [selectedCity, setSelectedCity] = useState("");
       carData[form.brand]
         .filter((item) => item.model === form.model)
         .map((item) =>
-          item.transmission.map((trans) => <option key={trans} value={trans}>{trans}</option>)
+          item.transmission.map((trans) => <option key={`trans-${trans}`} value={trans}>{trans}</option>)
         )}
   </select>
 
@@ -1427,7 +789,7 @@ const [selectedCity, setSelectedCity] = useState("");
   value={form.engine}
   onChange={handleChange}
   disabled={!form.transmission}
-  requerd
+  
   className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">Yanacaq Növü</option>
@@ -1436,7 +798,7 @@ const [selectedCity, setSelectedCity] = useState("");
       carData[form.brand]
         .filter((engitem) => engitem.model === form.model)
         .map((engitem) =>
-          engitem.engine.map((eng) => <option key={eng} value={eng}>{eng}</option>)
+          engitem.engine.map((eng) => <option key={`engine-${eng}`} value={eng}>{eng}</option>)
         )}
   </select>
 
@@ -1448,7 +810,7 @@ const [selectedCity, setSelectedCity] = useState("");
     value={form.modfikasiya}
     onChange={handleChange}
     disabled={!form.engine}
-    required
+   
     className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">Modifikasiya seçin</option>
@@ -1457,7 +819,7 @@ const [selectedCity, setSelectedCity] = useState("");
       carData[form.brand]
         .filter((item) => item.model === form.model)
         .map((item) =>
-          item.modfikasiya.map((mod) => <option key={mod} value={mod}>{mod}</option>)
+          item.modfikasiya.map((mod) => <option key={`mod-${mod}`} value={mod}>{mod}</option>)
         )}
   </select>
 
@@ -1470,39 +832,62 @@ const [selectedCity, setSelectedCity] = useState("");
 
   {/* Şəkillər */}
   <div className="col-span-1 sm:col-span-2 lg:col-span-3">
-    <label className="block mb-2 font-semibold">Şəkillər:</label>
-    <input
-      type="file"
-      multiple
-      accept="image/*"
-      onChange={handleFileChange}
-      disabled={!form.modfikasiya}
-      className="p-3 border rounded-xl w-full cursor-pointer"
-    />
-    {form.images.length > 0 && (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
-        {form.images.map((img, index) => {
-          const url = URL.createObjectURL(img);
-          return (
-            <div
-              key={index}
-              className={`relative border rounded-lg overflow-hidden cursor-pointer ${
-                mainImageIndex === index ? "ring-4 ring-green-500" : ""
-              }`}
-              onClick={() => setMainImageIndex(index)}
+  <label className="block mb-2 font-semibold">Şəkillər:</label>
+
+  <input
+    type="file"
+    multiple
+    accept="image/*"
+    onChange={handleFileChange}
+    disabled={!form.modfikasiya}
+    className="p-3 border rounded-xl w-full cursor-pointer"
+  />
+
+  {form.images.length > 0 && (
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-4">
+      {form.images.map((img, index) => {
+        const url = URL.createObjectURL(img);
+
+        return (
+          <div
+            key={index}
+            className={`relative w-full aspect-[4/3] border rounded-xl overflow-hidden cursor-pointer transition ${
+              mainImageIndex === index
+                ? "ring-4 ring-green-500"
+                : "hover:ring-2 hover:ring-gray-300"
+            }`}
+            onClick={() => setMainImageIndex(index)}
+          >
+            {/* X düyməsi */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveImage(index);
+              }}
+              className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center hover:bg-red-700 z-10"
             >
-              <img src={url} alt={`Şəkil ${index + 1}`} className="object-cover w-full h-24" />
-              {mainImageIndex === index && (
-                <div className="absolute bottom-0 left-0 right-0 bg-green-600 text-white text-center text-xs py-1">
-                  Əsas şəkil
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    )}
-  </div>
+              ✕
+            </button>
+
+            <img
+              src={url}
+              alt={`Şəkil ${index + 1}`}
+              className="w-full h-full object-cover"
+            />
+
+            {mainImageIndex === index && (
+              <div className="absolute bottom-0 left-0 right-0 bg-green-600 text-white text-center text-xs py-1">
+                Əsas şəkil
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  )}
+</div>
+
 
        <label className="block mb-2  w-[200px] bg-gray-200 rounded-[10px] p-1 ">
        
