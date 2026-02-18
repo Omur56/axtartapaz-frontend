@@ -488,9 +488,16 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
-import { Heart, RefreshCcw, Percent, MapPin, Search, User } from "lucide-react";
+import { Heart, RefreshCcw, Percent, MapPin} from "lucide-react";
 import Katalog from "../Katalog";
 import BottomMenu from "../../components/MobileMenu";
+import Search from "../Search";
+
+
+
+
+
+
 const ITEMS_PER_LOAD = 8;
 
 const CATEGORIES = {
@@ -663,8 +670,10 @@ const Home = () => {
   };
 
   /* ================= RENDER ================= */
-  return (
+  return (  
     <div className="min-h-screen max-w-[1200px] mx-auto mt-[80px] mb-10">
+
+    
       {/* SEARCH */}
       <input
         value={query}
@@ -673,6 +682,9 @@ const Home = () => {
         placeholder="Axtar..."
         className="w-full border p-2 rounded mb-4"
       />
+       
+
+
 
       {loadingSearch && (
         <Typography align="center">
@@ -682,6 +694,7 @@ const Home = () => {
 
       {!loadingSearch && results.length > 0 && (
         <div className="grid grid-cols-2  sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6 ">
+          
           {results.map((item) => (
             <Link key={item._id} to={`/ads/${item.source}/${item._id}`}>
               <div className="border rounded shadow p-2">
@@ -696,6 +709,8 @@ const Home = () => {
           ))}
         </div>
       )}
+
+   
 
       <Katalog   className="mt-1 " width="100%" height="60px" marginTop="10px"  />
 

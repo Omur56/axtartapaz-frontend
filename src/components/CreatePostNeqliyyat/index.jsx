@@ -63,6 +63,81 @@ const [imageClose, setImageClose] = useState(false);
   });
 
   const carData = {
+
+    Mercedess : [
+      {
+        model: "Gle",
+        motor: ["2.0", "3.0", "4.0"],
+        ban_type: ["Sedan", "Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "GLC",
+        motor: ["2.0", "3.0", "4.0"],
+        ban_type: ["Sedan", "Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "GLE",
+        motor: ["2.0", "3.0", "4.0"],
+        ban_type: ["Sedan", "Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "GLA",
+        motor: ["2.0", "3.0", "4.0"],
+        ban_type: ["Sedan", "Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "170 S",
+      motor: ["1.8 L / 52 a.g."],
+      year: ["1950", "1951", "1952","1949"],
+      ban_type: ["Sedan", "Kabrolet"],
+      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+      engine: ["Benzin", "Dizel", "Hibrid"],
+      modfikasiya: ["Ön"],
+      transmission: [ "Mexanika"],
+      salon: ["Dəri", "Parça"],
+      },
+
+      {
+        model: "A-Class",
+        motor: ["1.4 l / 82 a.g.","1.6 l / 82 a.g.","1.6 l / 102 a.g.","1.9 l / 125 a.g.","2.1 l / 140 a.g."],
+        ban_type: ["Sedan", "Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+
+      }
+      
+
+      
+      
+    ],
   Chevrolet: [
     {
       model: "Aveo",
@@ -623,32 +698,36 @@ const handleRemoveImage = (indexToRemove) => {
           </button>
 
           {isOpen && (
-            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 w-[full " >
-              <div className="relative max-w-full max-h-full overflow-y-auto bg-white p-6 rounded-xl shadow-lg mb-4 mt-4">
+            <div className="fixed inset-0 bg-black/60 flex mb-5  z-50  rounded-[10px] " >
+              <div className="relative w-full h-screen   bg-white shadow-lg ">
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="absolute top-2 right-2 text-gray-600 hover:text-red-600"
+                  className="absolute top-0 right-0 text-gray-600 hover:text-red-600"
                 >
                   <X size={28} />
                 </button>
 
                 <form
   onSubmit={handleSubmit}
-  className="w-full max-h-[80vh] px-2 py-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto bg-white shadow-md rounded-xl"
+  className="w-screen max-h-screen px-4 py-4 mt-4 mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto bg-white shadow-md rounded-xl"
 >
   {/* Marka */}
+  
+  
   <select
     name="brand"
     value={form.brand}
     onChange={handleChange}
     
-    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
   >
     <option value="">Marka seçin</option>
     {Object.keys(carData).map((brand, index) => (
       <option key={`brand-${index}`}  value={brand}>{brand}</option>
     ))}
   </select>
+
+  
 
   {/* Model */}
   <select
@@ -657,7 +736,7 @@ const handleRemoveImage = (indexToRemove) => {
     onChange={handleChange}
     disabled={!form.brand}
     
-    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">Model seçin</option>
     {form.brand &&
@@ -672,7 +751,7 @@ const handleRemoveImage = (indexToRemove) => {
     onChange={handleChange}
     disabled={!form.model}
     
-    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option className="text-gray-400" value="">Rəng seçin</option>
     {form.brand &&
@@ -690,7 +769,7 @@ const handleRemoveImage = (indexToRemove) => {
     onChange={handleChange}
     disabled={!form.color}
     
-    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">Ban növü seçin</option>
     {form.brand &&
@@ -709,7 +788,7 @@ const handleRemoveImage = (indexToRemove) => {
   onChange={handleChange}
   disabled={!form.ban_type}
   
-  className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+  className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
 >
   <option value="">Motor seçin</option>
   {form.brand &&
@@ -732,7 +811,7 @@ const handleRemoveImage = (indexToRemove) => {
     onChange={handleChange}
     disabled={!form.motor}
     
-    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">İl seçin</option>
     {Array.from({ length: 80 }, (_, i) => {
@@ -750,7 +829,7 @@ const handleRemoveImage = (indexToRemove) => {
     onChange={handleChange}
     disabled={!form.year}
     
-    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   />
 
   {/* Qiymət */}
@@ -762,7 +841,7 @@ const handleRemoveImage = (indexToRemove) => {
     onChange={handleChange}
     disabled={!form.km}
   
-    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   />
 
   {/* Transmissiya */}
@@ -772,7 +851,7 @@ const handleRemoveImage = (indexToRemove) => {
     onChange={handleChange}
     disabled={!form.price}
    
-    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">Transmissiya seçin</option>
     {form.brand &&
@@ -790,7 +869,7 @@ const handleRemoveImage = (indexToRemove) => {
   onChange={handleChange}
   disabled={!form.transmission}
   
-  className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+  className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">Yanacaq Növü</option>
     {form.brand &&
@@ -811,7 +890,7 @@ const handleRemoveImage = (indexToRemove) => {
     onChange={handleChange}
     disabled={!form.engine}
    
-    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
   >
     <option value="">Modifikasiya seçin</option>
     {form.brand &&
@@ -887,7 +966,7 @@ const handleRemoveImage = (indexToRemove) => {
     </div>
   )}
 </div>
-
+<div className="col-span-1 sm:col-span-2 lg:col-span-3 flex gap-2">
 
        <label className="block mb-2  w-[200px] bg-gray-200 rounded-[10px] p-1 ">
        
@@ -915,9 +994,11 @@ const handleRemoveImage = (indexToRemove) => {
     /> 
         Barter
       </label>
+      </div>
 
 
-  {/* Kontakt məlumatları */}
+  {/* Kontakt məlumatları */} 
+ 
   <input
     type="text"
     name="contact.phone"
@@ -926,7 +1007,7 @@ const handleRemoveImage = (indexToRemove) => {
     placeholder="+994-XX-XXX-XX-XX"
     
     disabled={!form.modfikasiya}
-    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+    className="p-3 rounded-xl border max-w-full  border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
   />
 
   <input
@@ -937,7 +1018,7 @@ const handleRemoveImage = (indexToRemove) => {
     placeholder="Email"
    
     disabled={!form.modfikasiya}
-    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+    className="p-3 rounded-xl border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
   />
 
   <input
@@ -948,7 +1029,7 @@ const handleRemoveImage = (indexToRemove) => {
     placeholder="Ad"
     
     disabled={!form.modfikasiya}
-    className="p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition capitalize"
+    className="p-3 rounded-xl border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition capitalize"
   />
 
   {/* Əlavə qeydlər */}
@@ -959,13 +1040,13 @@ const handleRemoveImage = (indexToRemove) => {
     placeholder="Əlavə Qeydlər"
    
     disabled={!form.modfikasiya}
-    className="col-span-1 sm:col-span-2 lg:col-span-3 p-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+    className="col-span-1    outline-none focus:border-blue-500 focus:ring-2  caret-pink-500  sm:col-span-2 lg:col-span-3 p-3 rounded-xl border border-gray-300 transition"
   />
 
   {/* Submit düyməsi */}
   <button
     type="submit"
-    className="col-span-1 sm:col-span-2 lg:col-span-3 bg-blue-500 text-white p-3 rounded-xl hover:bg-blue-600 transition"
+    className="col-span-1 sm:col-span-2 lg:col-span-3 bg-blue-500 text-white p-3 rounded-xl mb-5 hover:bg-blue-600 transition"
   >
     Əlavə et
   </button>

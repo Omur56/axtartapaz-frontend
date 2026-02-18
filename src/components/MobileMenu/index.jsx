@@ -53,11 +53,11 @@ const BottomMenu = () => {
               }`}
             >
               <Icon
-                size={30}
+                size={25}
+                color={isActive ? "#670fff" : "#670fff"}
+            
                 strokeWidth={1.5}
-                className={`transition-all duration-300 ${
-                  isActive ? "fill-red-500" : "text-gray-500"
-                }`}
+                className={`transition-all duration-300 `}
               />
             </div>
 
