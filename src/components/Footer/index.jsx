@@ -3,7 +3,7 @@ import TitleLogo from "../TitleLogo";
 
 function Footer() {
   return (
-    <footer className="w-full    bg-[#1E1E1E] py-10 px-4 sm:px-6 lg:px-8  ">
+    <footer className="w-full    bg-[#f7f7f7f2] py-10 px-4 sm:px-6 lg:px-8  ">
       {/* MAIN GRID CONTAINER */}
       <div className=" mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-10 ">
         
