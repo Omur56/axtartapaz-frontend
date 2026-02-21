@@ -643,17 +643,17 @@ export default function CreatePost() {
       formData.append("mainImageIndex", mainImageIndex);
     }
 
-    Object.entries(form).forEach(([key, value]) => {
-      if (key === "images" || key === "data") return;
-      if (key === "contact") {
-        Object.entries(value).forEach(([k, v]) =>
-          formData.append(`contact.${k}`, v),
-        );
-      } else {
-        formData.append(key, value); // <--- location, salon, brand, model, və s. buradan gedəcək
-      }
-    });
+ Object.entries(form).forEach(([key, value]) => {
+  if (key === "images" || key === "data") return;
 
+  if (key === "contact") {
+    Object.entries(value).forEach(([k, v]) => {
+      formData.set(`contact.${k}`, String(v || ""));
+    });
+  } else {
+    formData.set(key, String(value || ""));
+  }
+});
     formData.append(
       "data",
       form.data ? form.data.toISOString() : new Date().toISOString(),
@@ -1302,7 +1302,7 @@ export default function CreatePost() {
                     onChange={handleChange}
                     placeholder="Əlavə Qeydlər"
                     disabled={!form.modfikasiya}
-                    className="col-span-1    outline-none focus:border-blue-500 focus:ring-2  caret-pink-500  sm:col-span-2 lg:col-span-3 p-3 rounded-xl border border-gray-300 transition"
+                    className="col-span-1 min-h-[250px]   outline-none focus:border-blue-500 focus:ring-2  caret-pink-500  sm:col-span-2 lg:col-span-3 p-3 rounded-xl border border-gray-300 transition"
                   />
 
                   {/* Submit düyməsi */}
