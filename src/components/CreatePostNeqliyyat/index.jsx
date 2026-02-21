@@ -10,9 +10,8 @@ import confetti from "canvas-confetti";
 import Checkbox from "@mui/material/Checkbox";
 import { RefreshCcw, Percent, MapPin } from "lucide-react";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import { Link as MuiLink } from "@mui/material";
+import { Link as MuiLink, Radio } from "@mui/material";
 import CitySelect from "./CitySelect";
-
 
 export default function CreatePost() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,8 +22,10 @@ export default function CreatePost() {
   const [checked, setChecked] = React.useState(true);
   const [price, setPrice] = useState("");
   const [mainImageIndex, setMainImageIndex] = useState(null);
-const [selectedCity, setSelectedCity] = useState("");
-const [imageClose, setImageClose] = useState(false);
+  const [selectedCity, setSelectedCity] = useState("");
+  const [imageClose, setImageClose] = useState(false);
+  const [modelImagePreview, setModelImagePreview] = useState("");
+  const [handleModelImageChange, setHandleModelImageChange] = useState(null);
 
   const [form, setForm] = useState({
     id: Date.now(),
@@ -63,15 +64,27 @@ const [imageClose, setImageClose] = useState(false);
   });
 
   const carData = {
-
-    Mercedess : [
+    Mercedess: [
       {
         model: "Gle",
         motor: ["2.0", "3.0", "4.0"],
         ban_type: ["Sedan", "Hatchback"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
+        year: [
+          "2009",
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
         engine: ["Benzin", "Dizel", "Hibrid"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
@@ -82,7 +95,19 @@ const [imageClose, setImageClose] = useState(false);
         ban_type: ["Sedan", "Hatchback"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
         engine: ["Benzin", "Dizel", "Hibrid"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
@@ -93,7 +118,19 @@ const [imageClose, setImageClose] = useState(false);
         ban_type: ["Sedan", "Hatchback"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
         engine: ["Benzin", "Dizel", "Hibrid"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
@@ -104,154 +141,338 @@ const [imageClose, setImageClose] = useState(false);
         ban_type: ["Sedan", "Hatchback"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
         engine: ["Benzin", "Dizel", "Hibrid"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
       },
       {
         model: "170 S",
-      motor: ["1.8 L / 52 a.g."],
-      year: ["1950", "1951", "1952","1949"],
-      ban_type: ["Sedan", "Kabrolet"],
-      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-      engine: ["Benzin", "Dizel", "Hibrid"],
-      modfikasiya: ["Ön"],
-      transmission: [ "Mexanika"],
-      salon: ["Dəri", "Parça"],
+        motor: ["1.8 L / 52 a.g."],
+        year: ["1950", "1951", "1952", "1949"],
+        ban_type: ["Sedan", "Kabrolet"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        modfikasiya: ["Ön"],
+        transmission: ["Mexanika"],
+        salon: ["Dəri", "Parça"],
       },
 
       {
         model: "A-Class",
-        motor: ["1.4 l / 82 a.g.","1.6 l / 82 a.g.","1.6 l / 102 a.g.","1.9 l / 125 a.g.","2.1 l / 140 a.g."],
+        motor: [
+          "1.4 l / 82 a.g.",
+          "1.6 l / 82 a.g.",
+          "1.6 l / 102 a.g.",
+          "1.9 l / 125 a.g.",
+          "2.1 l / 140 a.g.",
+        ],
         ban_type: ["Sedan", "Hatchback"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: ["2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
+        year: [
+          "2003",
+          "2004",
+          "2005",
+          "2006",
+          "2007",
+          "2008",
+          "2009",
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
         engine: ["Benzin", "Dizel", "Hibrid"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
-
-      }
-      
-
-      
-      
+      },
     ],
-  Chevrolet: [
-    {
-      model: "Aveo",
-      motor: ["1.4", "1.6", "1.8"],
-      ban_type: ["Sedan", "Hatchback"],
-      transmission: ["Avtomat", "Mexanika"],
-      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-      year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
-      engine: ["Benzin", "Dizel", "Hibrid"],
-      salon: ["Dəri", "Parça"],
-      modfikasiya: ["Ön"],
-    },
-    {
-      model: "Camaro",
-      motor: ["2.0", "3.0", "5.0"],
-      ban_type: ["Coupe"],
-      transmission: ["Avtomat", "Mexanika"],
-      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-      year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"],
-      engine: ["Benzin"],
-      salon: ["Dəri", "Parça"],
-      modfikasiya: ["Arxa"],
-    },
-    {
-      model: "Malibu",
-      motor: ["1.5", "2.0", "2.5"],
-      ban_type: ["Sedan"],
-      transmission: ["Avtomat", "Mexanika"],
-      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-      year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"],
-      engine: ["Benzin", "Hibrid"],
-      salon: ["Dəri", "Parça"],
-      modfikasiya: ["Ön"],
-    },
-    {
-      model: "Niva",
-      motor: ["1.5", "1.7"],
-      ban_type: ["SUV"],
-      transmission: ["Mexanika"],
-      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-      year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"],
-      engine: ["Benzin"],
-      salon: ["Parça"],
-      modfikasiya: ["Tam"],
-    },
-    {
-      model: "Tahoe",
-      motor: ["5.3", "6.2"],
-      ban_type: ["SUV"],
-      transmission: ["Avtomat"],
-      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-      year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"],
-      engine: ["Benzin"],
-      salon: ["Dəri"],
-      modfikasiya: ["Tam"],
-    },
-    {
-      model: "Tracker",
-      motor: ["1.4", "1.6"],
-      ban_type: ["SUV"],
-      transmission: ["Avtomat", "Mexanika"],
-      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-      year: ["2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"],
-      engine: ["Benzin"],
-      salon: ["Parça"],
-      modfikasiya: ["Ön"],
-    },
-    {
-      model: "Orlando",
-      motor: ["1.8"],
-      ban_type: ["MPV"],
-      transmission: ["Avtomat"],
-      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-      year: ["2015","2016","2017","2018","2019","2020","2021","2023","2024","2025"],
-      engine: ["Benzin"],
-      salon: ["Dəri"],
-      modfikasiya: ["Ön"],
-    },
-    {
-      model: "Spin",
-      motor: ["1.8"],
-      ban_type: ["MPV"],
-      transmission: ["Avtomat"],
-      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-      year: ["2015","2016","2017","2018","2019","2020","2021","2023","2024","2025"],
-      engine: ["Benzin"],
-      salon: ["Dəri"],
-      modfikasiya: ["Ön"],
-    },
-    {
-      model: "Sail",
-      motor: ["1.5"],
-      ban_type: ["Sedan"],
-      transmission: ["Avtomat", "Mexanika"],
-      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-      year: ["2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2024","2025"],
-      engine: ["Benzin"],
-      salon: ["Dəri", "Parça"],
-      modfikasiya: ["Ön"],
-    },
-    {
-      model: "Rezzo",
-      motor: ["1.8"],
-      ban_type: ["MPV"],
-      transmission: ["Avtomat"],
-      color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-      year: ["2015","2016","2017","2018","2019","2020","2024","2025"],
-      engine: ["Benzin"],
-      salon: ["Dəri"],
-      modfikasiya: ["Ön"],
-    }
-  ]
-};
+    Chevrolet: [
+      {
+        model: "Cruze",
+        imagesByYear: {
+          2009: "../../assets/car_image_list/chevrolet-cruze.jpg",
+          2010: "../../assets/car_image_list/chevrolet-cruze.jpg",
+          2011: "../../assets/car_image_list/chevrolet-cruze.jpg",
+          2012: "../../assets/car_image_list/chevrolet-cruze.jpg",
+          2013: "../../assets/car_image_list/chevrolet-cruze.jpg",
+          2014: "../../assets/car_image_list/chevrolet-cruze-2012-2016.png",
+          2015: "../../assets/car_image_list/2015-Chevrolet-Cruze.jpg",
+          2016: "../../assets/car_image_list/chevrolet-cruze-2016-2019.png",
+          2017: "../../assets/car_image_list/chevrolet-cruze-2016-2019.png",
+          2018: "../../assets/car_image_list/chevrolet-cruze-2016-2019.png",
+          2019: "../../assets/car_image_list/chevrolet-cruze-2016-2019.png",
+          2020: "../../assets/car_image_list/chevrolet-cruze-2020.jpg",
+          2021: "../../assets/car_image_list/chevrolet-cruze-2021.jpg",
+          2022: "../../assets/car_image_list/cruze-2016-2026.jpg",
+          2023: "../../assets/car_image_list/cruze-2016-2026.jpg",
+          2024: "../../assets/car_image_list/cruze-2016-2026.jpg",
+          2025: "../../assets/car_image_list/cruze-2016-2026.jpg",
+        },
+        motor: ["1.4", "1.6", "1.8"],
+        ban_type: ["Sedan", "Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
 
+      {
+        model: "Aveo",
+        motor: ["1.4", "1.6", "1.8"],
+        ban_type: ["Sedan", "Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Camaro",
+        motor: ["2.0", "3.0", "5.0"],
+        ban_type: ["Coupe"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Arxa"],
+      },
+      {
+        model: "Malibu",
+        motor: ["1.5", "2.0", "2.5"],
+        ban_type: ["Sedan"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+        ],
+        engine: ["Benzin", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Niva",
+        motor: ["1.5", "1.7"],
+        ban_type: ["SUV"],
+        transmission: ["Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin"],
+        salon: ["Parça"],
+        modfikasiya: ["Tam"],
+      },
+      {
+        model: "Tahoe",
+        motor: ["5.3", "6.2"],
+        ban_type: ["SUV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Tam"],
+      },
+      {
+        model: "Tracker",
+        motor: ["1.4", "1.6"],
+        ban_type: ["SUV"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin"],
+        salon: ["Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Orlando",
+        motor: ["1.8"],
+        ban_type: ["MPV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Spin",
+        motor: ["1.8"],
+        ban_type: ["MPV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "2023",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Sail",
+        motor: ["1.5"],
+        ban_type: ["Sedan"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: [
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "2024",
+          "2025",
+        ],
+        engine: ["Benzin"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      {
+        model: "Rezzo",
+        motor: ["1.8"],
+        ban_type: ["MPV"],
+        transmission: ["Avtomat"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        year: ["2015", "2016", "2017", "2018", "2019", "2020", "2024", "2025"],
+        engine: ["Benzin"],
+        salon: ["Dəri"],
+        modfikasiya: ["Ön"],
+      },
+    ],
+  };
 
   const handleChangeSelect = (e) => {
     const { name, checked } = e.target;
@@ -267,12 +488,38 @@ const [imageClose, setImageClose] = useState(false);
     }));
   };
 
-
   const [cars, setCars] = useState([]);
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Form state yenilənməsi
+    setForm((prev) => ({ ...prev, [name]: value }));
+
+    // Marka seçiləndə model və şəkil reset
+    if (name === "brand") {
+      setForm((prev) => ({
+        ...prev,
+        model: "",
+        year: "",
+        color: "",
+        ban_type: "",
+      }));
+      setModelImagePreview("");
+    }
+
+    // Model və ya İl dəyişəndə şəkil yenilə
+    if ((name === "model" || name === "year") && form.brand && form.model) {
+      const selectedCar = carData[form.brand].find(
+        (item) => item.model === (name === "model" ? value : form.model),
+      );
+
+      if (selectedCar) {
+        const year = name === "year" ? value : form.year;
+        const yearImage = selectedCar.imagesByYear?.[year];
+        setModelImagePreview(yearImage || "");
+      }
+    }
 
     // Qiymət və KM üçün minlik formatlama
     if (name === "price" || name === "km") {
@@ -282,9 +529,7 @@ const [imageClose, setImageClose] = useState(false);
     }
     // Mobil nömrə formatlama
     else if (name === "contact.phone") {
-      // +994 prefiksi hər zaman qalır
-      let digits = value.replace(/\D/g, "").slice(3, 12); // 9 rəqəm
-      // Formatlama: +994-XX-XXX-XX-XX
+      let digits = value.replace(/\D/g, "").slice(3, 12);
       if (digits.length > 0) digits = digits.replace(/^(\d{0,2})/, "$1");
       if (digits.length > 2)
         digits = digits.replace(/^(\d{2})(\d{0,3})/, "$1-$2");
@@ -319,55 +564,52 @@ const [imageClose, setImageClose] = useState(false);
       setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
 
-const handleFileChange = (e) => {
-  const files = Array.from(e.target.files);
+    setForm((prev) => {
+      const totalImages = [...prev.images, ...files];
 
-  setForm((prev) => {
-    const totalImages = [...prev.images, ...files];
+      if (totalImages.length > 20) {
+        alert("Ən çoxu 20 şəkil yükləyə bilərsiniz.");
+        return prev; // əvvəlki state qalır
+      }
 
-    if (totalImages.length > 20) {
-      alert("Ən çoxu 20 şəkil yükləyə bilərsiniz.");
-      return prev; // əvvəlki state qalır
+      return {
+        ...prev,
+        images: totalImages, // əvvəlkilərin üstünə əlavə edir
+      };
+    });
+
+    // Əgər ilk dəfə şəkil seçilirsə
+    if (form.images.length === 0 && files.length > 0) {
+      setMainImageIndex(0);
     }
 
-    return {
-      ...prev,
-      images: totalImages, // əvvəlkilərin üstünə əlavə edir
-    };
-  });
+    e.target.value = null; // eyni şəkli yenidən seçə bilmək üçün
+  };
 
-  // Əgər ilk dəfə şəkil seçilirsə
-  if (form.images.length === 0 && files.length > 0) {
-    setMainImageIndex(0);
-  }
+  const handleRemoveImage = (indexToRemove) => {
+    setForm((prev) => {
+      const updatedImages = prev.images.filter(
+        (_, index) => index !== indexToRemove,
+      );
 
-  e.target.value = null; // eyni şəkli yenidən seçə bilmək üçün
-};
+      return {
+        ...prev,
+        images: updatedImages,
+      };
+    });
 
-
-const handleRemoveImage = (indexToRemove) => {
-  setForm((prev) => {
-    const updatedImages = prev.images.filter(
-      (_, index) => index !== indexToRemove
-    );
-
-    return {
-      ...prev,
-      images: updatedImages,
-    };
-  });
-
-  // Əgər silinən şəkil əsas idisə
-  if (mainImageIndex === indexToRemove) {
-    setMainImageIndex(null);
-  }
-  // Əgər əsas şəkildən əvvəlki silindisə index düzəlt
-  else if (mainImageIndex > indexToRemove) {
-    setMainImageIndex((prev) => prev - 1);
-  }
-};
-
+    // Əgər silinən şəkil əsas idisə
+    if (mainImageIndex === indexToRemove) {
+      setMainImageIndex(null);
+    }
+    // Əgər əsas şəkildən əvvəlki silindisə index düzəlt
+    else if (mainImageIndex > indexToRemove) {
+      setMainImageIndex((prev) => prev - 1);
+    }
+  };
 
   const fetchCars = async () => {
     try {
@@ -401,17 +643,16 @@ const handleRemoveImage = (indexToRemove) => {
       formData.append("mainImageIndex", mainImageIndex);
     }
 
- 
     Object.entries(form).forEach(([key, value]) => {
-  if (key === "images" || key === "data") return;
-  if (key === "contact") {
-    Object.entries(value).forEach(([k, v]) =>
-      formData.append(`contact.${k}`, v)
-    );
-  } else {
-    formData.append(key, value); // <--- location, salon, brand, model, və s. buradan gedəcək
-  }
-});
+      if (key === "images" || key === "data") return;
+      if (key === "contact") {
+        Object.entries(value).forEach(([k, v]) =>
+          formData.append(`contact.${k}`, v),
+        );
+      } else {
+        formData.append(key, value); // <--- location, salon, brand, model, və s. buradan gedəcək
+      }
+    });
 
     formData.append(
       "data",
@@ -689,7 +930,7 @@ const handleRemoveImage = (indexToRemove) => {
             </Link>
           </Breadcrumbs>
         </div>
-        <div className="p-4">
+        <div className="p-4 w-full">
           <button
             onClick={handleOpenForm}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md"
@@ -698,360 +939,380 @@ const handleRemoveImage = (indexToRemove) => {
           </button>
 
           {isOpen && (
-            <div className="fixed inset-0 bg-black/60 flex mb-5  z-50  rounded-[10px] " >
-              <div className="relative w-full h-screen   bg-white shadow-lg ">
+            <div className="fixed inset-0 w-screen  bg-white h-screen mb-5  z-50  rounded-[10px] ">
+              <div className="relative max-w-[1000px] mx-auto h-screen  bg-white shadow-lg ">
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="absolute top-0 right-0 text-gray-600 hover:text-red-600"
+                  className="absolute top-[15px] right-[0px] text-gray-600 hover:text-red-600"
                 >
-                  <X size={28} />
+                  <X size={20} />
                 </button>
 
                 <form
-  onSubmit={handleSubmit}
-  className="w-screen max-h-screen px-4 py-4 mt-4 mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto bg-white shadow-md rounded-xl"
->
-  {/* Marka */}
-  
-  
-  <select
-    name="brand"
-    value={form.brand}
-    onChange={handleChange}
-    
-    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
-  >
-    <option value="">Marka seçin</option>
-    {Object.keys(carData).map((brand, index) => (
-      <option key={`brand-${index}`}  value={brand}>{brand}</option>
-    ))}
-  </select>
+                  onSubmit={handleSubmit}
+                  className=" max-w-[1000px] h-screen border rounded-[10px]  px-4 py-4 mt-4 mb-4 flex flex-col gap-4 overflow-y-auto shadow-md "
+                >
+                  {/* Marka */}
 
-  
+                  <select
+                    name="brand"
+                    value={form.brand}
+                    onChange={handleChange}
+                    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+                  >
+                    <option value="">Marka seçin</option>
+                    {Object.keys(carData).map((brand, index) => (
+                      <option key={`brand-${index}`} value={brand}>
+                        {brand}
+                      </option>
+                    ))}
+                  </select>
 
-  {/* Model */}
-  <select
-    name="model"
-    value={form.model}
-    onChange={handleChange}
-    disabled={!form.brand}
-    
-    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
-  >
-    <option value="">Model seçin</option>
-    {form.brand &&
-      carData[form.brand].map((item) => (
-        <option key={`model-${item.model}`} value={item.model}>{item.model}</option>
-      ))}
-  </select>
+                  {/* Model */}
+                  <select
+                    name="model"
+                    value={form.model}
+                    onChange={handleChange}
+                    disabled={!form.brand}
+                    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+                  >
+                    <option value="">Model seçin</option>
+                    {form.brand &&
+                      carData[form.brand].map((item) => (
+                        <option key={`model-${item.model}`} value={item.model}>
+                          {item.model}
+                        </option>
+                      ))}
+                  </select>
 
-  <select
-    name="color"
-    value={form.color}
-    onChange={handleChange}
-    disabled={!form.model}
-    
-    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
-  >
-    <option className="text-gray-400" value="">Rəng seçin</option>
-    {form.brand &&
-      form.model &&
-      carData[form.brand]
-        .filter((item) => item.model === form.model)
-        .flatMap((item) => item.color)
-        .map((color) => <option key={`color-${color}`} value={color}>{color}</option>)}
-  </select>
+                  <select
+                    name="color"
+                    value={form.color}
+                    onChange={handleChange}
+                    disabled={!form.model}
+                    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+                  >
+                    <option className="text-gray-400" value="">
+                      Rəng seçin
+                    </option>
+                    {form.brand &&
+                      form.model &&
+                      carData[form.brand]
+                        .filter((item) => item.model === form.model)
+                        .flatMap((item) => item.color)
+                        .map((color) => (
+                          <option key={`color-${color}`} value={color}>
+                            {color}
+                          </option>
+                        ))}
+                  </select>
 
-  {/* Ban növü */}
-  <select
-    name="ban_type"
-    value={form.ban_type}
-    onChange={handleChange}
-    disabled={!form.color}
-    
-    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
-  >
-    <option value="">Ban növü seçin</option>
-    {form.brand &&
-      form.model &&
-      carData[form.brand]
-        .filter((item) => item.model === form.model)
-        .flatMap((item) => item.ban_type)
-        .map((type) => <option key={`ban-type-${type}`} value={type}>{type}</option>)}
-  </select>
+                  {/* Ban növü */}
+                  <select
+                    name="ban_type"
+                    value={form.ban_type}
+                    onChange={handleChange}
+                    disabled={!form.color}
+                    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+                  >
+                    <option value="">Ban növü seçin</option>
+                    {form.brand &&
+                      form.model &&
+                      carData[form.brand]
+                        .filter((item) => item.model === form.model)
+                        .flatMap((item) => item.ban_type)
+                        .map((type) => (
+                          <option key={`ban-type-${type}`} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                  </select>
 
-  {/* Motor */}
-  
-<select
-  name="motor"
-  value={form.motor}
-  onChange={handleChange}
-  disabled={!form.ban_type}
-  
-  className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
->
-  <option value="">Motor seçin</option>
-  {form.brand &&
-    form.model &&
-    carData[form.brand]
-      .filter((item) => item.model === form.model)
-      .map((item) =>
-        item.motor.map((motorOption) => (
-          <option key={`motor-${motorOption}`} value={motorOption}>
-            {motorOption}
-          </option>
-        ))
-      )}
-</select>
+                  {/* Motor */}
 
-  {/* İl */}
-  <select
-    name="year"
-    value={form.year}
-    onChange={handleChange}
-    disabled={!form.motor}
-    
-    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
-  >
-    <option value="">İl seçin</option>
-    {Array.from({ length: 80 }, (_, i) => {
-      const year = new Date().getFullYear() - i;
-      return <option key={`year-${year}`} value={year}>{year}</option>;
-    })}
-  </select>
+                  <select
+                    name="motor"
+                    value={form.motor}
+                    onChange={handleChange}
+                    disabled={!form.ban_type}
+                    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+                  >
+                    <option value="">Motor seçin</option>
+                    {form.brand &&
+                      form.model &&
+                      carData[form.brand]
+                        .filter((item) => item.model === form.model)
+                        .map((item) =>
+                          item.motor.map((motorOption) => (
+                            <option
+                              key={`motor-${motorOption}`}
+                              value={motorOption}
+                            >
+                              {motorOption}
+                            </option>
+                          )),
+                        )}
+                  </select>
 
-  {/* KM */}
-  <input
-    type="text"
-    value={form.km}
-    name="km"
-    placeholder="KM"
-    onChange={handleChange}
-    disabled={!form.year}
-    
-    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
-  />
+                  {/* İl */}
+                  <select
+                    name="year"
+                    value={form.year}
+                    onChange={handleChange}
+                    disabled={!form.motor}
+                    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+                  >
+                    <option value="">İl seçin</option>
+                    {Array.from({ length: 80 }, (_, i) => {
+                      const year = new Date().getFullYear() - i;
+                      return (
+                        <option key={`year-${year}`} value={year}>
+                          {year}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <div className="col-span-2 relative max-w-[250px] max-h-[280px]">
+                    <img
+                      src={modelImagePreview}
+                      alt={`${form.model} ${form.year} Nəsil`}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
 
-  {/* Qiymət */}
-  <input
-    type="text"
-    value={form.price}
-    name="price"
-    placeholder="Qiymət"
-    onChange={handleChange}
-    disabled={!form.km}
-  
-    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
-  />
+                    <div className="absolute top-2 left-2 p-1 bg-black/50 rounded">
+                      <span className="text-white font-semibold text-sm">
+                        {form.model} {form.year ? form.year : ""}
+                      </span>
+                    </div>
+                  </div>
 
-  {/* Transmissiya */}
-  <select
-    name="transmission"
-    value={form.transmission}
-    onChange={handleChange}
-    disabled={!form.price}
-   
-    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
-  >
-    <option value="">Transmissiya seçin</option>
-    {form.brand &&
-      form.model &&
-      carData[form.brand]
-        .filter((item) => item.model === form.model)
-        .map((item) =>
-          item.transmission.map((trans) => <option key={`trans-${trans}`} value={trans}>{trans}</option>)
-        )}
-  </select>
+                  {/* KM */}
+                  <input
+                    type="text"
+                    value={form.km}
+                    name="km"
+                    placeholder="KM"
+                    onChange={handleChange}
+                    disabled={!form.year}
+                    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+                  />
 
-  <select 
-  name="engine"
-  value={form.engine}
-  onChange={handleChange}
-  disabled={!form.transmission}
-  
-  className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
-  >
-    <option value="">Yanacaq Növü</option>
-    {form.brand &&
-      form.model &&
-      carData[form.brand]
-        .filter((engitem) => engitem.model === form.model)
-        .map((engitem) =>
-          engitem.engine.map((eng) => <option key={`engine-${eng}`} value={eng}>{eng}</option>)
-        )}
-  </select>
+                  {/* Qiymət */}
+                  <input
+                    type="text"
+                    value={form.price}
+                    name="price"
+                    placeholder="Qiymət"
+                    onChange={handleChange}
+                    disabled={!form.km}
+                    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+                  />
 
+                  {/* Transmissiya */}
+                  <select
+                    name="transmission"
+                    value={form.transmission}
+                    onChange={handleChange}
+                    disabled={!form.price}
+                    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+                  >
+                    <option value="">Transmissiya seçin</option>
+                    {form.brand &&
+                      form.model &&
+                      carData[form.brand]
+                        .filter((item) => item.model === form.model)
+                        .map((item) =>
+                          item.transmission.map((trans) => (
+                            <option key={`trans-${trans}`} value={trans}>
+                              {trans}
+                            </option>
+                          )),
+                        )}
+                  </select>
 
+                  <select
+                    name="engine"
+                    value={form.engine}
+                    onChange={handleChange}
+                    disabled={!form.transmission}
+                    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+                  >
+                    <option value="">Yanacaq Növü</option>
+                    {form.brand &&
+                      form.model &&
+                      carData[form.brand]
+                        .filter((engitem) => engitem.model === form.model)
+                        .map((engitem) =>
+                          engitem.engine.map((eng) => (
+                            <option key={`engine-${eng}`} value={eng}>
+                              {eng}
+                            </option>
+                          )),
+                        )}
+                  </select>
 
-  {/* Modifikasiya */}
-  <select
-    name="modfikasiya"
-    value={form.modfikasiya}
-    onChange={handleChange}
-    disabled={!form.engine}
-   
-    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
-  >
-    <option value="">Modifikasiya seçin</option>
-    {form.brand &&
-      form.model &&
-      carData[form.brand]
-        .filter((item) => item.model === form.model)
-        .map((item) =>
-          item.modfikasiya.map((mod) => <option key={`mod-${mod}`} value={mod}>{mod}</option>)
-        )}
-  </select>
+                  {/* Modifikasiya */}
+                  <select
+                    name="modfikasiya"
+                    value={form.modfikasiya}
+                    onChange={handleChange}
+                    disabled={!form.engine}
+                    className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+                  >
+                    <option value="">Modifikasiya seçin</option>
+                    {form.brand &&
+                      form.model &&
+                      carData[form.brand]
+                        .filter((item) => item.model === form.model)
+                        .map((item) =>
+                          item.modfikasiya.map((mod) => (
+                            <option key={`mod-${mod}`} value={mod}>
+                              {mod}
+                            </option>
+                          )),
+                        )}
+                  </select>
 
-  <CitySelect
-  selectedCity={form.location}
-  setSelectedCity={(city) =>
-    setForm((prev) => ({ ...prev, location: city }))
-  }
-/>
+                  <CitySelect
+                    selectedCity={form.location}
+                    setSelectedCity={(city) =>
+                      setForm((prev) => ({ ...prev, location: city }))
+                    }
+                  />
 
-  {/* Şəkillər */}
-  <div className="col-span-1 sm:col-span-2 lg:col-span-3">
-  <label className="block mb-2 font-semibold">Şəkillər:</label>
+                  {/* Şəkillər */}
+                  <div className="col-span-1 sm:col-span-2 lg:col-span-3">
+                    <label className="block mb-2 font-semibold">
+                      Şəkillər:
+                    </label>
 
-  <input
-    type="file"
-    multiple
-    accept="image/*"
-    onChange={handleFileChange}
-    disabled={!form.modfikasiya}
-    className="p-3 border rounded-xl w-full cursor-pointer"
-  />
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      disabled={!form.modfikasiya}
+                      className="p-3 border rounded-xl w-full cursor-pointer"
+                    />
 
-  {form.images.length > 0 && (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-4">
-      {form.images.map((img, index) => {
-        const url = URL.createObjectURL(img);
+                    {form.images.length > 0 && (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-4">
+                        {form.images.map((img, index) => {
+                          const url = URL.createObjectURL(img);
 
-        return (
-          <div
-            key={index}
-            className={`relative w-full aspect-[4/3] border rounded-xl overflow-hidden cursor-pointer transition ${
-              mainImageIndex === index
-                ? "ring-4 ring-green-500"
-                : "hover:ring-2 hover:ring-gray-300"
-            }`}
-            onClick={() => setMainImageIndex(index)}
-          >
-            {/* X düyməsi */}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemoveImage(index);
-              }}
-              className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center hover:bg-red-700 z-10"
-            >
-              ✕
-            </button>
+                          return (
+                            <div
+                              key={index}
+                              className={`relative w-full aspect-[4/3] border rounded-xl overflow-hidden cursor-pointer transition ${
+                                mainImageIndex === index
+                                  ? "ring-4 ring-green-500"
+                                  : "hover:ring-2 hover:ring-gray-300"
+                              }`}
+                              onClick={() => setMainImageIndex(index)}
+                            >
+                              {/* X düyməsi */}
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveImage(index);
+                                }}
+                                className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center hover:bg-red-700 z-10"
+                              >
+                                ✕
+                              </button>
 
-            <img
-              src={url}
-              alt={`Şəkil ${index + 1}`}
-              className="w-full h-full object-cover"
-            />
+                              <img
+                                src={url}
+                                alt={`Şəkil ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
 
-            {mainImageIndex === index && (
-              <div className="absolute bottom-0 left-0 right-0 bg-green-600 text-white text-center text-xs py-1">
-                Əsas şəkil
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  )}
-</div>
-<div className="col-span-1 sm:col-span-2 lg:col-span-3 flex gap-2">
+                              {mainImageIndex === index && (
+                                <div className="absolute bottom-0 left-0 right-0 bg-green-600 text-white text-center text-xs py-1">
+                                  Əsas şəkil
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex gap-2">
+                    <label className="block mb-2 w-[200px] max-h-[40px] bg-transparent border-cyan-900 border-2 rounded-[10px]  ">
+                      <Checkbox
+                        name="kredit"
+                        value={form.kredit}
+                        checked={options.kredit}
+                        onChange={handleChangeSelect}
+                        inputProps={{ "aria-label": "controlled" }}
+                      />{" "}
+                      Kredit ilə satılır
+                    </label>
 
-       <label className="block mb-2  w-[200px] bg-gray-200 rounded-[10px] p-1 ">
-       
-       
+                    <label className="block mb-2 w-[200px] max-h-[40px] bg-transparent border-cyan-900 border-2 rounded-[10px]">
+                      <Checkbox
+                        name="barter"
+                        value={form.barter}
+                        checked={options.barter}
+                        onChange={handleChangeSelect}
+                        inputProps={{ "aria-label": "controlled" }}
+                      />
+                      Barter
+                    </label>
+                  </div>
 
-        <Checkbox
-         name="kredit"
-          value={form.kredit}
-          checked={options.kredit}
-          onChange={handleChangeSelect}
-          inputProps={{ 'aria-label': 'controlled' }}
-    
-    /> Kredit ilə satılır
-      </label>
-                   
-      
-      <label className="block mb-2 w-[100px] bg-gray-200 rounded-[10px] p-1 ">
-        <Checkbox
-         name="barter"
-          value={form.barter}
-          checked={options.barter}
-          onChange={handleChangeSelect}
-          inputProps={{ 'aria-label': 'controlled' }}
-    
-    /> 
-        Barter
-      </label>
-      </div>
+                  {/* Kontakt məlumatları */}
 
+                  <input
+                    type="text"
+                    name="contact.phone"
+                    value={form.contact.phone}
+                    onChange={handleChange}
+                    placeholder="+994-XX-XXX-XX-XX"
+                    disabled={!form.modfikasiya}
+                    className="p-3 rounded-xl border max-w-full  border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+                  />
 
-  {/* Kontakt məlumatları */} 
- 
-  <input
-    type="text"
-    name="contact.phone"
-    value={form.contact.phone}
-    onChange={handleChange}
-    placeholder="+994-XX-XXX-XX-XX"
-    
-    disabled={!form.modfikasiya}
-    className="p-3 rounded-xl border max-w-full  border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
-  />
+                  <input
+                    type="email"
+                    name="contact.email"
+                    value={form.contact.email}
+                    onChange={handleChange}
+                    placeholder="Email"
+                    disabled={!form.modfikasiya}
+                    className="p-3 rounded-xl border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+                  />
 
-  <input
-    type="email"
-    name="contact.email"
-    value={form.contact.email}
-    onChange={handleChange}
-    placeholder="Email"
-   
-    disabled={!form.modfikasiya}
-    className="p-3 rounded-xl border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
-  />
+                  <input
+                    type="text"
+                    name="contact.name"
+                    value={form.contact.name}
+                    onChange={handleChange}
+                    placeholder="Ad"
+                    disabled={!form.modfikasiya}
+                    className="p-3 rounded-xl border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition capitalize"
+                  />
 
-  <input
-    type="text"
-    name="contact.name"
-    value={form.contact.name}
-    onChange={handleChange}
-    placeholder="Ad"
-    
-    disabled={!form.modfikasiya}
-    className="p-3 rounded-xl border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition capitalize"
-  />
+                  {/* Əlavə qeydlər */}
+                  <textarea
+                    name="description"
+                    value={form.description}
+                    onChange={handleChange}
+                    placeholder="Əlavə Qeydlər"
+                    disabled={!form.modfikasiya}
+                    className="col-span-1    outline-none focus:border-blue-500 focus:ring-2  caret-pink-500  sm:col-span-2 lg:col-span-3 p-3 rounded-xl border border-gray-300 transition"
+                  />
 
-  {/* Əlavə qeydlər */}
-  <textarea
-    name="description"
-    value={form.description}
-    onChange={handleChange}
-    placeholder="Əlavə Qeydlər"
-   
-    disabled={!form.modfikasiya}
-    className="col-span-1    outline-none focus:border-blue-500 focus:ring-2  caret-pink-500  sm:col-span-2 lg:col-span-3 p-3 rounded-xl border border-gray-300 transition"
-  />
-
-  {/* Submit düyməsi */}
-  <button
-    type="submit"
-    className="col-span-1 sm:col-span-2 lg:col-span-3 bg-blue-500 text-white p-3 rounded-xl mb-5 hover:bg-blue-600 transition"
-  >
-    Əlavə et
-  </button>
-</form>
-
+                  {/* Submit düyməsi */}
+                  <button
+                    type="submit"
+                    className="col-span-1 sm:col-span-2 lg:col-span-3 bg-blue-500 text-white p-3 rounded-xl mb-5 hover:bg-blue-600 transition"
+                  >
+                    Əlavə et
+                  </button>
+                </form>
               </div>
             </div>
           )}
