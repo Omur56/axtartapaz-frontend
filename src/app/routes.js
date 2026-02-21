@@ -41,8 +41,13 @@ import Favorites from "../pages/Favorite";
 import Cataloq from "../pages/Katalog/Cateqories/categories";
 import ResetPassword from "../pages/ResetPassword";
 import ForgotPassword from "../pages/ResetPassword/ForgotPassword";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
 // import MyHomeAndGarden from "../backend/models/HomeAndGarden";
 import AdDetail from "../pages/AdDetail";
+import Terms from "../pages/Terms";
+import Prohibited from "../pages/Prohibited";
+import PostingRules from "../pages/PostingRules";
+
 const router = createBrowserRouter([
   <RootLayout />,
   {
@@ -77,6 +82,45 @@ const router = createBrowserRouter([
   path: "/ads/:id",
   Component: AdDetail,
 },
+
+{
+  path: "/privacy-policy",
+  Component: PrivacyPolicy,
+},
+{
+  path: "/prohibited",
+  Component: Prohibited,
+},
+
+{
+  path: "/posting-rules",
+  Component: PostingRules,
+},
+{
+  path: "/terms",
+  Component: Terms,
+},
+
+      {
+        path: "/about",
+        Component: About,
+      },
+      {
+        path: "/contact",
+        Component: Contact,
+      },
+      {
+        path: "/qaydalar",
+        Component: Qaydalar,
+      },
+      {
+        path: "/yardim",
+        Component: Yardim,
+      },
+      {
+        path: "/xidmetler",
+        Component: Xidmetler,
+      },
 
       {
         path: "/Katalog",

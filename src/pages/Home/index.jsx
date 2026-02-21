@@ -492,6 +492,7 @@ import { Heart, RefreshCcw, Percent, MapPin} from "lucide-react";
 import Katalog from "../Katalog";
 import BottomMenu from "../../components/MobileMenu";
 import Search from "../Search";
+import { Helmet } from "react-helmet-async";
 
 
 
@@ -652,7 +653,20 @@ const Home = () => {
 
   const SkeletonCard = () => {
     return (
+      
       <div className="bg-gray-50 w-[185.7px] h-[268.6px] sm:w-[268.75px] sm:h-[268.6px] max-w-[240.4px] max-h-[368.8px] rounded-[12px] shadow-md overflow-hidden animate-pulse">
+
+        
+        
+     
+        
+        <Helmet>
+
+
+  <title>ProElan.az - Azərbaycanda Pulsuz Elanlar</title>
+  <meta name="description" content="ProElan.az - Avtomobil, əmlak və digər pulsuz elanlar platforması." />
+  <link rel="canonical" href="https://proelan.az/" />
+</Helmet>
         <div className="h-[147px] w-full bg-gray-300" />
 
         <div className="p-2 space-y-2">
