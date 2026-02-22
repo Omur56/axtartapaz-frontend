@@ -643,17 +643,17 @@ export default function CreatePost() {
       formData.append("mainImageIndex", mainImageIndex);
     }
 
- Object.entries(form).forEach(([key, value]) => {
-  if (key === "images" || key === "data") return;
+    Object.entries(form).forEach(([key, value]) => {
+      if (key === "images" || key === "data") return;
 
-  if (key === "contact") {
-    Object.entries(value).forEach(([k, v]) => {
-      formData.set(`contact.${k}`, String(v || ""));
+      if (key === "contact") {
+        Object.entries(value).forEach(([k, v]) => {
+          formData.set(`contact.${k}`, String(v || ""));
+        });
+      } else {
+        formData.set(key, String(value || ""));
+      }
     });
-  } else {
-    formData.set(key, String(value || ""));
-  }
-});
     formData.append(
       "data",
       form.data ? form.data.toISOString() : new Date().toISOString(),

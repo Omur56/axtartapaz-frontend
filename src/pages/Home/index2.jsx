@@ -313,5 +313,79 @@
 
 
 
+//  {isLoading
+//     ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
+//     : visibleAds.map((item) => (
+//         <div key={item._id} className="relative w-full max-w-[280px] min-w-[100px]">
+//           <Link target="_blank" to={`/${item.__type}/${item._id}`}>
+//             <div className="bg-white w-full h-[300px] rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
+              
+//               {/* ICONS */}
+//               <div className="absolute top-2 left-2 flex gap-2 z-10">
+//                 {item.kredit && (
+//                   <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
+//                     <Percent size={16} strokeWidth={1.5} />
+//                   </div>
+//                 )}
+//                 {item.barter && (
+//                   <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
+//                     <RefreshCcw size={16} strokeWidth={1.5} />
+//                   </div>
+//                 )}
+//               </div>
 
+//               {/* IMAGE */}
+//               <div className="relative w-full h-[180px] sm:h-[250px] md:h-[250px] lg:h-[230px] xl:h-[250px] overflow-hidden">
+//                 <img
+//                   src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
+//                   className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+//                   alt={item.title}
+//                 />
+//                 {item.salon === "Salon" && (
+//                   <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
+//                     Salon
+//                   </div>
+//                 )}
+//               </div>
+
+//               {/* CONTENT */}
+//               <div className="flex-1 p-3 flex flex-col justify-between">
+//                 <div>
+//                   <h3 className="font-bold text-base sm:text-lg truncate">{item.price} AZN ₼</h3>
+//                   <p className="text-sm sm:text-base font-semibold truncate mt-1">
+//                     {item.title || item.brand}
+//                   </p>
+//                   {item.year && item.motor && item.km && (
+//                     <p className="text-xs sm:text-sm text-gray-600 truncate mt-1">
+//                       {item.year}, {item.motor}, {item.km} km
+//                     </p>
+//                   )}
+//                 </div>
+
+//                 <div className="flex justify-between items-center text-gray-600 mt-2 text-xs sm:text-sm">
+//                   <span className="flex items-center gap-1">
+//                     <MapPin size={14} color="#75FC56" />
+//                     {item.location}
+//                   </span>
+//                   <span className="truncate">
+//                     {formatDate(item.data)} {getCurrentTime(item.data)}
+//                   </span>
+//                 </div>
+//               </div>
+//             </div>
+//           </Link>
+
+//           {/* FAVORITE */}
+//           <button
+//             onClick={() => toggleFavorite(item)}
+//             className="absolute top-2 right-2"
+//           >
+//             <Heart
+//               size={22}
+//               fill={favorites.some((f) => f._id === item._id) ? "red" : "none"}
+//               color="#fff"
+//             />
+//           </button>
+//         </div>
+//       ))}
 

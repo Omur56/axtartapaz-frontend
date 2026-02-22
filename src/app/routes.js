@@ -47,6 +47,8 @@ import AdDetail from "../pages/AdDetail";
 import Terms from "../pages/Terms";
 import Prohibited from "../pages/Prohibited";
 import PostingRules from "../pages/PostingRules";
+import Success from "../pages/Success";
+import Cancel from "../pages/Cancel";
 
 const router = createBrowserRouter([
   <RootLayout />,
@@ -57,6 +59,14 @@ const router = createBrowserRouter([
       {
         index: true,
         Component: Home,
+      },
+      {
+        path: "/success",
+        Component: Success,
+      },
+      {
+        path: "/cancel",
+        Component: Cancel,
       },
       {
         path: "/reset-password",
