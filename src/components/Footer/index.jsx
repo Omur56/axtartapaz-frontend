@@ -21,10 +21,10 @@ function Footer() {
         {/* Links */}
         <div className="text-gray-400  sm:max-h-[80px] flex justify-center w-full">
           <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 text-center sm:max-h-[20px]">
-            <Link className="hover:text-[#43D262] hover:underline" to="/privacy-policy">PrivacyPolicy {PrivacyPolicy}</Link>
-            <Link className="hover:text-[#43D262] hover:underline" to="/posting-rules">Posting Rules {postingRules}</Link>
-            <Link className="hover:text-[#43D262] hover:underline" to="/prohibited">Prohibited {prohibited}</Link>
-            <Link className="hover:text-[#43D262] hover:underline" to="/terms">Terms {terms}</Link>
+            <Link className="hover:text-[#43D262] hover:underline" to="/privacy-policy">PrivacyPolicy </Link>
+            <Link className="hover:text-[#43D262] hover:underline" to="/posting-rules">Posting Rules </Link>
+            <Link className="hover:text-[#43D262] hover:underline" to="/prohibited">Prohibited </Link>
+            <Link className="hover:text-[#43D262] hover:underline" to="/terms">Terms </Link>
             <Link className="hover:text-[#43D262] hover:underline" to="/about">
               Haqqımızda
             </Link>

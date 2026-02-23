@@ -68,6 +68,7 @@ const router = createBrowserRouter([
         path: "/cancel",
         Component: Cancel,
       },
+     
       {
         path: "/reset-password",
         Component: ResetPassword,
