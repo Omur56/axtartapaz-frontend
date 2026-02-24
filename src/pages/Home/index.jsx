@@ -13,11 +13,9 @@
 // import Button from '@mui/material/Button';
 // import {Link as MuiLink} from '@mui/material/Link';
 
-
 // // ==================== CONSTANTS ====================
 
 // const ITEMS_PER_LOAD = 8;
-
 
 //   function handleClick(event) {
 //   event.preventDefault();
@@ -34,8 +32,6 @@
 //   phone: "/api/Phone",
 //   clothing: "/api/Clothing",
 // };
-
-
 
 // // ==================== AD CARD COMPONENT ====================
 // const AdCard = ({ item, favorites, toggleFavorite }) => {
@@ -61,8 +57,6 @@
 
 //   return (
 //     <div className="relative  w-[200px] h-[380px] max-w-[240px]  sm:w-[220px] md:w-[220px] lg:w-[220px] xl:w-[220px]  rounded-xl   transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
-      
-    
 
 //       <Link target="_blank" to={`/${item.__type}/${item._id}`}>
 //      <div className=" w-full max-w-[240px] sm:w-[220px] md:w-[220px] lg:w-[220px] xl:w-[220px] h-[380px] rounded-xl   transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col relative">
@@ -99,7 +93,7 @@
 
 //   {/* CONTENT */}
 //   <div className="flex-1 p-2  h-[150px] flex flex-col">
-    
+
 //       <h3 className="font-bold text-base sm:text-lg truncate-overflow">
 //         {item.price} AZN ₼
 //       </h3>
@@ -114,20 +108,18 @@
 //           {item.category } {item.brand} {item.model} {item.title}
 //         </p>
 
-       
-
 //       )}
 
 //       {item.title && !item.brand && !item.model && (
 //         <p className="text-sm sm:text-base font-semibold truncate mt-1">
 //           {item.title} {item.category} {item.brand} {item.model}
-//         </p> 
+//         </p>
 //       )}
 
 //       {item.title && !item.brand && !item.model && !item.category && (
 //         <p className="text-sm sm:text-base font-semibold truncate mt-1">
 //           {item.title} {item.category} {item.brand} {item.model}
-//         </p> 
+//         </p>
 //       )}
 
 //       {item.title && item.brand && item.model && !item.category && (
@@ -154,13 +146,11 @@
 //         </p>
 //       )}
 
-
 //       {item.title && item.brand && !item.model && item.category && (
 //         <p className="text-sm sm:text-base font-semibold truncate mt-1">
 //           {item.title} {item.brand} {item.category} {item.model}
 //         </p>
 //       )}
-     
 
 //       {item.year && item.motor && item.km && (
 //         <p className="text-xs sm:text-sm text-gray-600 truncate mt-1">
@@ -182,7 +172,7 @@
 //        <Mail size={8} color="#75FC56" className="truncate-1" />
 //         {item.contact.email}
 //       </span>
-//       <span className="truncate">{item.email} 
+//       <span className="truncate">{item.email}
 //       </span>
 // </div>
 //     <div className="flex justify-between items-center text-gray-600 mt-2 text-xs sm:text-sm">
@@ -203,13 +193,13 @@
 //       <button
 //         onClick={() => toggleFavorite(item)}
 //         className=" absolute z-10 top-2 right-5 w-8 h-8 flex items-center justify-center  p-1 transition duration-300 ease-in-out"
-        
+
 //       >
 //         <Heart
 //           size={22}
 //           fill={favorites.some((f) => f._id === item._id) ? "red" : "none"}
 //           color="#fff"
-//           className="drop-shadow-lg w-6 h-6 bg-black/20 rounded-full p-1" 
+//           className="drop-shadow-lg w-6 h-6 bg-black/20 rounded-full p-1"
 //         />
 //       </button>
 //     </div>
@@ -337,7 +327,6 @@
 //           item.size,
 //           item.material,
 //           item.color,
-          
 
 //         ]
 //           .filter(Boolean)
@@ -354,8 +343,6 @@
 //     } finally {
 //       setLoadingSearch(false);
 //     }
-
-
 
 //   };
 
@@ -381,9 +368,6 @@
 //     return () => window.removeEventListener("scroll", onScroll);
 //   }, [allAds.length, visibleCount]);
 
-
-
- 
 //   /* ================= RENDER ================= */
 //   return (
 //     <div className="min-h-screen max-w-[1200px] mx-auto mt-[80px] mb-10 p-2">
@@ -392,7 +376,7 @@
 //         <Link underline="hover" color="inherit" href="*" to="/">
 //           Ana Səhifə
 //         </Link>
-        
+
 //       </Breadcrumbs>
 //     </div>
 //       {/* SEARCH */}
@@ -402,11 +386,8 @@
 //         onChange={(e) => setQuery(e.target.value)}
 //         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
 //         placeholder="Axtar..."
-        
+
 //       />
-
-    
-
 
 //       {loadingSearch && (
 //         <Typography align="center">
@@ -414,7 +395,6 @@
 //         </Typography>
 //       )}
 
-      
 //       <Katalog />
 
 //       {!loadingSearch && results.length > 0 && (
@@ -422,7 +402,7 @@
 //           {results.map((item) => (
 //             <Link key={item._id} to={`/ads/${item.source}/${item._id}`}>
 //               <div className="border border-gray-300 shadow w-full h-[320px] rounded-[10px] bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
-               
+
 //                 <img
 //                   src={item.images?.[0] || "/no-image.jpg"}
 //                   className="h-[150px] rounded-[10px] w-full object-cover"
@@ -437,7 +417,7 @@
 //                   {item.km && item.motor && item.year && (
 //                     <p className="text-xs">{item.km} Km - {item.motor} L - {item.year} il</p>
 //                   )}
-                
+
 //                 </div>
 //                 <p className="text-xs">{item.data}</p>
 
@@ -446,14 +426,12 @@
 //             </Link>
 //           ))}
 //         </div>
-        
-//       )}
 
+//       )}
 
 //       {/* MAIN CARDS */}
 //       <div className="grid justify-items-center grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
 
-        
 //         {isLoading
 //           ? Array.from({ length: ITEMS_PER_LOAD }).map((_, i) => (
 //               <SkeletonCard key={i} />
@@ -467,8 +445,6 @@
 //               />
 //             ))}
 //       </div>
-   
-  
 
 //       <BottomMenu />
 //     </div>
@@ -477,11 +453,7 @@
 
 // export default Home;
 
-
 // ----------------------------homepage-2----------------
-
-
-
 
 // import React, { useEffect, useState } from "react";
 // import axios from "axios";
@@ -493,11 +465,6 @@
 // import BottomMenu from "../../components/MobileMenu";
 // import Search from "../Search";
 // import { Helmet } from "react-helmet-async";
-
-
-
-
-
 
 // const ITEMS_PER_LOAD = 8;
 
@@ -610,7 +577,7 @@
 //           item.city,
 //           item.location,
 //           item.description,
-          
+
 //         ]
 //           .filter(Boolean)
 //           .some((v) => v.toLowerCase().includes(q))
@@ -653,15 +620,10 @@
 
 //   const SkeletonCard = () => {
 //     return (
-      
+
 //       <div className="bg-gray-50 w-[185.7px] h-[268.6px] sm:w-[268.75px] sm:h-[268.6px] max-w-[240.4px] max-h-[368.8px] rounded-[12px] shadow-md overflow-hidden animate-pulse">
 
-        
-        
-     
-        
 //         <Helmet>
-
 
 //   <title>ProElan.az - Azərbaycanda Pulsuz Elanlar</title>
 //   <meta name="description" content="ProElan.az - Avtomobil, əmlak və digər pulsuz elanlar platforması." />
@@ -683,11 +645,6 @@
 //     );
 //   };
 
-
-  
-
-
-
 // const handleUpgrade = async (listingId, type) => {
 //   console.log("listing id", listingId, type);
 //   try {
@@ -705,8 +662,6 @@
 //     console.log(err.response?.data || err.message);
 //   }
 // };
-
-
 
 // //  const handleUpgrade = async (listingId, type) => {
 // //   try {
@@ -726,10 +681,9 @@
 // // };
 
 //   /* ================= RENDER ================= */
-//   return (  
+//   return (
 //     <div className="min-h-screen max-w-[1200px] mx-auto mt-[80px] mb-10">
 
-    
 //       {/* SEARCH */}
 //       <input
 //         value={query}
@@ -738,9 +692,6 @@
 //         placeholder="Axtar..."
 //         className="w-full border p-2 rounded mb-4"
 //       />
-       
-
-
 
 //       {loadingSearch && (
 //         <Typography align="center">
@@ -750,7 +701,7 @@
 
 //       {!loadingSearch && results.length > 0 && (
 //         <div className="grid grid-cols-2  sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6 ">
-          
+
 //           {results.map((item) => (
 //             <Link key={item._id} to={`/ads/${item.source}/${item._id}`}>
 //               <div className="border rounded shadow p-2">
@@ -765,8 +716,6 @@
 //           ))}
 //         </div>
 //       )}
-
-   
 
 //       <Katalog   className="mt-1 " width="100%" height="60px" marginTop="10px"  />
 
@@ -810,7 +759,7 @@
 
 //             {/* CONTENT */}
 //             <div className="flex-1 p-3 flex flex-col justify-between">
-             
+
 //                 <h3 className="font-bold text-base sm:text-lg truncate">{item.price} AZN ₼</h3>
 //                 <p className="text-sm sm:text-base font-semibold  mt-1">
 //                   {item.brand || item.category || item.model || item.title}
@@ -820,7 +769,6 @@
 //                     {item.year}, {item.motor}, {item.km} km
 //                   </p>
 //                 )}
-          
 
 //               <div className="flex justify-between items-center text-gray-600 mt-2 text-xs sm:text-sm">
 //                 <span className="flex items-center gap-1">
@@ -833,9 +781,6 @@
 //               </div>
 
 //               {/* 🔥 STRIPE UPGRADE BUTTON-LARI */}
-           
-
-   
 
 //             </div>
 //           </div>
@@ -855,9 +800,6 @@
 //                   VIP et
 //                 </button>
 
-
-
-          
 //               </div>
 //         {/* FAVORITE */}
 //         <button
@@ -882,16 +824,9 @@
 
 // export default Home;
 
-
-
 // -------------------------------------------------------------
 
-
-
-
-
 // -----------------------homepage-3---------------------------
-
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -903,7 +838,7 @@ import Katalog from "../Katalog";
 import BottomMenu from "../../components/MobileMenu";
 import { Helmet } from "react-helmet-async";
 
-import {Star } from "lucide-react";
+import { Star } from "lucide-react";
 
 const ITEMS_PER_LOAD = 8;
 
@@ -952,7 +887,7 @@ const Home = () => {
   /* ALL ADS */
   const allAds = Object.entries(data)
     .flatMap(([type, items]) =>
-      (items || []).map((item) => ({ ...item, __type: type }))
+      (items || []).map((item) => ({ ...item, __type: type })),
     )
     .sort((a, b) => {
       if (a.type === "vip") return -1;
@@ -972,7 +907,7 @@ const Home = () => {
         document.documentElement.scrollHeight - 300
       ) {
         setVisibleCount((prev) =>
-          prev >= allAds.length ? prev : prev + ITEMS_PER_LOAD
+          prev >= allAds.length ? prev : prev + ITEMS_PER_LOAD,
         );
       }
     };
@@ -1018,7 +953,7 @@ const Home = () => {
           item.description,
         ]
           .filter(Boolean)
-          .some((v) => v.toLowerCase().includes(q))
+          .some((v) => v.toLowerCase().includes(q)),
       );
       setResults(filtered);
     } catch (e) {
@@ -1075,7 +1010,7 @@ const Home = () => {
       const res = await axios.post(
         `http://localhost:10000/api/payments/create-checkout/${listingId}`,
         { type },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       window.location.href = res.data.url;
     } catch (err) {
@@ -1134,12 +1069,14 @@ const Home = () => {
         {isLoading
           ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
           : visibleAds.map((item) => (
-              <div key={item._id} className="relative w-full max-w-[280px] min-w-[100px]">
+              <div
+                key={item._id}
+                className="relative w-full max-w-[280px] min-w-[100px]"
+              >
                 <Link target="_blank" to={`/${item.__type}/${item._id}`}>
                   <div className="bg-white w-full h-[300px] rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
                     {/* ICONS */}
                     <div className="absolute top-2 left-2 flex gap-2 z-10">
-                    
                       {item.barter && (
                         <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
                           <RefreshCcw size={16} strokeWidth={1.5} />
@@ -1151,7 +1088,6 @@ const Home = () => {
                         </div>
                       )}
                     </div>
-
 
                     <div className="absolute top-2 right-2 flex gap-2 z-999">
                       {item.upgrade === "vip" && (
@@ -1167,14 +1103,13 @@ const Home = () => {
                       )}
                     </div>
 
-                    
-
-                   
-
                     {/* IMAGE */}
                     <div className="relative w-full h-[180px] sm:h-[250px] md:h-[250px] lg:h-[230px] xl:h-[250px] overflow-hidden">
                       <img
-                        src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
+                        src={
+                          item.images?.[item.images.length - 1] ||
+                          "/no-image.jpg"
+                        }
                         className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
                         alt={item.title}
                       />
@@ -1186,7 +1121,10 @@ const Home = () => {
                         {item.price} AZN ₼
                       </h3>
                       <p className="text-sm sm:text-base font-semibold mt-1">
-                        {item.brand || item.category || item.model || item.title}
+                        {item.brand ||
+                          item.category ||
+                          item.model ||
+                          item.title}
                       </p>
                       {item.year && item.motor && item.km && (
                         <p className="text-xs sm:text-sm text-gray-600 truncate mt-1">
@@ -1233,7 +1171,9 @@ const Home = () => {
                 >
                   <Heart
                     size={22}
-                    fill={favorites.some((f) => f._id === item._id) ? "red" : "none"}
+                    fill={
+                      favorites.some((f) => f._id === item._id) ? "red" : "none"
+                    }
                     color="#fff"
                   />
                 </button>
@@ -1247,8 +1187,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
-
-
-
