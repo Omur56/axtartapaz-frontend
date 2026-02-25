@@ -1008,7 +1008,7 @@ const Home = () => {
       }
 
       const res = await axios.post(
-        `http://localhost:10000/api/payments/create-checkout/${listingId}`,
+        `${process.env.REACT_APP_API_URL}/api/payments/create-checkout/${listingId}`,
         { type },
         { headers: { Authorization: `Bearer ${token}` } },
       );
