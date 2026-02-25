@@ -108,6 +108,9 @@ export default function PostDetailCar() {
     );
 
   if (notFound || !post)
+
+
+    
     return (
       <div className="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-r from-fuchsia-100 to-violet-200">
         <h1 className="text-9xl font-extrabold text-white tracking-widest">
@@ -163,6 +166,8 @@ function handleClick(event) {
   event.preventDefault();
   console.info('You clicked a breadcrumb.');
 }
+
+
   return (
     <div className="max-w-6xl min-h-screen mx-auto ">
 
@@ -187,7 +192,7 @@ function handleClick(event) {
       </Link>
 
       <div role="presentation" onClick={handleClick}>
-      <Breadcrumbs aria-label="breadcrumb">
+      <Breadcrumbs aria-label="breadcrumb" >
         <Link
         component={RouterLink} underline="hover"className="capitalize hover:underline hover:text-[#43D262]"  href="*" to="/">
           Ana Səhifə
@@ -215,11 +220,11 @@ function handleClick(event) {
     </div>
 
       {/* Main content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-white shadow-lg rounded-xl sm:p-6 ">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-white shadow-lg rounded-xl ">
         {/* Left / Main column */}
         <div className="lg:col-span-2 space-y-4 ">
-          <h1 className="text-2xl font-bold mb-4 capitalize p-2">
-            {post.category} {post.brand} {post.model}
+          <h1 className="text-2xl font-bold mb-4 p-2">
+             {post.brand} {post.model},  {post.motor} L, {post.year} il, {post.km} km
           </h1>
 
           <Carousel showThumbs showStatus={false} autoPlay infiniteLoop>
@@ -231,12 +236,12 @@ function handleClick(event) {
     return (
       <div
         key={index}
-        className="relative max-w-full max-h-[400px] sm:w-full sm:h-[400px] overflow-hidden cursor-pointer"
+        className="relative max-w-full max-h-[400px] sm:rounded-[10px] sm:w-full sm:h-[400px] overflow-hidden cursor-pointer"
         onClick={() => openZoom(index)}
       >
         {/* 🔵 Blur background */}
         <div
-          className="absolute inset-0 bg-center bg-cover blur-xl scale-110"
+          className="absolute inset-0 bg-center bg-cover blur-xl scale-110 "
           style={{ backgroundImage: `url(${imageSrc})` }}
         />
 
@@ -247,7 +252,7 @@ function handleClick(event) {
         <img
           src={imageSrc}
           alt={`Şəkil ${index + 1}`}
-          className="relative z-10 w-full h-full object-contain rounded-lg"
+          className="relative z-10 w-full h-full object-contain object-center"
         />
       </div>
     );

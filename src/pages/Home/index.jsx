@@ -1071,11 +1071,13 @@ const Home = () => {
           : visibleAds.map((item) => (
               <div
                 key={item._id}
-                className="relative w-full max-w-[280px] min-w-[100px]"
+                className="relative w-full max-w-[229px] min-w-[100px] max-h-[300.8px] min-h-[100px] mb-10"
               >
                 <Link target="_blank" to={`/${item.__type}/${item._id}`}>
-                  <div className="bg-white w-full h-[300px] rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
+                  <div className="bg-white w-full h-[300px]  rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
                     {/* ICONS */}
+                   
+                   
                     <div className="absolute top-2 left-2 flex gap-2 z-10">
                       {item.barter && (
                         <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
@@ -1089,7 +1091,18 @@ const Home = () => {
                       )}
                     </div>
 
-                    <div className="absolute top-2 right-2 flex gap-2 z-999">
+                  <div className="">
+                    {item.sifarisle && (
+                      <div className="absolute top-2 right-2 flex gap-2 z-10">
+                        <div className="w-[50px] h-[20px] flex items-center justify-center bg-blue-500 shadow-red-500 shadow-md rounded-[4px] text-white">
+                          <span className="text-xs">Sifarişlə</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                
+
+                    <div className="absolute top-2 right-2 flex gap-2 z-10">
                       {item.upgrade === "vip" && (
                         <div className="w-6 h-6 z-50 flex items-center justify-center bg-yellow-500 rounded-full text-white">
                           <Star size={16} strokeWidth={1.5} />
@@ -1104,7 +1117,7 @@ const Home = () => {
                     </div>
 
                     {/* IMAGE */}
-                    <div className="relative w-full h-[180px] sm:h-[250px] md:h-[250px] lg:h-[230px] xl:h-[250px] overflow-hidden">
+                    <div className="relative w-full h-[250px] overflow-hidden">
                       <img
                         src={
                           item.images?.[item.images.length - 1] ||
@@ -1116,7 +1129,7 @@ const Home = () => {
                     </div>
 
                     {/* CONTENT */}
-                    <div className="flex-1 p-3 flex flex-col justify-between">
+                    <div className="flex-1 p-3 flex flex-col justify-between h-[200px]">
                       <h3 className="font-bold text-base sm:text-lg truncate">
                         {item.price} AZN ₼
                       </h3>

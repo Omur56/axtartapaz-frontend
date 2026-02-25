@@ -1,0 +1,14 @@
+/* Əgər header <header> teqi ilədirsə */
+header {
+  display: none !important;
+}
+
+/* Və ya className ilədirsə */
+.header {
+  display: none !important;
+}
+
+/* Və ya id ilədirsə */
+#header {
+  display: none !important;
+}

@@ -49,6 +49,8 @@ import Prohibited from "../pages/Prohibited";
 import PostingRules from "../pages/PostingRules";
 import Success from "../pages/Success";
 import Cancel from "../pages/Cancel";
+import Layout from "./Layout";
+import PostDetailCar from "../pages/PostDetalCar";
 
 const router = createBrowserRouter([
   <RootLayout />,
@@ -145,10 +147,19 @@ const router = createBrowserRouter([
         path: "/Katalog/Nəqliyyat",
         Component: Nəqliyyat,
       },
-      {
-        path: "/cars/:id",
-        Component: PostDetalCar,
-      },
+      // {
+      //   path: "/cars/:id",
+      //   Component: PostDetalCar,
+      // },
+
+       {
+    path: "/",
+    Component: Layout,
+    children: [
+      { path: "/", Component: Home },
+      { path: "/cars/:id", Component: PostDetalCar },
+    ],
+  },
       {
         path: "/Katalog/Ev_veBag",
         Component: EvVəBag,
@@ -195,10 +206,19 @@ const router = createBrowserRouter([
         Component: PostDetalCar,
       },
 
-      {
-  path: "/cars/:id",
-  Component: PostDetalCar,
-},
+//       {
+//   path: "/cars/:id",
+//   Component: PostDetalCar,
+// },
+
+{
+    path: "/",
+    element: <Layout />,
+    children: [
+      { path: "/", element: <Home /> },
+      { path: "/cars/:id", element: <PostDetailCar /> },
+    ],
+  },
 {
   path: "/electronika/:id",
   Component: PostDetailElectronika,

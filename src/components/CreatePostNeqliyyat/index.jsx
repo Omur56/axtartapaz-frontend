@@ -19,7 +19,7 @@ export default function CreatePost() {
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
   const [editingId, setEditingId] = useState(null);
-  const [checked, setChecked] = React.useState(true);
+  const [checked, setChecked] = React.useState(false);
   const [price, setPrice] = useState("");
   const [mainImageIndex, setMainImageIndex] = useState(null);
   const [selectedCity, setSelectedCity] = useState("");
@@ -44,6 +44,9 @@ export default function CreatePost() {
     motor: "",
     salon: "",
     default: "",
+    sifarisle : "",
+    resmi: "",
+    magaza: "",
     barter: "",
     transmission: "",
     kredit: "",
@@ -61,6 +64,11 @@ export default function CreatePost() {
   const [options, setOptions] = useState({
     kredit: false,
     barter: false,
+    salon: false,
+    default: false,
+    resmi: false,
+    magaza: false,
+    sifarisle: false,
   });
 
   const carData = {
@@ -713,6 +721,9 @@ export default function CreatePost() {
 
       salon: "",
       default: "",
+      sifarisle : "",
+    resmi: "",
+    magaza: "",
       barter: "",
       kredit: "",
       engine: "",
@@ -1244,7 +1255,7 @@ export default function CreatePost() {
                       <Checkbox
                         name="kredit"
                         value={form.kredit}
-                        checked={options.kredit}
+                        checked={options.kredit ?? false}
                         onChange={handleChangeSelect}
                         inputProps={{ "aria-label": "controlled" }}
                       />{" "}
@@ -1255,7 +1266,7 @@ export default function CreatePost() {
                       <Checkbox
                         name="barter"
                         value={form.barter}
-                        checked={options.barter}
+                        checked={options.barter ?? false}
                         onChange={handleChangeSelect}
                         inputProps={{ "aria-label": "controlled" }}
                       />
@@ -1263,6 +1274,64 @@ export default function CreatePost() {
                     </label>
                   </div>
 
+                  <select
+                  name="salon"
+                  value={form.salon}
+                  onChange={handleChange}
+                  disabled={!form.modfikasiya}
+                  className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
+                >
+                  <option value="">Salon</option>
+                  {form.brand &&
+                    form.model &&
+                    carData[form.brand]
+                      .filter((item) => item.model === form.model)
+                      .map((item) =>
+                        item.salon.map((salon) => (
+                          <option key={`salon-${salon}`} value={salon}>
+                            {salon}
+                          </option>
+                        )),
+                      )}
+                </select>
+                <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex gap-2">
+ <label className="block mb-2 w-[200px] max-h-[40px] bg-transparent border-cyan-900 border-2 rounded-[10px]">
+                <Checkbox
+                name="sifarisle"
+                value={form.sifarisle}
+                checked={options.sifarisle ?? false}
+                onChange={handleChangeSelect}
+                inputProps={{ "aria-label": "controlled" }}
+              />{" "}
+              Sifariş
+</label>
+
+
+<label className="block mb-2 w-[200px] max-h-[40px] bg-transparent border-cyan-900 border-2 rounded-[10px]">
+                <Checkbox
+                name="magaza"
+                value={form.magaza}
+                checked={options.magaza ?? false}
+                onChange={handleChangeSelect}
+                inputProps={{ "aria-label": "controlled" }}
+              />{" "}
+              Salon
+</label>
+
+<label className="block mb-2 w-[200px] max-h-[40px] bg-transparent border-cyan-900 border-2 rounded-[10px]">
+                <Checkbox
+                name="resmi"
+                value={form.resmi
+}
+                checked={options.resmi ?? false}
+                onChange={handleChangeSelect}
+                inputProps={{ "aria-label": "controlled" }}
+              />{" "}
+              Resmi
+</label>
+
+
+</div>
                   {/* Kontakt məlumatları */}
 
                   <input
@@ -1302,7 +1371,7 @@ export default function CreatePost() {
                     onChange={handleChange}
                     placeholder="Əlavə Qeydlər"
                     disabled={!form.modfikasiya}
-                    className="col-span-1 min-h-[200px]   outline-none focus:border-blue-500 focus:ring-2  caret-pink-500  sm:col-span-2 lg:col-span-3 p-3 rounded-xl border border-gray-300 transition"
+                    className="col-span-1 min-h-[150px]   outline-none focus:border-blue-500 focus:ring-2  caret-pink-500  sm:col-span-2 lg:col-span-3 p-3 rounded-xl border border-gray-300 transition"
                   />
 
                   {/* Submit düyməsi */}
