@@ -1150,14 +1150,14 @@ const Home = () => {
                   <div className="flex gap-2 mt-3">
                     <button
                       onClick={() => handleUpgrade(item._id, "premium")}
-                      className="bg-yellow-500 text-white px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 hover:bg-yellow-600 transition-colors duration-300 ease-in-out"
+                      className="bg-yellow-500 shadow-blue-400 text-white px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 hover:bg-yellow-600 transition-colors duration-300 ease-in-out"
                     >
                       Premium et
                     </button>
 
                     <button
                       onClick={() => handleUpgrade(item._id, "vip")}
-                      className="bg-red-600 text-white px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 hover:bg-red-700 transition-colors duration-300 ease-in-out"
+                      className="bg-red-600 shadow-blue-400 text-white px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 hover:bg-red-700 transition-colors duration-300 ease-in-out"
                     >
                       VIP et
                     </button>

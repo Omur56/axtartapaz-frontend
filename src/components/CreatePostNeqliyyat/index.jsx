@@ -1302,7 +1302,7 @@ export default function CreatePost() {
                     onChange={handleChange}
                     placeholder="Əlavə Qeydlər"
                     disabled={!form.modfikasiya}
-                    className="col-span-1 min-h-[250px]   outline-none focus:border-blue-500 focus:ring-2  caret-pink-500  sm:col-span-2 lg:col-span-3 p-3 rounded-xl border border-gray-300 transition"
+                    className="col-span-1 min-h-[200px]   outline-none focus:border-blue-500 focus:ring-2  caret-pink-500  sm:col-span-2 lg:col-span-3 p-3 rounded-xl border border-gray-300 transition"
                   />
 
                   {/* Submit düyməsi */}
