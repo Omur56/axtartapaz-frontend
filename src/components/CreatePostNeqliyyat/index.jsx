@@ -31,6 +31,7 @@ export default function CreatePost() {
     id: Date.now(),
     modfikasiya: "",
     color: "",
+    type: "",
     city: "",
     category: "",
     brand: "",
@@ -496,6 +497,14 @@ export default function CreatePost() {
     }));
   };
 
+const official_store_salon_checked_group = (e) => {
+  const { name } = e.target;
+
+  setForm((prev) => ({
+    ...prev,
+    type: prev.type === name ? "" : name, 
+  }));
+};
   const [cars, setCars] = useState([]);
 
   const handleChange = (e) => {
@@ -1235,7 +1244,7 @@ export default function CreatePost() {
 
                               <img
                                 src={url}
-                                alt={`Şəkil ${index + 1}`}
+                                alt={`Şəkil ${index + 1} - ${form.brand} ${form.model} ${form.year} ${form.color} ${form.ban_type} ${form.transmission} ${form.engine} ${form.modfikasiya} ${form.location} ${form.price} ${form.description}`}
                                 className="w-full h-full object-cover"
                               />
 
@@ -1294,42 +1303,34 @@ export default function CreatePost() {
                         )),
                       )}
                 </select>
-                <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex gap-2">
- <label className="block mb-2 w-[200px] max-h-[40px] bg-transparent border-cyan-900 border-2 rounded-[10px]">
-                <Checkbox
-                name="sifarisle"
-                value={form.sifarisle}
-                checked={options.sifarisle ?? false}
-                onChange={handleChangeSelect}
-                inputProps={{ "aria-label": "controlled" }}
-              />{" "}
-              Sifariş
-</label>
+ <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex gap-2">
 
+  <label className="block mb-2 w-[200px] max-h-[40px] border-cyan-900 border-2 rounded-[10px]">
+    <Checkbox
+      name="sifarisle"
+      checked={form.type === "sifarisle"}
+      onChange={official_store_salon_checked_group}
+    />
+    Sifariş
+  </label>
 
-<label className="block mb-2 w-[200px] max-h-[40px] bg-transparent border-cyan-900 border-2 rounded-[10px]">
-                <Checkbox
-                name="magaza"
-                value={form.magaza}
-                checked={options.magaza ?? false}
-                onChange={handleChangeSelect}
-                inputProps={{ "aria-label": "controlled" }}
-              />{" "}
-              Salon
-</label>
+  <label className="block mb-2 w-[200px] max-h-[40px] border-cyan-900 border-2 rounded-[10px]">
+    <Checkbox
+      name="magaza"
+      checked={form.type === "magaza"}
+      onChange={official_store_salon_checked_group}
+    />
+    Salon
+  </label>
 
-<label className="block mb-2 w-[200px] max-h-[40px] bg-transparent border-cyan-900 border-2 rounded-[10px]">
-                <Checkbox
-                name="resmi"
-                value={form.resmi
-}
-                checked={options.resmi ?? false}
-                onChange={handleChangeSelect}
-                inputProps={{ "aria-label": "controlled" }}
-              />{" "}
-              Resmi
-</label>
-
+  <label className="block mb-2 w-[200px] max-h-[40px] border-cyan-900 border-2 rounded-[10px]">
+    <Checkbox
+      name="resmi"
+      checked={form.type === "resmi"}
+      onChange={official_store_salon_checked_group}
+    />
+    Resmi
+  </label>
 
 </div>
                   {/* Kontakt məlumatları */}
