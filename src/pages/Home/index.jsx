@@ -166,43 +166,29 @@ const Home = () => {
     </div>
   );
 
-  /* UPGRADE */const handleUpgrade = async (listingId, type) => {
-  try {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
-    const listing = allAds.find((ad) => ad._id === listingId);
+  const handleUpgrade = async (listingId, type) => {
+    try {
+      const token = localStorage.getItem("token");
 
-    if (listing.userId !== userId) {
-      return alert("Yalnız öz elanınızı VIP/Premium edə bilərsiniz");
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/payments/create-checkout/${listingId}`,
+        { type }, // "vip" / "premium"
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (res.data.url) {
+        window.location.href = res.data.url; // Stripe checkout səhifəsinə yönləndir
+      }
+    } catch (err) {
+      console.log(err.response?.data || err.message);
     }
+  };
 
-    // Stripe checkout səhifəsinə yönləndir
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_URL}/api/payments/create-checkout/${listingId}`,
-      { type },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    if (res.data.url) {
-      window.location.href = res.data.url; // istifadəçi Stripe ödəniş səhifəsinə gedir
-    }
-  } catch (err) {
-    console.log(err.response?.data || err.message);
-  }
-};
   const typeLabels = {
     sifarisle: "Sifariş",
     magaza: "Salon",
     resmi: "Rəsmi",
   };
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("payment") === "success") {
-      window.history.replaceState({}, document.title, "/");
-      window.location.reload();
-    }
-  }, []);
 
   /* RENDER */
   return (
@@ -273,26 +259,6 @@ const Home = () => {
                           <Percent size={16} strokeWidth={1.5} />
                         </div>
                       )}
-                     
-
-                      {item.type === "sifarisle" && (
-                        <div className="bg-blue-500  text-white px-2 py-1 text-xs rounded  absolute top-36">
-                          {typeLabels[item.type]}
-                        </div>
-                      )}
-                      {item.type === "magaza" && (
-                        <div className="bg-blue-500  text-white px-2 py-1 text-xs rounded absolute top-36">
-                          {typeLabels[item.type]}
-                        </div>
-                      )}
-                      {item.type === "resmi" && (
-                        <div className="bg-blue-500  text-white px-2 py-1 text-xs rounded  absolute top-36">
-                          {typeLabels[item.type]}
-                        </div>
-                      )}
-
-
-                      
                     </div>
 
                     {/* IMAGE */}
@@ -300,20 +266,39 @@ const Home = () => {
                       <img
                         src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
                         className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-                        alt={item.title || item.brand || item.model || item.category || item._id ||  item.id || item.ban_type}
+                        alt={item.title || item.brand || item.model || item.category || item._id || item.id || item.ban_type}
                       />
-                     {item.priorityType === "vip" && (
-  <div className="bg-red-600 left-2 text-white px-2 py-1 text-xs rounded z-20">
-    🔥 VIP
-  </div>
-)}
-{item.priorityType === "premium" && (
-  <div className="bg-yellow-500 right-2 h-[20px] w-[80px] text-white px-2 py-1 text-[10px] rounded">
-    ⭐ Premium
-  </div>
-)}
+                      {/* VIP / PREMIUM badge */}
+                      {item.priorityType && item.priorityType !== "free" && (
+                        <span className="vip-badge z-20 bg-red-500 text-white px-2 py-1 text-xs rounded absolute top-[152px] right-2">
+                          {item.priorityType?.toUpperCase() || ""}
+                        </span>
+                      )}
+
+
+                      {item.type === "Magaza" && (
+                        <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
+                          Salon
+                        </div>
+                      )}
+
+                      {item.type === "sifarisle"}
+
+
+                      {item.type === "sifarisle" && (
+                        <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
+                          Sifarişlə
+                        </div>
+                      )}
+
+                       {item.type === "resmi" && (
+                        <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
+                          Rəsmi
+                        </div>
+                       )}
+
+                      
                     </div>
-                    
 
                     {/* CONTENT */}
                     <div className="flex-1 p-3 flex flex-col justify-between h-[200px]">
@@ -342,23 +327,20 @@ const Home = () => {
                 </Link>
 
                 {/* UPGRADE BUTTONS */}
-                {item.userId === currentUserId && (
-                  <div className="flex gap-2 mt-3">
-                    <button
-                      onClick={() => handleUpgrade(item._id, "premium")}
-                      className="bg-yellow-500 shadow-blue-400 text-white px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 hover:bg-yellow-600 transition-colors duration-300 ease-in-out"
-                    >
-                      Premium et
-                    </button>
-
-                    <button
-                      onClick={() => handleUpgrade(item._id, "vip")}
-                      className="bg-red-600 shadow-blue-400 text-white px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 hover:bg-red-700 transition-colors duration-300 ease-in-out"
-                    >
-                      VIP et
-                    </button>
-                  </div>
-                )}
+                <div className="flex justify-between top-1 items-center mt-2">
+                  <button
+                    className="bg-yellow-400 hover:bg-yellow-500 min-w-[10px] max-w-[100px] text-black font-bold py-1 px-3 rounded"
+                    onClick={() => handleUpgrade(item._id, "vip")}
+                  >
+                    VIP Et
+                  </button>
+                  <button
+                    className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-1 px-3 rounded"
+                    onClick={() => handleUpgrade(item._id, "premium")}
+                  >
+                    Premium Et
+                  </button>
+                </div>
 
                 {/* FAVORITE */}
                 <button
