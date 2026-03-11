@@ -315,6 +315,22 @@ const Home = () => {
                       {item.priorityType?.toUpperCase() || ""}
                     </span>
                   )}
+
+                  {item.type === "magaza" && (
+                    <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
+                      Salon
+                    </div>
+                  )}
+                  {item.type === "sifarisle" && (
+                    <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
+                      Sifarişlə
+                    </div>
+                  )}
+                  {item.type === "resmi" && (
+                    <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
+                      Rəsmi
+                    </div>
+                  )}
                 </div>
 
                 {/* CONTENT */}
