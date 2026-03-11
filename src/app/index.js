@@ -2,7 +2,7 @@ import { RouterProvider } from "react-router";
 import router from './routes';
 import React from "react";
 import { HelmetProvider } from "react-helmet-async";
-
+import PaymentButton from "../components/PaymentButton.jsx";
 
 
 function App() {
@@ -10,6 +10,7 @@ function App() {
   
    <HelmetProvider>
     <RouterProvider router={router} />
+     <PaymentButton />
     </HelmetProvider>
 
     

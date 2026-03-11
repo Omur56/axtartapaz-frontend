@@ -1,6 +1,7 @@
 {
-  "root": "build/",
+  "root": "build",
   "routes": {
+    "/api/**": "http://localhost:10000",
     "/**": "index.html"
   }
 }

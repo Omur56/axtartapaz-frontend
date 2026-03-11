@@ -51,6 +51,7 @@ import Success from "../pages/Success";
 import Cancel from "../pages/Cancel";
 import Layout from "./Layout";
 import PostDetailCar from "../pages/PostDetalCar";
+import PaymentPage from "../pages/PaymentPage";
 
 const router = createBrowserRouter([
   <RootLayout />,
@@ -69,6 +70,11 @@ const router = createBrowserRouter([
       {
         path: "/cancel",
         Component: Cancel,
+      },
+     {
+      path:"/payment/:listingId" ,
+      Component: PaymentPage,
+        
       },
      
       {

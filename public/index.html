@@ -33,8 +33,13 @@
       property="og:image"
       content="https://proelan.az/assets/TitleLogoImg/prologo.png"
     />
-<link rel="stylesheet" href="/static/css/main.css">
-<script src="/static/js/main.js"></script>
+
+    <!-- Favicon və Apple icon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/assets/TitleLogoImg/proelan.svg" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Google Adsense -->
     <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7349957528018863"
@@ -82,20 +87,23 @@
     <meta name="distribution" content="global" />
     <meta name="rating" content="general" />
 
-    <!-- Favicon və Apple icon -->
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="/assets/TitleLogoImg/proelan.svg" />
-    <link rel="manifest" href="/manifest.json" />
-
-    <!-- Content Security Policy (production-da domenləri düzəlt) -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; connect-src 'self' http://localhost:10000 https://proelan.az; img-src 'self' data: blob: https://res.cloudinary.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';"
-    />
+    <!-- Content Security Policy -->
+ 
+<meta http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        connect-src 'self' http://localhost:10000 http://localhost:3000 http://localhost:5000 https://proelan.az https://geminally-stealthless-mimi.ngrok-free.dev https://my-backend-wj5g.onrender.com https://api.cloudinary.com https://res.cloudinary.com https://pagead2.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://www.googletagmanager.com;
+        script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://www.googletagmanager.com https://www.google-analytics.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        img-src 'self' data: blob: https://res.cloudinary.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google;
+        font-src 'self' https://fonts.gstatic.com;
+        frame-src https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.google.com;
+        manifest-src 'self';
+      ">
 
     <!-- React build faylları -->
-    <script defer src="/static/js/main.js"></script>
-    <link href="/static/css/main.css" rel="stylesheet" />
+    <!-- <link rel="stylesheet" href="/static/css/main.css" />
+    <script defer src="/static/js/main.js"></script> -->
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

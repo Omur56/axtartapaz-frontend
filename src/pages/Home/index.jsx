@@ -30,6 +30,7 @@ const Home = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const [announcements, setAnnouncements] = useState([]);
 
   const currentUserId = localStorage.getItem("userId");
 
@@ -106,6 +107,7 @@ const Home = () => {
     try {
       const requests = Object.entries(CATEGORIES).map(async ([key, url]) => {
         const res = await axios.get(`${process.env.REACT_APP_API_URL}${url}`);
+        console.log("API URL:", process.env.REACT_APP_API_URL);
         return res.data.map((i) => ({ ...i, source: key }));
       });
       const responses = await Promise.all(requests);
@@ -166,29 +168,67 @@ const Home = () => {
     </div>
   );
 
-  const handleUpgrade = async (listingId, type) => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/payments/create-checkout/${listingId}`,
-        { type }, // "vip" / "premium"
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (res.data.url) {
-        window.location.href = res.data.url; // Stripe checkout səhifəsinə yönləndir
-      }
-    } catch (err) {
-      console.log(err.response?.data || err.message);
-    }
-  };
-
   const typeLabels = {
     sifarisle: "Sifariş",
     magaza: "Salon",
     resmi: "Rəsmi",
   };
+
+
+// FETCH ANNOUNCEMENTS AND SORT BY PRIORITY
+useEffect(() => {
+  const fetchAnnouncements = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/announcements`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Yalnız VIP və Premium elanları filter et
+      const paidAds = res.data.filter(
+        (item) =>
+          item.priorityType?.toLowerCase() === "vip" ||
+          item.priorityType?.toLowerCase() === "premium"
+      );
+
+      // VIP > PREMIUM sıralaması
+      const sorted = paidAds.sort((a, b) => {
+        const priority = { vip: 2, premium: 1 };
+        const aPr = priority[a.priorityType.toLowerCase()] || 0;
+        const bPr = priority[b.priorityType.toLowerCase()] || 0;
+        return bPr - aPr;
+      });
+
+      setAnnouncements(sorted);
+    } catch (err) {
+      console.log(err.response?.data || err.message);
+    }
+  };
+
+  fetchAnnouncements();
+}, []);
+
+
+
+ const handleUpgrade = async (listingId, type) => {
+    try {
+      const token = localStorage.getItem("token");
+      // Backend-dən Stripe checkout session alır
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/payments/create-checkout/${listingId}`,
+        { type },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // Stripe ödəniş səhifəsinə yönləndir
+      window.location.href = data.url;
+    } catch (err) {
+      console.log(err.response?.data || err.message);
+    }
+  };
+ 
+
+  
 
   /* RENDER */
   return (
@@ -236,6 +276,78 @@ const Home = () => {
 
       <Katalog className="mt-1" width="100%" height="60px" marginTop="10px" />
 
+     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-[120px] sm:mt-[220px] rounded-[15px] border border-red-500 justify-items-center p-4">
+  {announcements.map((item) => (
+    <div
+      key={item._id}
+      className="relative w-full max-w-[280px] min-w-[100px] max-h-[300.8px] min-h-[100px] mb-36"
+    >
+      <Link target="_blank" to={`/${item.__type || item.category}/${item._id}`}>
+        <div className="w-full max-h-[350px] min-h-[100px] rounded-[15px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
+          {/* ICONS */}
+          <div className="absolute top-2 left-2 flex gap-2 z-10">
+            {item.barter && (
+              <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
+                <RefreshCcw size={16} strokeWidth={1.5} />
+              </div>
+            )}
+            {item.kredit && (
+              <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
+                <Percent size={16} strokeWidth={1.5} />
+              </div>
+            )}
+          </div>
+
+          {/* IMAGE */}
+          <div className="relative w-full h-[350px] overflow-hidden rounded-[15px]">
+            <img
+              src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
+              className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+              alt={item.title || item.brand || item.model || item.category}
+            />
+            {/* VIP / PREMIUM badge */}
+            {item.priorityType && item.priorityType !== "free" && (
+              <span className="vip-badge z-20 bg-red-500 text-white px-2 py-1 text-xs rounded absolute bottom-2 right-2">
+                {item.priorityType?.toUpperCase() || ""}
+              </span>
+            )}
+          </div>
+
+          {/* CONTENT */}
+          <div className="flex-1 p-3 flex flex-col justify-between h-[200px]">
+            <h3 className="font-bold text-base sm:text-lg truncate">{item.price} AZN ₼</h3>
+            <p className="text-sm sm:text-base font-semibold">{item.brand || item.category || item.model || item.title}</p>
+            {item.year && item.motor && item.km && (
+              <p className="text-xs sm:text-sm text-gray-600 truncate">{item.year}, {item.motor}, {item.km} km</p>
+            )}
+            <div className="flex justify-between items-center text-gray-600 mt-2 text-xs sm:text-sm">
+              <span className="flex items-center gap-1">
+                <MapPin size={14} color="#75FC56" />
+                {item.location}
+              </span>
+              <span className="truncate">{formatDate(item.data)} {getCurrentTime(item.data)}</span>
+            </div>
+          </div>
+        </div>
+      </Link>
+
+      {/* FAVORITE */}
+      <button onClick={() => toggleFavorite(item)} className="absolute top-2 right-2">
+        <Heart
+          size={22}
+          fill={favorites.some((f) => f._id === item._id) ? "red" : "rgba(0,0,0,0.4)"}
+          color="#fff"
+        />
+      </button>
+    </div>
+  ))}
+</div>
+    
+    <div className="flex justify-center mt-4 border-t border-red-500 "></div>
+      
+
+
+
       {/* CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-[120px] sm:mt-[220px] justify-items-center">
         {isLoading
@@ -270,19 +382,19 @@ const Home = () => {
                       />
                       {/* VIP / PREMIUM badge */}
                       {item.priorityType && item.priorityType !== "free" && (
-                        <span className="vip-badge z-20 bg-red-500 text-white px-2 py-1 text-xs rounded absolute top-[152px] right-2">
+                        <span className="vip-badge z-20 bg-red-500 text-white px-2 py-1 text-xs rounded absolute bottom-2 right-2">
                           {item.priorityType?.toUpperCase() || ""}
                         </span>
                       )}
 
 
-                      {item.type === "Magaza" && (
+                      {item.type === "magaza" && (
                         <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
                           Salon
                         </div>
                       )}
 
-                      {item.type === "sifarisle"}
+                     
 
 
                       {item.type === "sifarisle" && (
