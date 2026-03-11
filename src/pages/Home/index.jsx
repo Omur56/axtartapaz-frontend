@@ -57,7 +57,7 @@ const Home = () => {
   /* ALL ADS */
   const allAds = Object.entries(data)
     .flatMap(([type, items]) =>
-      (items || []).map((item) => ({ ...item, __type: type }))
+      (items || []).map((item) => ({ ...item, __type: type })),
     )
     .sort((a, b) => {
       const priority = { vip: 2, premium: 1, free: 0 };
@@ -77,7 +77,7 @@ const Home = () => {
         document.documentElement.scrollHeight - 300
       ) {
         setVisibleCount((prev) =>
-          prev >= allAds.length ? prev : prev + ITEMS_PER_LOAD
+          prev >= allAds.length ? prev : prev + ITEMS_PER_LOAD,
         );
       }
     };
@@ -124,7 +124,7 @@ const Home = () => {
           item.description,
         ]
           .filter(Boolean)
-          .some((v) => v.toLowerCase().includes(q))
+          .some((v) => v.toLowerCase().includes(q)),
       );
       setResults(filtered);
     } catch (e) {
@@ -174,50 +174,50 @@ const Home = () => {
     resmi: "Rəsmi",
   };
 
+  // FETCH ANNOUNCEMENTS AND SORT BY PRIORITY
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/announcements`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
 
-// FETCH ANNOUNCEMENTS AND SORT BY PRIORITY
-useEffect(() => {
-  const fetchAnnouncements = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/announcements`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+        // Yalnız VIP və Premium elanları filter et
+        const paidAds = res.data.filter(
+          (item) =>
+            item.priorityType?.toLowerCase() === "vip" ||
+            item.priorityType?.toLowerCase() === "premium",
+        );
 
-      // Yalnız VIP və Premium elanları filter et
-      const paidAds = res.data.filter(
-        (item) =>
-          item.priorityType?.toLowerCase() === "vip" ||
-          item.priorityType?.toLowerCase() === "premium"
-      );
+        // VIP > PREMIUM sıralaması
+        const sorted = paidAds.sort((a, b) => {
+          const priority = { vip: 2, premium: 1 };
+          const aPr = priority[a.priorityType.toLowerCase()] || 0;
+          const bPr = priority[b.priorityType.toLowerCase()] || 0;
+          return bPr - aPr;
+        });
 
-      // VIP > PREMIUM sıralaması
-      const sorted = paidAds.sort((a, b) => {
-        const priority = { vip: 2, premium: 1 };
-        const aPr = priority[a.priorityType.toLowerCase()] || 0;
-        const bPr = priority[b.priorityType.toLowerCase()] || 0;
-        return bPr - aPr;
-      });
+        setAnnouncements(sorted);
+      } catch (err) {
+        console.log(err.response?.data || err.message);
+      }
+    };
 
-      setAnnouncements(sorted);
-    } catch (err) {
-      console.log(err.response?.data || err.message);
-    }
-  };
+    fetchAnnouncements();
+  }, []);
 
-  fetchAnnouncements();
-}, []);
-
-
-
- const handleUpgrade = async (listingId, type) => {
+  const handleUpgrade = async (listingId, type) => {
     try {
       const token = localStorage.getItem("token");
       // Backend-dən Stripe checkout session alır
       const { data } = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/payments/create-checkout/${listingId}`,
         { type },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       // Stripe ödəniş səhifəsinə yönləndir
@@ -226,9 +226,6 @@ useEffect(() => {
       console.log(err.response?.data || err.message);
     }
   };
- 
-
-  
 
   /* RENDER */
   return (
@@ -276,77 +273,96 @@ useEffect(() => {
 
       <Katalog className="mt-1" width="100%" height="60px" marginTop="10px" />
 
-     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-[120px] sm:mt-[220px] rounded-[15px] border border-red-500 justify-items-center p-4">
-  {announcements.map((item) => (
-    <div
-      key={item._id}
-      className="relative w-full max-w-[280px] min-w-[100px] max-h-[300.8px] min-h-[100px] mb-36"
-    >
-      <Link target="_blank" to={`/${item.__type || item.category}/${item._id}`}>
-        <div className="w-full max-h-[350px] min-h-[100px] rounded-[15px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
-          {/* ICONS */}
-          <div className="absolute top-2 left-2 flex gap-2 z-10">
-            {item.barter && (
-              <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
-                <RefreshCcw size={16} strokeWidth={1.5} />
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-[120px] sm:mt-[220px] rounded-[15px] border border-red-500 justify-items-center p-4">
+        {announcements.map((item) => (
+          <div
+            key={item._id}
+            className="relative w-full max-w-[280px] min-w-[100px] max-h-[300.8px] min-h-[100px] mb-36"
+          >
+            <Link
+              target="_blank"
+              to={`/${item.__type || item.category}/${item._id}`}
+            >
+              <div className="w-full max-h-[350px] min-h-[100px] rounded-[15px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
+                {/* ICONS */}
+                <div className="absolute top-2 left-2 flex gap-2 z-10">
+                  {item.barter && (
+                    <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
+                      <RefreshCcw size={16} strokeWidth={1.5} />
+                    </div>
+                  )}
+                  {item.kredit && (
+                    <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
+                      <Percent size={16} strokeWidth={1.5} />
+                    </div>
+                  )}
+                </div>
+
+                {/* IMAGE */}
+                <div className="relative w-full h-[350px] overflow-hidden rounded-[15px]">
+                  <img
+                    src={
+                      item.images?.[item.images.length - 1] || "/no-image.jpg"
+                    }
+                    className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+                    alt={
+                      item.title || item.brand || item.model || item.category
+                    }
+                  />
+                  {/* VIP / PREMIUM badge */}
+                  {item.priorityType && item.priorityType !== "free" && (
+                    <span className="vip-badge z-20 bg-red-500 text-white px-2 py-1 text-xs rounded absolute bottom-2 right-2">
+                      {item.priorityType?.toUpperCase() || ""}
+                    </span>
+                  )}
+                </div>
+
+                {/* CONTENT */}
+                <div className="flex-1 p-3 flex flex-col justify-between h-[200px]">
+                  <h3 className="font-bold text-base sm:text-lg truncate">
+                    {item.price} AZN ₼
+                  </h3>
+                  <p className="text-sm sm:text-base font-semibold">
+                    {item.brand || item.category || item.model || item.title}
+                  </p>
+                  {item.year && item.motor && item.km && (
+                    <p className="text-xs sm:text-sm text-gray-600 truncate">
+                      {item.year}, {item.motor}, {item.km} km
+                    </p>
+                  )}
+                  <div className="flex justify-between items-center text-gray-600 mt-2 text-xs sm:text-sm">
+                    <span className="flex items-center gap-1">
+                      <MapPin size={14} color="#75FC56" />
+                      {item.location}
+                    </span>
+                    <span className="truncate">
+                      {formatDate(item.data)} {getCurrentTime(item.data)}
+                    </span>
+                  </div>
+                </div>
               </div>
-            )}
-            {item.kredit && (
-              <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
-                <Percent size={16} strokeWidth={1.5} />
-              </div>
-            )}
+            </Link>
+
+            {/* FAVORITE */}
+            <button
+              onClick={() => toggleFavorite(item)}
+              className="absolute top-2 right-2"
+            >
+              <Heart
+                size={22}
+                fill={
+                  favorites.some((f) => f._id === item._id)
+                    ? "red"
+                    : "rgba(0,0,0,0.4)"
+                }
+                color="#fff"
+              />
+            </button>
           </div>
+        ))}
+      </div>
 
-          {/* IMAGE */}
-          <div className="relative w-full h-[350px] overflow-hidden rounded-[15px]">
-            <img
-              src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
-              className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-              alt={item.title || item.brand || item.model || item.category}
-            />
-            {/* VIP / PREMIUM badge */}
-            {item.priorityType && item.priorityType !== "free" && (
-              <span className="vip-badge z-20 bg-red-500 text-white px-2 py-1 text-xs rounded absolute bottom-2 right-2">
-                {item.priorityType?.toUpperCase() || ""}
-              </span>
-            )}
-          </div>
-
-          {/* CONTENT */}
-          <div className="flex-1 p-3 flex flex-col justify-between h-[200px]">
-            <h3 className="font-bold text-base sm:text-lg truncate">{item.price} AZN ₼</h3>
-            <p className="text-sm sm:text-base font-semibold">{item.brand || item.category || item.model || item.title}</p>
-            {item.year && item.motor && item.km && (
-              <p className="text-xs sm:text-sm text-gray-600 truncate">{item.year}, {item.motor}, {item.km} km</p>
-            )}
-            <div className="flex justify-between items-center text-gray-600 mt-2 text-xs sm:text-sm">
-              <span className="flex items-center gap-1">
-                <MapPin size={14} color="#75FC56" />
-                {item.location}
-              </span>
-              <span className="truncate">{formatDate(item.data)} {getCurrentTime(item.data)}</span>
-            </div>
-          </div>
-        </div>
-      </Link>
-
-      {/* FAVORITE */}
-      <button onClick={() => toggleFavorite(item)} className="absolute top-2 right-2">
-        <Heart
-          size={22}
-          fill={favorites.some((f) => f._id === item._id) ? "red" : "rgba(0,0,0,0.4)"}
-          color="#fff"
-        />
-      </button>
-    </div>
-  ))}
-</div>
-    
-    <div className="flex justify-center mt-4 border-t border-red-500 "></div>
-      
-
-
+      <div className="flex justify-center mt-4 border-t border-red-500 "></div>
 
       {/* CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-[120px] sm:mt-[220px] justify-items-center">
@@ -376,9 +392,20 @@ useEffect(() => {
                     {/* IMAGE */}
                     <div className="relative w-full h-[350px] overflow-hidden rounded-[15px]">
                       <img
-                        src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
+                        src={
+                          item.images?.[item.images.length - 1] ||
+                          "/no-image.jpg"
+                        }
                         className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-                        alt={item.title || item.brand || item.model || item.category || item._id || item.id || item.ban_type}
+                        alt={
+                          item.title ||
+                          item.brand ||
+                          item.model ||
+                          item.category ||
+                          item._id ||
+                          item.id ||
+                          item.ban_type
+                        }
                       />
                       {/* VIP / PREMIUM badge */}
                       {item.priorityType && item.priorityType !== "free" && (
@@ -387,15 +414,11 @@ useEffect(() => {
                         </span>
                       )}
 
-
                       {item.type === "magaza" && (
                         <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
                           Salon
                         </div>
                       )}
-
-                     
-
 
                       {item.type === "sifarisle" && (
                         <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
@@ -403,13 +426,11 @@ useEffect(() => {
                         </div>
                       )}
 
-                       {item.type === "resmi" && (
+                      {item.type === "resmi" && (
                         <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
                           Rəsmi
                         </div>
-                       )}
-
-                      
+                      )}
                     </div>
 
                     {/* CONTENT */}
@@ -418,7 +439,10 @@ useEffect(() => {
                         {item.price} AZN ₼
                       </h3>
                       <p className="text-sm sm:text-base font-semibold ">
-                        {item.brand || item.category || item.model || item.title}
+                        {item.brand ||
+                          item.category ||
+                          item.model ||
+                          item.title}
                       </p>
                       {item.year && item.motor && item.km && (
                         <p className="text-xs sm:text-sm text-gray-600 truncate ">
@@ -461,7 +485,11 @@ useEffect(() => {
                 >
                   <Heart
                     size={22}
-                    fill={favorites.some((f) => f._id === item._id) ? "red" : "rgba(0,0,0,0.4)"}
+                    fill={
+                      favorites.some((f) => f._id === item._id)
+                        ? "red"
+                        : "rgba(0,0,0,0.4)"
+                    }
                     color="#fff"
                   />
                 </button>
