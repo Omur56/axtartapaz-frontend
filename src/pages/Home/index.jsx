@@ -1,3 +1,263 @@
+// // ----------------------- Home.jsx ---------------------------
+// import React, { useEffect, useState } from "react";
+// import axios from "axios";
+// import { Link } from "react-router-dom";
+// import CircularProgress from "@mui/material/CircularProgress";
+// import Typography from "@mui/material/Typography";
+// import { Heart, RefreshCcw, Percent, MapPin } from "lucide-react";
+// import Katalog from "../Katalog";
+// import BottomMenu from "../../components/MobileMenu";
+// import { Helmet } from "react-helmet-async";
+// const API = process.env.REACT_APP_API_URL || "https://my-backend-wj5g.onrender.com";
+
+// const ITEMS_PER_LOAD = 8;
+
+// const CATEGORIES = {
+//   cars: "/api/cars",
+//   homeGarden: "/api/homeGarden",
+//   electronika: "/api/electronika",
+//   accessories: "/api/accessories",
+//   realEstate: "/api/realEstate",
+//   household: "/api/Household",
+//   phone: "/api/Phone",
+//   clothing: "/api/Clothing",
+// };
+
+// const Home = () => {
+//   const [data, setData] = useState({});
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
+//   const [favorites, setFavorites] = useState([]);
+//   const [query, setQuery] = useState("");
+//   const [results, setResults] = useState([]);
+//   const [loadingSearch, setLoadingSearch] = useState(false);
+//   const [announcements, setAnnouncements] = useState([]);
+
+//   const currentUserId = localStorage.getItem("userId");
+
+//   /* FETCH ALL DATA */
+//   // useEffect(() => {
+//   //   const fetchAll = async () => {
+//   //     setIsLoading(true);
+//   //     try {
+//   //       const requests = Object.entries(CATEGORIES).map(async ([key, url]) => {
+//   //         const res = await axios.get(`${process.env.REACT_APP_API_URL}${url}`);
+//   //         return [key, res.data];
+//   //       });
+//   //       const responses = await Promise.all(requests);
+//   //       setData(Object.fromEntries(responses));
+//   //     } catch (err) {
+//   //       console.error("API error:", err);
+//   //     } finally {
+//   //       setIsLoading(false);
+//   //     }
+//   //   };
+//   //   fetchAll();
+//   // }, []);
+
+//   useEffect(() => {
+//   const fetchAll = async () => {
+//     setIsLoading(true);
+//     try {
+//       const requests = Object.entries(CATEGORIES).map(async ([key, url]) => {
+//         const res = await axios.get(`${API}${url}`);
+//         const safeData = Array.isArray(res.data) ? res.data : [];
+//         return [key, safeData];
+//       });
+
+//       const responses = await Promise.all(requests);
+//       setData(Object.fromEntries(responses));
+
+//     } catch (err) {
+//       console.error("API error:", err);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   fetchAll();
+// }, []);
+
+//   /* ALL ADS */
+//   const allAds = Object.entries(data)
+//     .flatMap(([type, items]) =>
+//       (items || []).map((item) => ({ ...item, __type: type })),
+//     )
+//     .sort((a, b) => {
+//       const priority = { vip: 2, premium: 1, free: 0 };
+//       const aPr = priority[a.type] || 0;
+//       const bPr = priority[b.type] || 0;
+//       if (aPr !== bPr) return bPr - aPr;
+//       return new Date(b.data) - new Date(a.data);
+//     });
+
+//   const visibleAds = allAds.slice(0, visibleCount);
+
+//   /* INFINITE SCROLL */
+//   useEffect(() => {
+//     const onScroll = () => {
+//       if (
+//         window.innerHeight + window.scrollY >=
+//         document.documentElement.scrollHeight - 300
+//       ) {
+//         setVisibleCount((prev) =>
+//           prev >= allAds.length ? prev : prev + ITEMS_PER_LOAD,
+//         );
+//       }
+//     };
+//     window.addEventListener("scroll", onScroll);
+//     return () => window.removeEventListener("scroll", onScroll);
+//   }, [allAds.length]);
+
+//   /* FAVORITES */
+//   useEffect(() => {
+//     const stored = localStorage.getItem("favorites");
+//     if (stored) setFavorites(JSON.parse(stored));
+//   }, []);
+
+//   const toggleFavorite = (item) => {
+//     const exists = favorites.some((f) => f._id === item._id);
+//     const updated = exists
+//       ? favorites.filter((f) => f._id !== item._id)
+//       : [...favorites, item];
+//     setFavorites(updated);
+//     localStorage.setItem("favorites", JSON.stringify(updated));
+//   };
+
+//   /* SEARCH */
+//   const handleSearch = async () => {
+//     if (!query.trim()) return;
+//     setLoadingSearch(true);
+//     try {
+//       const requests = Object.entries(CATEGORIES).map(async ([key, url]) => {
+//         const res = await axios.get(`${process.env.REACT_APP_API_URL}${url}`);
+//         console.log("API URL:", process.env.REACT_APP_API_URL);
+//         return res.data.map((i) => ({ ...i, source: key }));
+//       });
+//       const responses = await Promise.all(requests);
+//       const merged = responses.flat();
+//       const q = query.toLowerCase();
+//       const filtered = merged.filter((item) =>
+//         [
+//           item.title,
+//           item.brand,
+//           item.model,
+//           item.category,
+//           item.city,
+//           item.location,
+//           item.description,
+//         ]
+//           .filter(Boolean)
+//           .some((v) => v.toLowerCase().includes(q)),
+//       );
+//       setResults(filtered);
+//     } catch (e) {
+//       console.error("Search error:", e);
+//     } finally {
+//       setLoadingSearch(false);
+//     }
+//   };
+
+//   /* DATE HELPERS */
+//   const formatDate = (dateString) => {
+//     const postDate = new Date(dateString);
+//     const now = new Date();
+//     const today = new Date(now.setHours(0, 0, 0, 0));
+//     const postDay = new Date(postDate.setHours(0, 0, 0, 0));
+//     const diffTime = today - postDay;
+//     const oneDay = 24 * 60 * 60 * 1000;
+//     if (diffTime === 0) return "bugün";
+//     if (diffTime === oneDay) return "dünən";
+//     return postDate.toLocaleDateString("az-AZ", {
+//       day: "numeric",
+//       month: "long",
+//       year: "numeric",
+//     });
+//   };
+//   const getCurrentTime = (d) => new Date(d).toTimeString().slice(0, 5);
+
+//   /* SKELETON */
+//   const SkeletonCard = () => (
+//     <div className="bg-gray-50 w-[185px] h-[268px] sm:w-[268px] sm:h-[268px] max-w-[240px] max-h-[368px] rounded-[12px] shadow-md overflow-hidden animate-pulse">
+//       <div className="h-[147px] w-full bg-gray-300" />
+//       <div className="p-2 space-y-2">
+//         <div className="h-4 w-24 bg-gray-300 rounded" />
+//         <div className="h-3 w-full bg-gray-300 rounded" />
+//         <div className="h-3 w-3/4 bg-gray-300 rounded" />
+//         <div className="flex justify-between mt-3">
+//           <div className="h-3 w-16 bg-gray-300 rounded" />
+//           <div className="h-3 w-12 bg-gray-300 rounded" />
+//         </div>
+//       </div>
+//     </div>
+//   );
+
+//   const typeLabels = {
+//     sifarisle: "Sifariş",
+//     magaza: "Salon",
+//     resmi: "Rəsmi",
+//   };
+
+//   // FETCH ANNOUNCEMENTS AND SORT BY PRIORITY
+//   useEffect(() => {
+//     const fetchAnnouncements = async () => {
+//       try {
+//         const token = localStorage.getItem("token");
+//         const res = await axios.get(
+//           `${process.env.REACT_APP_API_URL}/api/announcements`,
+//           {
+//             headers: { Authorization: `Bearer ${token}` },
+//           },
+//         );
+
+//         // Yalnız VIP və Premium elanları filter et
+//         const paidAds = res.data.filter(
+//           (item) =>
+//             item.priorityType?.toLowerCase() === "vip" ||
+//             item.priorityType?.toLowerCase() === "premium",
+//         );
+
+//         // VIP > PREMIUM sıralaması
+//         const sorted = paidAds.sort((a, b) => {
+//           const priority = { vip: 2, premium: 1 };
+//           const aPr = priority[a.priorityType.toLowerCase()] || 0;
+//           const bPr = priority[b.priorityType.toLowerCase()] || 0;
+//           return bPr - aPr;
+//         });
+
+//         setAnnouncements(sorted);
+//       } catch (err) {
+//         console.log(err.response?.data || err.message);
+//       }
+//     };
+
+//     fetchAnnouncements();
+//   }, []);
+
+//   const handleUpgrade = async (listingId, type) => {
+//     try {
+//       const token = localStorage.getItem("token");
+//       // Backend-dən Stripe checkout session alır
+//       const { data } = await axios.post(
+//         `${process.env.REACT_APP_API_URL}/api/payments/create-checkout/${listingId}`,
+//         { type },
+//         { headers: { Authorization: `Bearer ${token}` } },
+//       );
+
+//       // Stripe ödəniş səhifəsinə yönləndir
+//       window.location.href = data.url;
+//     } catch (err) {
+//       console.log(err.response?.data || err.message);
+//     }
+//   };
+
+
+
+
+
+
+
+
 // ----------------------- Home.jsx ---------------------------
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -8,6 +268,9 @@ import { Heart, RefreshCcw, Percent, MapPin } from "lucide-react";
 import Katalog from "../Katalog";
 import BottomMenu from "../../components/MobileMenu";
 import { Helmet } from "react-helmet-async";
+
+const API =
+  process.env.REACT_APP_API_URL || "https://my-backend-wj5g.onrender.com";
 
 const ITEMS_PER_LOAD = 8;
 
@@ -40,9 +303,11 @@ const Home = () => {
       setIsLoading(true);
       try {
         const requests = Object.entries(CATEGORIES).map(async ([key, url]) => {
-          const res = await axios.get(`${process.env.REACT_APP_API_URL}${url}`);
-          return [key, res.data];
+          const res = await axios.get(`${API}${url}`);
+          const safeData = Array.isArray(res.data) ? res.data : [];
+          return [key, safeData];
         });
+
         const responses = await Promise.all(requests);
         setData(Object.fromEntries(responses));
       } catch (err) {
@@ -51,13 +316,17 @@ const Home = () => {
         setIsLoading(false);
       }
     };
+
     fetchAll();
   }, []);
 
   /* ALL ADS */
   const allAds = Object.entries(data)
     .flatMap(([type, items]) =>
-      (items || []).map((item) => ({ ...item, __type: type })),
+      (Array.isArray(items) ? items : []).map((item) => ({
+        ...item,
+        __type: type,
+      })),
     )
     .sort((a, b) => {
       const priority = { vip: 2, premium: 1, free: 0 };
@@ -106,12 +375,14 @@ const Home = () => {
     setLoadingSearch(true);
     try {
       const requests = Object.entries(CATEGORIES).map(async ([key, url]) => {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}${url}`);
-        console.log("API URL:", process.env.REACT_APP_API_URL);
-        return res.data.map((i) => ({ ...i, source: key }));
+        const res = await axios.get(`${API}${url}`);
+        const safeData = Array.isArray(res.data) ? res.data : [];
+        return safeData.map((i) => ({ ...i, source: key }));
       });
+
       const responses = await Promise.all(requests);
       const merged = responses.flat();
+
       const q = query.toLowerCase();
       const filtered = merged.filter((item) =>
         [
@@ -126,6 +397,7 @@ const Home = () => {
           .filter(Boolean)
           .some((v) => v.toLowerCase().includes(q)),
       );
+
       setResults(filtered);
     } catch (e) {
       console.error("Search error:", e);
@@ -150,54 +422,31 @@ const Home = () => {
       year: "numeric",
     });
   };
+
   const getCurrentTime = (d) => new Date(d).toTimeString().slice(0, 5);
 
-  /* SKELETON */
-  const SkeletonCard = () => (
-    <div className="bg-gray-50 w-[185px] h-[268px] sm:w-[268px] sm:h-[268px] max-w-[240px] max-h-[368px] rounded-[12px] shadow-md overflow-hidden animate-pulse">
-      <div className="h-[147px] w-full bg-gray-300" />
-      <div className="p-2 space-y-2">
-        <div className="h-4 w-24 bg-gray-300 rounded" />
-        <div className="h-3 w-full bg-gray-300 rounded" />
-        <div className="h-3 w-3/4 bg-gray-300 rounded" />
-        <div className="flex justify-between mt-3">
-          <div className="h-3 w-16 bg-gray-300 rounded" />
-          <div className="h-3 w-12 bg-gray-300 rounded" />
-        </div>
-      </div>
-    </div>
-  );
-
-  const typeLabels = {
-    sifarisle: "Sifariş",
-    magaza: "Salon",
-    resmi: "Rəsmi",
-  };
-
-  // FETCH ANNOUNCEMENTS AND SORT BY PRIORITY
+  /* FETCH ANNOUNCEMENTS */
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/announcements`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
 
-        // Yalnız VIP və Premium elanları filter et
-        const paidAds = res.data.filter(
+        const res = await axios.get(`${API}/api/announcements`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const list = Array.isArray(res.data) ? res.data : [];
+
+        const paidAds = list.filter(
           (item) =>
             item.priorityType?.toLowerCase() === "vip" ||
             item.priorityType?.toLowerCase() === "premium",
         );
 
-        // VIP > PREMIUM sıralaması
         const sorted = paidAds.sort((a, b) => {
           const priority = { vip: 2, premium: 1 };
-          const aPr = priority[a.priorityType.toLowerCase()] || 0;
-          const bPr = priority[b.priorityType.toLowerCase()] || 0;
+          const aPr = priority[a.priorityType?.toLowerCase()] || 0;
+          const bPr = priority[b.priorityType?.toLowerCase()] || 0;
           return bPr - aPr;
         });
 
@@ -213,19 +462,36 @@ const Home = () => {
   const handleUpgrade = async (listingId, type) => {
     try {
       const token = localStorage.getItem("token");
-      // Backend-dən Stripe checkout session alır
+
       const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/payments/create-checkout/${listingId}`,
+        `${API}/api/payments/create-checkout/${listingId}`,
         { type },
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      // Stripe ödəniş səhifəsinə yönləndir
       window.location.href = data.url;
     } catch (err) {
       console.log(err.response?.data || err.message);
     }
   };
+
+  /* SKELETON */
+const SkeletonCard = () => (
+  <div className="bg-gray-50 w-[185px] h-[268px] sm:w-[268px] sm:h-[268px] max-w-[240px] max-h-[368px] rounded-[12px] shadow-md overflow-hidden animate-pulse">
+    <div className="h-[147px] w-full bg-gray-300" />
+    <div className="p-2 space-y-2">
+      <div className="h-4 w-24 bg-gray-300 rounded" />
+      <div className="h-3 w-full bg-gray-300 rounded" />
+      <div className="h-3 w-3/4 bg-gray-300 rounded" />
+      <div className="flex justify-between mt-3">
+        <div className="h-3 w-16 bg-gray-300 rounded" />
+        <div className="h-3 w-12 bg-gray-300 rounded" />
+      </div>
+    </div>
+  </div>
+);
+
+
 
   /* RENDER */
   return (
