@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 
+
 export default function AdDetail() {
   const { id } = useParams();
   const [ad, setAd] = useState(null);
@@ -51,27 +52,54 @@ export default function AdDetail() {
   };
 
   // Fetch all ads for similar ads
-  useEffect(() => {
-    const fetchAllAds = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/my-announcements`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setAllAds(res.data.filter((a) => a._id !== id));
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchAllAds();
-  }, [id]);
+useEffect(() => {
+  const fetchAllAds = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      // bütün modellər
+      const models = [
+        "cars",
+        "phone",
+        "clothing",
+        "household",
+        "electronika",
+        "accessories",
+        "homeGarden",
+        "realEstate",
+      ];
+
+      // paralel fetch
+      const requests = models.map((model) =>
+        axios
+          .get(`${process.env.REACT_APP_API_URL}/api/${model}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((res) => Array.isArray(res.data) ? res.data : [])
+          .catch(() => [])
+      );
+
+      const results = await Promise.all(requests);
+      let allAdsData = results.flat();
+
+      // yalnız mövcud istifadəçi elanları
+      allAdsData = allAdsData.filter(a => a.userId === currentUserId && a._id !== id);
+
+      setAllAds(allAdsData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchAllAds();
+}, [id]);
 
   // Fetch single ad
   useEffect(() => {
     const fetchAd = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/my-announcements`, {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/${modelMap}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const selectedAd = res.data.find((a) => a._id === id);

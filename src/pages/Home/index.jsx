@@ -251,13 +251,6 @@
 //     }
 //   };
 
-
-
-
-
-
-
-
 // ----------------------- Home.jsx ---------------------------
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -426,38 +419,68 @@ const Home = () => {
   const getCurrentTime = (d) => new Date(d).toTimeString().slice(0, 5);
 
   /* FETCH ANNOUNCEMENTS */
-  useEffect(() => {
-    const fetchAnnouncements = async () => {
-      try {
-        const token = localStorage.getItem("token");
+useEffect(() => {
+  const fetchAllModels = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-        const res = await axios.get(`${API}/api/announcements`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      // bütün modellərin endpointləri
+      const models = [
+        "accessories",
+        "electronika",
+        "clothing",
+        "homeGarden",
+        "phone",
+        "realEstate",
+        "Household",
+        "cars",
+      ];
 
-        const list = Array.isArray(res.data) ? res.data : [];
+      // bütün modellərdən paralel fetch
+      const requests = models.map((model) =>
+        axios
+          .get(`${API}/api/${model}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((res) =>
+            Array.isArray(res.data)
+              ? res.data.map((item) => ({ ...item, __type: model }))
+              : []
+          )
+          .catch(() => [])
+      );
 
-        const paidAds = list.filter(
-          (item) =>
-            item.priorityType?.toLowerCase() === "vip" ||
-            item.priorityType?.toLowerCase() === "premium",
-        );
+      const results = await Promise.all(requests);
 
-        const sorted = paidAds.sort((a, b) => {
-          const priority = { vip: 2, premium: 1 };
-          const aPr = priority[a.priorityType?.toLowerCase()] || 0;
-          const bPr = priority[b.priorityType?.toLowerCase()] || 0;
-          return bPr - aPr;
-        });
+      // flatten: bütün elanları tək array-də birləşdir
+      let allAds = results.flat();
 
-        setAnnouncements(sorted);
-      } catch (err) {
-        console.log(err.response?.data || err.message);
-      }
-    };
+      // yalnız VIP və PREMIUM elanları seç
+      const paidAds = allAds.filter(
+        (item) =>
+          item.priorityType?.toLowerCase() === "vip" ||
+          item.priorityType?.toLowerCase() === "premium"
+      );
 
-    fetchAnnouncements();
-  }, []);
+      // VIP / PREMIUM ön sıraya
+      const sorted = paidAds.sort((a, b) => {
+        const priority = { vip: 2, premium: 1 };
+        const aPr = priority[a.priorityType?.toLowerCase()] || 0;
+        const bPr = priority[b.priorityType?.toLowerCase()] || 0;
+        if (aPr !== bPr) return bPr - aPr;
+
+        // əgər priority eyni olarsa, tarixə görə sortla
+        return new Date(b.data) - new Date(a.data);
+      });
+
+      setAnnouncements(sorted);
+    } catch (err) {
+      console.log(err.response?.data || err.message);
+    }
+  };
+
+  fetchAllModels();
+}, []);
 
   const handleUpgrade = async (listingId, type) => {
     try {
@@ -476,22 +499,20 @@ const Home = () => {
   };
 
   /* SKELETON */
-const SkeletonCard = () => (
-  <div className="bg-gray-50 w-[185px] h-[268px] sm:w-[268px] sm:h-[268px] max-w-[240px] max-h-[368px] rounded-[12px] shadow-md overflow-hidden animate-pulse">
-    <div className="h-[147px] w-full bg-gray-300" />
-    <div className="p-2 space-y-2">
-      <div className="h-4 w-24 bg-gray-300 rounded" />
-      <div className="h-3 w-full bg-gray-300 rounded" />
-      <div className="h-3 w-3/4 bg-gray-300 rounded" />
-      <div className="flex justify-between mt-3">
-        <div className="h-3 w-16 bg-gray-300 rounded" />
-        <div className="h-3 w-12 bg-gray-300 rounded" />
+  const SkeletonCard = () => (
+    <div className="bg-gray-50 w-[185px] h-[268px] sm:w-[268px] sm:h-[268px] max-w-[240px] max-h-[368px] rounded-[12px] shadow-md overflow-hidden animate-pulse">
+      <div className="h-[147px] w-full bg-gray-300" />
+      <div className="p-2 space-y-2">
+        <div className="h-4 w-24 bg-gray-300 rounded" />
+        <div className="h-3 w-full bg-gray-300 rounded" />
+        <div className="h-3 w-3/4 bg-gray-300 rounded" />
+        <div className="flex justify-between mt-3">
+          <div className="h-3 w-16 bg-gray-300 rounded" />
+          <div className="h-3 w-12 bg-gray-300 rounded" />
+        </div>
       </div>
     </div>
-  </div>
-);
-
-
+  );
 
   /* RENDER */
   return (
@@ -523,7 +544,7 @@ const SkeletonCard = () => (
       {!loadingSearch && results.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
           {results.map((item) => (
-            <Link key={item._id} to={`/ads/${item.source}/${item._id}`}>
+            <Link key={item._id} to={`${item.source}/${item._id}`}>
               <div className="border rounded shadow p-2">
                 <img
                   src={item.images?.[0] || "/no-image.jpg"}
@@ -539,115 +560,105 @@ const SkeletonCard = () => (
 
       <Katalog className="mt-1" width="100%" height="60px" marginTop="10px" />
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-[120px] sm:mt-[220px] rounded-[15px] border border-red-500 justify-items-center p-4">
-        {announcements.map((item) => (
-          <div
-            key={item._id}
-            className="relative w-full max-w-[280px] min-w-[100px] max-h-[300.8px] min-h-[100px] mb-36"
-          >
-            <Link
-              target="_blank"
-              to={`/${item.__type || item.category}/${item._id}`}
-            >
-              <div className="w-full max-h-[350px] min-h-[100px] rounded-[15px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
-                {/* ICONS */}
-                <div className="absolute top-2 left-2 flex gap-2 z-10">
-                  {item.barter && (
-                    <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
-                      <RefreshCcw size={16} strokeWidth={1.5} />
-                    </div>
-                  )}
-                  {item.kredit && (
-                    <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
-                      <Percent size={16} strokeWidth={1.5} />
-                    </div>
-                  )}
-                </div>
+  <div className="relative py-4 mt-[200px] min-w-[100px] max-w-[1200px] min-h-[150px] max-h[300px] bg-blue-200 rounded-[10px]">
+  {/* Sol ox */}
+  <button
+    onClick={() => {
+      document.getElementById("announcement-slider").scrollBy({ left: -300, behavior: "smooth" });
+    }}
+    className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-blue-500/40 rounded-full shadow p-2 hover:bg-gray-100"
+  >
+    &#8592;
+  </button>
 
-                {/* IMAGE */}
-                <div className="relative w-full h-[350px] overflow-hidden rounded-[15px]">
-                  <img
-                    src={
-                      item.images?.[item.images.length - 1] || "/no-image.jpg"
-                    }
-                    className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-                    alt={
-                      item.title || item.brand || item.model || item.category
-                    }
-                  />
-                  {/* VIP / PREMIUM badge */}
-                  {item.priorityType && item.priorityType !== "free" && (
-                    <span className="vip-badge z-20 bg-red-500 text-white px-2 py-1 text-xs rounded absolute bottom-2 right-2">
-                      {item.priorityType?.toUpperCase() || ""}
-                    </span>
-                  )}
-
-                  {item.type === "magaza" && (
-                    <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
-                      Salon
-                    </div>
-                  )}
-                  {item.type === "sifarisle" && (
-                    <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
-                      Sifarişlə
-                    </div>
-                  )}
-                  {item.type === "resmi" && (
-                    <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
-                      Rəsmi
-                    </div>
-                  )}
-                </div>
-
-                {/* CONTENT */}
-                <div className="flex-1 p-3 flex flex-col justify-between h-[200px]">
-                  <h3 className="font-bold text-base sm:text-lg truncate">
-                    {item.price} AZN ₼
-                  </h3>
-                  <p className="text-sm sm:text-base font-semibold">
-                    {item.brand || item.category || item.model || item.title}
-                  </p>
-                  {item.year && item.motor && item.km && (
-                    <p className="text-xs sm:text-sm text-gray-600 truncate">
-                      {item.year}, {item.motor}, {item.km} km
-                    </p>
-                  )}
-                  <div className="flex justify-between items-center text-gray-600 mt-2 text-xs sm:text-sm">
-                    <span className="flex items-center gap-1">
-                      <MapPin size={14} color="#75FC56" />
-                      {item.location}
-                    </span>
-                    <span className="truncate">
-                      {formatDate(item.data)} {getCurrentTime(item.data)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-
-            {/* FAVORITE */}
-            <button
-              onClick={() => toggleFavorite(item)}
-              className="absolute top-2 right-2"
-            >
-              <Heart
-                size={22}
-                fill={
-                  favorites.some((f) => f._id === item._id)
-                    ? "red"
-                    : "rgba(0,0,0,0.4)"
-                }
-                color="#fff"
+  {/* Slider */}
+  <div
+    id="announcement-slider"
+    className="flex overflow-x-auto scrollbar-hide gap-4 px-10 "
+  >
+    {announcements.map((item) => (
+      <div
+        key={item._id}
+        className="flex-shrink-0 max-w-[280px] min-w-[100px] max-h-[350px] rounded-[15px] relative bg-white"
+      >
+        <Link target="_blank" to={`/${item.__type}/${item._id}`}>
+          <div className="w-full h-full rounded-[15px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
+            {/* IMAGE */}
+            <div className="relative max-w-[280px] min-w-[100px] h-[150px]  overflow-hidden rounded-[15px]">
+              <img
+                src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
+                className="max-w-[280px] min-w-full h-[150px] object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+                alt={item.title || item.brand || item.model || item.category}
               />
-            </button>
-          </div>
-        ))}
-      </div>
+              {item.priorityType && item.priorityType !== "free" && (
+                <span className="vip-badge z-20 bg-red-500 text-white px-2 py-1 text-xs rounded absolute bottom-2 right-2">
+                  {item.priorityType?.toUpperCase() || ""}
+                </span>
+              )}
+            </div>
 
-      <div className="flex justify-center mt-4 border-t border-red-500 "></div>
+            {/* CONTENT */}
+            <div className="flex-1 p-3 flex flex-col justify-between h-[200px]">
+              <h3 className="font-bold text-base sm:text-lg truncate">
+                {item.price} AZN ₼
+              </h3>
+              <p className="text-sm sm:text-base font-semibold">
+                {item.brand || item.category || item.model || item.title}
+              </p>
+              {item.year && item.motor && item.km && (
+                <p className="text-xs sm:text-sm text-gray-600 truncate">
+                  {item.year}, {item.motor}, {item.km} km
+                </p>
+              )}
+              <div className="flex justify-between items-center text-gray-600 mt-2 text-xs sm:text-sm">
+                <span className="flex items-center gap-1">
+                  <MapPin size={14} color="#75FC56" />
+                  {item.location}
+                </span>
+                <span className="truncate">
+                  {formatDate(item.data)} {getCurrentTime(item.data)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </Link>
+
+        {/* FAVORITE */}
+        <button
+          onClick={() => toggleFavorite(item)}
+          className="absolute top-2 right-2"
+        >
+          <Heart
+            size={22}
+            fill={
+              favorites.some((f) => f._id === item._id)
+                ? "red"
+                : "rgba(0,0,0,0.4)"
+            }
+            color="#fff"
+          />
+        </button>
+      </div>
+    ))}
+  </div>
+
+  {/* Sağ ox */}
+  <button
+    onClick={() => {
+      document.getElementById("announcement-slider").scrollBy({ left: 300, behavior: "smooth" });
+    }}
+    className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-blue-500/40 rounded-full shadow p-2 hover:bg-gray-100"
+  >
+    &#8594;
+  </button>
+</div>
+
+
+
+      <div className="flex justify-center mt-4 border-t rounded-[10px] border-blue-700 border-[10px] "></div>
 
       {/* CARDS */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-[120px] sm:mt-[220px] justify-items-center">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-[120px] sm:mt-[20px] justify-items-center">
         {isLoading
           ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
           : visibleAds.map((item) => (
@@ -675,7 +686,7 @@ const SkeletonCard = () => (
                     <div className="relative w-full h-[350px] overflow-hidden rounded-[15px]">
                       <img
                         src={
-                          item.images?.[item.images.length - 1] ||
+                          item.images?.[item.images.length - [1]] ||
                           "/no-image.jpg"
                         }
                         className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
