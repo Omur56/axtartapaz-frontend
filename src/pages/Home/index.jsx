@@ -261,6 +261,7 @@ import { Heart, RefreshCcw, Percent, MapPin } from "lucide-react";
 import Katalog from "../Katalog";
 import BottomMenu from "../../components/MobileMenu";
 import { Helmet } from "react-helmet-async";
+import '../../styles/home_style.css'
 
 const API =
   process.env.REACT_APP_API_URL || "https://my-backend-wj5g.onrender.com";
@@ -658,16 +659,16 @@ useEffect(() => {
       <div className="flex justify-center mt-4 border-t rounded-[10px] border-blue-700 border-[10px] "></div>
 
       {/* CARDS */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-[120px] sm:mt-[20px] justify-items-center">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-[120px] sm:mt-[20px] justify-items-center ">
         {isLoading
           ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
           : visibleAds.map((item) => (
               <div
                 key={item._id}
-                className="relative w-full max-w-[280px] min-w-[100px] max-h-[300.8px] min-h-[100px] mb-36"
+                className="relative "
               >
                 <Link target="_blank" to={`/${item.__type}/${item._id}`}>
-                  <div className="w-full max-h-[350px]  min-h-[100px] rounded-[15px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
+                  <div className="z-1 shadow-sm bg-white  sm:w-[229px] sm:h-[268.75px] rounded-[8px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
                     {/* ICONS */}
                     <div className="absolute top-2 left-2 flex gap-2 z-10">
                       {item.barter && (
@@ -683,7 +684,7 @@ useEffect(() => {
                     </div>
 
                     {/* IMAGE */}
-                    <div className="relative w-full h-[350px] overflow-hidden rounded-[15px]">
+                    <div className="relative  sm:w-[229px] w-[173px] h-[129px] sm:h-[170.75px] overflow-hidden rounded-[4px]">
                       <img
                         src={
                           item.images?.[item.images.length - [1]] ||
@@ -708,49 +709,49 @@ useEffect(() => {
                       )}
 
                       {item.type === "magaza" && (
-                        <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
+                        <div className="absolute p-1 bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm  rounded">
                           Salon
                         </div>
                       )}
 
                       {item.type === "sifarisle" && (
-                        <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
+                        <div className="absolute p-1 bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm  rounded">
                           Sifarişlə
                         </div>
                       )}
 
                       {item.type === "resmi" && (
-                        <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm px-2 py-1 rounded">
+                        <div className="absolute p-1 bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm  rounded">
                           Rəsmi
                         </div>
                       )}
                     </div>
 
                     {/* CONTENT */}
-                    <div className="flex-1 p-3 flex flex-col justify-between h-[200px]">
-                      <h3 className="font-bold text-base sm:text-lg truncate">
+                    <div className="w-[173px] h-[96.6px] sm:w-[229px] sm:h-[98px] p-2">
+                      <div className="font-bold text-[16px] sm:text-[18px]">
                         {item.price} AZN ₼
-                      </h3>
-                      <p className="text-sm sm:text-base font-semibold ">
+                      </div>
+                      <div className="text-[12px] sm:text-[16px]">
                         {item.brand ||
                           item.category ||
                           item.model ||
                           item.title}
-                      </p>
-                      {item.year && item.motor && item.km && (
-                        <p className="text-xs sm:text-sm text-gray-600 truncate ">
-                          {item.year}, {item.motor}, {item.km} km
-                        </p>
-                      )}
-                      <div className="flex justify-between items-center text-gray-600 mt-2 text-xs sm:text-sm">
-                        <span className="flex items-center gap-1">
-                          <MapPin size={14} color="#75FC56" />
-                          {item.location}
-                        </span>
-                        <span className="truncate">
-                          {formatDate(item.data)} {getCurrentTime(item.data)}
-                        </span>
                       </div>
+                      {item.year && item.motor && item.km && (
+                        <div className=" text-[12px] sm:text-[16px]">
+                          {item.year}, {item.motor}, {item.km} km
+                        </div>
+                      )}
+                    <div className="flex justify-between items-center text-gray-600 mt-2 text-xs sm:text-sm">
+                <span className="flex items-center gap-1">
+                  <MapPin size={14} color="#75FC56" />
+                  {item.location}
+                </span>
+                <span className="truncate">
+                  {formatDate(item.data)} {getCurrentTime(item.data)}
+                </span>
+              </div>
                     </div>
                   </div>
                 </Link>
