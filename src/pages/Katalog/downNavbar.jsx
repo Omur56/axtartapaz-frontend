@@ -48,7 +48,7 @@ const DownNavbar = () => {
 
             className={`z-0 w-[80px] h-[10px] flex gap-2 text-gray-500   sm:min-w-[250px] sm:min-h-[20px] items-center font-semibold hover:text-green-500 transition duration-300 ${open ? "text-black" : ""}`}
           >
-            <Grip className="text-gray-500" /><span className="hidden md:inline sm:text-[12px]">Bütün kateqoriyalar </span> 
+            <Grip className="text-gray-500" /><span className="hidden md:inline sm:text-[12px] ">Bütün kateqoriyalar </span> 
             <ChevronUp className={`absolute right-4 text-green-500 transition-transform duration-300 ${open ? "rotate-0" : "rotate-180"}`} />
           </button>
 

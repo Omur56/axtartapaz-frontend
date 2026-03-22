@@ -580,15 +580,15 @@ useEffect(() => {
     {announcements.map((item) => (
       <div
         key={item._id}
-        className="flex-shrink-0 max-w-[280px] min-w-[100px] max-h-[350px] rounded-[15px] relative bg-white"
+        className="flex-shrink-0 w-[280px] min-w-[100px] border-[1px] border-blue-500 max-h-[350px] rounded-[15px] relative bg-white"
       >
         <Link target="_blank" to={`/${item.__type}/${item._id}`}>
-          <div className="w-full h-full rounded-[15px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
+          <div className="w-full h-full border-blue-500 rounded-[15px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
             {/* IMAGE */}
             <div className="relative max-w-[280px] min-w-[100px] h-[150px]  overflow-hidden rounded-[15px]">
               <img
                 src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
-                className="max-w-[280px] min-w-full h-[150px] object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
                 alt={item.title || item.brand || item.model || item.category}
               />
               {item.priorityType && item.priorityType !== "free" && (
@@ -668,7 +668,7 @@ useEffect(() => {
                 className="relative "
               >
                 <Link target="_blank" to={`/${item.__type}/${item._id}`}>
-                  <div className="z-1 shadow-sm bg-white  sm:w-[229px] sm:h-[268.75px] rounded-[8px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
+                  <div className="z-1 shadow-sm bg-white border-[1px] border-blue-500 border-shadow sm:w-[229px] sm:h-[268.75px] rounded-[8px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
                     {/* ICONS */}
                     <div className="absolute top-2 left-2 flex gap-2 z-10">
                       {item.barter && (
@@ -684,7 +684,7 @@ useEffect(() => {
                     </div>
 
                     {/* IMAGE */}
-                    <div className="relative  sm:w-[229px] w-[173px] h-[129px] sm:h-[170.75px] overflow-hidden rounded-[4px]">
+                    <div className="relative  sm:w-[229px] w-[178px] h-[129px] sm:h-[170.75px] overflow-hidden rounded-[4px]">
                       <img
                         src={
                           item.images?.[item.images.length - [1]] ||
@@ -759,13 +759,13 @@ useEffect(() => {
                 {/* UPGRADE BUTTONS */}
                 <div className="flex justify-between top-1 items-center mt-2">
                   <button
-                    className="bg-yellow-400 hover:bg-yellow-500 min-w-[10px] max-w-[100px] text-black font-bold py-1 px-3 rounded"
+                    className="border-[1px] border-gray-300 min-w-[10px] max-w-[100px] text-blue-500 hover:border-blue-500 ease-in-out transition-transform duration-300  py-1 px-3 rounded"
                     onClick={() => handleUpgrade(item._id, "vip")}
                   >
                     VIP Et
                   </button>
                   <button
-                    className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-1 px-3 rounded"
+                    className="border-[1px] border-gray-300 text-blue-500 hover:border-blue-500 ease-in-out transition-transform duration-300 py-1 px-3  rounded"
                     onClick={() => handleUpgrade(item._id, "premium")}
                   >
                     Premium Et
