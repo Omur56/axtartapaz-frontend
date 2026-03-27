@@ -90,7 +90,7 @@ export default function Login() {
               <Link to="/forgot-password" className="hover:underline">
                 Şifrəni unutdum?
               </Link>
-              <Link to="/register" className="hover:underline">
+              <Link to="/reqister" className="hover:underline">
                 Qeydiyyatdan keçin
               </Link>
             </div>

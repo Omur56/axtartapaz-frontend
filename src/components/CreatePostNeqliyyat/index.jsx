@@ -10,7 +10,7 @@ import confetti from "canvas-confetti";
 import Checkbox from "@mui/material/Checkbox";
 import { RefreshCcw, Percent, MapPin } from "lucide-react";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import { Link as MuiLink, Radio } from "@mui/material";
+import { Link as MuiLink, patch, Radio } from "@mui/material";
 import CitySelect from "./CitySelect";
 
 export default function CreatePost() {
@@ -939,13 +939,13 @@ const official_store_salon_checked_group = (e) => {
         <h2 className="text-2xl font-bold mb-4">Yeni Nəqliyyat Elanı</h2>
         <div role="presentation" onClick={handleClick}>
           <Breadcrumbs aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" href="/">
+            <Link className="capitalize hover:underline hover:text-[#43D262]" underline="hover" color="inherit" to={"/"} href="/">
               Ana Səhifə
             </Link>
-            <Link underline="hover" color="inherit" href="/Katalog">
+            <Link className="capitalize hover:underline hover:text-[#43D262]" underline="hover" color="inherit" to={"/Katalog"} href="/Katalog">
               Katalog
             </Link>
-            <Link underline="hover" color="inherit" href="/Nəqliyyat">
+            <Link className="capitalize hover:underline hover:text-[#43D262]" underline="hover" color="inherit" to={"/Katalog/Nəqliyyat"} href="/Katalog/Nəqliyyat">
               Nəqliyyat
             </Link>
           </Breadcrumbs>

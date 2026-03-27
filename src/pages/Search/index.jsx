@@ -269,6 +269,7 @@ useEffect(() => {
         item.description,
         item.location,
         item.city,
+        item.price,
       ]
         .join(" ")
         .toLowerCase();
