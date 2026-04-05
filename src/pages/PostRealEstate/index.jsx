@@ -190,7 +190,7 @@ export default function PostDetailRealEstate() {
         </button>
       </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-white shadow-lg rounded-xl p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6  shadow-lg rounded-xl p-6">
         {isLoading ? (
           Array.from({ length: 1 }).map((_, i) => (
             <div

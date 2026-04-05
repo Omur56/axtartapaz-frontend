@@ -101,7 +101,7 @@ export default function Profile() {
     );
 
   return (
-    <BubbleBackground>
+    
       <Box className="min-h-screen mt-12 max-w-[1000px] mx-auto p-6">
         {/* Profil Kartı */}
         {userData && (
@@ -196,6 +196,6 @@ export default function Profile() {
         )}
         <BottomMenu />
       </Box>
-    </BubbleBackground>
+    
   );
 }

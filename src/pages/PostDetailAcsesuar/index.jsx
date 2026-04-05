@@ -167,7 +167,7 @@ const [progress, setProgress] = React.useState(0);
         </button>
       </Link>
 
-      <div className="grid grid-cols-1 max-w-[1200px] lg:grid-cols-3 gap-6 bg-white shadow-lg rounded-xl p-6">
+      <div className="grid grid-cols-1 max-w-[1200px] lg:grid-cols-3 gap-6 shadow-lg rounded-xl p-6">
         <div className="lg:col-span-2 space-y-6">
           <Carousel showThumbs showStatus={false} autoPlay infiniteLoop>
             {imageArray?.map((img, index) => (

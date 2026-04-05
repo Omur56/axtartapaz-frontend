@@ -262,7 +262,7 @@ import Katalog from "../Katalog";
 import BottomMenu from "../../components/MobileMenu";
 import { Helmet } from "react-helmet-async";
 import '../../styles/home_style.css'
-
+import { useTheme } from "../../components/Main/ThemeContext";
 const API =
   process.env.REACT_APP_API_URL || "https://my-backend-wj5g.onrender.com";
 
@@ -501,6 +501,7 @@ useEffect(() => {
 
   /* SKELETON */
   const SkeletonCard = () => (
+
     <div className="bg-gray-50 w-[185px] h-[268px] sm:w-[268px] sm:h-[268px] max-w-[240px] max-h-[368px] rounded-[12px] shadow-md overflow-hidden animate-pulse">
       <div className="h-[147px] w-full bg-gray-300" />
       <div className="p-2 space-y-2">
@@ -517,7 +518,10 @@ useEffect(() => {
 
   /* RENDER */
   return (
+  
+      
     <div className="min-h-screen max-w-[1200px] mx-auto mt-[80px] mb-10">
+      
       <Helmet>
         <title>ProElan.az - Azərbaycanda Pulsuz Elanlar</title>
         <meta
@@ -561,7 +565,7 @@ useEffect(() => {
 
       <Katalog className="mt-1" width="100%" height="60px" marginTop="10px" />
 
-  <div className="relative py-4 mt-[200px] min-w-[100px] max-w-[1200px] min-h-[150px] max-h[300px] bg-blue-200 rounded-[10px]">
+  <div className="relative p-4 mt-[200px] min-w-[100px] max-w-[1200px] min-h-[150px] max-h[300px] bg-blue-200 border-[2px] border-blue-600 rounded-[10px]">
   {/* Sol ox */}
   <button
     onClick={() => {
@@ -793,6 +797,7 @@ useEffect(() => {
 
       <BottomMenu />
     </div>
+    
   );
 };
 

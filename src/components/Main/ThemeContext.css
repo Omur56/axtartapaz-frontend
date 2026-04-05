@@ -1,0 +1,37 @@
+.page {
+  min-height: 100vh;
+  padding: 2rem;
+  transition: background-color 0.3s, color 0.3s;
+
+  
+}
+
+.page.light {
+  background-color: #f5f5f5;
+  color: #222;
+}
+
+.page.dark {
+  background-color: #010f2e;
+  color: #f5f5f5;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.page.light button {
+  
+  color: #040404;
+}
+
+.page.dark button {
+ 
+  color: #ffffff;
+}

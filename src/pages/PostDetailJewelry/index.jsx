@@ -96,7 +96,7 @@ export default function PostDetailJewelry() {
           ← Geri
         </Link>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white shadow-md rounded-xl p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6  shadow-md rounded-xl p-4">
           {/* Şəkillər Carousel */}
 
           <div className="space-y-4 flex flex-col ">
