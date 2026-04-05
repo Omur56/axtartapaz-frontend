@@ -263,6 +263,7 @@ import BottomMenu from "../../components/MobileMenu";
 import { Helmet } from "react-helmet-async";
 import '../../styles/home_style.css'
 import { useTheme } from "../../components/Main/ThemeContext";
+
 const API =
   process.env.REACT_APP_API_URL || "https://my-backend-wj5g.onrender.com";
 
@@ -589,18 +590,35 @@ useEffect(() => {
         <Link target="_blank" to={`/${item.__type}/${item._id}`}>
           <div className="w-full h-full border-blue-500 rounded-[15px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
             {/* IMAGE */}
-            <div className="relative max-w-[280px] min-w-[100px] h-[150px]  overflow-hidden rounded-[15px]">
-              <img
-                src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
-                className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-                alt={item.title || item.brand || item.model || item.category}
-              />
-              {item.priorityType && item.priorityType !== "free" && (
-                <span className="vip-badge z-20 bg-red-500 text-white px-2 py-1 text-xs rounded absolute bottom-2 right-2">
-                  {item.priorityType?.toUpperCase() || ""}
-                </span>
-              )}
-            </div>
+       <div className="relative max-w-[280px] min-w-[100px] h-[150px] overflow-hidden rounded-[15px]">
+  <img
+    src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
+    className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+    alt={item.title || item.brand || item.model || item.category}
+  />
+  
+  {item.priorityType && item.priorityType !== "free" && (
+    <span className="vip-badge z-20 bg-white/20 text-white px-2 py-1 text-xs rounded absolute bottom-2 right-2 flex items-center gap-1">
+      {/* Icon */}
+      {item.priorityType.toLowerCase() === "vip" && (
+        <img
+          src="/assets/vip_premium/crown.png"
+          alt="VIP"
+          className="w-4 h-4"
+        />
+      )}
+      {item.priorityType.toLowerCase() === "premium" && (
+        <img
+          src="/assets/vip_premium/diamond.png"
+          alt="Premium"
+          className="w-4 h-4"
+        />
+      )}
+      {/* Text */}
+      
+    </span>
+  )}
+</div>
 
             {/* CONTENT */}
             <div className="flex-1 p-3 flex flex-col justify-between h-[200px]">
@@ -706,12 +724,23 @@ useEffect(() => {
                         }
                       />
                       {/* VIP / PREMIUM badge */}
-                      {item.priorityType && item.priorityType !== "free" && (
-                        <span className="vip-badge z-20 bg-red-500 text-white px-2 py-1 text-xs rounded absolute bottom-2 right-2">
-                          {item.priorityType?.toUpperCase() || ""}
-                        </span>
-                      )}
-
+                     {item.priorityType && item.priorityType !== "free" && (
+  <span className={`vip-badge z-20 px-2 py-1 text-xs rounded absolute bottom-2 right-2 flex items-center gap-1
+    ${item.priorityType.toLowerCase() === "vip" ? "bg-white/20 " : ""}
+    ${item.priorityType.toLowerCase() === "premium" ? "bg-white/20 " : ""}`}>
+    
+    {/* Icon */}
+    {item.priorityType.toLowerCase() === "vip" && (
+      <img src="/assets/vip_premium/crown.png" alt="VIP" className="w-4 h-4" />
+    )}
+    {item.priorityType.toLowerCase() === "premium" && (
+      <img src="/assets/vip_premium/diamond.png" alt="Premium" className="w-4 h-4" />
+    )}
+    
+    {/* Text */}
+   
+  </span>
+)}
                       {item.type === "magaza" && (
                         <div className="absolute p-1 bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm  rounded">
                           Salon
