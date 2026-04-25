@@ -37,11 +37,11 @@ export default function Login() {
 
   return (
     <div className="w-full h-screen">
-      <BubbleBackground>
+      {/* <BubbleBackground> */}
         <div className="flex items-center justify-center min-h-screen px-4">
           <form
             onSubmit={handleSubmit}
-            className="w-full max-w-md bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8 space-y-6"
+            className="w-full max-w-md bg-white/80 backdrop-blur-md shadow-2xl rounded-2xl p-8 space-y-6"
           >
             <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
               Xoş Gəlmisiniz
@@ -73,7 +73,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-1/2 -translate-y-1/2"
+                className="absolute right-2 top-6 translate-y-1/2"
               >
                 <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
               </button>
@@ -96,7 +96,7 @@ export default function Login() {
             </div>
           </form>
         </div>
-      </BubbleBackground>
+      {/* </BubbleBackground> */}
       <BottomMenu />
     </div>
   );

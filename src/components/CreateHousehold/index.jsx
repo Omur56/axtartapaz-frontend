@@ -62,7 +62,7 @@ export default function CreateHousehold() {
 
   const fetchItems = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/Household`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/household`);
       setHouseholdItems(response.data);
     } catch (error) {
       console.error("Error fetching accessory items:", error);
@@ -103,14 +103,14 @@ export default function CreateHousehold() {
 
     if (editingId) {
       await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/Household/${editingId}`,
+        `${process.env.REACT_APP_API_URL}/api/household/${editingId}`,
         formData,
         config
       );
       setEditingId(null);
     } else {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/Household`,
+        `${process.env.REACT_APP_API_URL}/api/household`,
         formData,
         config
       );
@@ -161,7 +161,7 @@ export default function CreateHousehold() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/Household/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/household/${id}`);
       fetchItems();
     } catch (error) {
       console.error("Delete error:", error);
@@ -170,7 +170,7 @@ export default function CreateHousehold() {
 
   const handleFavorite = async (id) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/Household/${id}/favorite`);
+      await axios.patch(`${process.env.REACT_APP_API_URL}/api/household/${id}/favorite`);
       fetchItems();
     } catch (err) {
       console.error(err);
@@ -179,7 +179,7 @@ export default function CreateHousehold() {
 
   const handleLike = async (id) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/Household/${id}/like`);
+      await axios.patch(`${process.env.REACT_APP_API_URL}/api/household/${id}/like`);
       fetchItems();
     } catch (err) {
       console.error(err);
@@ -203,7 +203,7 @@ export default function CreateHousehold() {
 
   const handleImageDelete = async (image) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/Household/images/${image}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/household/images/${image}`);
       fetchItems();
     } catch (error) {
       console.error(error);
@@ -243,7 +243,7 @@ export default function CreateHousehold() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/Household`];
+  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/household`];
 
   const handleSearch = async () => {
     if (!query.trim()) return;

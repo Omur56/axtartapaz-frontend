@@ -163,7 +163,7 @@ const router = createBrowserRouter([
     Component: Layout,
     children: [
       { path: "/", Component: Home },
-      { path: "/cars/:id", Component: PostDetalCar },
+      { path: "/car/:id", Component: PostDetalCar },
     ],
   },
       {

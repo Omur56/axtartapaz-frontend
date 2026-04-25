@@ -216,27 +216,27 @@ const [progress, setProgress] = React.useState(0);
           <h2 className="text-xl font-bold mb-4">Əlaqə məlumatı</h2>
           <div className="space-y-2 text-gray-700">
             <p>
-              <span className="font-semibold">Ad:</span> {post?.contact.name}
+              <span className="font-semibold">Ad:</span> <p>{post.contact?.name || "N/A"}</p>
             </p>
             <p>
               <span className="font-semibold">Telefon:</span>
               <a
-                href={`tel:${post?.contact.phone}`}
+                href={`tel:${post.contact?.phone || "N/A"}`}
                 className="text-blue-600 font-bold ml-1"
               >
-                {post?.contact.phone}
+                {post.contact?.phone || "N/A"}
               </a>
             </p>
             <p>
               <span className="font-semibold">Email:</span>{" "}
-              {post?.contact.email}
+              {post.contact?.email || "N/A"}
             </p>
             <p>
               <span className="font-semibold">Şəhər:</span> {post.location}
             </p>
           </div>
           <a
-            href={`tel:${post?.contact.phone}`}
+            href={`tel:${post.contact?.phone || "N/A"}`}
             className="text-white font-bold ml-1"
           >
             {" "}

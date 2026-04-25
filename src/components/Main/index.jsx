@@ -23,7 +23,7 @@ const { darkMode, toggleTheme } = useTheme();
       {/* 🔹 Breadcrumb burada */}
      
 <div className={darkMode ? "page dark" : "page light"}>
-  <button className="mt-10 z-50 fixed" onClick={toggleTheme}>
+  <button className=" fixed button_toggle" onClick={toggleTheme}>
         {darkMode ?  "🌙" : "🌞"}
       </button>
       <main className="flex-grow  min-h-screen w-full mx-auto ">

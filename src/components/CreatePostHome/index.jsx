@@ -60,14 +60,15 @@ export default function CreatePostForHomeAndGarden() {
   };
 
   // Backenddən elanları gətirmək
-  const fetchItems = async () => {
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/homeGarden/`);
-      setHomeGardenItems(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // const fetchItems = async () => {
+  //   try {
+  //     const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/homeGarden/`);
+  //     // setHomeGardenItems(res.data);
+  //     setHomeGardenItems(res.data.ads || res.data);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -249,7 +250,8 @@ const handleSubmit = async (e) => {
         const motor = item.motor?.toLowerCase() || "";
         const transmission = item.transmission?.toLowerCase() || "";
         const ban_type = item.ban_type?.toLowerCase() || "";
-        const price = item.price?.toLowerCase() || "";
+        // const price = item.price?.toLowerCase() || "";
+        const price = item.price?.toString().toLowerCase() || "";
         const description = item.description?.toLowerCase() || "";
         return (
           title.includes(query.toLowerCase()) ||
@@ -277,26 +279,56 @@ const handleSubmit = async (e) => {
   };
 
   const [isLoading, setIsLoading] = useState(true);
-  const [homeGarden, setHomeGarden] = useState([]);
+  // const [homeGarden, setHomeGarden] = useState([]);
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      setIsLoading(true);
-      try {
-        const [homeGarden] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/api/homeGarden`),
-        ]);
 
-        setHomeGarden(homeGarden.data);
-      } catch (err) {
-        console.error("API xətası:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
-    fetchAll();
-  }, []);
+  // useEffect(() => {
+  //   const fetchAll = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       const [homeGarden] = await Promise.all([
+  //         axios.get(`${process.env.REACT_APP_API_URL}/api/homeGarden`),
+  //       ]);
+
+  //       setHomeGarden(homeGarden.data);
+  //     } catch (err) {
+  //       console.error("API xətası:", err);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchAll();
+  // }, []);
+
+
+
+//   const fetchItems = async () => {
+//   try {
+//     const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/homeGarden/`);
+//     setHomeGardenItems(res.data.ads || res.data);
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };
+
+useEffect(() => {
+  fetchItems();
+}, []);
+
+
+const fetchItems = async () => {
+  setIsLoading(true); // 🔥 əlavə et
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/homeGarden`);
+    setHomeGardenItems(res.data.ads || res.data);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setIsLoading(false); // 🔥 ƏN VACİB
+  }
+};
 
   const token = localStorage.getItem("token");
 
@@ -527,16 +559,19 @@ const handleOpenForm = () => {
           )}
 
           {!loading && results.length > 0 && (
-            <div key={results.id} className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div  className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {results.map((item, index) => (
                 <Link
                   key={item.id || item._id}
-                  to={`/item/${item._id} || ${item.id}`}
+                  // to={`/item/${item._id} || ${item.id}`}
+                  to={`/item/${item._id || item.id}`}
                 >
-                  <div
-                    key={index}
-                    className="border sm:w-[240.4px] max-w-[240.4px] h-[300px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
-                  >
+                  
+           <div
+  key={item._id || item.id}
+  className="border sm:w-[240.4px] max-w-[240.4px] h-[300px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
+>
+                  
                     <img
                       src={
                         item.images && item.images.length > 0
@@ -586,7 +621,10 @@ const handleOpenForm = () => {
             ))
           ) : (
             <>
-              {homeGardenItems.map((item) => (
+              {/* {homeGardenItems.map((item) => ( */}
+
+              {Array.isArray(homeGardenItems) &&
+  homeGardenItems.map((item) => (
                 <Link target="_blank"
             rel="noopener noreferrer" key={item._id} to={`/PostDetailHome/${item._id}`}>
                   <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">

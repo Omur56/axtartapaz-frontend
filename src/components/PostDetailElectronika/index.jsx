@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 export default function  PostDetailElectronika() {
     const { id } = useParams();
     const [electronikaPost, setElectronikaPost] = useState(null);
+ const contact = electronikaPost?.contact ?? {};
 
 
    useEffect(() =>{
@@ -18,7 +19,13 @@ export default function  PostDetailElectronika() {
     .catch((err) => console.error("Xeta:", err));
    }, [id]);
 
-   if(!electronikaPost) return null;
+   if (!electronikaPost) {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <div className="animate-spin w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+    </div>
+  );
+}
 
    return(
      <div className="max-w-[900px] mx-auto mt-10 bg-white p-5 rounded-lg shadow">
@@ -46,9 +53,9 @@ export default function  PostDetailElectronika() {
 
         <div className="mt-4 p-4 border rounded">
           <h3 className="font-bold">Əlaqə</h3>
-          <p>{electronikaPost.contact?.name}</p>
-          <p>{electronikaPost.contact?.phone}</p>
-          <p>{electronikaPost.contact?.email}</p>
+      <p>{contact?.name || "—"}</p>
+<p>{contact?.phone || "—"}</p>
+<p>{contact?.email || "—"}</p>
         </div>
       </div>
     </div>

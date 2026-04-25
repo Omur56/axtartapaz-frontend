@@ -156,7 +156,7 @@ export default function CreateElectronikaPost() {
   const handleEdit = (item) => {
     setElectronikaPost({
       ...item,
-      data: item.data ? new Date(item.data) : new Date(),
+      data: item.createdAt? new Date(item.createdAt) : new Date(),
     });
     setEditingId(item._id);
     setPreview(item.images || []);

@@ -32,7 +32,7 @@ export default function CreateRealEstate() {
     favorite: false,
     data: new Date(),
   });
-
+ 
   const [realEstateList, setRealEstateList] = useState([]);
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
@@ -46,6 +46,33 @@ export default function CreateRealEstate() {
       ...files.map((file) => URL.createObjectURL(file)),
     ]);
   };
+
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+
+
+
+  useEffect(() => {
+    const fetchAll = async () => {
+      setIsLoading(true);
+      try {
+        const [realEstate] = await Promise.all([
+          axios.get(`${process.env.REACT_APP_API_URL}/api/realEstate`),
+        ]);
+
+        setRealEstate(realEstate.data);
+      } catch (err) {
+        console.error("API xətası:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAll();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,7 +92,7 @@ export default function CreateRealEstate() {
   const fetchItems = async () => {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/RealEstate`
+        `${process.env.REACT_APP_API_URL}/api/realEstate`
       );
       setRealEstateList(res.data);
     } catch (err) {
@@ -100,9 +127,28 @@ export default function CreateRealEstate() {
     setEditingId(null);
   };
 
+
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+  if (!realEstatePost.price || isNaN(realEstatePost.price)) {
+    Swal.fire({
+      icon: "error",
+      title: "Qiymət düzgün deyil",
+      text: "Zəhmət olmasa düzgün qiymət daxil edin",
+    });
+    return;
+  }
 
+  if (!token) {
+    Swal.fire({
+      icon: "warning",
+      title: "Giriş tələb olunur",
+      text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+    });
+    return;
+  }
     if (!token) {
       Swal.fire({
         icon: "warning",
@@ -119,17 +165,30 @@ export default function CreateRealEstate() {
     images.forEach((file) => formData.append("images", file));
 
     // Digər sahələri əlavə et
-    Object.entries(realEstatePost).forEach(([key, value]) => {
-      if (key === "data") return;
-      if (key === "contact") {
-        Object.entries(value).forEach(([k, v]) =>
-          formData.append(`contact.${k}`, v)
-        );
-      } else {
-        formData.append(key, value);
-      }
-    });
+    // Object.entries(realEstatePost).forEach(([key, value]) => {
+    //   if (key === "data") return;
+    //   if (key === "contact") {
+    //     Object.entries(value).forEach(([k, v]) =>
+    //       formData.append(`contact.${k}`, v)
+    //     );
+    //   } else {
+    //     formData.append(key, value);
+    //   }
+    // });
 
+    Object.entries(realEstatePost).forEach(([key, value]) => {
+  if (key === "data") return;
+
+  if (key === "contact") {
+    Object.entries(value).forEach(([k, v]) =>
+      formData.append(`contact.${k}`, v)
+    );
+  } else if (key === "price") {
+    formData.append("price", Number(value)); // 🔥 FIX
+  } else {
+    formData.append(key, value);
+  }
+});
     // Tarixi ISO formatında əlavə et
     formData.append("data", realEstatePost.data.toISOString());
 
@@ -251,9 +310,7 @@ export default function CreateRealEstate() {
     return date.toTimeString().split(" ")[0].slice(0, 5);
   };
 
-  useEffect(() => {
-    fetchItems();
-  }, []);
+ 
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -286,7 +343,7 @@ export default function CreateRealEstate() {
         const motor = item.motor?.toLowerCase() || "";
         const transmission = item.transmission?.toLowerCase() || "";
         const ban_type = item.ban_type?.toLowerCase() || "";
-        const price = item.price?.toLowerCase() || "";
+        const price = item.price?.toString().toLowerCase() || "";
         const description = item.description?.toLowerCase() || "";
         return (
           title_type.includes(query.toLowerCase()) ||
@@ -315,24 +372,6 @@ export default function CreateRealEstate() {
   const [isLoading, setIsLoading] = useState(true);
   const [realEstate, setRealEstate] = useState([]);
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      setIsLoading(true);
-      try {
-        const [realEstate] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/api/realEstate`),
-        ]);
-
-        setRealEstate(realEstate.data);
-      } catch (err) {
-        console.error("API xətası:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAll();
-  }, []);
 
   const token = localStorage.getItem("token");
 

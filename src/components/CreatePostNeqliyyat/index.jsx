@@ -26,51 +26,97 @@ export default function CreatePost() {
   const [imageClose, setImageClose] = useState(false);
   const [modelImagePreview, setModelImagePreview] = useState("");
   const [handleModelImageChange, setHandleModelImageChange] = useState(null);
+const [options, setOptions] = useState({
+  credit: false,
+  barter: false,
+  salon: false,
+});
+
+
+
+
+  // const [form, setForm] = useState({
+  //   id: Date.now(),
+  //   modification: "",
+  //   color: "",
+  //   type: "",
+  //   city: "",
+  //   category: "",
+  //   brand: "",
+  //   model: "",
+  //   ban_type: "",
+  //   year: "",
+  //   price: "",
+  //   location: "",
+  //   images: [],
+  //   km: "",
+  //   motor: "",
+  //   salon: "",
+  //   default: "",
+  //   sifarisle : "",
+  //   resmi: "",
+  //   magaza: "",
+  //   barter: "",
+  //   transmission: "",
+  //   credit: "",
+  //   engine: "",
+  //   contact: {
+  //     name: "",
+  //     email: "",
+  //     phone: "",
+  //   },
+  //   liked: false,
+  //   favorite: false,
+  //   data: new Date(),
+  // });
+
+  // const [options, setOptions] = useState({
+  //   credit: false,
+  //   barter: false,
+  //   salon: false,
+  //   default: false,
+  //   resmi: false,
+  //   magaza: false,
+  //   sifarisle: false,
+  // });
+
 
   const [form, setForm] = useState({
-    id: Date.now(),
-    modfikasiya: "",
-    color: "",
-    type: "",
-    city: "",
-    category: "",
-    brand: "",
-    model: "",
-    ban_type: "",
-    year: "",
-    price: "",
-    location: "",
-    images: [],
-    km: "",
-    motor: "",
-    salon: "",
-    default: "",
-    sifarisle : "",
-    resmi: "",
-    magaza: "",
-    barter: "",
-    transmission: "",
-    kredit: "",
-    engine: "",
-    contact: {
-      name: "",
-      email: "",
-      phone: "",
-    },
-    liked: false,
-    favorite: false,
-    data: new Date(),
-  });
+  id: Date.now(),
+  modification: "",
+  color: "",
+  type: "",
+  city: "",
+  category: "",
+  brand: "",
+  model: "",
+  ban_type: "",
+  year: "",
+  price: "",
+  location: "",
+  images: [],
+  km: "",
+  motor: "",
+  salon: false,
+  barter: false,
+  transmission: "",
+  credit: false,
+  engine: "",
+  
+  type_magasine: "", // ✅ BURA
 
-  const [options, setOptions] = useState({
-    kredit: false,
-    barter: false,
-    salon: false,
-    default: false,
-    resmi: false,
-    magaza: false,
-    sifarisle: false,
-  });
+  contact: {
+    name: "",
+    email: "",
+    phone: "",
+  },
+
+  liked: false,
+  favorite: false,
+  createdAt: new Date(),
+});
+
+const typeOptions = ["sifarisle", "magaza", "resmi"];
 
   const carData = {
     Mercedess: [
@@ -630,7 +676,7 @@ const official_store_salon_checked_group = (e) => {
 
   const fetchCars = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/cars`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/car`);
       setCars(res.data);
     } catch (err) {
       console.error(err);
@@ -638,81 +684,169 @@ const official_store_salon_checked_group = (e) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
-    if (!token || !userId) {
-      Swal.fire({
-        icon: "warning",
-        title: "Giriş tələb olunur",
-        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-      });
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
 
-      return;
-    }
-
-    const formData = new FormData();
-
-    form.images.forEach((file) => formData.append("images", file));
-
-    if (mainImageIndex !== null) {
-      formData.append("mainImageIndex", mainImageIndex);
-    }
-
-    Object.entries(form).forEach(([key, value]) => {
-      if (key === "images" || key === "data") return;
-
-      if (key === "contact") {
-        Object.entries(value).forEach(([k, v]) => {
-          formData.set(`contact.${k}`, String(v || ""));
-        });
-      } else {
-        formData.set(key, String(value || ""));
-      }
+  if (!token || !userId) {
+    Swal.fire({
+      icon: "warning",
+      title: "Giriş tələb olunur",
+      text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
     });
-    formData.append(
-      "data",
-      form.data ? form.data.toISOString() : new Date().toISOString(),
-    );
-    formData.append("userId", userId);
+    return;
+  }
 
-    try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/cars`, formData, {
+  const formData = new FormData();
+
+  // images
+  form.images.forEach((file) => formData.append("images", file));
+
+  if (mainImageIndex !== null) {
+    formData.append("mainImageIndex", mainImageIndex);
+  }
+
+  // 🔴 FIX: price clean (ƏSAS DÜZƏLİŞ BURADADIR)
+  const cleanedPrice = Number(String(form.price).replace(/\s/g, ""));
+
+  // digər form field-lər
+  Object.entries(form).forEach(([key, value]) => {
+    if (key === "images" || key === "data" || key === "price") return;
+
+    if (key === "contact") {
+      Object.entries(value).forEach(([k, v]) => {
+        formData.set(`contact.${k}`, String(v || ""));
+      });
+    } else {
+      formData.set(key, String(value || ""));
+    }
+  });
+
+  // 🔴 price-i ayrıca düzgün göndər
+  formData.set("price", isNaN(cleanedPrice) ? 0 : cleanedPrice);
+
+  formData.append(
+    "data",
+    form.data ? form.data.toISOString() : new Date().toISOString()
+  );
+
+  formData.append("userId", userId);
+
+  try {
+    await axios.post(
+      `${process.env.REACT_APP_API_URL}/api/car`,
+      formData,
+      {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
-      });
+      }
+    );
 
-      resetForm();
-      fetchCars();
-      Swal.fire({
-        icon: "success",
-        title: "Elanınız uğurla yerləşdirildi!",
-        confirmButtonColor: "#3085d6",
-      }).then(() => {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-        });
+    resetForm();
+    fetchCars();
+
+    Swal.fire({
+      icon: "success",
+      title: "Elanınız uğurla yerləşdirildi!",
+      confirmButtonColor: "#3085d6",
+    }).then(() => {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
       });
-    } catch (err) {
-      console.error("Elan yüklənmədi:", err.response?.data || err.message);
-      Swal.fire({
-        icon: "error",
-        title: "Xəta baş verdi",
-        text: err.response?.data?.error || "Server xətası",
-        confirmButtonColor: "#d33",
-      });
-    }
-  };
+    });
+  } catch (err) {
+    console.error("Elan yüklənmədi:", err.response?.data || err.message);
+
+    Swal.fire({
+      icon: "error",
+      title: "Xəta baş verdi",
+      text: err.response?.data?.error || "Server xətası",
+      confirmButtonColor: "#d33",
+    });
+  }
+};
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const token = localStorage.getItem("token");
+  //   const userId = localStorage.getItem("userId");
+  //   if (!token || !userId) {
+  //     Swal.fire({
+  //       icon: "warning",
+  //       title: "Giriş tələb olunur",
+  //       text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+  //     });
+
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+
+  //   form.images.forEach((file) => formData.append("images", file));
+
+  //   if (mainImageIndex !== null) {
+  //     formData.append("mainImageIndex", mainImageIndex);
+  //   }
+
+  //   Object.entries(form).forEach(([key, value]) => {
+  //     if (key === "images" || key === "data") return;
+
+  //     if (key === "contact") {
+  //       Object.entries(value).forEach(([k, v]) => {
+  //         formData.set(`contact.${k}`, String(v || ""));
+  //       });
+  //     } else {
+  //       formData.set(key, String(value || ""));
+  //     }
+  //   });
+  //   formData.append(
+  //     "data",
+  //     form.data ? form.data.toISOString() : new Date().toISOString(),
+  //   );
+  //   formData.append("userId", userId);
+
+  //   try {
+  //     await axios.post(`${process.env.REACT_APP_API_URL}/api/cars`, formData, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+
+  //     resetForm();
+  //     fetchCars();
+  //     Swal.fire({
+  //       icon: "success",
+  //       title: "Elanınız uğurla yerləşdirildi!",
+  //       confirmButtonColor: "#3085d6",
+  //     }).then(() => {
+  //       confetti({
+  //         particleCount: 100,
+  //         spread: 70,
+  //         origin: { y: 0.6 },
+  //       });
+  //     });
+  //   } catch (err) {
+  //     console.error("Elan yüklənmədi:", err.response?.data || err.message);
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Xəta baş verdi",
+  //       text: err.response?.data?.error || "Server xətası",
+  //       confirmButtonColor: "#d33",
+  //     });
+  //   }
+  // };
 
   const resetForm = () => {
     setForm({
       id: Date.now(),
-      modfikasiya: "",
+      modification: "",
       color: "",
       city: "",
       category: "",
@@ -788,7 +922,7 @@ const official_store_salon_checked_group = (e) => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/cars`];
+  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/car`];
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -850,7 +984,7 @@ const official_store_salon_checked_group = (e) => {
       setIsLoading(true);
       try {
         const [neqliyyat] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/api/cars`),
+          axios.get(`${process.env.REACT_APP_API_URL}/api/car`),
         ]);
 
         setNeqliyyat(neqliyyat.data);
@@ -1173,8 +1307,8 @@ const official_store_salon_checked_group = (e) => {
 
                   {/* Modifikasiya */}
                   <select
-                    name="modfikasiya"
-                    value={form.modfikasiya}
+                    name="modification"
+                    value={form.modification}
                     onChange={handleChange}
                     disabled={!form.engine}
                     className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
@@ -1211,7 +1345,7 @@ const official_store_salon_checked_group = (e) => {
                       multiple
                       accept="image/*"
                       onChange={handleFileChange}
-                      disabled={!form.modfikasiya}
+                      disabled={!form.modification}
                       className="p-3 border rounded-xl w-full cursor-pointer"
                     />
 
@@ -1262,9 +1396,9 @@ const official_store_salon_checked_group = (e) => {
                   <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex gap-2">
                     <label className="block mb-2 w-[200px] max-h-[40px] bg-transparent border-cyan-900 border-2 rounded-[10px]  ">
                       <Checkbox
-                        name="kredit"
-                        value={form.kredit}
-                        checked={options.kredit ?? false}
+                        name="credit"
+                        value={form.credit}
+                        checked={options.credit ?? false}
                         onChange={handleChangeSelect}
                         inputProps={{ "aria-label": "controlled" }}
                       />{" "}
@@ -1283,54 +1417,45 @@ const official_store_salon_checked_group = (e) => {
                     </label>
                   </div>
 
-                  <select
-                  name="salon"
-                  value={form.salon}
-                  onChange={handleChange}
-                  disabled={!form.modfikasiya}
-                  className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
-                >
-                  <option value="">Salon</option>
-                  {form.brand &&
-                    form.model &&
-                    carData[form.brand]
-                      .filter((item) => item.model === form.model)
-                      .map((item) =>
-                        item.salon.map((salon) => (
-                          <option key={`salon-${salon}`} value={salon}>
-                            {salon}
-                          </option>
-                        )),
-                      )}
-                </select>
- <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex gap-2">
+                 <div className="flex gap-2">
 
-  <label className="block mb-2 w-[200px] max-h-[40px] border-cyan-900 border-2 rounded-[10px]">
-    <Checkbox
-      name="sifarisle"
-      checked={form.type === "sifarisle"}
-      onChange={official_store_salon_checked_group}
-    />
-    Sifariş
-  </label>
+<label>
+  <input
+    type="radio"
+    name="type_magasine"
+    checked={form.type_magasine === "sifarisle"}
+    onChange={() =>
+      setForm((prev) => ({ ...prev, type_magasine: "sifarisle" }))
+    }
+  />
+  Sifariş
+</label>
 
-  <label className="block mb-2 w-[200px] max-h-[40px] border-cyan-900 border-2 rounded-[10px]">
-    <Checkbox
-      name="magaza"
-      checked={form.type === "magaza"}
-      onChange={official_store_salon_checked_group}
-    />
-    Salon
-  </label>
+<label>
+  <input
+    type="radio"
+    name="type_magasine"
+    checked={form.type_magasine === "magaza"}
+    onChange={() =>
+      setForm((prev) => ({ ...prev, type_magasine: "magaza" }))
+    }
+  />
+  Salon
+</label>
 
-  <label className="block mb-2 w-[200px] max-h-[40px] border-cyan-900 border-2 rounded-[10px]">
-    <Checkbox
-      name="resmi"
-      checked={form.type === "resmi"}
-      onChange={official_store_salon_checked_group}
-    />
-    Resmi
-  </label>
+<label>
+  <input
+    type="radio"
+    name="type_magasine"
+    checked={form.type_magasine === "resmi"}
+    onChange={() =>
+      setForm((prev) => ({ ...prev, type_magasine: "resmi" }))
+    }
+  />
+  Rəsmi
+</label>
+
+  
 
 </div>
                   {/* Kontakt məlumatları */}
@@ -1341,7 +1466,7 @@ const official_store_salon_checked_group = (e) => {
                     value={form.contact.phone}
                     onChange={handleChange}
                     placeholder="+994-XX-XXX-XX-XX"
-                    disabled={!form.modfikasiya}
+                    disabled={!form.modification}
                     className="p-3 rounded-xl border max-w-full  border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
                   />
 
@@ -1351,7 +1476,7 @@ const official_store_salon_checked_group = (e) => {
                     value={form.contact.email}
                     onChange={handleChange}
                     placeholder="Email"
-                    disabled={!form.modfikasiya}
+                    disabled={!form.modification}
                     className="p-3 rounded-xl border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
                   />
 
@@ -1361,7 +1486,7 @@ const official_store_salon_checked_group = (e) => {
                     value={form.contact.name}
                     onChange={handleChange}
                     placeholder="Ad"
-                    disabled={!form.modfikasiya}
+                    disabled={!form.modification}
                     className="p-3 rounded-xl border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition capitalize"
                   />
 
@@ -1371,7 +1496,7 @@ const official_store_salon_checked_group = (e) => {
                     value={form.description}
                     onChange={handleChange}
                     placeholder="Əlavə Qeydlər"
-                    disabled={!form.modfikasiya}
+                    disabled={!form.modification}
                     className="col-span-1 min-h-[150px]   outline-none focus:border-blue-500 focus:ring-2  caret-pink-500  sm:col-span-2 lg:col-span-3 p-3 rounded-xl border border-gray-300 transition"
                   />
 
@@ -1401,7 +1526,7 @@ const official_store_salon_checked_group = (e) => {
               {results.map((item, index) => (
                 <Link
                   key={item.id || item._id}
-                  to={`/item/${item._id} || ${item.id}`}
+                  to={`/item/${item._id || item.id}`}
                 >
                   <div
                     key={index}
@@ -1483,10 +1608,10 @@ const official_store_salon_checked_group = (e) => {
                     <div className="p-2 ">
                       <h2 className="text-lg font-bold">{car.price} AZN</h2>
                       <p className="font-sans capitalize text-[12px] truncate w-50 ">
-                        {car.category} {car.brand} {car.model}
+                      {car.brand} {car.model}
                       </p>
                       <p className="capitalize text-[12px] font-sans font-[500] truncate w-50">
-                        {car.year}, {car.motor} L, {car.km} km
+                        {car?.car?.year}, {car?.car?.motor} L, {car?.car?.km} km
                       </p>
                       <div className="flex justify-between gap-1  ">
                         <p className="text-[10px] rounded flex justify-between text-gray-600">

@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  padding: 2rem;
+  /* padding: 2rem; */
   transition: background-color 0.3s, color 0.3s;
 
   
@@ -16,22 +16,27 @@
   color: #000000;
 }
 
-button {
+.button_toggle {
   padding: 0.5rem 1rem;
-  margin-top: 1rem;
+  margin-top: 5rem;
   cursor: pointer;
   border: none;
   border-radius: 5px;
   font-size: 1rem;
   transition: background-color 0.3s, color 0.3s;
+  right: 2%;
+  z-index: 100;
+  
 }
 
 .page.light button {
-  
+    
+
   color: #010222;
 }
 
 .page.dark button {
  
+
   color: #ffffff;
 }

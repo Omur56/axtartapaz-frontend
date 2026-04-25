@@ -28,7 +28,7 @@ export default function PostDetailCar() {
   // Fetch all cars for "similar cars"
   useEffect(() => {
     axios
-      .get(`${BASE_URL}/api/cars`)
+      .get(`${BASE_URL}/api/car`)
       .then((res) => setCars(res.data))
       .catch((err) => console.error("Elanlar yüklənmədi:", err));
   }, [BASE_URL]);
@@ -36,7 +36,7 @@ export default function PostDetailCar() {
   // Fetch single post by ID
   useEffect(() => {
     axios
-      .get(`${BASE_URL}/api/cars/${id}`)
+      .get(`${BASE_URL}/api/car/${id}`)
       .then((res) => {
         setPost(res.data);
         setLoading(false);
@@ -208,7 +208,7 @@ function handleClick(event) {
         
         <Link
   component={RouterLink}     // React Router Link istifadə et
-  to={`/cars/${post._id}`}    // klik edəndə yönləndirəcək
+  to={`/car/${post._id}`}    // klik edəndə yönləndirəcək
   className="capitalize hover:underline hover:text-[#43D262]"
   underline="hover"
   
@@ -224,7 +224,7 @@ function handleClick(event) {
         {/* Left / Main column */}
         <div className="lg:col-span-2 space-y-4 ">
           <h1 className="text-2xl font-bold mb-4 p-2">
-             {post.brand} {post.model},  {post.motor} L, {post.year} il, {post.km} km
+             {post.brand} {post.model},  {post?.car.motor} L, {post?.car.year} il, {post?.car.km} km
           </h1>
 
           <Carousel showThumbs showStatus={false} autoPlay infiniteLoop>
@@ -271,29 +271,29 @@ function handleClick(event) {
                 <span className="font-bold">Model:</span> {post.model}
               </li>
               <li>
-             <span className="font-bold">Rəngi:</span> {post.color}
+             <span className="font-bold">Rəngi:</span> {post.car?.color}
               </li>
               <li>
-                <span className="font-bold">İl:</span> {post.year}
+                <span className="font-bold">İl:</span> {post.car?.year}
               </li>
               <li>
-                <span className="font-bold">Km:</span> {post.km}
+                <span className="font-bold">Km:</span> {post.car?.km}
               </li>
               <li>
-                <span className="font-bold">Ban tipi:</span> {post.ban_type}
+                <span className="font-bold">Ban tipi:</span> {post.car?.ban_type}
               </li>
 
               <li>
-                <span className="font-bold">Mühərrik:</span> {post.motor}
+                <span className="font-bold">Mühərrik:</span> {post.car?.motor}
               </li>
               <li>
-                <span className="font-bold">Sürətlər qutusu:</span> {post.transmission}
+                <span className="font-bold">Sürətlər qutusu:</span> {post.car?.transmission}
               </li>
               <li>
-                <span className="font-bold">Modfikasiyya:</span> {post.modfikasiya}
+                <span className="font-bold">Modfikasiyya:</span> {post.car?.modification}
               </li>
               <li>
-             <span className="font-bold">Yanacaq Növü:</span> {post.engine}
+             <span className="font-bold">Yanacaq Növü:</span> {post.car?.engine}
               </li>
            <li>
              <span className="font-bold">Şəhər:</span> {post.location}
@@ -310,7 +310,7 @@ function handleClick(event) {
 
             <ul className="text-sm text-gray-700 gap-2">
               <li>
-                <span className="font-bold">Qeyd:</span> {post?.description}
+                <span className="font-bold">Qeyd:</span> {post.description}
               </li>
 
             </ul>
@@ -318,10 +318,9 @@ function handleClick(event) {
 
           <div className="flex justify-between text-sm text-gray-500 mt-4 p-2">
             <p>Elanın nömrəsi: {post.id}</p>
-            <p>
-              {post.location}, {formatDate(post.data)},{" "}
-              {getCurrentTime(post.data)}
-            </p>
+            <p className="capitalize text-[12px] p-1 rounded flex justify-between text-gray-600 truncate w-30">
+  {formatDate(post.createdAt)} {getCurrentTime(post.createdAt)}
+</p>
           </div>
         </div>
 
@@ -335,7 +334,7 @@ function handleClick(event) {
           </div>
           <div className="flex mt-2 w-full h-[100px]  gap-2">
             <div className="  w-full h-[50px] p-1  flex gap-2">
-              {post.kredit && (
+              {post?.car?.credit && (
                 <div className="w-[100px] h-[50px] flex gap-2">
                   <div className="flex w-full h-[40px] gap-2  bg-white rounded-lg p-2 shadow-md">
                     <p className="w-[25px] bg-orange-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
@@ -352,7 +351,7 @@ function handleClick(event) {
                     </span>
                   </div>
                   <div className="w-full h-[40px] flex gap-2 bg-white rounded-lg p-2 shadow-md">
-                    {post.barter && (
+                    {post?.car?.barter && (
                       <p className="w-[25px] bg-green-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
                         <RefreshCcw
                           size={16}
@@ -389,12 +388,12 @@ function handleClick(event) {
               <div className="w-full h-[100px]  block ">
                 <div className="flex gap-3 items-center">
                   <Avatar
-                    alt={post?.contact?.name}
+                    alt={post.contact?.name}
                     src="/broken-image.jpg"
                     className="w-[50px] h-[50px] border-blue-400 border-2"
                   />
                   <span className="font-semibold justify-center items-center"></span>{" "}
-                  {post?.contact?.name}
+                  {post.contact?.name}
                 </div>
 
                 <div
@@ -424,7 +423,7 @@ function handleClick(event) {
 
                   <button className="bg-blue-500  w-full h-8  rounded-[8px] flex justify-center items-center hover:bg-blue-600 text-white">
                     <a
-                      href={`https://wa.me/${post?.contact?.phone}`}
+                      href={`https://wa.me/${post.contact?.phone}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-white flex gap-2 text-[14px] font-sans text-center justify-center items-center"
@@ -444,8 +443,8 @@ function handleClick(event) {
           </div>
           <div className="w-full hidden sm:block h-[1px] border rounded-1 mt-24 bg-black mb-2"></div>
           <div className="text-gray-700 mt-4 gap-5">
-            <span className="font-bold">{post?.contact?.name}</span>
-            <span className="block">{post?.location}</span>
+            <span className="font-bold">{post.contact?.name}</span>
+            <span className="block">{post.location}</span>
           </div>
           <div className="text-gray-700 mt-4">
             <span className="font-bold">Qeyd:</span> <span className="font-semibold">{post?.description}</span>
@@ -459,7 +458,7 @@ function handleClick(event) {
           >
             <button className="bg-green-500 sm:w-[200px]    min-w-[170px] h-[40px]  sm:h-10 rounded-[8px] flex justify-center items-center hover:bg-green-600 text-white">
               <a
-                href={`tel:${post?.contact?.phone}`}
+                href={`tel:${post.contact?.phone}`}
                 className="text-white flex gap-2 font-[14px] text-center justify-center items-center"
               >
                 <Phone
@@ -474,7 +473,7 @@ function handleClick(event) {
 
             <button className="bg-blue-500  min-w-[170px] h-[40px] sm:h-10 sm:w-[200px] rounded-[8px] flex justify-center items-center hover:bg-blue-600 text-white">
               <a
-                href={`https://wa.me/${post?.contact?.phone}`}
+                href={`https://wa.me/${post.contact?.phone}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white flex gap-2 text-[14px] font-sans text-center justify-center items-center"
@@ -498,7 +497,7 @@ function handleClick(event) {
           <div className="w-[50px] h-[50px]  rounded-[50%] dark:bg-zinc-800 bg-opacity-50 absolute   z-50 mt-[100%]  right-[80%]">
             <button className="bg-green-500 rounded-[50%]  flex justify-center items-center  w-full h-full  hover:bg-green-600 text-white">
               <a
-                href={`tel:${post?.contact?.phone}`}
+                href={`tel:${post.contact?.phone}`}
                 className="text-white font-bold text-center justify-center items-center"
               >
                 <Phone />
@@ -623,18 +622,22 @@ function handleClick(event) {
                   {car.price} AZN ₼
                 </h3>
                 <h2 className="text-[12px] truncate w-30">
-                  {car.category}, {car.brand}, {car.model}
+                  {car.brand}, {car.model}
                 </h2>
                 <p className="text-gray-600 truncate w-30">
-                  {car.year}, {car.km} km
+                  {car?.car?.year}, {car?.car?.km} km
                 </p>
                 <div className="flex justify-between gap-1 mt-7">
                   <p className="text-[10px] p-1 rounded flex justify-between text-gray-600">
                     <MapPin size={12} color="#75FC56" /> {car.location}
                   </p>
-                  <p className="capitalize text-[12px] p-1 rounded flex justify-between text-gray-600 truncate w-30">
+                  {/* <p className="capitalize text-[12px] p-1 rounded flex justify-between text-gray-600 truncate w-30">
                     {formatDate(car.data)} {getCurrentTime(car.data)}
-                  </p>
+                  </p> */}
+
+                  <p className="capitalize text-[12px] p-1 rounded flex justify-between text-gray-600 truncate w-30">
+  {formatDate(car.createdAt)} {getCurrentTime(car.createdAt)}
+</p>
                 </div>
               </div>
             </div>
