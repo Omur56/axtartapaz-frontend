@@ -217,14 +217,21 @@ const router = createBrowserRouter([
 //   Component: PostDetalCar,
 // },
 
+// {
+//     path: "/",
+//     element: <Layout />,
+//     children: [
+//       { path: "/", element: <Home /> },
+//       { path: "/cars/:id", element: <PostDetailCar /> },
+//     ],
+//   },
 {
-    path: "/",
-    element: <Layout />,
-    children: [
-      { path: "/", element: <Home /> },
-      { path: "/cars/:id", element: <PostDetailCar /> },
-    ],
-  },
+  path: "/",
+  Component: Layout,
+  children: [
+    { index: true, Component: Home },
+  ],
+},
 {
   path: "/electronika/:id",
   Component: PostDetailElectronika,
