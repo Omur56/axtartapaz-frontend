@@ -61,25 +61,25 @@ function Footer() {
             <Link to="https://github.com/omur56">
               <img
                 className="w-8 h-8"
-                src="/assets/SocialMediaIcon/github_3291695-removebg-preview.png"
+                src="/assets/SocialMediaIcon/github_3291695-removebg-preview.png" aria-label="github"
               />
             </Link>
             <Link to="https://mail.google.com/mail/?view=cm&fs=1&to=omur199624@gmail.com">
               <img
                 className="w-8 h-8"
-                src="/assets/SocialMediaIcon/icons8-gmail-48.png"
+                src="/assets/SocialMediaIcon/icons8-gmail-48.png" aria-label="gmail"
               />
             </Link>
             <Link to="https://www.linkedin.com/in/%C3%B6m%C3%BCrxan-abdullayev-b2052a318">
               <img
                 className="w-8 h-8"
-                src="/assets/SocialMediaIcon/linkedin_3992606-removebg-preview.png"
+                src="/assets/SocialMediaIcon/linkedin_3992606-removebg-preview.png" aria-label="linkedin"
               />
             </Link>
             <Link to="https://t.me/omurxan1">
               <img
                 className="w-8 h-8"
-                src="/assets/SocialMediaIcon/telegram-svgrepo-com.svg"
+                src="/assets/SocialMediaIcon/telegram-svgrepo-com.svg" aria-label="telegram"
               />
             </Link>
           </div>
@@ -89,7 +89,7 @@ function Footer() {
           >
             <img
               className="w-6 h-6"
-              src="/assets/SocialMediaIcon/telephoneicon.png"
+              src="/assets/SocialMediaIcon/telephoneicon.png" aria-label="icon-phone"
             />
             +994 55 913 80 99
           </a>
@@ -100,7 +100,7 @@ function Footer() {
           >
             <img
               className="w-6 h-6"
-              src="/assets/SocialMediaIcon/icons8-gmail-48.png"
+              src="/assets/SocialMediaIcon/icons8-gmail-48.png" aria-label="gmail"
             />
             omur199624@gmail.com
           </a>

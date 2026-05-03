@@ -40,10 +40,10 @@ export default function NavbarModal() {
 
             {/* Navbar links (BURANI ÖZÜN DOLDUR) */}
             <nav className="flex flex-col gap-4 mt-6">
-              <a href="#" className="text-lg hover:text-blue-500">
+              <a href="#" className="text-lg hover:text-blue-500" >
                 Ana səhifə
               </a>
-              <a href="#" className="text-lg hover:text-blue-500">
+              <a href="#" className="text-lg hover:text-blue-500" >
                 Avtomobillər
               </a>
               <a href="#" className="text-lg hover:text-blue-500">

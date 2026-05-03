@@ -10,7 +10,7 @@ const menuItems = [
   { id: 2, text: "Katalog", url: "/categories", icon: Icon_category },
   { id: 3, text: "Yeni Elan", url: "/CreateCatalogPost", icon: Icon_add },
   { id: 4, text: "Profil", url: "/profile", icon: Icon_person},
-  { id: 5, text: "Axtarış", url: "/search", icon: Icon_search },
+  { id: 5, text: "Axtarış", url: "/search", icon: Icon_search,  },
 ];
 
 export default menuItems;

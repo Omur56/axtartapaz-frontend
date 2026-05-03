@@ -12,7 +12,7 @@ const NavItem = ({ icon, text, url, isOpen }) => {
         }`
       }
     >
-      <span className="text-[15px] ">{icon}</span>
+      <span className="text-[15px] " >{icon}</span>
       {isOpen && <div className="text-[15px]">{text}</div>}
     </NavLink>
   );

@@ -42,6 +42,7 @@ const BottomMenu = () => {
           <NavLink
             key={item.id}
             to={item.url}
+            aria-label={item.text || "Navigation link"}
             className="flex flex-col items-center justify-center text-xs mt-1 transition-all duration-200"
           >
             {/* Icon bubble */}
@@ -55,7 +56,7 @@ const BottomMenu = () => {
               <Icon
                 size={25}
                 color={isActive ? "#670fff" : "#670fff"}
-            
+             aria-hidden="true" //"screen reader icon-u ignore etsin"
                 strokeWidth={1.5}
                 className={`transition-all duration-300 `}
               />

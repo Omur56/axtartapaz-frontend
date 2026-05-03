@@ -14,8 +14,13 @@ import { useTheme } from "../../components/Main/ThemeContext";
 import Swal from "sweetalert2";
 
 
-const API =
-  process.env.REACT_APP_API_URL || "https://my-backend-wj5g.onrender.com";
+const API = process.env.REACT_APP_API_URL || "https://my-backend-wj5g.onrender.com";
+
+// const API = process.env.REACT_APP_API_URL;
+
+
+
+
 
 const ITEMS_PER_LOAD = 8;
 
@@ -71,6 +76,20 @@ useEffect(() => {
   });
 }, []);
 
+// axios.get(`${API}/api/ads`);
+
+useEffect(() => {
+  const fetchAds = async () => {
+    try {
+      const res = await axios.get(`${API}/api/ads`);
+      console.log("ADS:", res.data);
+    } catch (err) {
+      console.log("ADS ERROR:", err.message);
+    }
+  };
+
+  fetchAds();
+}, []);
   /* FETCH ALL DATA */
   useEffect(() => {
     const fetchAll = async () => {
@@ -376,7 +395,7 @@ useEffect(() => {
       <a href={ad.link} key={ad._id}>
         <img
           src={`${API}/uploads/${ad.image}`}
-          className="w-full rounded shadow"
+          className="w-full rounded shadow" alt={ad._id}
         />
       </a>
     ))}
@@ -413,6 +432,7 @@ useEffect(() => {
                 <img
                   src={item.images?.[0] || "/no-image.jpg"}
                   className="h-[100px] w-full object-cover"
+                  alt={item._id}
                 />
                 <p className="font-bold">{item.price} AZN</p>
                 <p className="text-xs">{item.title}</p>
@@ -572,6 +592,7 @@ useEffect(() => {
                 <button
                   onClick={() => toggleFavorite(item)}
                   className="absolute top-2 right-2"
+                  aria-label="toggleFavoriteButton"
                 >
                   <Heart
                     size={22}
@@ -594,6 +615,7 @@ useEffect(() => {
         <img
           src={`${API}/uploads/${ad.image}`}
           className="w-full rounded shadow"
+          alt={ad._id}
         />
       </a>
     ))}

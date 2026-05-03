@@ -19,6 +19,7 @@ const FavoriteButton = ({ item, favorites, setFavorites }) => {
   return (
     <button
       onClick={toggleFavorite}
+      aria-label="toggleFavoriteButton"
       className={`absolute top-2 right-2 p-2 rounded-full transition-colors ${
         isFavorite ? "bg-red-500 text-white" : "bg-gray-200 text-black"
       }`}

@@ -77,6 +77,7 @@ function Header() {
                 > 
             <button
       onClick={toggleFavorite}
+      aria-label="buttonHeartTarget"
       className="p-1 rounded-full transition-colors duration-300"
     >
       <Heart

@@ -207,8 +207,8 @@ const Search = () => {
 
   const apiUrls = useMemo(
     () => [
-      `${process.env.REACT_APP_API_URL}/api/cars`,
-      `${process.env.REACT_APP_API_URL}/api/homGarden`,
+      `${process.env.REACT_APP_API_URL}/api/car`,
+      `${process.env.REACT_APP_API_URL}/api/homeGarden`,
       `${process.env.REACT_APP_API_URL}/api/electronika`,
       `${process.env.REACT_APP_API_URL}/api/accessories`,
       `${process.env.REACT_APP_API_URL}/api/realEstate`,
