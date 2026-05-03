@@ -81,7 +81,7 @@ const Katalog = ({ className, width, height, marginTop }) => {
   )}
 
   {/* LABEL BURADA */}
-  <div className="absolute bottom-1 left-1 right-1 text-center">
+  <div className="absolute top-1 left-2  ">
     <span className="text-[10px] font-bold text-white drop-shadow">
       {label}
     </span>
