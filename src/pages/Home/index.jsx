@@ -472,7 +472,7 @@ useEffect(() => {
                 key={item._id}
                 className="relative "
               >
-                <Link target="_blank" to={`/${item.__type}/${item._id}`}>
+                <Link  to={`/${item.__type}/${item._id}`}>
                   <div className="z-1 shadow-sm bg-white border-[1px] border-blue-500 border-shadow sm:w-[229px] sm:h-[268.75px] rounded-[8px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
                     {/* ICONS */}
                     <div className="absolute top-2 left-2 flex gap-2 z-10">
