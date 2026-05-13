@@ -604,8 +604,8 @@ function handleClick(event) {
         {cars.map((car) => (
           <Link
             key={car._id || car.id}
-            to={`/cars/${car._id}`}
-            target="_blank"
+            to={`/car/${car._id}`}
+            target="_top"
             rel="noopener noreferrer"
           >
             <div className="w-[185.7px] h-[222.6px] max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-sm transform transition-all duration-300">

@@ -648,7 +648,7 @@ const handleOpenForm = () => {
             <>
               {[...clothingItems].reverse().map((item) => (
                 <Link
-                target="_blank"
+                target="_top"
             rel="noopener noreferrer"
                   key={item._id || item.id}
                   to={`/PostDetailClothing/${item._id}`}

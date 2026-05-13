@@ -231,10 +231,10 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
             <p>
               <span className="font-semibold">Telefon:</span>{" "}
               <a
-                href={`tel:${post?.contact.phone}`}
+                href={`tel:${post?.contact.Phone}`}
                 className="text-blue-600 font-bold ml-1"
               >
-                {post?.contact.phone}
+                {post?.contact.Phone}
               </a>
             </p>
             <p>
@@ -246,7 +246,7 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
             </p>
           </div>
           <a
-            href={`tel:${post?.contact.phone}`}
+            href={`tel:${post?.contact.Phone}`}
             className="text-white font-bold ml-1"
           >
             {" "}
@@ -265,7 +265,7 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
           .reverse()
           .slice(0, 8)
           .map((item) => (
-            <Link  target="_blank"
+            <Link  target="_top"
             rel="noopener noreferrer" key={item._id} to={`/PostDetailPhone/${item._id}`}>
               <div className="border w-[226px] h-[304px] rounded-2xl bg-white shadow-sm hover:shadow-xl transition duration-200">
                 <img

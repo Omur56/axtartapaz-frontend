@@ -1590,10 +1590,10 @@ const official_store_salon_checked_group = (e) => {
             <>
               {[...cars].map((car) => (
                 <Link
-                  target="_blank"
+                  target="_top"
                   rel="noopener noreferrer"
                   key={car._id}
-                  to={`/cars/${car._id}`}
+                  to={`/car/${car._id}`}
                 >
                   <div className="  w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <div className="flex gap-2 rounded-t-sm">

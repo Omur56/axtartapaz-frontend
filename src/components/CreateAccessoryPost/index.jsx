@@ -642,7 +642,7 @@ export default function CreateAccessoryPost() {
             <>
               {[...accessoryItems].reverse().map((item) => (
                 <Link
-                  target="_blank"
+                  target="_top"
                   rel="noopener noreferrer"
                   key={item._id || item.id}
                   to={`/PostDetailAcsesuar/${item._id}`}

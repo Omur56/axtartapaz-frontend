@@ -625,7 +625,7 @@ const handleOpenForm = () => {
 
               {Array.isArray(homeGardenItems) &&
   homeGardenItems.map((item) => (
-                <Link target="_blank"
+                <Link target="_top"
             rel="noopener noreferrer" key={item._id} to={`/PostDetailHome/${item._id}`}>
                   <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     {item.images && item.images.length > 0 && (
