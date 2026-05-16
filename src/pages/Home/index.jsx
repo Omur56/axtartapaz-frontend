@@ -27,7 +27,7 @@ const ITEMS_PER_LOAD = 8;
 const CATEGORIES = {
   car: "/api/car",
   homeGarden: "/api/homeGarden",
-  electronika: "/api/electronika",
+  electronics: "/api/electronics",
   accessories: "/api/accessories",
   realEstate: "/api/realEstate",
   household: "/api/Household",
@@ -50,7 +50,7 @@ const [stickyAds, setStickyAds] = useState([]);
 
    const models = [
         "accessories",
-        "electronika",
+        "electronics",
         "clothing",
         "homeGarden",
         "phone",
@@ -147,7 +147,7 @@ const allAds = Object.entries(data)
 // ------count say --
 // useEffect(() => {
 //   axios.get(`${API}/api/count/cars`).then(res => console.log(res.data.count));
-//   axios.get(`${API}/api/count/electronika`).then(res => console.log(res.data.count));
+//   axios.get(`${API}/api/count/electronics`).then(res => console.log(res.data.count));
 //   axios.get(`${API}/api/count/clothing`).then(res => console.log(res.data.count));
 //   axios.get(`${API}/api/count/realEstate`).then(res => console.log(res.data.count));
 //   axios.get(`${API}/api/count/phone`).then(res => console.log(res.data.count));
