@@ -208,7 +208,7 @@ const router = createBrowserRouter([
         Component: PostDetailElectronika,
       },
       {
-        path: "/ads/cars/:id",
+        path: "/ads/car/:id",
         Component: PostDetalCar,
       },
 

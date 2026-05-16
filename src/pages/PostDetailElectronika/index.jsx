@@ -6,7 +6,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { X, MapPin, Phone, MessageCircleMore } from "lucide-react";
 import { Box, LinearProgress, Avatar } from "@mui/material";
 
-export default function PostDetailElectronika() {
+export default function PostDetailelectronics() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -20,14 +20,14 @@ export default function PostDetailElectronika() {
 
   useEffect(() => {
     axios
-      .get(`${BASE_URL}/api/electronika`)
+      .get(`${BASE_URL}/api/electronics`)
       .then((res) => setPosts(res.data))
       .catch((err) => console.error(err));
   }, []);
 
   useEffect(() => {
     axios
-      .get(`${BASE_URL}/api/electronika/${id}`)
+      .get(`${BASE_URL}/api/electronics/${id}`)
       .then((res) => setPost(res.data))
       .catch((err) => console.error(err));
   }, [id]);
@@ -139,7 +139,7 @@ export default function PostDetailElectronika() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {posts.slice(0, 8).map((item) => (
-          <Link key={item._id} to={`/PostDetailElectronika/${item._id}`}>
+          <Link key={item._id} to={`/PostDetailelectronics/${item._id}`}>
             <div className="border rounded-lg p-2">
               <img
                 src={

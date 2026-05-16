@@ -7,11 +7,11 @@ import Swal from "sweetalert2";
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { RefreshCcw, Percent, MapPin } from "lucide-react";
-export default function CreateElectronikaPost() {
+export default function CreateelectronicsPost() {
   const { id } = useParams();
   const [isOpen, setIsOpen] = useState(false);
 
-  const [elektronikaPost, setElectronikaPost] = useState({
+  const [elektronikaPost, setelectronicsPost] = useState({
     id: Date.now(),
     title: "",
     brand: "",
@@ -26,7 +26,7 @@ export default function CreateElectronikaPost() {
     data: new Date(),
   });
 
-  const [elektronikaItems, setElectronikaItems] = useState([]);
+  const [elektronikaItems, setelectronicsItems] = useState([]);
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
   const [editingId, setEditingId] = useState(null);
@@ -44,23 +44,23 @@ export default function CreateElectronikaPost() {
     const { name, value } = e.target;
     if (name.startsWith("contact.")) {
       const field = name.split(".")[1];
-      setElectronikaPost((prev) => ({
+      setelectronicsPost((prev) => ({
         ...prev,
         contact: { ...prev.contact, [field]: value },
       }));
     } else if (name === "data") {
       // tarix inputunu stringdən Date-ə çevirmək üçün 
-      setElectronikaPost((prev) => ({ ...prev, data: new Date(value) }));
+      setelectronicsPost((prev) => ({ ...prev, data: new Date(value) }));
     } else {
-      setElectronikaPost((prev) => ({ ...prev, [name]: value }));
+      setelectronicsPost((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   // Backenddən elanları çəkmək üçün
   const fetchItems = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/electronika/`);
-      setElectronikaItems(res.data);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/electronics/`);
+      setelectronicsItems(res.data);
     } catch (err) {
       console.error(err);
     }
@@ -86,10 +86,10 @@ export default function CreateElectronikaPost() {
   try {
     const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` };
     if (editingId) {
-      await axios.put(`${process.env.REACT_APP_API_URL}/api/electronika/${editingId}`, formData, { headers });
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/electronics/${editingId}`, formData, { headers });
       setEditingId(null);
     } else {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/electronika`, formData, { headers });
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/electronics`, formData, { headers });
       Swal.fire({ icon: "success", title: "Elan uğurla yerləşdirildi!" });
     }
     resetForm();
@@ -103,7 +103,7 @@ export default function CreateElectronikaPost() {
 
   // Formu sıfırlamaq üçün
   const resetForm = () => {
-    setElectronikaPost({
+    setelectronicsPost({
       id: Date.now(),
       title: "",
       brand: "",
@@ -125,7 +125,7 @@ export default function CreateElectronikaPost() {
   // Silmə funksiyası
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/electronika/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/electronics/${id}`);
       fetchItems();
     } catch (err) {
       console.error("Delete error:", err);
@@ -135,7 +135,7 @@ export default function CreateElectronikaPost() {
   // Favorit et / favoritdən çıxart
   const handleFavorite = async (id) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/electronika/${id}/favorite`);
+      await axios.patch(`${process.env.REACT_APP_API_URL}/api/electronics/${id}/favorite`);
       fetchItems();
     } catch (err) {
       console.error(err);
@@ -145,7 +145,7 @@ export default function CreateElectronikaPost() {
   // Like / unlike funksiyası
   const handleLike = async (id) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/electronika/${id}/like`);
+      await axios.patch(`${process.env.REACT_APP_API_URL}/api/electronics/${id}/like`);
       fetchItems();
     } catch (err) {
       console.error(err);
@@ -154,7 +154,7 @@ export default function CreateElectronikaPost() {
 
   // Redaktə üçün formu doldur
   const handleEdit = (item) => {
-    setElectronikaPost({
+    setelectronicsPost({
       ...item,
       data: item.createdAt? new Date(item.createdAt) : new Date(),
     });
@@ -197,7 +197,7 @@ export default function CreateElectronikaPost() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/electronika`];
+  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/electronics`];
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -261,7 +261,7 @@ export default function CreateElectronikaPost() {
       setIsLoading(true); // loading başladı
       try {
         const [accessoriesRes] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/api/electronika`),
+          axios.get(`${process.env.REACT_APP_API_URL}/api/electronics`),
         ]);
 
         setAccessories(accessoriesRes.data);
@@ -583,7 +583,7 @@ const handleOpenForm = () => {
                 target="_top"
             rel="noopener noreferrer"
                   key={item._id || item.id}
-                  to={`/PostDetailElectronika/${item._id}`}
+                  to={`/PostDetailelectronics/${item._id}`}
                 >
                   <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <div className="flex gap-2 rounded-t-sm">
