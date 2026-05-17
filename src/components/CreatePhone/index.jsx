@@ -18,7 +18,7 @@ export default function CreatePhone() {
     price: "",
     color: "",
     storage: "",
-    rom: "",
+    ram: "",
     sim_card: "",
     location: "",
     images: [],
@@ -126,7 +126,7 @@ export default function CreatePhone() {
       price: "",
       color: "",
       storage: "",
-      rom: "",
+      ram: "",
       sim_card: "",
       location: "",
       images: [],
@@ -160,7 +160,7 @@ export default function CreatePhone() {
       price: "",
       color: "",
       storage: "",
-      rom: "",
+      ram: "",
       sim_card: "",
       location: "",
       images: [],
@@ -468,9 +468,9 @@ const handleOpenForm = () => {
                   />
                   <input
                     type="text"
-                    name="rom"
+                    name="ram"
                     placeholder="Ram"
-                    value={phonePost.rom}
+                    value={phonePost.ram}
                     onChange={handleChange}
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                     required
