@@ -60,7 +60,7 @@ export default function CreatePhone() {
 
   const fetchItems = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/Phone/`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/phone/`);
       setPhoneItems(res.data);
     } catch (err) {
       console.error(err);
@@ -92,7 +92,7 @@ export default function CreatePhone() {
   try {
     if (editingId) {
       await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/Phone/${editingId}`,
+        `${process.env.REACT_APP_API_URL}/api/phone/${editingId}`,
         formData,
         {
           headers: {
@@ -103,7 +103,7 @@ export default function CreatePhone() {
       );
       setEditingId(null);
     } else {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/Phone`, formData, {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/phone`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
@@ -131,7 +131,7 @@ export default function CreatePhone() {
       location: "",
       images: [],
       description: "",
-      contact: { name: "", email: "", Phone: "" },
+      contact: { name: "", email: "", phone: "" },
       liked: false,
       favorite: false,
       data: new Date(),
@@ -165,7 +165,7 @@ export default function CreatePhone() {
       location: "",
       images: [],
       description: "",
-      contact: { name: "", email: "", Phone: "" },
+      contact: { name: "", email: "", phone: "" },
       liked: false,
       favorite: false,
       data: new Date(),
@@ -177,7 +177,7 @@ export default function CreatePhone() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/Phone/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/phone/${id}`);
       fetchItems();
     } catch (err) {
       console.error("Delete error:", err);
@@ -186,7 +186,7 @@ export default function CreatePhone() {
 
   const handleFavorite = async (id) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/Phone/${id}/favorite`);
+      await axios.patch(`${process.env.REACT_APP_API_URL}/api/phone/${id}/favorite`);
       fetchItems();
     } catch (err) {
       console.error(err);
@@ -195,7 +195,7 @@ export default function CreatePhone() {
 
   const handleLike = async (id) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/Phone/${id}/like`);
+      await axios.patch(`${process.env.REACT_APP_API_URL}/api/phone/${id}/like`);
       fetchItems();
     } catch (err) {
       console.error(err);
@@ -245,7 +245,7 @@ export default function CreatePhone() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/Phone`];
+  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/phone`];
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -300,17 +300,17 @@ export default function CreatePhone() {
   };
 
   const [isLoading, setIsLoading] = useState(true);
-  const [Phone, setPhone] = useState([]);
+  const [phone, setPhone] = useState([]);
 
   useEffect(() => {
     const fetchAll = async () => {
       setIsLoading(true); // loading başladı
       try {
-        const [Phone] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/api/Phone`),
+        const [phone] = await Promise.all([
+          axios.get(`${process.env.REACT_APP_API_URL}/api/phone`),
         ]);
 
-        setPhone(Phone.data);
+        setPhone(phone.data);
       } catch (err) {
         console.error("API xətası:", err);
       } finally {
@@ -524,9 +524,9 @@ const handleOpenForm = () => {
                   />
                   <input
                     type="tel"
-                    name="contact.Phone"
+                    name="contact.phone"
                     placeholder="Əlaqə Telefon"
-                    value={phonePost.contact.Phone}
+                    value={phonePost.contact.phone}
                     onChange={handleChange}
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px] invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                     required
