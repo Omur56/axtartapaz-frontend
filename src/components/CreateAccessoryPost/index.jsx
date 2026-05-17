@@ -59,7 +59,7 @@ export default function CreateAccessoryPost() {
   const fetchItems = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/accessories`
+        `${process.env.REACT_APP_API_URL}/api/accessory`
       );
       setAccessoryItems(response.data);
     } catch (error) {
@@ -103,7 +103,7 @@ export default function CreateAccessoryPost() {
     try {
       if (editingId) {
         await axios.put(
-          `${process.env.REACT_APP_API_URL}/api/accessories/${editingId}`,
+          `${process.env.REACT_APP_API_URL}/api/accessory/${editingId}`,
           formData,
           {
             headers: {
@@ -115,7 +115,7 @@ export default function CreateAccessoryPost() {
         setEditingId(null);
       } else {
         await axios.post(
-          `${process.env.REACT_APP_API_URL}/api/accessories`,
+          `${process.env.REACT_APP_API_URL}/api/accessory`,
           formData,
           {
             headers: {
@@ -168,7 +168,7 @@ export default function CreateAccessoryPost() {
   const handleDelete = async (id) => {
     try {
       await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/accessories/${id}`
+        `${process.env.REACT_APP_API_URL}/api/accessory/${id}`
       );
       fetchItems();
     } catch (error) {
@@ -179,7 +179,7 @@ export default function CreateAccessoryPost() {
   const handleFavorite = async (id) => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_URL}/api/accessories/${id}/favorite`
+        `${process.env.REACT_APP_API_URL}/api/accessory/${id}/favorite`
       );
       fetchItems();
     } catch (err) {
@@ -190,7 +190,7 @@ export default function CreateAccessoryPost() {
   const handleLike = async (id) => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_URL}/api/accessories/${id}/like`
+        `${process.env.REACT_APP_API_URL}/api/accessory/${id}/like`
       );
       fetchItems();
     } catch (err) {
@@ -210,7 +210,7 @@ export default function CreateAccessoryPost() {
   const handleImageDelete = async (image) => {
     try {
       await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/accessories/images/${image}`
+        `${process.env.REACT_APP_API_URL}/api/accessory/images/${image}`
       );
       fetchItems();
     } catch (error) {
@@ -251,7 +251,7 @@ export default function CreateAccessoryPost() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/accessories`];
+  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/accessory`];
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -308,17 +308,17 @@ export default function CreateAccessoryPost() {
   };
 
   const [isLoading, setIsLoading] = useState(true);
-  const [accessories, setAccessories] = useState([]);
+  // const [accessory, setAccessory] = useState([]);
 
   useEffect(() => {
     const fetchAll = async () => {
       setIsLoading(true); // loading başladı
       try {
-        const [accessoriesRes] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/api/accessories`),
+        const [accessoryRes] = await Promise.all([
+          axios.get(`${process.env.REACT_APP_API_URL}/api/accessory`),
         ]);
 
-        setAccessories(accessoriesRes.data);
+        setAccessory(accessoryRes.data);
       } catch (err) {
         console.error("API xətası:", err);
       } finally {

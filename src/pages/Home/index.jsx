@@ -28,10 +28,10 @@ const CATEGORIES = {
   car: "/api/car",
   homeGarden: "/api/homeGarden",
   electronics: "/api/electronics",
-  accessories: "/api/accessories",
+  accessory: "/api/accessory",
   realEstate: "/api/realEstate",
   household: "/api/Household",
-  phone: "/api/Phone",
+  phone: "/api/phone",
   clothing: "/api/Clothing",
 };
 
@@ -49,7 +49,7 @@ const [stickyAds, setStickyAds] = useState([]);
   const currentUserId = localStorage.getItem("userId");
 
    const models = [
-        "accessories",
+        "accessory",
         "electronics",
         "clothing",
         "homeGarden",
