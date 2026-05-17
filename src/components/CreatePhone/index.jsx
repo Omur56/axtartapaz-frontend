@@ -64,6 +64,7 @@ export default function CreatePhone() {
       setPhoneItems(res.data);
     } catch (err) {
       console.error(err);
+      
     }
   };
 
@@ -142,6 +143,7 @@ export default function CreatePhone() {
     fetchItems();
   } catch (err) {
     console.error("Error:", err);
+    
     Swal.fire({
       icon: "error",
       title: "Xəta baş verdi",
