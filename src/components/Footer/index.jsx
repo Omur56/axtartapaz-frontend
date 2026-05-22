@@ -10,7 +10,7 @@ function Footer() {
   return (
     <>
      
-    <footer className="w-full  bg-orange-500   py-10 px-4 sm:px-6 lg:px-8  ">
+    <footer className="w-full   py-10 px-4 sm:px-6 lg:px-8  ">
     <div className="border-t border-slate-300 mb-10"></div>
       {/* MAIN GRID CONTAINER */}
       <div className=" mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-10 ">
@@ -22,7 +22,7 @@ function Footer() {
         </div>
 
         {/* Links */}
-        <div className="text-white  sm:max-h-[80px] flex justify-center w-full">
+        <div className="text-gray-500  sm:max-h-[80px] flex justify-center w-full">
           <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 text-center sm:max-h-[20px]">
             <Link className="hover:text-[#43D262] hover:underline" to="/privacy-policy">PrivacyPolicy </Link>
             <Link className="hover:text-[#43D262] hover:underline" to="/posting-rules">Posting Rules </Link>
@@ -56,7 +56,7 @@ function Footer() {
         </div>
 
         {/* Social + Phone */}
-        <div className="flex flex-col text-white items-center md:items-end gap-4 w-full">
+        <div className="flex flex-col text-gray-500 items-center md:items-end gap-4 w-full">
           <div className="flex gap-4 justify-center md:justify-end flex-wrap">
             <Link to="https://github.com/omur56">
               <img
@@ -84,7 +84,7 @@ function Footer() {
             </Link>
           </div>
           <a
-            className="text-white  text-sm flex items-center gap-2 hover:underline hover:text-sky-400"
+            className="text-gray-500  text-sm flex items-center gap-2 hover:underline hover:text-sky-400"
             href="tel:+994559138099"
           >
             <img
@@ -95,7 +95,7 @@ function Footer() {
           </a>
           İş saatları: Hər gün 09:00 - 18:00
           <a
-            className="text-white  text-sm flex items-center gap-2 hover:underline hover:text-sky-400"
+            className="text-gray-500  text-sm flex items-center gap-2 hover:underline hover:text-sky-400"
             href="emailto:omur199624@gmail.com"
           >
             <img
@@ -104,7 +104,7 @@ function Footer() {
             />
             omur199624@gmail.com
           </a>
-          <p className="text-white text-sm">
+          <p className="text-gray-500 text-sm">
             Site by
             <span className="text-[#43D262] text-wrap font-bold">
               {" "}
@@ -119,7 +119,7 @@ function Footer() {
 
       {/* Copyright */}
       <div className="flex justify-center mt-6">
-        <p className="text-white text-center text-sm sm:text-base">
+        <p className="text-gray-500 text-center text-sm sm:text-base">
           © 2026 ProElan.az - Bütün Hüquqlar Qorunur.
         </p>
       </div>

@@ -553,80 +553,164 @@ const official_store_salon_checked_group = (e) => {
 };
   const [cars, setCars] = useState([]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
 
-    // Form state yenilənməsi
-    setForm((prev) => ({ ...prev, [name]: value }));
+//     // Form state yenilənməsi
+//     // setForm((prev) => ({ ...prev, [name]: value }));
 
-    // Marka seçiləndə model və şəkil reset
-    if (name === "brand") {
-      setForm((prev) => ({
-        ...prev,
-        model: "",
-        year: "",
-        color: "",
-        ban_type: "",
-      }));
-      setModelImagePreview("");
-    }
+   
+// setForm((prev) => ({ ...prev, [name]: value }));
 
-    // Model və ya İl dəyişəndə şəkil yenilə
-    if ((name === "model" || name === "year") && form.brand && form.model) {
-      const selectedCar = carData[form.brand].find(
-        (item) => item.model === (name === "model" ? value : form.model),
+//     // Marka seçiləndə model və şəkil reset
+//     if (name === "brand") {
+//       setForm((prev) => ({
+//         ...prev,
+//         model: "",
+//         year: "",
+//         color: "",
+//         ban_type: "",
+//       }));
+//       setModelImagePreview("");
+//     }
+
+//     // Model və ya İl dəyişəndə şəkil yenilə
+//     if ((name === "model" || name === "year") && form.brand && form.model) {
+//       const selectedCar = carData[form.brand].find(
+//         (item) => item.model === (name === "model" ? value : form.model),
+//       );
+
+//       if (selectedCar) {
+//         const year = name === "year" ? value : form.year;
+//         const yearImage = selectedCar.imagesByYear?.[year];
+//         setModelImagePreview(yearImage || "");
+//       }
+//     }
+
+//     // Qiymət və KM üçün minlik formatlama
+//     if (name === "price" || name === "km") {
+//       let cleanedValue = value.replace(/\D/g, "");
+//       let formatted = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+//       setForm((prev) => ({ ...prev, [name]: formatted }));
+//     }
+//     // Mobil nömrə formatlama
+//     else if (name === "contact.phone") {
+//       let digits = value.replace(/\D/g, "").slice(3, 12);
+//       if (digits.length > 0) digits = digits.replace(/^(\d{0,2})/, "$1");
+//       if (digits.length > 2)
+//         digits = digits.replace(/^(\d{2})(\d{0,3})/, "$1-$2");
+//       if (digits.length > 5)
+//         digits = digits.replace(/^(\d{2})-(\d{3})(\d{0,2})/, "$1-$2-$3");
+//       if (digits.length > 7)
+//         digits = digits.replace(
+//           /^(\d{2})-(\d{3})-(\d{2})(\d{0,2})/,
+//           "$1-$2-$3-$4",
+//         );
+
+//       let formatted = "+994-" + digits;
+//       setForm((prev) => ({
+//         ...prev,
+//         contact: { ...prev.contact, phone: formatted },
+//       }));
+//     }
+//     // Digər contact inputları
+//     else if (name.startsWith("contact.")) {
+//       const field = name.split(".")[1];
+//       setForm((prev) => ({
+//         ...prev,
+//         contact: { ...prev.contact, [field]: value },
+//       }));
+//     }
+//     // Tarix inputu
+//     else if (name === "data") {
+//       setForm((prev) => ({ ...prev, data: new Date(value) }));
+//     }
+//     // Digər inputlar
+//     else {
+//       setForm((prev) => ({ ...prev, [name]: value }));
+//     }
+//   };
+
+
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  // Form state yenilənməsi
+setForm((prev) => ({ ...prev, [name]: value }));
+
+  // Mobil nömrə formatlama
+  if (name === "contact.phone") {
+    let digits = value.replace(/\D/g, "").slice(3, 12);
+
+    if (digits.length > 0)
+      digits = digits.replace(/^(\d{0,2})/, "$1");
+
+    if (digits.length > 2)
+      digits = digits.replace(/^(\d{2})(\d{0,3})/, "$1-$2");
+
+    if (digits.length > 5)
+      digits = digits.replace(
+        /^(\d{2})-(\d{3})(\d{0,2})/,
+        "$1-$2-$3"
       );
 
-      if (selectedCar) {
-        const year = name === "year" ? value : form.year;
-        const yearImage = selectedCar.imagesByYear?.[year];
-        setModelImagePreview(yearImage || "");
-      }
-    }
+    if (digits.length > 7)
+      digits = digits.replace(
+        /^(\d{2})-(\d{3})-(\d{2})(\d{0,2})/,
+        "$1-$2-$3-$4"
+      );
 
-    // Qiymət və KM üçün minlik formatlama
-    if (name === "price" || name === "km") {
-      let cleanedValue = value.replace(/\D/g, "");
-      let formatted = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-      setForm((prev) => ({ ...prev, [name]: formatted }));
-    }
-    // Mobil nömrə formatlama
-    else if (name === "contact.phone") {
-      let digits = value.replace(/\D/g, "").slice(3, 12);
-      if (digits.length > 0) digits = digits.replace(/^(\d{0,2})/, "$1");
-      if (digits.length > 2)
-        digits = digits.replace(/^(\d{2})(\d{0,3})/, "$1-$2");
-      if (digits.length > 5)
-        digits = digits.replace(/^(\d{2})-(\d{3})(\d{0,2})/, "$1-$2-$3");
-      if (digits.length > 7)
-        digits = digits.replace(
-          /^(\d{2})-(\d{3})-(\d{2})(\d{0,2})/,
-          "$1-$2-$3-$4",
-        );
+    let formatted = "+994-" + digits;
 
-      let formatted = "+994-" + digits;
-      setForm((prev) => ({
-        ...prev,
-        contact: { ...prev.contact, phone: formatted },
-      }));
-    }
-    // Digər contact inputları
-    else if (name.startsWith("contact.")) {
-      const field = name.split(".")[1];
-      setForm((prev) => ({
-        ...prev,
-        contact: { ...prev.contact, [field]: value },
-      }));
-    }
-    // Tarix inputu
-    else if (name === "data") {
-      setForm((prev) => ({ ...prev, data: new Date(value) }));
-    }
-    // Digər inputlar
-    else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-    }
-  };
+    setForm((prev) => ({
+      ...prev,
+      contact: {
+        ...prev.contact,
+        phone: formatted,
+      },
+    }));
+
+    return;
+  }
+
+  // digər contact fieldləri
+  if (name.startsWith("contact.")) {
+    const field = name.split(".")[1];
+
+    setForm((prev) => ({
+      ...prev,
+      contact: {
+        ...prev.contact,
+        [field]: value,
+      },
+    }));
+
+    return;
+  }
+
+  // qiymət və km
+  if (name === "price" || name === "km") {
+    let cleanedValue = value.replace(/\D/g, "");
+    let formatted = cleanedValue.replace(
+      /\B(?=(\d{3})+(?!\d))/g,
+      " "
+    );
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: formatted,
+    }));
+
+    return;
+  }
+
+  // default
+  setForm((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
 
@@ -1611,7 +1695,7 @@ const official_store_salon_checked_group = (e) => {
                       {car.brand} {car.model}
                       </p>
                       <p className="capitalize text-[12px] font-sans font-[500] truncate w-50">
-                        {car?.car?.year}, {car?.car?.motor} L, {car?.car?.km} km
+                        {car?.year}, {car?.motor} L, {car?.km} km
                       </p>
                       <div className="flex justify-between gap-1  ">
                         <p className="text-[10px] rounded flex justify-between text-gray-600">

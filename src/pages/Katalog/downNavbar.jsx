@@ -11,6 +11,8 @@ import Meiset from "../../../src/icon_nav/meiset.png";
 import Telefon from "../../../src/icon_nav/telefon.png";
 import Geyim from "../../../src/icon_nav/geyim.png";
 import List from "../../../src/icon_nav/fi-rr-grid.svg";
+import { FaThLarge } from "react-icons/fa";
+import { Grid2x2 } from 'lucide-react';
 
 const DownNavbar = () => {
   const [open, setOpen] = useState(false);
@@ -104,21 +106,22 @@ const DownNavbar = () => {
       {/* HEADER */}
       <nav
         onClick={scrollTop}
-        className={`mt-[-15px]  w-[80px] h-[30px] sm:min-w-[200px] sm:min-h-[40px] rounded-[8px] transition duration-300 hover:border-green-500 border-[1px] flex bg-white  px-2 py-2 relative z-50 ${open ? "border-green-500" : "shadow"}`}
+        className={`w-[100px] h-[30px]  rounded-[8px] transition duration-300 flex bg-orange-600  px-2 py-2 relative  `}
       >
         <div className="flex items-center max-w-screen-xl mx-auto">
           <button
             onClick={() => setOpen(!open)}
             type="button"
             aria-label="downButton"
-            className={`z-0 w-[60px] h-[10px] flex gap-2 text-gray-500   sm:min-w-[250px] sm:min-h-[20px] items-center font-semibold hover:text-green-500 transition duration-300 ${open ? "text-black" : ""}`}
+            className={`z-100 w-[60px] h-[10px] flex gap-1 text-[#ffffff]   sm:min-w-[108.88px] sm:min-h-[44.5px] items-center font-semibold  transition duration-300 ${open ? "text-black" : ""}`}
           >
-            <Grip className="text-gray-500" />
+            {/* <Grip className="text-[#ffffff]" /> */}
+          <FaThLarge />
             <span className="hidden md:inline sm:text-[12px] ">
-              Bütün kateqoriyalar{" "}
+              Kataloq{" "}
             </span>
             <ChevronUp
-              className={`absolute right-4 text-green-500 transition-transform duration-300 ${open ? "rotate-0" : "rotate-180"}`}
+              className={`absolute right-0 text-[#ffffff] transition-transform duration-300 ${open ? "rotate-0" : "rotate-180"}`}
             />
           </button>
         </div>
@@ -126,7 +129,7 @@ const DownNavbar = () => {
 
       {/* OVERLAY */}
       <div
-        className={` fixed inset-0 z-40 transition duration-500 mt-[60px] ${
+        className={` fixed inset-0  transition duration-500 mt-[60px] ${
           open ? "visible" : "invisible"
         }`}
       >

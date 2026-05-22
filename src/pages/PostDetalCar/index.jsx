@@ -388,12 +388,12 @@ function handleClick(event) {
               <div className="w-full h-[100px]  block ">
                 <div className="flex gap-3 items-center">
                   <Avatar
-                    alt={post.contact?.name}
+                    alt={post.contact.name}
                     src="/broken-image.jpg"
                     className="w-[50px] h-[50px] border-blue-400 border-2"
                   />
                   <span className="font-semibold justify-center items-center"></span>{" "}
-                  {post.contact?.name}
+                  {post.contact.name}
                 </div>
 
                 <div
@@ -423,7 +423,7 @@ function handleClick(event) {
 
                   <button className="bg-blue-500  w-full h-8  rounded-[8px] flex justify-center items-center hover:bg-blue-600 text-white">
                     <a
-                      href={`https://wa.me/${post.contact?.phone}`}
+                      href={`https://wa.me/${post.contact.phone}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-white flex gap-2 text-[14px] font-sans text-center justify-center items-center"
@@ -447,7 +447,7 @@ function handleClick(event) {
             <span className="block">{post.location}</span>
           </div>
           <div className="text-gray-700 mt-4">
-            <span className="font-bold">Qeyd:</span> <span className="font-semibold">{post?.description}</span>
+            <span className="font-bold">Qeyd:</span> <span className="font-semibold">{post.description}</span>
           </div>
         </div>
 
@@ -458,7 +458,7 @@ function handleClick(event) {
           >
             <button className="bg-green-500 sm:w-[200px]    min-w-[170px] h-[40px]  sm:h-10 rounded-[8px] flex justify-center items-center hover:bg-green-600 text-white">
               <a
-                href={`tel:${post.contact?.phone}`}
+                href={`tel:${post?.contact.phone}`}
                 className="text-white flex gap-2 font-[14px] text-center justify-center items-center"
               >
                 <Phone
@@ -473,7 +473,7 @@ function handleClick(event) {
 
             <button className="bg-blue-500  min-w-[170px] h-[40px] sm:h-10 sm:w-[200px] rounded-[8px] flex justify-center items-center hover:bg-blue-600 text-white">
               <a
-                href={`https://wa.me/${post.contact?.phone}`}
+                href={`https://wa.me/${post?.contact.phone}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white flex gap-2 text-[14px] font-sans text-center justify-center items-center"

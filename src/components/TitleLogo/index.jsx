@@ -3,7 +3,7 @@ import Title_logo from "./logo";
 
 function TitleLogo() {
   return (
-    <div className="title-logo justify-center mt-[-20px]  p-2  flex  items-center   cursor-pointer">
+    <div className="title-logo justify-center mt-[-15px]  p-2  flex  items-center   cursor-pointer">
       <NavLink className={`w-[80px] h-[50px] flex `} to={"/"}>
         <div className=" flex justify-center items-center gap-1">
           <Title_logo/>

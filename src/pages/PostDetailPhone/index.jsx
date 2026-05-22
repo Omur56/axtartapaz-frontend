@@ -231,10 +231,10 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
             <p>
               <span className="font-semibold">Telefon:</span>{" "}
               <a
-                href={`tel:${post?.contact.Phone}`}
+                href={`tel:${post?.contact.phone}`}
                 className="text-blue-600 font-bold ml-1"
               >
-                {post?.contact.Phone}
+                {post?.contact.phone}
               </a>
             </p>
             <p>
@@ -246,7 +246,7 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
             </p>
           </div>
           <a
-            href={`tel:${post?.contact.Phone}`}
+            href={`tel:${post?.contact.phone}`}
             className="text-white font-bold ml-1"
           >
             {" "}

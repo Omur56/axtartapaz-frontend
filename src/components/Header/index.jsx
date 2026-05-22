@@ -58,17 +58,22 @@ function Header() {
 
   
   return (
-    <header ref={headerRef}  className="header h-[60px] fixed  p-2   z-50  top-0 backdrop-blur-md bg-orange-500/80 text-gray-800 shadow-none  transition-all duration-300 mb-6 w-full  " >  
-      <div className="flex justify-between   items-center py-4 mx-auto my-auto max-w-[1200px]">
+    <header ref={headerRef}  className="header h-[50px] fixed  p-2 bg-[#ffffff]  z-50  top-0 backdrop-blur-md  text-gray-800 shadow-none  transition-all duration-300 mb-6 w-full  " >  
+      <div className="flex justify-between mx-auto my-auto  items-center  max-w-[1200px]">
         
       
        
-       <div className="flex w-[100px] h-[20px]  gap-16  justify-items-center">
-         <TitleLogo  />
-        <DownNavbar />
+       <div className="flex w-[100px] gap-[20px] sm:gap-[60px] h-[20px] justify-items-center   ">
+        <TitleLogo  />
+        
+<DownNavbar />
+       
+         
+         
+       
       </div>
        
-        <div className="flex gap-3 mt-[-10px]">
+        <div className="flex gap-3 ">
            <Link
                   
                   rel="noopener noreferrer"
