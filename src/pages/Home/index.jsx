@@ -68,7 +68,7 @@ const typeLabels = {
 
 useEffect(() => {
   axios.get(`${API}/api/ads/sticky`).then((res) => {
-    console.log("STICKY ADS:", res.data);
+    // console.log("STICKY ADS:", res.data);
 
     const safeData = Array.isArray(res.data) ? res.data : [];
 
@@ -82,7 +82,7 @@ useEffect(() => {
   const fetchAds = async () => {
     try {
       const res = await axios.get(`${API}/api/ads`);
-      console.log("ADS:", res.data);
+      // console.log("ADS:", res.data);
     } catch (err) {
       console.log("ADS ERROR:", err.message);
     }
@@ -156,7 +156,16 @@ const allAds = Object.entries(data)
 // axios.get(`${API}/api/count/accessories`).then(res => console.log(res.data.count));
 // }, []);
 
+useEffect(() => {
+  const timer = setTimeout(() => {
+    axios.get(`${API}/api/ads/sticky`)
+      .then((res) => {
+        setStickyAds(Array.isArray(res.data) ? res.data : []);
+      });
+  }, 1500);
 
+  return () => clearTimeout(timer);
+}, []);
 
 const items = [
   { key: "car", label: "Avtomobil" },
@@ -169,13 +178,29 @@ const items = [
   { key: "realEstate", label: "Evlər" },
 ];
 
+
+
+
 useEffect(() => {
   const fetchCounts = async () => {
     try {
+      const cached = sessionStorage.getItem("counts");
+
+      if (cached) {
+        setCounts(JSON.parse(cached));
+        return;
+      }
+
       const res = await axios.get(`${API}/api/countSay/counts`);
+
       setCounts(res.data);
+
+      sessionStorage.setItem(
+        "counts",
+        JSON.stringify(res.data)
+      );
     } catch (err) {
-      console.error(err);
+      console.log(err);
     }
   };
 
@@ -195,7 +220,15 @@ useEffect(() => {
         );
       }
     };
-    window.addEventListener("scroll", onScroll);
+    // window.addEventListener("scroll", onScroll);
+    const cached = sessionStorage.getItem("counts");
+
+if (cached) {
+  setCounts(JSON.parse(cached));
+  return;
+}
+
+
     return () => window.removeEventListener("scroll", onScroll);
   }, [allAds.length]);
 
@@ -214,42 +247,65 @@ useEffect(() => {
     localStorage.setItem("favorites", JSON.stringify(updated));
   };
 
+
+
   /* SEARCH */
   const handleSearch = async () => {
-    if (!query.trim()) return;
-    setLoadingSearch(true);
-    try {
-      const requests = Object.entries(CATEGORIES).map(async ([key, url]) => {
-        const res = await axios.get(`${API}${url}`);
-        const safeData = Array.isArray(res.data) ? res.data : [];
-        return safeData.map((i) => ({ ...i, source: key }));
-      });
+  //   if (!query.trim()) return;
+  //   setLoadingSearch(true);
+  //   try {
+  //     const requests = Object.entries(CATEGORIES).map(async ([key, url]) => {
+  //       const res = await axios.get(`${API}${url}`);
+  //       const safeData = Array.isArray(res.data) ? res.data : [];
+  //       return safeData.map((i) => ({ ...i, source: key }));
+  //     });
 
-      const responses = await Promise.all(requests);
-      const merged = responses.flat();
+  //     const responses = await Promise.all(requests);
+  //     const merged = responses.flat();
 
-      const q = query.toLowerCase();
-      const filtered = merged.filter((item) =>
-        [
-          item.title,
-          item.brand,
-          item.model,
-          item.category,
-          item.city,
-          item.location,
-          item.description,
-        ]
-          .filter(Boolean)
-          .some((v) => v.toLowerCase().includes(q)),
-      );
+  //     const q = query.toLowerCase();
+  //     const filtered = merged.filter((item) =>
+  //       [
+  //         item.title,
+  //         item.brand,
+  //         item.model,
+  //         item.category,
+  //         item.city,
+  //         item.location,
+  //         item.description,
+  //       ]
+  //         .filter(Boolean)
+  //         .some((v) => v.toLowerCase().includes(q)),
+  //     );
 
-      setResults(filtered);
-    } catch (e) {
-      console.error("Search error:", e);
-    } finally {
-      setLoadingSearch(false);
-    }
-  };
+  //     setResults(filtered);
+  //   } catch (e) {
+  //     console.error("Search error:", e);
+  //   } finally {
+  //     setLoadingSearch(false);
+  //   }
+  // };
+
+
+
+  const q = query.toLowerCase();
+
+  const filtered = allAds.filter((item) =>
+    [
+      item.title,
+      item.brand,
+      item.model,
+      item.category,
+      item.city,
+      item.location,
+      item.description,
+    ]
+      .filter(Boolean)
+      .some((v) => v.toLowerCase().includes(q))
+  );
+
+  setResults(filtered);
+};
 
   /* DATE HELPERS */
   const formatDate = (dateString) => {
@@ -426,14 +482,23 @@ useEffect(() => {
 
       {!loadingSearch && results.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-          {results.map((item) => (
+          {visibleAds.map((item, index) => (
             <Link key={item._id} to={`${item.source}/${item._id}`}>
               <div className="border rounded shadow p-2">
-                <img
+                {/* <img
                   src={item.images?.[0] || "/no-image.jpg"}
                   className="h-[100px] w-full object-cover"
                   alt={item._id}
-                />
+                /> */}
+
+                <img
+  src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
+  className="w-full h-full object-cover"
+  alt={item.title || item.brand || item.model}
+  loading={index < 10 ? "eager" : "lazy"}
+  fetchPriority={index < 10 ? "high" : "auto"}
+  decoding="async"
+/>
                 <p className="font-bold">{item.price} AZN</p>
                 <p className="text-xs">{item.title}</p>
               </div>
