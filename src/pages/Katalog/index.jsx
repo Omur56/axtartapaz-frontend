@@ -113,9 +113,9 @@ const Katalog = ({ className, width, height, marginTop }) => {
                   <div className="absolute top-2 right-2 opacity-50 ">
                     <FontAwesomeIcon icon={faChevronRight} className="text-white" />
                   </div>
-                  <div className="h-[20px] w-full flex flex-col items-center justify-center relative">
+                  <div className="h-full w-full flex flex-col items-center justify-center relative">
                {typeof cat.icon === "string" ? (
-  <img src={cat.icon} alt={cat.label} />
+  <img className="w-full h-full" src={cat.icon} alt={cat.label} />
 ) : (
   <Icon className="w-[50px] h-[50px] text-white" />
 )}

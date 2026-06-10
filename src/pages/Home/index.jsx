@@ -220,14 +220,18 @@ useEffect(() => {
         );
       }
     };
-    // window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll);
     const cached = sessionStorage.getItem("counts");
 
 if (cached) {
   setCounts(JSON.parse(cached));
   return;
 }
+window.addEventListener("scroll", onScroll);
 
+return () => {
+  window.removeEventListener("scroll", onScroll);
+};
 
     return () => window.removeEventListener("scroll", onScroll);
   }, [allAds.length]);
@@ -397,6 +401,16 @@ useEffect(() => {
   // };
 
 
+  const optimizeImage = (url) => {
+  if (!url || !url.includes("cloudinary")) return url;
+
+  return url.replace(
+    "/upload/",
+    "/upload/f_auto,q_auto,w_500/"
+  );
+};
+
+
   const handleUpgrade = async (listingId, type) => {
   try {
     const token = localStorage.getItem("token");
@@ -491,13 +505,36 @@ useEffect(() => {
                   alt={item._id}
                 /> */}
 
-                <img
+                {/* <img
   src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
   className="w-full h-full object-cover"
   alt={item.title || item.brand || item.model}
   loading={index < 10 ? "eager" : "lazy"}
   fetchPriority={index < 10 ? "high" : "auto"}
   decoding="async"
+/> */}
+
+{/* <img
+  src={optimizeImage(
+    item.images?.[item.images.length - 1] || "/no-image.jpg"
+  )}
+  className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+  alt={item.title || item.brand || item.model}
+  loading="lazy"
+  decoding="async"
+/> */}
+
+
+<img
+  src={optimizeImage(
+    item.images?.[item.images.length - 1] || "/no-image.jpg"
+  )}
+  loading={index < 10 ? "eager" : "lazy"}
+  fetchPriority={index < 3 ? "high" : "auto"}
+  decoding="async"
+  className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+  alt={item.title || item.brand || item.model}
+
 />
                 <p className="font-bold">{item.price} AZN</p>
                 <p className="text-xs">{item.title}</p>
@@ -555,7 +592,7 @@ useEffect(() => {
 
                     {/* IMAGE */}
                     <div className="relative sm:w-[229px] w-[178px] h-[129px] sm:h-[170.75px] overflow-hidden rounded-[4px]">
-
+{/* 
   <img
     src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
     className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
@@ -568,7 +605,20 @@ useEffect(() => {
       item.id ||
       item.ban_type
     }
-  />
+  /> */}
+
+  <img
+  src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
+  className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+  alt={
+    item.title ||
+    item.brand ||
+    item.model ||
+    item.category
+  }
+  loading="lazy"
+  decoding="async"
+/>
 
   {/* VIP / PREMIUM badge */}
   {item.priorityType && item.priorityType !== "free" && (
