@@ -1,18 +1,23 @@
 
 // ----------------------- Home.jsx ---------------------------
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense} from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { Heart, RefreshCcw, Percent, MapPin } from "lucide-react";
-import Katalog from "../Katalog";
-import BottomMenu from "../../components/MobileMenu";
+// import Katalog from "../Katalog";
+// import BottomMenu from "../../components/MobileMenu";
 import { Helmet } from "react-helmet-async";
 import '../../styles/home_style.css'
 import { useTheme } from "../../components/Main/ThemeContext";
 import Swal from "sweetalert2";
-
+import { Gem } from "lucide-react";
+import { Crown } from "lucide-react";
+const Katalog = lazy(() =>import("../Katalog"));
+const BottomMenu = lazy(() =>
+  import("../../components/MobileMenu")
+);
 
 const API = process.env.REACT_APP_API_URL || "https://my-backend-wj5g.onrender.com";
 
@@ -66,30 +71,30 @@ const typeLabels = {
 };
 
 
-useEffect(() => {
-  axios.get(`${API}/api/ads/sticky`).then((res) => {
-    // console.log("STICKY ADS:", res.data);
+// useEffect(() => {
+//   axios.get(`${API}/api/ads/sticky`).then((res) => {
+//     // console.log("STICKY ADS:", res.data);
 
-    const safeData = Array.isArray(res.data) ? res.data : [];
+//     const safeData = Array.isArray(res.data) ? res.data : [];
 
-    setStickyAds(safeData);
-  });
-}, []);
+//     setStickyAds(safeData);
+//   });
+// }, []);
 
 // axios.get(`${API}/api/ads`);
 
-useEffect(() => {
-  const fetchAds = async () => {
-    try {
-      const res = await axios.get(`${API}/api/ads`);
-      // console.log("ADS:", res.data);
-    } catch (err) {
-      console.log("ADS ERROR:", err.message);
-    }
-  };
+// useEffect(() => {
+//   const fetchAds = async () => {
+//     try {
+//       const res = await axios.get(`${API}/api/ads`);
+//       // console.log("ADS:", res.data);
+//     } catch (err) {
+//       console.log("ADS ERROR:", err.message);
+//     }
+//   };
 
-  fetchAds();
-}, []);
+//   fetchAds();
+// }, []);
   /* FETCH ALL DATA */
   useEffect(() => {
     const fetchAll = async () => {
@@ -209,32 +214,54 @@ useEffect(() => {
 // --------
 
   /* INFINITE SCROLL */
-  useEffect(() => {
-    const onScroll = () => {
-      if (
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 300
-      ) {
-        setVisibleCount((prev) =>
-          prev >= allAds.length ? prev : prev + ITEMS_PER_LOAD,
-        );
-      }
-    };
-    window.addEventListener("scroll", onScroll);
-    const cached = sessionStorage.getItem("counts");
+//   useEffect(() => {
+//     const onScroll = () => {
+//       if (
+//         window.innerHeight + window.scrollY >=
+//         document.documentElement.scrollHeight - 300
+//       ) {
+//         setVisibleCount((prev) =>
+//           prev >= allAds.length ? prev : prev + ITEMS_PER_LOAD,
+//         );
+//       }
+//     };
+//     // window.addEventListener("scroll", onScroll);
+//     // const cached = sessionStorage.getItem("counts");
 
-if (cached) {
-  setCounts(JSON.parse(cached));
-  return;
-}
-window.addEventListener("scroll", onScroll);
+// // if (cached) {
+// //   setCounts(JSON.parse(cached));
+// //   return;
+// // }
+// window.addEventListener("scroll", onScroll);
 
-return () => {
-  window.removeEventListener("scroll", onScroll);
-};
+// return () => {
+//   window.removeEventListener("scroll", onScroll);
+// };
 
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [allAds.length]);
+//     return () => window.removeEventListener("scroll", onScroll);
+//   }, [allAds.length]);
+
+
+useEffect(() => {
+  const onScroll = () => {
+    if (
+      window.innerHeight + window.scrollY >=
+      document.documentElement.scrollHeight - 300
+    ) {
+      setVisibleCount((prev) =>
+        prev >= allAds.length
+          ? prev
+          : prev + ITEMS_PER_LOAD
+      );
+    }
+  };
+
+  window.addEventListener("scroll", onScroll);
+
+  return () =>
+    window.removeEventListener("scroll", onScroll);
+}, [allAds.length]);
+
 
   /* FAVORITES */
   useEffect(() => {
@@ -401,12 +428,12 @@ useEffect(() => {
   // };
 
 
-  const optimizeImage = (url) => {
+ const optimizeImage = (url) => {
   if (!url || !url.includes("cloudinary")) return url;
 
   return url.replace(
     "/upload/",
-    "/upload/f_auto,q_auto,w_500/"
+    "/upload/f_auto,q_auto,w_400,h_250,c_fill/"
   );
 };
 
@@ -424,6 +451,7 @@ useEffect(() => {
     window.location.href = data.url;
   } catch (err) {
     console.log(err.response?.data || err.message);
+    const Swal = (await import("sweetalert2")).default;
 
     // 🔥 BURADA MODAL ÇIXIR
     Swal.fire({
@@ -526,7 +554,7 @@ useEffect(() => {
 
 
 <img
-  src={optimizeImage(
+ src={optimizeImage(
     item.images?.[item.images.length - 1] || "/no-image.jpg"
   )}
   loading={index < 10 ? "eager" : "lazy"}
@@ -544,9 +572,11 @@ useEffect(() => {
         </div>
       )}
 
-      <Katalog className="mt-1" width="100%" height="60px" marginTop="10px" />
+      {/* <Katalog className="mt-1" width="100%" height="60px" marginTop="10px" /> */}
 
- 
+ <Suspense fallback={null}>
+  <Katalog />
+</Suspense>
 
 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-52">
   {items.map((item) => (
@@ -574,7 +604,7 @@ useEffect(() => {
                 key={item._id}
                 className="relative "
               >
-                <Link  to={`/${item.__type}/${item._id}`} target="_top">
+                <Link  to={`/${item.__type}/${item._id}`}>
                   <div className="z-1 shadow-sm bg-white border-[1px]  border-shadow sm:w-[229px] sm:h-[268.75px] rounded-[8px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
                     {/* ICONS */}
                     <div className="absolute top-2 left-2 flex gap-2 z-10">
@@ -632,11 +662,13 @@ useEffect(() => {
     >
       {/* Icon */}
       {item.priorityType.toLowerCase() === "vip" && (
-        <span className="material-icons text-[16px]">diamond</span>
+        // <span className="material-icons text-[16px]">diamond</span>
+        <Gem size={16} />
       )}
 
       {item.priorityType.toLowerCase() === "premium" && (
-        <span className="material-icons text-[16px]">workspace_premium</span>
+        // <span className="material-icons text-[16px]">workspace_premium</span>
+        <Crown size={16} />
       )}
 
       {/* Text */}
@@ -735,7 +767,11 @@ useEffect(() => {
       </a>
     ))}
 </div>
-      <BottomMenu />
+      {/* <BottomMenu /> */}
+
+      <Suspense fallback={null}>
+  <BottomMenu />
+</Suspense>
     </div>
     
   );
