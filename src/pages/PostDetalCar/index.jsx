@@ -38,6 +38,9 @@ export default function PostDetailCar() {
     axios
       .get(`${BASE_URL}/api/car/${id}`)
       .then((res) => {
+        console.log("POST:", res.data);
+    console.log("CONTACT:", res.data.contact);
+   console.log("phone", res.data.contact?.phone);
         setPost(res.data);
         setLoading(false);
       })
@@ -394,6 +397,7 @@ function handleClick(event) {
                   />
                   <span className="font-semibold justify-center items-center"></span>{" "}
                   {post.contact.name}
+                 
                 </div>
 
                 <div
@@ -423,7 +427,8 @@ function handleClick(event) {
 
                   <button className="bg-blue-500  w-full h-8  rounded-[8px] flex justify-center items-center hover:bg-blue-600 text-white">
                     <a
-                      href={`https://wa.me/${post.contact.phone}`}
+                      href={`https://wa.me/${post.contact?.phone}`}
+                      
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-white flex gap-2 text-[14px] font-sans text-center justify-center items-center"
@@ -444,6 +449,7 @@ function handleClick(event) {
           <div className="w-full hidden sm:block h-[1px] border rounded-1 mt-24 bg-black mb-2"></div>
           <div className="text-gray-700 mt-4 gap-5">
             <span className="font-bold">{post.contact?.name}</span>
+             <p className="text-black">{post.contact?.phone}</p>
             <span className="block">{post.location}</span>
           </div>
           <div className="text-gray-700 mt-4">
@@ -458,7 +464,7 @@ function handleClick(event) {
           >
             <button className="bg-green-500 sm:w-[200px]    min-w-[170px] h-[40px]  sm:h-10 rounded-[8px] flex justify-center items-center hover:bg-green-600 text-white">
               <a
-                href={`tel:${post?.contact.phone}`}
+                href={`tel:${post.contact?.phone}`}
                 className="text-white flex gap-2 font-[14px] text-center justify-center items-center"
               >
                 <Phone
@@ -473,7 +479,7 @@ function handleClick(event) {
 
             <button className="bg-blue-500  min-w-[170px] h-[40px] sm:h-10 sm:w-[200px] rounded-[8px] flex justify-center items-center hover:bg-blue-600 text-white">
               <a
-                href={`https://wa.me/${post?.contact.phone}`}
+                href={`https://wa.me/${post.contact?.phone}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white flex gap-2 text-[14px] font-sans text-center justify-center items-center"
@@ -513,6 +519,7 @@ function handleClick(event) {
               <span className="text-xs sm:text-xl top-2  h-2 font-sans mb-4 capitalize justify-center items-center text-white">
                 {post.price} AZN
               </span>
+              
             </div>
             <a
               href={showPhone ? `tel:${phone}` : "#"}
