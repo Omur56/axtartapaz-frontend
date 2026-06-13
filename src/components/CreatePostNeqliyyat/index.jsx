@@ -645,95 +645,6 @@ setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-//   const handleSubmit = async (e) => {
-//   e.preventDefault();
-
-//   const token = localStorage.getItem("token");
-//   const userId = localStorage.getItem("userId");
-
-//   if (!token || !userId) {
-//     Swal.fire({
-//       icon: "warning",
-//       title: "Giriş tələb olunur",
-//       text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-//     });
-//     return;
-//   }
-
-//   const formData = new FormData();
-
-//   // images
-//   form.images.forEach((file) => formData.append("images", file));
-
-//   if (mainImageIndex !== null) {
-//     formData.append("mainImageIndex", mainImageIndex);
-//   }
-
-//   // 🔴 FIX: price clean (ƏSAS DÜZƏLİŞ BURADADIR)
-//   const cleanedPrice = Number(String(form.price).replace(/\s/g, ""));
-
-//   // digər form field-lər
-//   Object.entries(form).forEach(([key, value]) => {
-//     if (key === "images" || key === "data" || key === "price") return;
-
-//     if (key === "contact") {
-//       Object.entries(value).forEach(([k, v]) => {
-//         formData.set(`contact.${k}`, String(v || ""));
-//       });
-//     } else {
-//       formData.set(key, String(value || ""));
-//     }
-//   });
-
-//   // 🔴 price-i ayrıca düzgün göndər
-//   formData.set("price", isNaN(cleanedPrice) ? 0 : cleanedPrice);
-
-//   formData.append(
-//     "data",
-//     form.data ? form.data.toISOString() : new Date().toISOString()
-//   );
-
-//   formData.append("userId", userId);
-
-//   try {
-//     await axios.post(
-//       `${process.env.REACT_APP_API_URL}/api/car`,
-//       formData,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           "Content-Type": "multipart/form-data",
-//         },
-//       }
-//     );
-
-//     resetForm();
-//     fetchCars();
-
-//     Swal.fire({
-//       icon: "success",
-//       title: "Elanınız uğurla yerləşdirildi!",
-//       confirmButtonColor: "#3085d6",
-//     }).then(() => {
-//       confetti({
-//         particleCount: 100,
-//         spread: 70,
-//         origin: { y: 0.6 },
-//       });
-//     });
-//   } catch (err) {
-//     console.error("Elan yüklənmədi:", err.response?.data || err.message);
-
-//     Swal.fire({
-//       icon: "error",
-//       title: "Xəta baş verdi",
-//       text: err.response?.data?.error || "Server xətası",
-//       confirmButtonColor: "#d33",
-//     });
-//   }
-// };
-
-
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -762,11 +673,11 @@ const handleSubmit = async (e) => {
     formData.append("mainImageIndex", mainImageIndex);
   }
 
-  // price clean
   const cleanedPrice = Number(String(form.price).replace(/\s/g, ""));
 
-  // MAIN FIX 🔥
+  // ❌ contact burada YOXDUR
   const carObject = {
+    title: form.title,
     brand: form.brand,
     model: form.model,
     ban_type: form.ban_type,
@@ -777,19 +688,23 @@ const handleSubmit = async (e) => {
     km: form.km,
     color: form.color,
     modification: form.modification,
+
     barter: options.barter ? "Bəli" : "Xeyr",
     credit: options.credit ? "Bəli" : "Xeyr",
-    salon: options.salon ? "Bəli" : "Xeyr",
-    type_magasine: form.type_magasine, // 🔥 FIXED
+    salon: options.salon ? "Xeyr" : "Xeyr",
+    type_magasine: form.type_magasine,
   };
 
   formData.set("car", JSON.stringify(carObject));
 
-  // other fields
+  // 🔥 CONTACT FIX (BURASI KRİTİK)
+  formData.set("contact.name", form.contact.name || "");
+  formData.set("contact.email", form.contact.email || "");
+  formData.set("contact.phone", form.contact.phone || "");
+
   formData.set("price", isNaN(cleanedPrice) ? 0 : cleanedPrice);
   formData.set("location", form.location || "");
   formData.set("description", form.description || "");
-  // formData.set("userId", userId);
 
   try {
     await axios.post(
@@ -816,7 +731,6 @@ const handleSubmit = async (e) => {
       icon: "success",
       title: "Elan uğurla yerləşdirildi!",
     });
-
   } catch (err) {
     console.error(err);
 
@@ -824,15 +738,11 @@ const handleSubmit = async (e) => {
       icon: "error",
       title: "Xəta baş verdi",
     });
-
   } finally {
     setIsUploading(false);
     setUploadProgress(0);
   }
 };
-
-
-
 
   
 

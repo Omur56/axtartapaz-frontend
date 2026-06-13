@@ -18,6 +18,7 @@ export default function PostDetailHousehold() {
  const [progress, setProgress] = React.useState(0);
   const [buffer, setBuffer] = React.useState(10);
 
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
 
   useEffect(() => {
     axios
@@ -127,6 +128,24 @@ if (notFound || !post) return <div className="h-screen w-full flex flex-col just
   const nextImage = () =>
     setZoomIndex((prev) => (prev === imageArray.length - 1 ? 0 : prev + 1));
 
+
+  const handleUpgrade = async (listingId, type) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const { data } = await axios.post(
+      `${BASE_URL}/api/payments/create-checkout/${listingId}`,
+      { type },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    window.location.href = data.url;
+  } catch (err) {
+    console.log(err.response?.data || err.message);
+  }
+};
+
+ 
   return (
     <div className="max-w-6xl mx-auto p-4">
       
@@ -187,6 +206,23 @@ if (notFound || !post) return <div className="h-screen w-full flex flex-col just
             <p className="text-black text-sm mt-2"><span className="font-bold text-black font-xs">Məhsul tipi: </span>{post.type_of_goods} </p>
             
             <p className="text-black  text-sm mt-2"><span className="font-bold text-black font-xs ">Təsvir: </span> {post.description}</p>
+
+             <div className="flex gap-2 mt-4">
+ 
+  <button
+    onClick={() => handleUpgrade(post._id, "vip")}
+    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+  >
+    <span className="text-blue-500 ">VIP et</span>
+  </button>
+
+  <button
+    onClick={() => handleUpgrade(post._id, "premium")}
+    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+  >
+    <span className="text-blue-500 ">Premium et</span>
+  </button>
+</div>
           </div>
 
           <div className="flex items-center justify-between mt-6 text-sm text-gray-500">
@@ -230,6 +266,23 @@ if (notFound || !post) return <div className="h-screen w-full flex flex-col just
               Zəng et
             </button>
           </a>
+
+            <div className="flex gap-2 mt-4">
+ 
+  <button
+    onClick={() => handleUpgrade(post._id, "vip")}
+    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+  >
+    <span className="text-blue-500 ">VIP et</span>
+  </button>
+
+  <button
+    onClick={() => handleUpgrade(post._id, "premium")}
+    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+  >
+    <span className="text-blue-500 ">Premium et</span>
+  </button>
+</div>
         </div>
       </div>
 

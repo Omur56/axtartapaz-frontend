@@ -19,7 +19,7 @@ export default function PostDetail() {
 const [progress, setProgress] = React.useState(0);
   const [buffer, setBuffer] = React.useState(10);
 
-
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/api/homeGarden/`)
@@ -135,6 +135,23 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
   const nextImage = () =>
     setZoomIndex((prev) => (prev === imageArray.length - 1 ? 0 : prev + 1));
 
+  const handleUpgrade = async (listingId, type) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const { data } = await axios.post(
+      `${BASE_URL}/api/payments/create-checkout/${listingId}`,
+      { type },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    window.location.href = data.url;
+  } catch (err) {
+    console.log(err.response?.data || err.message);
+  }
+};
+
+
   return (
     <div className="post-page max-w-6xl mx-auto p-4">
       <Link to="/Katalog/Ev_veBag">
@@ -232,6 +249,23 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
               Zəng et
             </button>
           </a>
+
+                <div className="flex gap-2 mt-4">
+ 
+  <button
+    onClick={() => handleUpgrade(post._id, "vip")}
+    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+  >
+    <span className="text-blue-500 ">VIP et</span>
+  </button>
+
+  <button
+    onClick={() => handleUpgrade(post._id, "premium")}
+    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+  >
+    <span className="text-blue-500 ">Premium et</span>
+  </button>
+</div>
         </div>
       </div>
 

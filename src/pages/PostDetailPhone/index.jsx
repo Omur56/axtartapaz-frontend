@@ -132,6 +132,26 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
   const nextImage = () =>
     setZoomIndex((prev) => (prev === imageArray.length - 1 ? 0 : prev + 1));
 
+
+
+  const handleUpgrade = async (listingId, type) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const { data } = await axios.post(
+      `${BASE_URL}/api/payments/create-checkout/${listingId}`,
+      { type },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    window.location.href = data.url;
+  } catch (err) {
+    console.log(err.response?.data || err.message);
+  }
+};
+
+
+
   return (
     <div className="max-w-6xl mx-auto p-4">
       <Link to="/Katalog/Telefonlar">
@@ -212,7 +232,7 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
               <span className="font-bold">Qeyd:</span> {post?.description}
             </li>
           </ul>
-
+  
           <div className="flex justify-between text-sm text-gray-500 mt-4">
             <p>Elanın nömrəsi: {post.id}</p>
             <p>
@@ -254,7 +274,25 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
               Zəng et
             </button>
           </a>
+          <div className="flex gap-2 mt-4">
+ 
+  <button
+    onClick={() => handleUpgrade(post._id, "vip")}
+    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+  >
+    <span className="text-blue-500 ">VIP et</span>
+  </button>
+
+  <button
+    onClick={() => handleUpgrade(post._id, "premium")}
+    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+  >
+    <span className="text-blue-500 ">Premium et</span>
+  </button>
+</div>
         </div>
+
+        
       </div>
 
       <h2 className="text-[22px] font-bold text-gray-700 mt-10 mb-4">

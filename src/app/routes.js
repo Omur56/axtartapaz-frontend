@@ -204,7 +204,7 @@ const router = createBrowserRouter([
         Component: PostDetailAcsesuar,
       },
       {
-        path: "/ads/electronika/:id",
+        path: "/ads/electronics/:id",
         Component: PostDetailElectronika,
       },
       {
@@ -233,7 +233,7 @@ const router = createBrowserRouter([
   ],
 },
 {
-  path: "/electronika/:id",
+  path: "/electronics/:id",
   Component: PostDetailElectronika,
 },
 {
@@ -270,7 +270,7 @@ const router = createBrowserRouter([
         Component: PostDetalCar,
       },
       {
-        path: "/PostDetailElectronika/:id",
+        path: "/electronics/:id",
         Component: PostDetailElectronika,
       },
       {

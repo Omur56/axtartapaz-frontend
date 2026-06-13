@@ -40,6 +40,7 @@ const CATEGORIES = {
   clothing: "/api/Clothing",
 };
 
+
 const Home = () => {
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -52,6 +53,91 @@ const Home = () => {
 const [counts, setCounts] = useState({});
 const [stickyAds, setStickyAds] = useState([]);
   const currentUserId = localStorage.getItem("userId");
+
+const [filters1, setFilters1] = useState({
+  category: "all",
+  priceMin: "",
+  priceMax: "",
+  city: "",
+  type: "all",
+
+  // CAR
+  brand: "",
+  model: "",
+  yearMin: "",
+  yearMax: "",
+  color: "",
+  fuel: "",
+  motor: "",
+  credit: false,
+  barter: false,
+});
+
+
+  const allAds1 = Object.entries(data).flatMap(([type, items]) =>
+  (Array.isArray(items) ? items : []).map((item) => ({
+    ...item,
+    __type: type,
+  }))
+);
+const filteredAds = allAds1.filter((item) => {
+  const price = Number(item.price || 0);
+
+  // CATEGORY
+  if (filters1.category !== "all" && item.__type !== filters1.category) {
+    return false;
+  }
+
+  // PRICE
+  if (filters1.priceMin && price < Number(filters1.priceMin)) return false;
+  if (filters1.priceMax && price > Number(filters1.priceMax)) return false;
+
+  // CITY
+  if (
+    filters1.city &&
+    !item.location?.toLowerCase().includes(filters1.city.toLowerCase())
+  ) {
+    return false;
+  }
+
+  // TYPE
+  if (filters1.type !== "all") {
+    const type = (item.priorityType || "free").toLowerCase();
+    if (type !== filters1.type) return false;
+  }
+
+  // 🚗 CAR ONLY FILTERS
+  if (item.__type === "car") {
+    if (
+      filters1.brand &&
+      !item.brand?.toLowerCase().includes(filters1.brand.toLowerCase())
+    )
+      return false;
+
+    if (
+      filters1.model &&
+      !item.model?.toLowerCase().includes(filters1.model.toLowerCase())
+    )
+      return false;
+
+    if (filters1.yearMin && item.year < Number(filters1.yearMin)) return false;
+    if (filters1.yearMax && item.year > Number(filters1.yearMax)) return false;
+
+    if (filters1.color && item.color !== filters1.color) return false;
+
+    if (filters1.motor && !item.motor?.includes(filters1.motor)) return false;
+
+    if (filters1.fuel && item.fuel !== filters1.fuel) return false;
+
+    if (filters1.credit && !item.car?.credit) return false;
+
+    if (filters1.barter && !item.car?.barter) return false;
+  }
+
+  return true;
+});
+
+
 
    const models = [
         "accessory",
@@ -506,15 +592,135 @@ useEffect(() => {
         />
         <link rel="canonical" href="https://proelan.az/" />
       </Helmet>
+<div className="bg-white p-4 rounded-xl shadow mb-4">
 
+  <div className="flex gap-2 mb-3">
+    <input
+      value={query}
+      onChange={(e) => setQuery(e.target.value)}
+      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+      placeholder="Elan axtar..."
+      className="flex-1 border rounded-lg p-2"
+    />
+
+    <button
+      onClick={handleSearch}
+      className="bg-blue-600 text-white px-4 rounded-lg"
+    >
+      Axtar
+    </button>
+ 
+<button
+  onClick={() => {
+    setQuery("");
+
+    setFilters1({
+      category: "all",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      type: "all",
+      brand: "",
+      model: "",
+      yearMin: "",
+      yearMax: "",
+      color: "",
+      fuel: "",
+      motor: "",
+      credit: false,
+      barter: false,
+    });
+
+    setResults([]);
+  }}
+  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+>
+  Filtrləri Sıfırla
+</button>
+
+  </div>
+
+  <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+
+    <select
+      className="border p-2 rounded"
+      value={filters1.category}
+      onChange={(e) =>
+        setFilters1({
+          ...filters1,
+          category: e.target.value,
+        })
+      }
+    >
+      <option value="all">Bütün kateqoriyalar</option>
+      <option value="car">Avtomobil</option>
+      <option value="electronics">Elektronika</option>
+      <option value="phone">Telefon</option>
+      <option value="realEstate">Əmlak</option>
+      <option value="clothing">Geyim</option>
+    </select>
+
+    <input
+      type="number"
+      placeholder="Min qiymət"
+      className="border p-2 rounded"
+      onChange={(e) =>
+        setFilters1({
+          ...filters1,
+          priceMin: e.target.value,
+        })
+      }
+    />
+
+    <input
+      type="number"
+      placeholder="Max qiymət"
+      className="border p-2 rounded"
+      onChange={(e) =>
+        setFilters1({
+          ...filters1,
+          priceMax: e.target.value,
+        })
+      }
+    />
+
+    <input
+      placeholder="Şəhər"
+      className="border p-2 rounded"
+      onChange={(e) =>
+        setFilters1({
+          ...filters1,
+          city: e.target.value,
+        })
+      }
+    />
+
+    <select
+      className="border p-2 rounded"
+      value={filters1.type}
+      onChange={(e) =>
+        setFilters1({
+          ...filters1,
+          type: e.target.value,
+        })
+      }
+    >
+      <option value="all">Bütün elanlar</option>
+      <option value="vip">VIP</option>
+      <option value="premium">Premium</option>
+      <option value="free">Adi</option>
+    </select>
+
+  </div>
+</div>
       {/* SEARCH */}
-      <input
+      {/* <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
         placeholder="Axtar..."
         className="w-full border p-2 rounded mb-4"
-      />
+      /> */}
 
       {loadingSearch && (
         <Typography align="center">
@@ -574,11 +780,13 @@ useEffect(() => {
 
       {/* <Katalog className="mt-1" width="100%" height="60px" marginTop="10px" /> */}
 
- <Suspense fallback={null}>
-  <Katalog />
+<Suspense fallback={null}>
+  <div className="w-full max-w-[1200px] h-[250px] mx-auto mt-10">
+    <Katalog />
+  </div>
 </Suspense>
 
-<div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-52">
+<div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-16">
   {items.map((item) => (
     <div
       key={item.key}
@@ -599,7 +807,7 @@ useEffect(() => {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-[120px] sm:mt-[20px] justify-items-center ">
         {isLoading
           ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
-          : visibleAds.map((item) => (
+          : filteredAds.slice(0, visibleCount).map((item) => (
               <div
                 key={item._id}
                 className="relative "
@@ -656,8 +864,8 @@ useEffect(() => {
       className={`z-20 px-2 py-1 text-xs rounded absolute bottom-2 right-2 flex items-center gap-1
       ${
         item.priorityType.toLowerCase() === "premium"
-          ? "bg-yellow-400 text-black shadow-md"
-          : "bg-blue-600 text-white"
+          ? "bg-white text-red-500 shadow-md"
+          : "bg-white text-blue-600"
       }`}
     >
       {/* Icon */}
@@ -672,9 +880,9 @@ useEffect(() => {
       )}
 
       {/* Text */}
-      <span className="capitalize">
+      {/* <span className="capitalize">
         {item.priorityType}
-      </span>
+      </span> */}
     </span>
   )}
 
@@ -720,7 +928,7 @@ useEffect(() => {
                 </Link>
 
                 {/* UPGRADE BUTTONS */}
-                <div className="flex justify-between top-1 items-center mt-2">
+                {/* <div className="flex justify-between top-1 items-center mt-2">
                   <button
                     className="border-[1px] border-gray-300 min-w-[10px] max-w-[100px] text-blue-500 hover:border-blue-500 ease-in-out transition-transform duration-300  py-1 px-3 rounded"
                     onClick={() => handleUpgrade(item._id, "vip")}
@@ -733,7 +941,7 @@ useEffect(() => {
                   >
                     Premium Et
                   </button>
-                </div>
+                </div> */}
 
                 {/* FAVORITE */}
                 <button

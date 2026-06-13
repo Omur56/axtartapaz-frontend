@@ -30,6 +30,8 @@ export default function CreateelectronicsPost() {
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
   const [editingId, setEditingId] = useState(null);
+const [item, setItem] = useState(null);
+
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -122,6 +124,18 @@ export default function CreateelectronicsPost() {
     setEditingId(null);
   };
 
+  
+
+useEffect(() => {
+  axios
+    .get(`${process.env.REACT_APP_API_URL}/api/electronics/${id}`)
+    .then((res) => {
+      setItem(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}, [id]);
   // Silmə funksiyası
   const handleDelete = async (id) => {
     try {
@@ -583,7 +597,7 @@ const handleOpenForm = () => {
                 target="_top"
             rel="noopener noreferrer"
                   key={item._id || item.id}
-                  to={`/PostDetailelectronics/${item._id}`}
+                  to={`/electronics/${item._id}`}
                 >
                   <div className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300">
                     <div className="flex gap-2 rounded-t-sm">

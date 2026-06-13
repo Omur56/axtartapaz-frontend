@@ -171,6 +171,24 @@ function handleClick(event) {
 }
 
 
+
+const handleUpgrade = async (listingId, type) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const { data } = await axios.post(
+      `${BASE_URL}/api/payments/create-checkout/${listingId}`,
+      { type },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    window.location.href = data.url;
+  } catch (err) {
+    console.log(err.response?.data || err.message);
+  }
+};
+
+
   return (
     <div className="max-w-6xl min-h-screen mx-auto ">
 
@@ -265,6 +283,7 @@ function handleClick(event) {
 
           <p className="text-3xl font-bold text-black mt-4 p-2">{post.price} AZN</p>
 
+
           <div className="border-t pt-4 p-2">
             <ul className="text-sm text-gray-700 space-y-1 mt-4 justify-between grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2">
              <li>
@@ -317,6 +336,8 @@ function handleClick(event) {
               </li>
 
             </ul>
+
+    
           </div>
 
           <div className="flex justify-between text-sm text-gray-500 mt-4 p-2">
@@ -449,12 +470,30 @@ function handleClick(event) {
           <div className="w-full hidden sm:block h-[1px] border rounded-1 mt-24 bg-black mb-2"></div>
           <div className="text-gray-700 mt-4 gap-5">
             <span className="font-bold">{post.contact?.name}</span>
-             <p className="text-black">{post.contact?.phone}</p>
+             
             <span className="block">{post.location}</span>
           </div>
           <div className="text-gray-700 mt-4">
             <span className="font-bold">Qeyd:</span> <span className="font-semibold">{post.description}</span>
           </div>
+
+          
+                   <div className="flex gap-2 mt-4">
+ 
+  <button
+    onClick={() => handleUpgrade(post._id, "vip")}
+    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+  >
+    <span className="text-blue-500 ">VIP et</span>
+  </button>
+
+  <button
+    onClick={() => handleUpgrade(post._id, "premium")}
+    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+  >
+    <span className="text-blue-500 ">Premium et</span>
+  </button>
+</div>
         </div>
 
         <div className="w-full flex justify-center items-center">

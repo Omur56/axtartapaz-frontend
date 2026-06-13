@@ -59,6 +59,23 @@ export default function PostDetailelectronics() {
       </Box>
     );
 
+    const handleUpgrade = async (listingId, type) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const { data } = await axios.post(
+      `${BASE_URL}/api/payments/create-checkout/${listingId}`,
+      { type },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    window.location.href = data.url;
+  } catch (err) {
+    console.log(err.response?.data || err.message);
+  }
+};
+
+
   return (
     <div className="max-w-6xl min-h-screen mx-auto">
 
@@ -106,6 +123,23 @@ export default function PostDetailelectronics() {
             <div className="border-t mt-3 pt-2">
               <b>Qeyd:</b> {post.description}
             </div>
+
+              <div className="flex gap-2 mt-4">
+ 
+  <button
+    onClick={() => handleUpgrade(post._id, "vip")}
+    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+  >
+    <span className="text-blue-500 ">VIP et</span>
+  </button>
+
+  <button
+    onClick={() => handleUpgrade(post._id, "premium")}
+    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+  >
+    <span className="text-blue-500 ">Premium et</span>
+  </button>
+</div>
           </div>
 
           <div className="flex justify-between text-sm text-gray-500 p-2">
