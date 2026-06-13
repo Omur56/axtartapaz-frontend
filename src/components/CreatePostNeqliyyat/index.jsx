@@ -33,52 +33,10 @@ const [options, setOptions] = useState({
 });
 
 
+const [isUploading, setIsUploading] = useState(false);
+const [uploadProgress, setUploadProgress] = useState(0);
 
 
-  // const [form, setForm] = useState({
-  //   id: Date.now(),
-  //   modification: "",
-  //   color: "",
-  //   type: "",
-  //   city: "",
-  //   category: "",
-  //   brand: "",
-  //   model: "",
-  //   ban_type: "",
-  //   year: "",
-  //   price: "",
-  //   location: "",
-  //   images: [],
-  //   km: "",
-  //   motor: "",
-  //   salon: "",
-  //   default: "",
-  //   sifarisle : "",
-  //   resmi: "",
-  //   magaza: "",
-  //   barter: "",
-  //   transmission: "",
-  //   credit: "",
-  //   engine: "",
-  //   contact: {
-  //     name: "",
-  //     email: "",
-  //     phone: "",
-  //   },
-  //   liked: false,
-  //   favorite: false,
-  //   data: new Date(),
-  // });
-
-  // const [options, setOptions] = useState({
-  //   credit: false,
-  //   barter: false,
-  //   salon: false,
-  //   default: false,
-  //   resmi: false,
-  //   magaza: false,
-  //   sifarisle: false,
-  // });
 
 
   const [form, setForm] = useState({
@@ -553,86 +511,6 @@ const official_store_salon_checked_group = (e) => {
 };
   const [cars, setCars] = useState([]);
 
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-
-//     // Form state yenilənməsi
-//     // setForm((prev) => ({ ...prev, [name]: value }));
-
-   
-// setForm((prev) => ({ ...prev, [name]: value }));
-
-//     // Marka seçiləndə model və şəkil reset
-//     if (name === "brand") {
-//       setForm((prev) => ({
-//         ...prev,
-//         model: "",
-//         year: "",
-//         color: "",
-//         ban_type: "",
-//       }));
-//       setModelImagePreview("");
-//     }
-
-//     // Model və ya İl dəyişəndə şəkil yenilə
-//     if ((name === "model" || name === "year") && form.brand && form.model) {
-//       const selectedCar = carData[form.brand].find(
-//         (item) => item.model === (name === "model" ? value : form.model),
-//       );
-
-//       if (selectedCar) {
-//         const year = name === "year" ? value : form.year;
-//         const yearImage = selectedCar.imagesByYear?.[year];
-//         setModelImagePreview(yearImage || "");
-//       }
-//     }
-
-//     // Qiymət və KM üçün minlik formatlama
-//     if (name === "price" || name === "km") {
-//       let cleanedValue = value.replace(/\D/g, "");
-//       let formatted = cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-//       setForm((prev) => ({ ...prev, [name]: formatted }));
-//     }
-//     // Mobil nömrə formatlama
-//     else if (name === "contact.phone") {
-//       let digits = value.replace(/\D/g, "").slice(3, 12);
-//       if (digits.length > 0) digits = digits.replace(/^(\d{0,2})/, "$1");
-//       if (digits.length > 2)
-//         digits = digits.replace(/^(\d{2})(\d{0,3})/, "$1-$2");
-//       if (digits.length > 5)
-//         digits = digits.replace(/^(\d{2})-(\d{3})(\d{0,2})/, "$1-$2-$3");
-//       if (digits.length > 7)
-//         digits = digits.replace(
-//           /^(\d{2})-(\d{3})-(\d{2})(\d{0,2})/,
-//           "$1-$2-$3-$4",
-//         );
-
-//       let formatted = "+994-" + digits;
-//       setForm((prev) => ({
-//         ...prev,
-//         contact: { ...prev.contact, phone: formatted },
-//       }));
-//     }
-//     // Digər contact inputları
-//     else if (name.startsWith("contact.")) {
-//       const field = name.split(".")[1];
-//       setForm((prev) => ({
-//         ...prev,
-//         contact: { ...prev.contact, [field]: value },
-//       }));
-//     }
-//     // Tarix inputu
-//     else if (name === "data") {
-//       setForm((prev) => ({ ...prev, data: new Date(value) }));
-//     }
-//     // Digər inputlar
-//     else {
-//       setForm((prev) => ({ ...prev, [name]: value }));
-//     }
-//   };
-
-
-
 const handleChange = (e) => {
   const { name, value } = e.target;
 
@@ -767,7 +645,97 @@ setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleSubmit = async (e) => {
+//   const handleSubmit = async (e) => {
+//   e.preventDefault();
+
+//   const token = localStorage.getItem("token");
+//   const userId = localStorage.getItem("userId");
+
+//   if (!token || !userId) {
+//     Swal.fire({
+//       icon: "warning",
+//       title: "Giriş tələb olunur",
+//       text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+//     });
+//     return;
+//   }
+
+//   const formData = new FormData();
+
+//   // images
+//   form.images.forEach((file) => formData.append("images", file));
+
+//   if (mainImageIndex !== null) {
+//     formData.append("mainImageIndex", mainImageIndex);
+//   }
+
+//   // 🔴 FIX: price clean (ƏSAS DÜZƏLİŞ BURADADIR)
+//   const cleanedPrice = Number(String(form.price).replace(/\s/g, ""));
+
+//   // digər form field-lər
+//   Object.entries(form).forEach(([key, value]) => {
+//     if (key === "images" || key === "data" || key === "price") return;
+
+//     if (key === "contact") {
+//       Object.entries(value).forEach(([k, v]) => {
+//         formData.set(`contact.${k}`, String(v || ""));
+//       });
+//     } else {
+//       formData.set(key, String(value || ""));
+//     }
+//   });
+
+//   // 🔴 price-i ayrıca düzgün göndər
+//   formData.set("price", isNaN(cleanedPrice) ? 0 : cleanedPrice);
+
+//   formData.append(
+//     "data",
+//     form.data ? form.data.toISOString() : new Date().toISOString()
+//   );
+
+//   formData.append("userId", userId);
+
+//   try {
+//     await axios.post(
+//       `${process.env.REACT_APP_API_URL}/api/car`,
+//       formData,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "Content-Type": "multipart/form-data",
+//         },
+//       }
+//     );
+
+//     resetForm();
+//     fetchCars();
+
+//     Swal.fire({
+//       icon: "success",
+//       title: "Elanınız uğurla yerləşdirildi!",
+//       confirmButtonColor: "#3085d6",
+//     }).then(() => {
+//       confetti({
+//         particleCount: 100,
+//         spread: 70,
+//         origin: { y: 0.6 },
+//       });
+//     });
+//   } catch (err) {
+//     console.error("Elan yüklənmədi:", err.response?.data || err.message);
+
+//     Swal.fire({
+//       icon: "error",
+//       title: "Xəta baş verdi",
+//       text: err.response?.data?.error || "Server xətası",
+//       confirmButtonColor: "#d33",
+//     });
+//   }
+// };
+
+
+
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   const token = localStorage.getItem("token");
@@ -782,6 +750,9 @@ setForm((prev) => ({ ...prev, [name]: value }));
     return;
   }
 
+  setIsUploading(true);
+  setUploadProgress(0);
+
   const formData = new FormData();
 
   // images
@@ -791,31 +762,34 @@ setForm((prev) => ({ ...prev, [name]: value }));
     formData.append("mainImageIndex", mainImageIndex);
   }
 
-  // 🔴 FIX: price clean (ƏSAS DÜZƏLİŞ BURADADIR)
+  // price clean
   const cleanedPrice = Number(String(form.price).replace(/\s/g, ""));
 
-  // digər form field-lər
-  Object.entries(form).forEach(([key, value]) => {
-    if (key === "images" || key === "data" || key === "price") return;
+  // MAIN FIX 🔥
+  const carObject = {
+    brand: form.brand,
+    model: form.model,
+    ban_type: form.ban_type,
+    year: form.year,
+    engine: form.engine,
+    motor: form.motor,
+    transmission: form.transmission,
+    km: form.km,
+    color: form.color,
+    modification: form.modification,
+    barter: options.barter ? "Bəli" : "Xeyr",
+    credit: options.credit ? "Bəli" : "Xeyr",
+    salon: options.salon ? "Bəli" : "Xeyr",
+    type_magasine: form.type_magasine, // 🔥 FIXED
+  };
 
-    if (key === "contact") {
-      Object.entries(value).forEach(([k, v]) => {
-        formData.set(`contact.${k}`, String(v || ""));
-      });
-    } else {
-      formData.set(key, String(value || ""));
-    }
-  });
+  formData.set("car", JSON.stringify(carObject));
 
-  // 🔴 price-i ayrıca düzgün göndər
+  // other fields
   formData.set("price", isNaN(cleanedPrice) ? 0 : cleanedPrice);
-
-  formData.append(
-    "data",
-    form.data ? form.data.toISOString() : new Date().toISOString()
-  );
-
-  formData.append("userId", userId);
+  formData.set("location", form.location || "");
+  formData.set("description", form.description || "");
+  formData.set("userId", userId);
 
   try {
     await axios.post(
@@ -826,6 +800,12 @@ setForm((prev) => ({ ...prev, [name]: value }));
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
+        onUploadProgress: (progressEvent) => {
+          const percent = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadProgress(percent);
+        },
       }
     );
 
@@ -834,98 +814,27 @@ setForm((prev) => ({ ...prev, [name]: value }));
 
     Swal.fire({
       icon: "success",
-      title: "Elanınız uğurla yerləşdirildi!",
-      confirmButtonColor: "#3085d6",
-    }).then(() => {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
+      title: "Elan uğurla yerləşdirildi!",
     });
+
   } catch (err) {
-    console.error("Elan yüklənmədi:", err.response?.data || err.message);
+    console.error(err);
 
     Swal.fire({
       icon: "error",
       title: "Xəta baş verdi",
-      text: err.response?.data?.error || "Server xətası",
-      confirmButtonColor: "#d33",
     });
+
+  } finally {
+    setIsUploading(false);
+    setUploadProgress(0);
   }
 };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
 
-  //   const token = localStorage.getItem("token");
-  //   const userId = localStorage.getItem("userId");
-  //   if (!token || !userId) {
-  //     Swal.fire({
-  //       icon: "warning",
-  //       title: "Giriş tələb olunur",
-  //       text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-  //     });
 
-  //     return;
-  //   }
 
-  //   const formData = new FormData();
-
-  //   form.images.forEach((file) => formData.append("images", file));
-
-  //   if (mainImageIndex !== null) {
-  //     formData.append("mainImageIndex", mainImageIndex);
-  //   }
-
-  //   Object.entries(form).forEach(([key, value]) => {
-  //     if (key === "images" || key === "data") return;
-
-  //     if (key === "contact") {
-  //       Object.entries(value).forEach(([k, v]) => {
-  //         formData.set(`contact.${k}`, String(v || ""));
-  //       });
-  //     } else {
-  //       formData.set(key, String(value || ""));
-  //     }
-  //   });
-  //   formData.append(
-  //     "data",
-  //     form.data ? form.data.toISOString() : new Date().toISOString(),
-  //   );
-  //   formData.append("userId", userId);
-
-  //   try {
-  //     await axios.post(`${process.env.REACT_APP_API_URL}/api/cars`, formData, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     });
-
-  //     resetForm();
-  //     fetchCars();
-  //     Swal.fire({
-  //       icon: "success",
-  //       title: "Elanınız uğurla yerləşdirildi!",
-  //       confirmButtonColor: "#3085d6",
-  //     }).then(() => {
-  //       confetti({
-  //         particleCount: 100,
-  //         spread: 70,
-  //         origin: { y: 0.6 },
-  //       });
-  //     });
-  //   } catch (err) {
-  //     console.error("Elan yüklənmədi:", err.response?.data || err.message);
-  //     Swal.fire({
-  //       icon: "error",
-  //       title: "Xəta baş verdi",
-  //       text: err.response?.data?.error || "Server xətası",
-  //       confirmButtonColor: "#d33",
-  //     });
-  //   }
-  // };
+  
 
   const resetForm = () => {
     setForm({
@@ -1185,6 +1094,24 @@ setForm((prev) => ({ ...prev, [name]: value }));
                 >
                   <X size={20} />
                 </button>
+
+{isUploading && (
+  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999]">
+    <div className="bg-white p-6 rounded-xl w-[320px] text-center">
+      <p className="font-semibold mb-3">Elan yüklənir...</p>
+
+      <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
+        <div
+          className="h-3 bg-green-500 transition-all duration-200"
+          style={{ width: `${uploadProgress}%` }}
+        />
+      </div>
+
+      <p className="mt-2 text-sm">{uploadProgress}%</p>
+    </div>
+  </div>
+)}
+
 
                 <form
                   onSubmit={handleSubmit}
