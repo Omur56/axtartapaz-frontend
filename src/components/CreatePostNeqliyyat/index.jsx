@@ -789,7 +789,7 @@ const handleSubmit = async (e) => {
   formData.set("price", isNaN(cleanedPrice) ? 0 : cleanedPrice);
   formData.set("location", form.location || "");
   formData.set("description", form.description || "");
-  formData.set("userId", userId);
+  // formData.set("userId", userId);
 
   try {
     await axios.post(
