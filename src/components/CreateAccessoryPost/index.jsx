@@ -90,9 +90,7 @@ export default function CreateAccessoryPost() {
     Object.entries(accessory).forEach(([key, value]) => {
       if (key === "images" || key === "data") return; // artıq əlavə olunub və ya handled olunur
       if (key === "contact") {
-        Object.entries(value).forEach(([k, v]) =>
-          formData.append(`contact.${k}`, v)
-        );
+       formData.append("contact", JSON.stringify(value));
       } else {
         formData.append(key, value);
       }
