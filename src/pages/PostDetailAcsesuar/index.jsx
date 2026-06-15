@@ -23,16 +23,18 @@ const [progress, setProgress] = React.useState(0);
 
     const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
 
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/accessories`)
-      .then((res) => setAccessories(res.data))
-      .catch((err) => console.error("Xəta:", err));
-  }, []);
 
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/accessories/${id}`)
+    useEffect(() => {
+  axios
+    .get(`${process.env.REACT_APP_API_URL}/api/accessory`)
+    .then((res) => setAccessories(res.data))
+    .catch((err) => console.error("Xəta:", err));
+}, []);
+
+
+ useEffect(() => {
+  axios
+    .get(`${process.env.REACT_APP_API_URL}/api/accessory/${id}`)
       .then((res) => {
         setPost(res.data);
         setLoading(false);
