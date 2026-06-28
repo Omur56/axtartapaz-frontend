@@ -6,12 +6,10 @@ import { Link } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { Heart, RefreshCcw, Percent, MapPin } from "lucide-react";
-// import Katalog from "../Katalog";
-// import BottomMenu from "../../components/MobileMenu";
+
 import { Helmet } from "react-helmet-async";
 import '../../styles/home_style.css'
-import { useTheme } from "../../components/Main/ThemeContext";
-import Swal from "sweetalert2";
+
 import { Gem } from "lucide-react";
 import { Crown } from "lucide-react";
 const Katalog = lazy(() =>import("../Katalog"));
@@ -21,7 +19,7 @@ const BottomMenu = lazy(() =>
 
 const API = process.env.REACT_APP_API_URL || "https://my-backend-wj5g.onrender.com";
 
-// const API = process.env.REACT_APP_API_URL;
+
 
 
 
@@ -53,6 +51,11 @@ const Home = () => {
 const [counts, setCounts] = useState({});
 const [stickyAds, setStickyAds] = useState([]);
   const currentUserId = localStorage.getItem("userId");
+
+
+  const [brands, setBrands] = useState([]);
+const [models, setModels] = useState([]);
+const [motors, setMotors] = useState([]);
 
 const [filters1, setFilters1] = useState({
   category: "all",
@@ -139,17 +142,59 @@ const filteredAds = allAds1.filter((item) => {
 
 
 
-   const models = [
-        "accessory",
-        "electronics",
-        "clothing",
-        "homeGarden",
-        "phone",
-        "realEstate",
-        "Household",
-        "car",
-      ];
+  //  const models = [
+  //       "accessory",
+  //       "electronics",
+  //       "clothing",
+  //       "homeGarden",
+  //       "phone",
+  //       "realEstate",
+  //       "Household",
+  //       "car",
+  //     ];
 
+
+// ----axtarış filter
+console.log(`${API}/api/filter/brands`);
+useEffect(() => {
+  axios
+    .get(`${API}/api/filter/brands`)
+    .then((res) => setBrands(res.data));
+}, []);
+
+useEffect(() => {
+  if (!filters1.brand) {
+    setModels([]);
+    return;
+  }
+
+  axios
+    .get(`${API}/api/filter/models`, {
+      params: {
+        brand: filters1.brand,
+      },
+    })
+    .then((res) => setModels(res.data));
+}, [filters1.brand]);
+
+useEffect(() => {
+  if (!filters1.brand || !filters1.model) {
+    setMotors([]);
+    return;
+  }
+
+  axios
+    .get(`${API}/api/filter/motors`, {
+      params: {
+        brand: filters1.brand,
+        model: filters1.model,
+      },
+    })
+    .then((res) => setMotors(res.data));
+}, [filters1.brand, filters1.model]);
+
+
+  
 const typeLabels = {
   magaza: "Salon",
   sifarisle: "Sifarişlə",
@@ -157,30 +202,7 @@ const typeLabels = {
 };
 
 
-// useEffect(() => {
-//   axios.get(`${API}/api/ads/sticky`).then((res) => {
-//     // console.log("STICKY ADS:", res.data);
 
-//     const safeData = Array.isArray(res.data) ? res.data : [];
-
-//     setStickyAds(safeData);
-//   });
-// }, []);
-
-// axios.get(`${API}/api/ads`);
-
-// useEffect(() => {
-//   const fetchAds = async () => {
-//     try {
-//       const res = await axios.get(`${API}/api/ads`);
-//       // console.log("ADS:", res.data);
-//     } catch (err) {
-//       console.log("ADS ERROR:", err.message);
-//     }
-//   };
-
-//   fetchAds();
-// }, []);
   /* FETCH ALL DATA */
   useEffect(() => {
     const fetchAll = async () => {
@@ -235,17 +257,7 @@ const allAds = Object.entries(data)
 
   const visibleAds = allAds.slice(0, visibleCount);
 
-// ------count say --
-// useEffect(() => {
-//   axios.get(`${API}/api/count/cars`).then(res => console.log(res.data.count));
-//   axios.get(`${API}/api/count/electronics`).then(res => console.log(res.data.count));
-//   axios.get(`${API}/api/count/clothing`).then(res => console.log(res.data.count));
-//   axios.get(`${API}/api/count/realEstate`).then(res => console.log(res.data.count));
-//   axios.get(`${API}/api/count/phone`).then(res => console.log(res.data.count));
-//   axios.get(`${API}/api/count/homeGarden`).then(res => console.log(res.data.count));
-// axios.get(`${API}/api/count/Household`).then(res => console.log(res.data.count));
-// axios.get(`${API}/api/count/accessories`).then(res => console.log(res.data.count));
-// }, []);
+
 
 useEffect(() => {
   const timer = setTimeout(() => {
@@ -297,35 +309,6 @@ useEffect(() => {
 
   fetchCounts();
 }, []);
-// --------
-
-  /* INFINITE SCROLL */
-//   useEffect(() => {
-//     const onScroll = () => {
-//       if (
-//         window.innerHeight + window.scrollY >=
-//         document.documentElement.scrollHeight - 300
-//       ) {
-//         setVisibleCount((prev) =>
-//           prev >= allAds.length ? prev : prev + ITEMS_PER_LOAD,
-//         );
-//       }
-//     };
-//     // window.addEventListener("scroll", onScroll);
-//     // const cached = sessionStorage.getItem("counts");
-
-// // if (cached) {
-// //   setCounts(JSON.parse(cached));
-// //   return;
-// // }
-// window.addEventListener("scroll", onScroll);
-
-// return () => {
-//   window.removeEventListener("scroll", onScroll);
-// };
-
-//     return () => window.removeEventListener("scroll", onScroll);
-//   }, [allAds.length]);
 
 
 useEffect(() => {
@@ -368,42 +351,7 @@ useEffect(() => {
 
   /* SEARCH */
   const handleSearch = async () => {
-  //   if (!query.trim()) return;
-  //   setLoadingSearch(true);
-  //   try {
-  //     const requests = Object.entries(CATEGORIES).map(async ([key, url]) => {
-  //       const res = await axios.get(`${API}${url}`);
-  //       const safeData = Array.isArray(res.data) ? res.data : [];
-  //       return safeData.map((i) => ({ ...i, source: key }));
-  //     });
-
-  //     const responses = await Promise.all(requests);
-  //     const merged = responses.flat();
-
-  //     const q = query.toLowerCase();
-  //     const filtered = merged.filter((item) =>
-  //       [
-  //         item.title,
-  //         item.brand,
-  //         item.model,
-  //         item.category,
-  //         item.city,
-  //         item.location,
-  //         item.description,
-  //       ]
-  //         .filter(Boolean)
-  //         .some((v) => v.toLowerCase().includes(q)),
-  //     );
-
-  //     setResults(filtered);
-  //   } catch (e) {
-  //     console.error("Search error:", e);
-  //   } finally {
-  //     setLoadingSearch(false);
-  //   }
-  // };
-
-
+ 
 
   const q = query.toLowerCase();
 
@@ -497,22 +445,6 @@ useEffect(() => {
   fetchAllModels();
 }, []);
 
-  // const handleUpgrade = async (listingId, type) => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-
-  //     const { data } = await axios.post(
-  //       `${API}/api/payments/create-checkout/${listingId}`,
-  //       { type },
-  //       { headers: { Authorization: `Bearer ${token}` } },
-  //     );
-
-  //     window.location.href = data.url;
-  //   } catch (err) {
-  //     console.log(err.response?.data || err.message);
-  //   }
-  // };
-
 
  const optimizeImage = (url) => {
   if (!url || !url.includes("cloudinary")) return url;
@@ -592,23 +524,83 @@ useEffect(() => {
         />
         <link rel="canonical" href="https://proelan.az/" />
       </Helmet>
+
+
+      <select
+    value={filters1.brand}
+    onChange={(e)=>
+        setFilters1({
+            ...filters1,
+            brand:e.target.value,
+            model:"",
+            motor:""
+        })
+    }
+>
+<option value="">Marka</option>
+
+{brands.map((brand)=>(
+<option key={brand} value={brand}>
+{brand}
+</option>
+))}
+
+</select>
+
+
+{filters1.brand && (
+<select
+    value={filters1.model}
+    onChange={(e)=>
+        setFilters1({
+            ...filters1,
+            model:e.target.value,
+            motor:""
+        })
+    }
+>
+<option value="">Model</option>
+
+{models.map((model)=>(
+<option key={model} value={model}>
+{model}
+</option>
+))}
+
+</select>
+)}
+
+{filters1.model && (
+<select
+    value={filters1.motor}
+    onChange={(e)=>
+        setFilters1({
+            ...filters1,
+            motor:e.target.value
+        })
+    }
+>
+<option value="">Motor</option>
+
+{motors.map((motor)=>(
+<option key={motor} value={motor}>
+{motor}
+</option>
+))}
+
+</select>
+)}
+
+
 <div className="bg-white p-4 rounded-xl shadow mb-4">
 
-  <div className="flex gap-2 mb-3">
-    <input
-      value={query}
-      onChange={(e) => setQuery(e.target.value)}
-      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-      placeholder="Elan axtar..."
-      className="flex-1 border rounded-lg p-2"
-    />
 
-    <button
-      onClick={handleSearch}
-      className="bg-blue-600 text-white px-4 rounded-lg"
-    >
-      Axtar
-    </button>
+
+
+  <div className="flex gap-2 mb-3">
+ 
+
+   
  
 <button
   onClick={() => {
@@ -658,6 +650,9 @@ useEffect(() => {
       <option value="phone">Telefon</option>
       <option value="realEstate">Əmlak</option>
       <option value="clothing">Geyim</option>
+      <option value="accessory">Aksesuar və Ehtiyyat hissələri</option>
+      <option value="household">Məişət texnikası</option>
+      <option value="homeGarden">Ev və Bağ Məhsulları</option>
     </select>
 
     <input
@@ -713,14 +708,7 @@ useEffect(() => {
 
   </div>
 </div>
-      {/* SEARCH */}
-      {/* <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-        placeholder="Axtar..."
-        className="w-full border p-2 rounded mb-4"
-      /> */}
+ 
 
       {loadingSearch && (
         <Typography align="center">
@@ -733,30 +721,7 @@ useEffect(() => {
           {visibleAds.map((item, index) => (
             <Link key={item._id} to={`${item.source}/${item._id}`}>
               <div className="border rounded shadow p-2">
-                {/* <img
-                  src={item.images?.[0] || "/no-image.jpg"}
-                  className="h-[100px] w-full object-cover"
-                  alt={item._id}
-                /> */}
-
-                {/* <img
-  src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
-  className="w-full h-full object-cover"
-  alt={item.title || item.brand || item.model}
-  loading={index < 10 ? "eager" : "lazy"}
-  fetchPriority={index < 10 ? "high" : "auto"}
-  decoding="async"
-/> */}
-
-{/* <img
-  src={optimizeImage(
-    item.images?.[item.images.length - 1] || "/no-image.jpg"
-  )}
-  className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-  alt={item.title || item.brand || item.model}
-  loading="lazy"
-  decoding="async"
-/> */}
+        
 
 
 <img
@@ -778,15 +743,15 @@ useEffect(() => {
         </div>
       )}
 
-      {/* <Katalog className="mt-1" width="100%" height="60px" marginTop="10px" /> */}
+     
 
 <Suspense fallback={null}>
-  <div className="w-full max-w-[1200px] h-[250px] mx-auto mt-10">
+  <div className="w-full max-w-[1200px] h-[250px]">
     <Katalog />
   </div>
 </Suspense>
 
-<div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-16">
+{/* <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-16">
   {items.map((item) => (
     <div
       key={item.key}
@@ -799,12 +764,12 @@ useEffect(() => {
       <span className="text-sm opacity-80">ümumi elan</span>
     </div>
   ))}
-</div>
+</div> */}
 
-      <div className="flex justify-center mt-4 border-t rounded-[10px] border-blue-700 border-[10px] "></div>
+      <div className="flex justify-center mt-4 border-t rounded-[10px] border-blue-700 border-[2px] "></div>
 
       {/* CARDS */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-[120px] sm:mt-[20px] justify-items-center ">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-[10px] sm:mt-[10px] justify-items-center ">
         {isLoading
           ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
           : filteredAds.slice(0, visibleCount).map((item) => (
@@ -830,20 +795,7 @@ useEffect(() => {
 
                     {/* IMAGE */}
                     <div className="relative sm:w-[229px] w-[178px] h-[129px] sm:h-[170.75px] overflow-hidden rounded-[4px]">
-{/* 
-  <img
-    src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
-    className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-    alt={
-      item.title ||
-      item.brand ||
-      item.model ||
-      item.category ||
-      item._id ||
-      item.id ||
-      item.ban_type
-    }
-  /> */}
+
 
   <img
   src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
@@ -870,19 +822,16 @@ useEffect(() => {
     >
       {/* Icon */}
       {item.priorityType.toLowerCase() === "vip" && (
-        // <span className="material-icons text-[16px]">diamond</span>
+       
         <Gem size={16} />
       )}
 
       {item.priorityType.toLowerCase() === "premium" && (
-        // <span className="material-icons text-[16px]">workspace_premium</span>
+        
         <Crown size={16} />
       )}
 
-      {/* Text */}
-      {/* <span className="capitalize">
-        {item.priorityType}
-      </span> */}
+    
     </span>
   )}
 
@@ -916,9 +865,7 @@ useEffect(() => {
                   <MapPin size={14} color="#75FC56" />
                   {item.location}
                 </span>
-                {/* <span className="truncate">
-                  {formatDate(item.data)} {getCurrentTime(item.data)}
-                </span> */}
+             
                    <span className="capitalize text-[12px] p-1 rounded flex justify-between text-gray-600 truncate w-30">
   {formatDate(item.createdAt)} {getCurrentTime(item.createdAt)}
 </span>
@@ -927,23 +874,7 @@ useEffect(() => {
                   </div>
                 </Link>
 
-                {/* UPGRADE BUTTONS */}
-                {/* <div className="flex justify-between top-1 items-center mt-2">
-                  <button
-                    className="border-[1px] border-gray-300 min-w-[10px] max-w-[100px] text-blue-500 hover:border-blue-500 ease-in-out transition-transform duration-300  py-1 px-3 rounded"
-                    onClick={() => handleUpgrade(item._id, "vip")}
-                  >
-                    VIP Et
-                  </button>
-                  <button
-                    className="border-[1px] border-gray-300 text-blue-500 hover:border-blue-500 ease-in-out transition-transform duration-300 py-1 px-3  rounded"
-                    onClick={() => handleUpgrade(item._id, "premium")}
-                  >
-                    Premium Et
-                  </button>
-                </div> */}
-
-                {/* FAVORITE */}
+          
                 <button
                   onClick={() => toggleFavorite(item)}
                   className="absolute top-2 right-2"
@@ -975,7 +906,7 @@ useEffect(() => {
       </a>
     ))}
 </div>
-      {/* <BottomMenu /> */}
+  
 
       <Suspense fallback={null}>
   <BottomMenu />
