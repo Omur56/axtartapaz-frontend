@@ -533,7 +533,8 @@ useEffect(() => {
             ...filters1,
             brand:e.target.value,
             model:"",
-            motor:""
+            motor:"",
+            color: "",
         })
     }
 >
