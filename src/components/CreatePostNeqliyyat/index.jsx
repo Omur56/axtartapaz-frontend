@@ -46,6 +46,7 @@ const [uploadProgress, setUploadProgress] = useState(0);
   type: "",
   city: "",
   category: "",
+   generation: "",
   brand: "",
   model: "",
   ban_type: "",
@@ -83,21 +84,11 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         motor: ["2.0", "3.0", "4.0"],
         ban_type: ["Sedan", "Hatchback"],
         transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2009",
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+        year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin", "Dizel", "Hibrid"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
@@ -108,19 +99,10 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ban_type: ["Sedan", "Hatchback"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
+       year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin", "Dizel", "Hibrid"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
@@ -131,19 +113,10 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ban_type: ["Sedan", "Hatchback"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
+       year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin", "Dizel", "Hibrid"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
@@ -154,19 +127,10 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ban_type: ["Sedan", "Hatchback"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
+    year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin", "Dizel", "Hibrid"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
@@ -176,7 +140,7 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         motor: ["1.8 L / 52 a.g."],
         year: ["1950", "1951", "1952", "1949"],
         ban_type: ["Sedan", "Kabrolet"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
         engine: ["Benzin", "Dizel", "Hibrid"],
         modfikasiya: ["Ön"],
         transmission: ["Mexanika"],
@@ -184,7 +148,90 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
       },
 
       {
-        model: "A-Class",
+        model:"A-Class",
+
+         generation: [
+          {
+          name: "A 140",
+          year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
+color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+      },
+
+      {
+        name: "A 160",
+          year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
+color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+      },
+
+      {
+        name: "A 170",
+          year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
+color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+      },
+{
+        name: "A 180",
+          year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
+color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+      },
+{
+        name: "A 190",
+          year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
+color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+      },
+      {
+        name: "A 200",
+          year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
+color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+      },
+      {
+        name: "A 220",
+          year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
+color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+      },
+      
+
+      {
+        name: "A 220 MATIC",
+          year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
+color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+      },
+
+      {
+        name: "A 220 E",
+          year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
+color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+      },
+
+    ],
+      
+        
         motor: [
           "1.4 l / 82 a.g.",
           "1.6 l / 82 a.g.",
@@ -194,54 +241,45 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ],
         ban_type: ["Sedan", "Hatchback"],
         transmission: ["Avtomat", "Mexanika"],
-        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2003",
-          "2004",
-          "2005",
-          "2006",
-          "2007",
-          "2008",
-          "2009",
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+       year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin", "Dizel", "Hibrid"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
       },
+     
     ],
     Chevrolet: [
       {
         model: "Cruze",
-        imagesByYear: {
-          2009: "../../assets/car_image_list/chevrolet-cruze.jpg",
-          2010: "../../assets/car_image_list/chevrolet-cruze.jpg",
-          2011: "../../assets/car_image_list/chevrolet-cruze.jpg",
-          2012: "../../assets/car_image_list/chevrolet-cruze.jpg",
-          2013: "../../assets/car_image_list/chevrolet-cruze.jpg",
-          2014: "../../assets/car_image_list/chevrolet-cruze-2012-2016.png",
-          2015: "../../assets/car_image_list/2015-Chevrolet-Cruze.jpg",
-          2016: "../../assets/car_image_list/chevrolet-cruze-2016-2019.png",
-          2017: "../../assets/car_image_list/chevrolet-cruze-2016-2019.png",
-          2018: "../../assets/car_image_list/chevrolet-cruze-2016-2019.png",
-          2019: "../../assets/car_image_list/chevrolet-cruze-2016-2019.png",
-          2020: "../../assets/car_image_list/chevrolet-cruze-2020.jpg",
-          2021: "../../assets/car_image_list/chevrolet-cruze-2021.jpg",
-          2022: "../../assets/car_image_list/cruze-2016-2026.jpg",
-          2023: "../../assets/car_image_list/cruze-2016-2026.jpg",
-          2024: "../../assets/car_image_list/cruze-2016-2026.jpg",
-          2025: "../../assets/car_image_list/cruze-2016-2026.jpg",
-        },
+ imagesByYear: {
+  2009: "../../../public/assets/car_image_list/chevrolet-cruze.jpg",
+  2010: "../../../public/assets/car_image_list/chevrolet-cruze.jpg",
+  2011: "../../../public/assets/car_image_list/chevrolet-cruze.jpg",
+  2012: "../../../public/assets/car_image_list/chevrolet-cruze.jpg",
+  2013: "../../../public/assets/car_image_list/chevrolet-cruze.jpg",
+
+  2014: "../../../public/assets/car_image_list/chevrolet-cruze-2012-2016.png",
+
+  2015: "../../../public/assets/car_image_list/2015-Chevrolet-Cruze.jpg",
+
+  2016: "../../../public/assets/car_image_list/chevrolet-cruze-2016-2019.png",
+  2017: "../../../public/assets/car_image_list/chevrolet-cruze-2016-2019.png",
+  2018: "../../../public/assets/car_image_list/chevrolet-cruze-2016-2019.png",
+  2019: "../../../public/assets/car_image_list/chevrolet-cruze-2016-2019.png",
+
+  2020: "../../../public/assets/car_image_list/chevrolet-cruze-2020.jpg",
+
+  2021: "../../../public/assets/car_image_list/chevrolet-cruze-2021.jpg",
+
+  2022: "../../../public/assets/car_image_list/cruze-2016-2026.jpg",
+  2023: "../../../public/assets/car_image_list/cruze-2016-2026.jpg",
+  2024: "../../../public/assets/car_image_list/cruze-2016-2026.jpg",
+  2025: "../../../public/assets/car_image_list/cruze-2016-2026.jpg",
+},
         motor: ["1.4", "1.6", "1.8"],
         ban_type: ["Sedan", "Hatchback"],
         transmission: ["Avtomat", "Mexanika"],
@@ -257,19 +295,10 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ban_type: ["Sedan", "Hatchback"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
+     year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin", "Dizel", "Hibrid"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
@@ -280,24 +309,10 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ban_type: ["Coupe"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2022",
-          "2023",
-          "2024",
-          "2025",
-        ],
+        year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Arxa"],
@@ -308,19 +323,10 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ban_type: ["Sedan"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-        ],
+      year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin", "Hibrid"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
@@ -331,24 +337,10 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ban_type: ["SUV"],
         transmission: ["Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2022",
-          "2023",
-          "2024",
-          "2025",
-        ],
+       year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin"],
         salon: ["Parça"],
         modfikasiya: ["Tam"],
@@ -359,24 +351,10 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ban_type: ["SUV"],
         transmission: ["Avtomat"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2022",
-          "2023",
-          "2024",
-          "2025",
-        ],
+        year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin"],
         salon: ["Dəri"],
         modfikasiya: ["Tam"],
@@ -387,19 +365,10 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ban_type: ["SUV"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2022",
-          "2023",
-          "2024",
-          "2025",
-        ],
+       year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin"],
         salon: ["Parça"],
         modfikasiya: ["Ön"],
@@ -410,18 +379,10 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ban_type: ["MPV"],
         transmission: ["Avtomat"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2023",
-          "2024",
-          "2025",
-        ],
+        year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin"],
         salon: ["Dəri"],
         modfikasiya: ["Ön"],
@@ -432,18 +393,10 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ban_type: ["MPV"],
         transmission: ["Avtomat"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2021",
-          "2023",
-          "2024",
-          "2025",
-        ],
+       year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin"],
         salon: ["Dəri"],
         modfikasiya: ["Ön"],
@@ -454,21 +407,10 @@ const typeOptions = ["sifarisle", "magaza", "resmi"];
         ban_type: ["Sedan"],
         transmission: ["Avtomat", "Mexanika"],
         color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi"],
-        year: [
-          "2010",
-          "2011",
-          "2012",
-          "2013",
-          "2014",
-          "2015",
-          "2016",
-          "2017",
-          "2018",
-          "2019",
-          "2020",
-          "2024",
-          "2025",
-        ],
+     year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
         engine: ["Benzin"],
         salon: ["Dəri", "Parça"],
         modfikasiya: ["Ön"],
@@ -688,19 +630,28 @@ const handleSubmit = async (e) => {
     km: form.km,
     color: form.color,
     modification: form.modification,
-
+generation: form.generation,
     barter: options.barter ? "Bəli" : "Xeyr",
     credit: options.credit ? "Bəli" : "Xeyr",
-    salon: options.salon ? "Xeyr" : "Xeyr",
+    salon: options.salon ? "Bəli" : "Xeyr",
     type_magasine: form.type_magasine,
-  };
 
+     contact: {
+
+        name: form.contact.name,
+
+        email: form.contact.email,
+
+        phone: form.contact.phone,
+    }
+  };
+console.log("SEND:", JSON.stringify(carObject, null, 2));
   formData.set("car", JSON.stringify(carObject));
 
   // 🔥 CONTACT FIX (BURASI KRİTİK)
-  formData.set("contact.name", form.contact.name || "");
-  formData.set("contact.email", form.contact.email || "");
-  formData.set("contact.phone", form.contact.phone || "");
+  // formData.set("contact.name", form.contact.name || "");
+  // formData.set("contact.email", form.contact.email || "");
+  // formData.set("contact.phone", form.contact.phone || "");
 
   formData.set("price", isNaN(cleanedPrice) ? 0 : cleanedPrice);
   formData.set("location", form.location || "");
@@ -753,6 +704,7 @@ const handleSubmit = async (e) => {
       color: "",
       city: "",
       category: "",
+       generation: "",
       brand: "",
       model: "",
       ban_type: "",
@@ -921,6 +873,12 @@ const handleSubmit = async (e) => {
     event.preventDefault();
   }
 
+  const selectedModel =
+  form.brand &&
+  carData[form.brand]?.find(
+    (item) => item.model === form.model
+  );
+
   return (
     <div className="min-h-screen ">
       <div className="p-6 max-w-5xl mx-auto">
@@ -1060,6 +1018,22 @@ const handleSubmit = async (e) => {
                       ))}
                   </select>
 
+                 <select
+  name="generation"
+  value={form.generation}
+  onChange={handleChange}
+  disabled={!form.model}
+  className="p-3 rounded-xl border"
+>
+  <option value="">Nəsil seçin</option>
+
+  {selectedModel?.generation?.map((gen) => (
+    <option key={gen.name} value={gen.name}>
+      {gen.name}
+    </option>
+  ))}
+</select>
+
                   <select
                     name="color"
                     value={form.color}
@@ -1147,19 +1121,21 @@ const handleSubmit = async (e) => {
                       );
                     })}
                   </select>
-                  <div className="col-span-2 relative max-w-[250px] max-h-[280px]">
-                    <img
-                      src={modelImagePreview}
-                      alt={`${form.model} ${form.year} Nəsil`}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
+                  
+  <div className="col-span-2 relative max-w-[250px] max-h-[280px]">
+    <img
+      src={modelImagePreview}
+      alt={`${form.model} ${form.year}`}
+      className="w-full h-full object-cover rounded-lg"
+    />
 
-                    <div className="absolute top-2 left-2 p-1 bg-black/50 rounded">
-                      <span className="text-white font-semibold text-sm">
-                        {form.model} {form.year ? form.year : ""}
-                      </span>
-                    </div>
-                  </div>
+    <div className="absolute top-2 left-2 bg-black/50 px-2 py-1 rounded">
+      <span className="text-white text-sm font-semibold">
+        {form.model} {form.year}
+      </span>
+    </div>
+  </div>
+
 
                   {/* KM */}
                   <input

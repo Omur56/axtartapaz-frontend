@@ -106,14 +106,14 @@ const DownNavbar = () => {
       {/* HEADER */}
       <nav
         onClick={scrollTop}
-        className={`w-[100px] h-[30px]  rounded-[8px] transition duration-300 flex bg-orange-600  px-2 py-2 relative  `}
+        className={`w-[100px] h-[30px]  rounded-[8px] transition duration-300 flex px-2 py-2 relative bg-green-500 `}
       >
         <div className="flex items-center max-w-screen-xl mx-auto">
           <button
             onClick={() => setOpen(!open)}
             type="button"
             aria-label="downButton"
-            className={`z-100 w-[60px] h-[10px] flex gap-1 text-[#ffffff]   sm:min-w-[108.88px] sm:min-h-[44.5px] items-center font-semibold  transition duration-300 ${open ? "text-black" : ""}`}
+            className={`z-100 w-[60px] h-[10px] flex gap-1 text-[#ffffff]   sm:min-w-[108.88px] sm:min-h-[44.5px] items-center font-semibold  transition duration-300 ${open ? "text-orange-500" : ""}`}
           >
             {/* <Grip className="text-[#ffffff]" /> */}
           <FaThLarge />
@@ -121,7 +121,7 @@ const DownNavbar = () => {
               Kataloq{" "}
             </span>
             <ChevronUp
-              className={`absolute right-0 text-[#ffffff] transition-transform duration-300 ${open ? "rotate-0" : "rotate-180"}`}
+              className={`absolute right-1 text-[#ffffff] transition-transform duration-300 ${open ? "rotate-0" : "rotate-180"}`}
             />
           </button>
         </div>

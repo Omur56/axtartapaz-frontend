@@ -8,7 +8,14 @@ import { Box, LinearProgress, Avatar } from "@mui/material";
 import { Percent, RefreshCcw, CarFront   } from "lucide-react";
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import { Link as RouterLink } from "react-router-dom";
-
+import {
+    getBrand,
+    getModel,
+    getTitle,
+    getLocation,
+    
+} from "../../utils/postHelpers";
+import { useSearchParams } from "react-router-dom";
 
 
 export default function PostDetailCar() {
@@ -25,13 +32,41 @@ export default function PostDetailCar() {
 
   const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
 
+ 
+
+const brand = post?.car?.brand;
+const model = post?.car?.model;
+const [searchParams] = useSearchParams();
+
+// const brand = getBrand(post);
+
+// const model = getModel(post);
+
+const title = getTitle(post);
+
+const location = getLocation(post);
+
+
+useEffect(() => {
+  axios.get(`${BASE_URL}/api/car`, {
+    params: {
+      brand,
+      model,
+    },
+  })
+  .then(res => setCars(res.data))
+  .catch(console.error);
+
+}, [brand, model]);
+
+
   // Fetch all cars for "similar cars"
-  useEffect(() => {
-    axios
-      .get(`${BASE_URL}/api/car`)
-      .then((res) => setCars(res.data))
-      .catch((err) => console.error("Elanlar yüklənmədi:", err));
-  }, [BASE_URL]);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${BASE_URL}/api/car`)
+  //     .then((res) => setCars(res.data))
+  //     .catch((err) => console.error("Elanlar yüklənmədi:", err));
+  // }, [BASE_URL]);
 
   // Fetch single post by ID
   useEffect(() => {
@@ -189,6 +224,12 @@ const handleUpgrade = async (listingId, type) => {
 };
 
 
+
+
+
+
+
+
   return (
     <div className="max-w-6xl min-h-screen mx-auto ">
 
@@ -213,31 +254,30 @@ const handleUpgrade = async (listingId, type) => {
       </Link>
 
       <div role="presentation" onClick={handleClick}>
-      <Breadcrumbs aria-label="breadcrumb" >
-        <Link
-        component={RouterLink} underline="hover"className="capitalize hover:underline hover:text-[#43D262]"  href="*" to="/">
-          Ana Səhifə
-        </Link>
-        <Link
-        component={RouterLink}
-        to={`/Katalog/Nəqliyyat`}
-          underline="hover"
-          className="capitalize hover:underline hover:text-[#43D262]"
-        >
-          Nəqliyyat
-        </Link>
-        
-        <Link
-  component={RouterLink}     // React Router Link istifadə et
-  to={`/car/${post._id}`}    // klik edəndə yönləndirəcək
-  className="capitalize hover:underline hover:text-[#43D262]"
-  underline="hover"
-  
->
-  {post.brand} {post.model}
-</Link>
+<Breadcrumbs>
 
-      </Breadcrumbs>
+<RouterLink to="/">
+Ana Səhifə
+</RouterLink>
+
+<RouterLink to="/Katalog/Nəqliyyat">
+Nəqliyyat
+</RouterLink>
+
+<RouterLink
+to={`/Katalog/Nəqliyyat?brand=${encodeURIComponent(post?.car?.brand)}`}
+>
+{post?.car?.brand}
+</RouterLink>
+
+<RouterLink
+to={`/Katalog/Nəqliyyat?brand=${encodeURIComponent(post?.car?.brand)}&model=${encodeURIComponent(post?.car?.model)}`}
+>
+{post?.car?.model}
+</RouterLink>
+
+</Breadcrumbs>
+   
     </div>
 
       {/* Main content */}
@@ -245,7 +285,7 @@ const handleUpgrade = async (listingId, type) => {
         {/* Left / Main column */}
         <div className="lg:col-span-2 space-y-4 ">
           <h1 className="text-2xl font-bold mb-4 p-2">
-             {post.brand} {post.model},  {post?.car.motor} L, {post?.car.year} il, {post?.car.km} km
+             {post.car?.brand} {post.car?.model},  {post.car?.motor} L, {post.car?.year} il, {post.car?.km} km
           </h1>
 
           <Carousel showThumbs showStatus={false} autoPlay infiniteLoop>
@@ -287,10 +327,13 @@ const handleUpgrade = async (listingId, type) => {
           <div className="border-t pt-4 p-2">
             <ul className="text-sm text-gray-700 space-y-1 mt-4 justify-between grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2">
              <li>
-              <span className="font-bold">Marka:</span> {post.brand}
+              <span className="font-bold">Marka:</span> {brand}
              </li>
               <li>
-                <span className="font-bold">Model:</span> {post.model}
+                <span className="font-bold">Model:</span> {model}
+              </li>
+              <li>
+                <span className="font-bold">Nəsil:</span>{post.car.generation}
               </li>
               <li>
              <span className="font-bold">Rəngi:</span> {post.car?.color}
@@ -552,7 +595,7 @@ const handleUpgrade = async (listingId, type) => {
           <div className="absolute   top-0 w-full h-[55px]   dark:bg-neutral-800 ">
             <div className="w-[700px] gap-5 text-center justify-start h-[55px] absolute top-0 left-0 flex  items-center pl-5 ">
               <span className="text-xs sm:text-xl top-2  h-2 font-sans mb-4 capitalize  justify-center items-center text-white">
-                {post.category} {post.brand} {post.model}
+                {post.car?.category} {brand} {model}
               </span>
               <div className="w-[1px] h-[25px] border rounded-1 dark:bg-zinc-600 bg-opacity-50 mb-2"></div>
               <span className="text-xs sm:text-xl top-2  h-2 font-sans mb-4 capitalize justify-center items-center text-white">
@@ -633,7 +676,7 @@ const handleUpgrade = async (listingId, type) => {
                   src={
                     img.startsWith("http") ? img : `${BASE_URL}/uploads/${img}`
                   }
-                  alt={post.brand}
+                  alt={post.car?.brand}
                   className="w-[50px] h-[50px] object-cover rounded-md"
                 />
               </div>
@@ -668,7 +711,7 @@ const handleUpgrade = async (listingId, type) => {
                   {car.price} AZN ₼
                 </h3>
                 <h2 className="text-[12px] truncate w-30">
-                  {car.brand}, {car.model}
+                  {car?.brand}, {car?.model}
                 </h2>
                 <p className="text-gray-600 truncate w-30">
                   {car?.car?.year}, {car?.car?.km} km

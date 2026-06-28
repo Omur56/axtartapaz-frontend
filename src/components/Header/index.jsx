@@ -63,7 +63,7 @@ function Header() {
         
       
        
-       <div className="flex w-[100px] gap-[20px] sm:gap-[60px] h-[20px] justify-items-center   ">
+       <div className="flex w-[100px] gap-[25px] sm:gap-[65px] h-[20px] justify-items-center   ">
         <TitleLogo  />
         
 <DownNavbar />

@@ -6,18 +6,24 @@ import { Link } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { Heart, RefreshCcw, Percent, MapPin } from "lucide-react";
+import { getCardData } from "../../utils/postHelpers";
+
 
 import { Helmet } from "react-helmet-async";
 import '../../styles/home_style.css'
 
+import { useSearchParams } from "react-router-dom";
 import { Gem } from "lucide-react";
 import { Crown } from "lucide-react";
+
 const Katalog = lazy(() =>import("../Katalog"));
 const BottomMenu = lazy(() =>
   import("../../components/MobileMenu")
 );
 
 const API = process.env.REACT_APP_API_URL || "https://my-backend-wj5g.onrender.com";
+
+
 
 
 
@@ -51,11 +57,20 @@ const Home = () => {
 const [counts, setCounts] = useState({});
 const [stickyAds, setStickyAds] = useState([]);
   const currentUserId = localStorage.getItem("userId");
+  const[ post, setPost] = useState({})
 
 
   const [brands, setBrands] = useState([]);
 const [models, setModels] = useState([]);
 const [motors, setMotors] = useState([]);
+
+const brand = post?.car?.brand;
+const model = post?.car?.model;
+const [searchParams] = useSearchParams();
+
+
+
+const cardData = getCardData(post);
 
 const [filters1, setFilters1] = useState({
   category: "all",
@@ -153,7 +168,17 @@ const filteredAds = allAds1.filter((item) => {
   //       "car",
   //     ];
 
+useEffect(() => {
+  axios.get(`${API}/api/brand`, {
+    params: {
+      brand,
+      model,
+    },
+  })
+  .then(res => setPost(res.data))
+  .catch(console.error);
 
+}, [brand, model]);
 // ----axtarış filter
 console.log(`${API}/api/filter/brands`);
 useEffect(() => {
@@ -526,112 +551,13 @@ useEffect(() => {
       </Helmet>
 
 
-      <select
-    value={filters1.brand}
-    onChange={(e)=>
-        setFilters1({
-            ...filters1,
-            brand:e.target.value,
-            model:"",
-            motor:"",
-            color: "",
-        })
-    }
->
-<option value="">Marka</option>
-
-{brands.map((brand)=>(
-<option key={brand} value={brand}>
-{brand}
-</option>
-))}
-
-</select>
-
-
-{filters1.brand && (
-<select
-    value={filters1.model}
-    onChange={(e)=>
-        setFilters1({
-            ...filters1,
-            model:e.target.value,
-            motor:""
-        })
-    }
->
-<option value="">Model</option>
-
-{models.map((model)=>(
-<option key={model} value={model}>
-{model}
-</option>
-))}
-
-</select>
-)}
-
-{filters1.model && (
-<select
-    value={filters1.motor}
-    onChange={(e)=>
-        setFilters1({
-            ...filters1,
-            motor:e.target.value
-        })
-    }
->
-<option value="">Motor</option>
-
-{motors.map((motor)=>(
-<option key={motor} value={motor}>
-{motor}
-</option>
-))}
-
-</select>
-)}
-
 
 <div className="bg-white p-4 rounded-xl shadow mb-4">
 
 
 
 
-  <div className="flex gap-2 mb-3">
- 
 
-   
- 
-<button
-  onClick={() => {
-    setQuery("");
-
-    setFilters1({
-      category: "all",
-      priceMin: "",
-      priceMax: "",
-      city: "",
-      type: "all",
-      brand: "",
-      model: "",
-      yearMin: "",
-      yearMax: "",
-      color: "",
-      fuel: "",
-      motor: "",
-      credit: false,
-      barter: false,
-    });
-
-    setResults([]);
-  }}
-  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
->
-  Filtrləri Sıfırla
-</button>
-
-  </div>
 
   <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
 
@@ -708,6 +634,110 @@ useEffect(() => {
     </select>
 
   </div>
+  <div className="flex gap-2 bg-white mt-2">
+      <select className="p-2 rounded-[2px] border shadow-sm"
+    value={filters1.brand}
+    onChange={(e)=>
+        setFilters1({
+            ...filters1,
+            brand:e.target.value,
+            model:"",
+            motor:"",
+            color: "",
+        })
+    }
+>
+<option value="">Marka</option>
+
+{brands.map((brand)=>(
+<option key={brand} value={brand}>
+{brand}
+</option>
+))}
+
+</select>
+
+
+{filters1.brand && (
+<select className="p-2 rounded-[2px] border shadow-sm"
+    value={filters1.model}
+    onChange={(e)=>
+        setFilters1({
+            ...filters1,
+            model:e.target.value,
+            motor:""
+        })
+    }
+>
+<option value="">Model</option>
+
+{models.map((model)=>(
+<option key={model} value={model}>
+{model}
+</option>
+))}
+
+</select>
+)}
+
+{filters1.model && (
+<select className="p-2 rounded-[2px] border shadow-sm"
+    value={filters1.motor}
+    onChange={(e)=>
+        setFilters1({
+            ...filters1,
+            motor:e.target.value
+        })
+    }
+>
+<option value="">Motor</option>
+
+{motors.map((motor)=>(
+<option key={motor} value={motor}>
+{motor}
+</option>
+))}
+
+</select>
+)}
+
+
+  <div className="flex gap-2 mb-3">
+ 
+
+   
+ 
+<button
+  onClick={() => {
+    setQuery("");
+
+    setFilters1({
+      category: "all",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      type: "all",
+      brand: "",
+      model: "",
+      yearMin: "",
+      yearMax: "",
+      color: "",
+      fuel: "",
+      motor: "",
+      credit: false,
+      barter: false,
+    });
+
+    setResults([]);
+  }}
+  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+>
+  Filtrləri Sıfırla
+</button>
+
+  </div>
+</div>
+
 </div>
  
 
@@ -747,7 +777,7 @@ useEffect(() => {
      
 
 <Suspense fallback={null}>
-  <div className="w-full max-w-[1200px] h-[250px]">
+  <div className="w-full max-w-[1200px] h-[150px]">
     <Katalog />
   </div>
 </Suspense>
@@ -767,10 +797,10 @@ useEffect(() => {
   ))}
 </div> */}
 
-      <div className="flex justify-center mt-4 border-t rounded-[10px] border-blue-700 border-[2px] "></div>
+      {/* <div className="flex justify-center  border-t rounded-[10px] border-blue-700 border-[2px] "></div> */}
 
       {/* CARDS */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-[10px] sm:mt-[10px] justify-items-center ">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-[10px] sm:mt-[100px] justify-items-center ">
         {isLoading
           ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
           : filteredAds.slice(0, visibleCount).map((item) => (
@@ -779,7 +809,7 @@ useEffect(() => {
                 className="relative "
               >
                 <Link  to={`/${item.__type}/${item._id}`}>
-                  <div className="z-1 shadow-sm bg-white border-[1px]  border-shadow sm:w-[229px] sm:h-[268.75px] rounded-[8px] hover:shadow-xl transition-shadow duration-300 ease-in-out overflow-hidden flex flex-col">
+                  <div className="z-1  bg-transparent    sm:w-[230.5px] sm:h-[268.75px] rounded-[8px] hover:shadow-xl  duration-300 ease-in-out overflow-hidden flex flex-col">
                     {/* ICONS */}
                     <div className="absolute top-2 left-2 flex gap-2 z-10">
                       {item?.car?.barter && (
@@ -846,28 +876,34 @@ useEffect(() => {
 </div>
 
                     {/* CONTENT */}
-                    <div className="w-[173px] h-[96.6px] sm:w-[229px] sm:h-[98px] p-2">
+                    <div className="w-[173px] h-[100.6px] sm:w-[229px] sm:h-[108px] p-2">
                       <div className="font-bold text-[16px] sm:text-[18px]">
                         {item.price} AZN ₼
                       </div>
                       <div className="text-[12px] sm:text-[16px]">
-                        {item.brand ||
+                        {/* {item.brand ||
+                        item.model ||
+                        item.title ||
                           item.category ||
-                          item.model ||
-                          item.title}
+                          
+                          item.title} */}
+                          <span className="font-semibold">{item.brand} {item.model}</span>
+                          
+
                       </div>
-                      {item.year && item.motor && item.km && (
+                   
+                      {item?.car.year && item?.car.motor && item?.car.km && (
                         <div className=" text-[12px] sm:text-[16px]">
-                          {item.year}, {item.motor}, {item.km} km
+                          {item?.car.year}, {item?.car.motor}, {item?.car.km} km
                         </div>
                       )}
-                    <div className="flex justify-between items-center text-gray-600 mt-2 text-xs sm:text-sm">
+                    <div className="flex justify-between items-center text-gray-600 mt-4 text-xs sm:text-sm">
                 <span className="flex items-center gap-1">
                   <MapPin size={14} color="#75FC56" />
                   {item.location}
                 </span>
              
-                   <span className="capitalize text-[12px] p-1 rounded flex justify-between text-gray-600 truncate w-30">
+                   <span className="capitalize text-[12px] p-1 rounded flex justify-between  text-gray-600 truncate w-30">
   {formatDate(item.createdAt)} {getCurrentTime(item.createdAt)}
 </span>
               </div>

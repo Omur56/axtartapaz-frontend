@@ -52,11 +52,11 @@ const Katalog = ({ className, width, height, marginTop }) => {
 
   return (
     <div className={`${className}  gap-6 scrollbar-hide    mx-auto  p-2 `}
-    style={{ width: width || "100%", height: height || "100px", marginTop: marginTop  || "80px" }} >
+    style={{ width: width || "100%", height: height || "100px", marginTop: marginTop  || "5px" }} >
       {/* --- Mobil versiya (slider) --- */}
       <div
       className="relative scrollbar-hide block md:hidden mx-auto p-2 scrollbar-hide "
-      style={{ width: width || "100%", height: height || "150px", marginTop: marginTop || "20px" }}
+      style={{ width: width || "100%", height: height || "150px", marginTop: marginTop || "5px" }}
     >
       {/* Slider container */}
       <div
