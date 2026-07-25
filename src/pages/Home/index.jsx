@@ -507,6 +507,85 @@ useEffect(() => {
     });
   }
 };
+
+
+const getCardInfo = (item) => {
+  switch (item.category) {
+    case "car":
+    return (
+  <>
+    <div className="font-semibold">
+      {item?.car?.brand} {item?.car?.model}
+    </div>
+
+    <div>
+      {[
+        item?.car?.year,
+        item?.car?.motor && `${item.car.motor} L`,
+        item?.car?.km && `${item.car.km} km`,
+      ]
+        .filter(Boolean)
+        .join(", ")}
+    </div>
+  </>
+);
+
+    case "phone":
+      return [
+        item?.model,
+        item?.storage,
+        item?.ram,
+        item?.color,
+      ]
+        .filter(Boolean)
+        .join(", ");
+
+    case "electronics":
+      return [
+        item?.title,
+        item?.type,
+        item?.brand,
+        item?.model,
+      ]
+        .filter(Boolean)
+        .join(", ");
+
+    case "realEstate":
+      return [
+        item?.realEstate?.rooms &&
+          `${item.realEstate.rooms} otaq`,
+        item?.realEstate?.area &&
+          `${item.realEstate.area} m²`,
+        item?.realEstate?.floor &&
+          `${item.realEstate.floor}-ci mərtəbə`,
+      ]
+        .filter(Boolean)
+        .join(", ");
+
+    case "clothing":
+      return item?.brand || "";
+
+    case "homeGarden":
+      return item?.brand || "";
+
+    case "household":
+      return item?.brand || "";
+
+    case "accessory":
+      return [
+        item?.brand,
+        item?.model,
+        item?.title,
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+    default:
+      return "";
+  }
+};
+
+
   /* SKELETON */
   const SkeletonCard = () => (
 
@@ -782,22 +861,7 @@ useEffect(() => {
   </div>
 </Suspense>
 
-{/* <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-16">
-  {items.map((item) => (
-    <div
-      key={item.key}
-      className="p-4 rounded-xl shadow-md bg-gradient-to-r from-blue-500 to-blue-700 text-white"
-    >
-      <h3 className="text-lg font-semibold">{item.label}</h3>
-      <p className="text-2xl font-bold">
-        {counts[item.key] || 0}
-      </p>
-      <span className="text-sm opacity-80">ümumi elan</span>
-    </div>
-  ))}
-</div> */}
 
-      {/* <div className="flex justify-center  border-t rounded-[10px] border-blue-700 border-[2px] "></div> */}
 
       {/* CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-[10px] sm:mt-[100px] justify-items-center ">
@@ -811,18 +875,22 @@ useEffect(() => {
                 <Link  to={`/${item.__type}/${item._id}`}>
                   <div className="z-1  bg-transparent    sm:w-[230.5px] sm:h-[268.75px] rounded-[8px] hover:shadow-xl  duration-300 ease-in-out overflow-hidden flex flex-col">
                     {/* ICONS */}
+               
+
+
                     <div className="absolute top-2 left-2 flex gap-2 z-10">
-                      {item?.car?.barter && (
-                        <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
-                          <RefreshCcw size={16} strokeWidth={1.5} />
-                        </div>
-                      )}
-                      {item?.car?.credit && (
-                        <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
-                          <Percent size={16} strokeWidth={1.5} />
-                        </div>
-                      )}
-                    </div>
+  {item?.car?.barter === "Bəli" && (
+    <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
+      <RefreshCcw size={16} strokeWidth={1.5} />
+    </div>
+  )}
+
+  {item?.car?.credit === "Bəli" && (
+    <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
+      <Percent size={16} strokeWidth={1.5} />
+    </div>
+  )}
+</div>
 
                     {/* IMAGE */}
                     <div className="relative sm:w-[229px] w-[178px] h-[129px] sm:h-[170.75px] overflow-hidden rounded-[4px]">
@@ -876,27 +944,17 @@ useEffect(() => {
 </div>
 
                     {/* CONTENT */}
-                    <div className="w-[173px] h-[100.6px] sm:w-[229px] sm:h-[108px] p-2">
+                    <div className="w-[173px] h-[110.6px] sm:w-[229px] sm:h-[118px] p-2">
                       <div className="font-bold text-[16px] sm:text-[18px]">
                         {item.price} AZN ₼
                       </div>
-                      <div className="text-[12px] sm:text-[16px]">
-                        {/* {item.brand ||
-                        item.model ||
-                        item.title ||
-                          item.category ||
-                          
-                          item.title} */}
-                          <span className="font-semibold">{item.brand} {item.model}</span>
-                          
-
-                      </div>
                    
-                      {item?.car.year && item?.car.motor && item?.car.km && (
-                        <div className=" text-[12px] sm:text-[16px]">
-                          {item?.car.year}, {item?.car.motor}, {item?.car.km} km
-                        </div>
-                      )}
+                   
+                      <div>
+  <span className="h-[13px] text-[12px] sm:text-[16px] truncate">
+    {getCardInfo(item)}
+  </span>
+</div>
                     <div className="flex justify-between items-center text-gray-600 mt-4 text-xs sm:text-sm">
                 <span className="flex items-center gap-1">
                   <MapPin size={14} color="#75FC56" />

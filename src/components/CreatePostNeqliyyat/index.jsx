@@ -78,6 +78,51 @@ const [uploadProgress, setUploadProgress] = useState(0);
 const typeOptions = ["sifarisle", "magaza", "resmi"];
 
   const carData = {
+    Bmw: [
+      {
+        model: "X5",
+        motor: ["2.0", "3.0", "4.0"],
+        ban_type: ["Sedan", "Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+        year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+
+
+      },
+
+      
+      
+    ],
+    
+    Audi: [
+      {
+        model: "A4",
+        motor: ["2.0", "3.0", "4.0"],
+        ban_type: ["Sedan", "Hatchback"],
+        transmission: ["Avtomat", "Mexanika"],
+        color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
+        year: Array.from(
+  { length: new Date().getFullYear() - 1980 + 1 },
+  (_, i) => String(1980 + i)
+),
+        engine: ["Benzin", "Dizel", "Hibrid"],
+        salon: ["Dəri", "Parça"],
+        modfikasiya: ["Ön"],
+      },
+      
+    
+
+    ],
+    
+
+
+      
     Mercedess: [
       {
         model: "Gle",
@@ -429,19 +474,31 @@ color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
     ],
   };
 
-  const handleChangeSelect = (e) => {
-    const { name, checked } = e.target;
+  // const handleChangeSelect = (e) => {
+  //   const { name, checked } = e.target;
 
+  //   setOptions((prev) => ({
+  //     ...prev,
+  //     [name]: checked,
+  //   }));
+
+  //   setForm((prev) => ({
+  //     ...prev,
+  //     [name]: checked ? "Bəli" : "Xeyr",
+  //   }));
+  // };
+
+  const handleChangeSelect = (e) => {
+    const {name, checked} = e.target;
     setOptions((prev) => ({
       ...prev,
       [name]: checked,
     }));
-
-    setForm((prev) => ({
-      ...prev,
-      [name]: checked ? "Bəli" : "Xeyr",
-    }));
-  };
+  setForm((prev) =>({
+    ...prev,
+    [name]: checked,
+  }));
+  }
 
 const official_store_salon_checked_group = (e) => {
   const { name } = e.target;
@@ -1010,6 +1067,7 @@ console.log("SEND:", JSON.stringify(carObject, null, 2));
                     className="p-3 rounded-xl border outline-none border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition disabled:bg-gray-50 disabled:text-gray-400"
                   >
                     <option value="">Model seçin</option>
+                    
                     {form.brand &&
                       carData[form.brand].map((item) => (
                         <option key={`model-${item.model}`} value={item.model}>
@@ -1295,7 +1353,7 @@ console.log("SEND:", JSON.stringify(carObject, null, 2));
                       <Checkbox
                         name="credit"
                         value={form.credit}
-                        checked={options.credit ?? false}
+                        checked={options.credit ?? true}
                         onChange={handleChangeSelect}
                         inputProps={{ "aria-label": "controlled" }}
                       />{" "}
