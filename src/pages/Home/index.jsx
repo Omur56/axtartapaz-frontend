@@ -92,68 +92,7 @@ const [filters1, setFilters1] = useState({
 });
 
 
-  const allAds1 = Object.entries(data).flatMap(([type, items]) =>
-  (Array.isArray(items) ? items : []).map((item) => ({
-    ...item,
-    __type: type,
-  }))
-);
-const filteredAds = allAds1.filter((item) => {
-  const price = Number(item.price || 0);
-
-  // CATEGORY
-  if (filters1.category !== "all" && item.__type !== filters1.category) {
-    return false;
-  }
-
-  // PRICE
-  if (filters1.priceMin && price < Number(filters1.priceMin)) return false;
-  if (filters1.priceMax && price > Number(filters1.priceMax)) return false;
-
-  // CITY
-  if (
-    filters1.city &&
-    !item.location?.toLowerCase().includes(filters1.city.toLowerCase())
-  ) {
-    return false;
-  }
-
-  // TYPE
-  if (filters1.type !== "all") {
-    const type = (item.priorityType || "free").toLowerCase();
-    if (type !== filters1.type) return false;
-  }
-
-  // 🚗 CAR ONLY FILTERS
-  if (item.__type === "car") {
-    if (
-      filters1.brand &&
-      !item.brand?.toLowerCase().includes(filters1.brand.toLowerCase())
-    )
-      return false;
-
-    if (
-      filters1.model &&
-      !item.model?.toLowerCase().includes(filters1.model.toLowerCase())
-    )
-      return false;
-
-    if (filters1.yearMin && item.year < Number(filters1.yearMin)) return false;
-    if (filters1.yearMax && item.year > Number(filters1.yearMax)) return false;
-
-    if (filters1.color && item.color !== filters1.color) return false;
-
-    if (filters1.motor && !item.motor?.includes(filters1.motor)) return false;
-
-    if (filters1.fuel && item.fuel !== filters1.fuel) return false;
-
-    if (filters1.credit && !item.car?.credit) return false;
-
-    if (filters1.barter && !item.car?.barter) return false;
-  }
-
-  return true;
-});
+ 
 
 
 
@@ -251,36 +190,132 @@ const typeLabels = {
     fetchAll();
   }, []);
 
-  /* ALL ADS */
+
+
+ 
+
 const allAds = Object.entries(data)
   .flatMap(([type, items]) =>
     (Array.isArray(items) ? items : []).map((item) => ({
       ...item,
       __type: type,
-    })),
+    }))
   )
+  .filter((item) => {
+    const price = Number(item.price || 0);
+
+    // Category
+    if (
+      filters1.category !== "all" &&
+      item.__type !== filters1.category
+    )
+      return false;
+
+    // Price
+    if (filters1.priceMin && price < Number(filters1.priceMin))
+      return false;
+
+    if (filters1.priceMax && price > Number(filters1.priceMax))
+      return false;
+
+    // City
+    if (
+      filters1.city &&
+      !item.location
+        ?.toLowerCase()
+        .includes(filters1.city.toLowerCase())
+    )
+      return false;
+
+    // Priority
+    if (filters1.type !== "all") {
+      const type = (item.priorityType || "free").toLowerCase();
+
+      if (type !== filters1.type) return false;
+    }
+
+    // Car Filters
+    if (item.__type === "car") {
+      if (
+        filters1.brand &&
+        item?.car?.brand !== filters1.brand
+      )
+        return false;
+
+      if (
+        filters1.model &&
+        item?.car?.model !== filters1.model
+      )
+        return false;
+
+      if (
+        filters1.motor &&
+        item?.car?.motor !== filters1.motor
+      )
+        return false;
+
+      if (
+        filters1.yearMin &&
+        Number(item?.car?.year) <
+          Number(filters1.yearMin)
+      )
+        return false;
+
+      if (
+        filters1.yearMax &&
+        Number(item?.car?.year) >
+          Number(filters1.yearMax)
+      )
+        return false;
+
+      if (
+        filters1.color &&
+        item?.car?.color !== filters1.color
+      )
+        return false;
+
+      if (
+        filters1.fuel &&
+        item?.car?.fuel !== filters1.fuel
+      )
+        return false;
+
+      if (filters1.credit && !item?.car?.credit)
+        return false;
+
+      if (filters1.barter && !item?.car?.barter)
+        return false;
+    }
+
+    return true;
+  })
   .sort((a, b) => {
-    const priorityMap = {
-      premium: 1,
+    const priorityOrder = {
+      premium: 3,
       vip: 2,
-      
-      free: 3,
+      free: 1,
     };
 
-    const aType = (a.priorityType || "free").toLowerCase();
-    const bType = (b.priorityType || "free").toLowerCase();
+    const aPriority =
+      priorityOrder[
+        (a.priorityType || "free").toLowerCase()
+      ] || 1;
 
-    // 1. priority (VIP ən yuxarı)
-    const priorityDiff =
-      (priorityMap[aType] || 3) - (priorityMap[bType] || 3);
+    const bPriority =
+      priorityOrder[
+        (b.priorityType || "free").toLowerCase()
+      ] || 1;
 
-    if (priorityDiff !== 0) return priorityDiff;
+    // Premium -> VIP -> Free
+    if (aPriority !== bPriority) {
+      return bPriority - aPriority;
+    }
 
-    // 2. newest first
+    // Eyni priority-də ən yeni əvvəl
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
 
-  const visibleAds = allAds.slice(0, visibleCount);
+const visibleAds = allAds.slice(0, visibleCount);
 
 
 
@@ -865,9 +900,10 @@ const getCardInfo = (item) => {
 
       {/* CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-[10px] sm:mt-[100px] justify-items-center ">
+
         {isLoading
           ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
-          : filteredAds.slice(0, visibleCount).map((item) => (
+          : visibleAds.map((item) => (
               <div
                 key={item._id}
                 className="relative "
@@ -878,7 +914,7 @@ const getCardInfo = (item) => {
                
 
 
-                    <div className="absolute top-2 left-2 flex gap-2 z-10">
+                    {/* <div className="absolute top-2 left-2 flex gap-2 z-10">
   {item?.car?.barter === "Bəli" && (
     <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
       <RefreshCcw size={16} strokeWidth={1.5} />
@@ -886,6 +922,36 @@ const getCardInfo = (item) => {
   )}
 
   {item?.car?.credit === "Bəli" && (
+    <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
+      <Percent size={16} strokeWidth={1.5} />
+    </div>
+  )}
+</div> */}
+
+{/* <div className="absolute top-2 left-2 flex gap-2 z-10">
+  {item?.car?.barter && (
+    <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
+      <RefreshCcw size={16} strokeWidth={1.5} />
+    </div>
+  )}
+
+  {item?.car?.credit && (
+    <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
+      <Percent size={16} strokeWidth={1.5} />
+    </div>
+  )}
+</div> */}
+
+
+
+<div className="absolute top-2 left-2 flex gap-2 z-10">
+  {item?.car?.barter && (
+    <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
+      <RefreshCcw size={16} strokeWidth={1.5} />
+    </div>
+  )}
+
+  {item?.car?.credit && (
     <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
       <Percent size={16} strokeWidth={1.5} />
     </div>
@@ -955,13 +1021,13 @@ const getCardInfo = (item) => {
     {getCardInfo(item)}
   </span>
 </div>
-                    <div className="flex justify-between items-center text-gray-600 mt-4 text-xs sm:text-sm">
+                    <div className="flex justify-between items-center  mt-4 text-xs sm:text-sm">
                 <span className="flex items-center gap-1">
                   <MapPin size={14} color="#75FC56" />
                   {item.location}
                 </span>
              
-                   <span className="capitalize text-[12px] p-1 rounded flex justify-between  text-gray-600 truncate w-30">
+                   <span className="capitalize text-[12px] p-1 rounded flex justify-between   truncate w-30">
   {formatDate(item.createdAt)} {getCurrentTime(item.createdAt)}
 </span>
               </div>

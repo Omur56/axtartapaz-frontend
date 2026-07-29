@@ -58,7 +58,7 @@ function Header() {
 
   
   return (
-    <header ref={headerRef}  className="header h-[50px] fixed  p-2 bg-[#ffffff]  z-50  top-0 backdrop-blur-md  text-gray-800 shadow-none  transition-all duration-300 mb-6 w-full  " >  
+    <header ref={headerRef}  className="header h-[50px] fixed  p-2   z-50  top-0 backdrop-blur-md   shadow-none  transition-all duration-300 mb-6 w-full  " >  
       <div className="flex justify-between mx-auto my-auto  items-center  max-w-[1200px]">
         
       

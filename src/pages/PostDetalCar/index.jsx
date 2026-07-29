@@ -400,52 +400,33 @@ to={`/Katalog/Nəqliyyat?brand=${encodeURIComponent(post?.car?.brand)}&model=${e
             </span>
           </div>
           <div className="flex mt-2 w-full h-[100px]  gap-2">
-            <div className="  w-full h-[50px] p-1  flex gap-2">
-              {post?.car?.credit && (
-                <div className="w-[100px] h-[50px] flex gap-2">
-                  <div className="flex w-full h-[40px] gap-2  bg-white rounded-lg p-2 shadow-md">
-                    <p className="w-[25px] bg-orange-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
-                      {" "}
-                      <Percent
-                        size={16}
-                        strokeWidth={1.5}
-                        absoluteStrokeWidth
-                      />{" "}
-                    </p>
+<div className="flex gap-2">
 
-                    <span className="text-sm text-gray-400 font-semibold mt-1">
-                      Kredit
-                    </span>
-                  </div>
-                  <div className="w-full h-[40px] flex gap-2 bg-white rounded-lg p-2 shadow-md">
-                    {post?.car?.barter && (
-                      <p className="w-[25px] bg-green-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
-                        <RefreshCcw
-                          size={16}
-                          strokeWidth={1.5}
-                          absoluteStrokeWidth
-                        />
-                      </p>
-                    )}
-                    <span className="text-sm text-gray-400 font-semibold mt-1">
-                      Barter
-                    </span>
-                  </div>
-                 {post.salon === "Salon" && (
-  <div className="w-full h-[40px] flex  text-white bg-blue-500 rounded-lg p-2 shadow-md">
-    <span className="w-[25px] bg-blue-500 h-[25px] p-1 justify-items-center  flex rounded-full text-white">
-    <CarFront size={16} strokeWidth={1.5} absoluteStrokeWidth  />
-    </span>
-    <span className="text-sm text-white font-semibold">
-      
-       Salon
-    </span>
-  </div>
-)}
+  {post?.car?.credit && (
+    <div className="w-full h-[40px] flex gap-2 bg-white rounded-lg p-2 shadow-md">
+      <p className="w-[25px] bg-orange-500 h-[25px] p-1 flex justify-center items-center rounded-full text-white">
+        <Percent size={16} />
+      </p>
 
-                </div>
-              )}
-            </div>
+      <span className="text-sm text-gray-400 font-semibold mt-1">
+        Kredit
+      </span>
+    </div>
+  )}
+
+  {post?.car?.barter && (
+    <div className="w-full h-[40px] flex gap-2 bg-white rounded-lg p-2 shadow-md">
+      <p className="w-[25px] bg-green-500 h-[25px] p-1 flex justify-center items-center rounded-full text-white">
+        <RefreshCcw size={16} />
+      </p>
+
+      <span className="text-sm text-gray-400 font-semibold mt-1">
+        Barter
+      </span>
+    </div>
+  )}
+
+</div>
           </div>
 
           <h2 className="text-xl font-bold mb-4">Əlaqə məlumatı</h2>

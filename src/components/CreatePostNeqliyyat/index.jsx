@@ -26,11 +26,11 @@ export default function CreatePost() {
   const [imageClose, setImageClose] = useState(false);
   const [modelImagePreview, setModelImagePreview] = useState("");
   const [handleModelImageChange, setHandleModelImageChange] = useState(null);
-const [options, setOptions] = useState({
-  credit: false,
-  barter: false,
-  salon: false,
-});
+// const [options, setOptions] = useState({
+//   credit: false,
+//   barter: false,
+//   salon: false,
+// });
 
 
 const [isUploading, setIsUploading] = useState(false);
@@ -488,17 +488,17 @@ color: ["Ağ", "Qara", "Gümüşü", "Qırmızı", "Mavi","Gold", "Berj"],
   //   }));
   // };
 
-  const handleChangeSelect = (e) => {
-    const {name, checked} = e.target;
-    setOptions((prev) => ({
-      ...prev,
-      [name]: checked,
-    }));
-  setForm((prev) =>({
-    ...prev,
-    [name]: checked,
-  }));
-  }
+  // const handleChangeSelect = (e) => {
+  //   const {name, checked} = e.target;
+  //   setOptions((prev) => ({
+  //     ...prev,
+  //     [name]: checked,
+  //   }));
+  // setForm((prev) =>({
+  //   ...prev,
+  //   [name]: checked,
+  // }));
+  // }
 
 const official_store_salon_checked_group = (e) => {
   const { name } = e.target;
@@ -644,6 +644,7 @@ setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
 
+  // ❌ contact burada YOXDUR
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -675,33 +676,76 @@ const handleSubmit = async (e) => {
   const cleanedPrice = Number(String(form.price).replace(/\s/g, ""));
 
   // ❌ contact burada YOXDUR
-  const carObject = {
-    title: form.title,
-    brand: form.brand,
-    model: form.model,
-    ban_type: form.ban_type,
-    year: form.year,
-    engine: form.engine,
-    motor: form.motor,
-    transmission: form.transmission,
-    km: form.km,
-    color: form.color,
-    modification: form.modification,
-generation: form.generation,
-    barter: options.barter ? "Bəli" : "Xeyr",
-    credit: options.credit ? "Bəli" : "Xeyr",
-    salon: options.salon ? "Bəli" : "Xeyr",
-    type_magasine: form.type_magasine,
+//   const carObject = {
+//     title: form.title,
+//     brand: form.brand,
+//     model: form.model,
+//     ban_type: form.ban_type,
+//     year: form.year,
+//     engine: form.engine,
+//     motor: form.motor,
+//     transmission: form.transmission,
+//     km: form.km,
+//     color: form.color,
+//     modification: form.modification,
+// generation: form.generation,
+//     // barter: options.barter ? "Bəli" : "Xeyr",
+//     // credit: options.credit ? "Bəli" : "Xeyr",
+//     // salon: options.salon ? "Bəli" : "Xeyr",
 
-     contact: {
+//     //  barter: options.barter,
+//   // credit: options.credit,
+//   // salon: options.salon,
 
-        name: form.contact.name,
+// //   barter: !!options.barter,
+// // credit: !!options.credit,
+// // salon: !!options.salon,
 
-        email: form.contact.email,
+// salon: form.salon,
+//     type_magasine: form.type_magasine,
 
-        phone: form.contact.phone,
-    }
-  };
+//      contact: {
+
+//         name: form.contact.name,
+
+//         email: form.contact.email,
+
+//         phone: form.contact.phone,
+//     }
+   
+//   }; 
+
+
+const carObject = {
+  title: form.title,
+  brand: form.brand,
+  model: form.model,
+  ban_type: form.ban_type,
+  year: form.year,
+  engine: form.engine,
+  motor: form.motor,
+  transmission: form.transmission,
+  km: form.km,
+  color: form.color,
+  modification: form.modification,
+  generation: form.generation,
+
+  credit: form.credit,
+  barter: form.barter,
+  salon: form.salon,
+
+  type_magasine: form.type_magasine,
+
+  contact: {
+    name: form.contact.name,
+    email: form.contact.email,
+    phone: form.contact.phone,
+  }
+};
+
+console.log("FORM:", form);
+console.log("CAR OBJECT:", carObject);
+  
 console.log("SEND:", JSON.stringify(carObject, null, 2));
   formData.set("car", JSON.stringify(carObject));
 
@@ -781,6 +825,7 @@ console.log("SEND:", JSON.stringify(carObject, null, 2));
     magaza: "",
       barter: "",
       kredit: "",
+      
       engine: "",
       contact: {
         name: "",
@@ -1348,7 +1393,34 @@ console.log("SEND:", JSON.stringify(carObject, null, 2));
                       </div>
                     )}
                   </div>
-                  <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex gap-2">
+<div className="flex gap-10 w-full items-center">
+  <div className="flex gap-2 justify-center items-center">
+                  <Checkbox className="ml-4 hover:cursor-pointer  w-[20px] max-h-[40px] bg-transparent border-cyan-900 border-2 rounded-[10px]"
+    name="credit"
+    checked={form.credit}
+    onChange={(e) =>
+        setForm(prev => ({
+            ...prev,
+            credit: e.target.checked
+        }))
+    }
+/><span>Kredit ilə satılır</span> 
+</div>
+
+<div className="flex w-1 h-1 gap-2 justify-center items-center">
+<Checkbox className="ml-4 hover:cursor-pointer   w-[20px] max-h-[40px] bg-transparent border-cyan-900 border-2 rounded-[10px]"
+    name="barter"
+    checked={form.barter}
+    onChange={(e) =>
+        setForm(prev => ({
+            ...prev,
+            barter: e.target.checked
+        }))
+    }
+/> <span>Barter</span> 
+</div>
+</div>
+                  {/* <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex gap-2">
                     <label className="block mb-2 w-[200px] max-h-[40px] bg-transparent border-cyan-900 border-2 rounded-[10px]  ">
                       <Checkbox
                         name="credit"
@@ -1370,7 +1442,7 @@ console.log("SEND:", JSON.stringify(carObject, null, 2));
                       />
                       Barter
                     </label>
-                  </div>
+                  </div> */}
 
                  <div className="flex gap-2">
 
