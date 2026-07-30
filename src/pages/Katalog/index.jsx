@@ -68,13 +68,13 @@ const Katalog = ({ className, width, height, marginTop }) => {
     <Link
   key={id}
   to={`/katalog/${path}`}
-  className={`relative min-w-[100px] max-w-[120px] h-[120px] rounded-[10px] shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover} snap-start`}
+  className={`relative min-w-[100px] max-w-[120px] h-[100px] rounded-[10px] shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover} snap-start`}
 >
   {typeof icon === "string" ? (
     <img
       src={icon}
       alt={label}
-      className="w-[100px] h-[80px] object-cover absolute bottom-0 right-0"
+      className="w-[100px] h-[60px] sm:h-[80px] object-cover absolute bottom-0 right-0 rounded-[10px]"
     />
   ) : (
     <icon className="w-[50px] h-[50px] text-white absolute bottom-0 right-0" />
@@ -107,7 +107,7 @@ const Katalog = ({ className, width, height, marginTop }) => {
             >
               <div className="mt-4 ">
                 <button
-                  className={`${cat.bgColor} h- ring-2 ring-blue-500 flex-col transform hover:scale-105 border w-[150px] h-[100px] rounded-[7px] flex justify-center items-center shadow transition-all duration-200`}
+                  className={`${cat.bgColor} h- ring-2 flex-col transform hover:scale-105 border w-[150px] h-[100px] rounded-[7px] flex justify-center items-center shadow transition-all duration-200`}
                 >
                   
                   <div className="absolute top-2 right-2 opacity-50 ">
@@ -121,7 +121,7 @@ const Katalog = ({ className, width, height, marginTop }) => {
 )}
                  
                   </div>
-                   <p className="z-50 left-2 absolute p-1 mt-[-50px]   color:red text-[10px] text-white font-bold">{cat.label}</p>
+                   <p className="z-50 left-2 absolute p-1 mt-[-50px]   color:red text-[10px]  font-bold">{cat.label}</p>
                 </button>
                
               </div>

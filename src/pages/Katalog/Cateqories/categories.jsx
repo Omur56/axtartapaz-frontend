@@ -43,7 +43,7 @@ const Katalog = () => {
               alt={label}
               className="w-16 h-16 sm:w-20 sm:h-20 mb-3"
             />
-            <span className="font-medium text-white text-center">{label}</span>
+            <span className="font-medium  text-center">{label}</span>
           </Link>
         ))}
       </div>
