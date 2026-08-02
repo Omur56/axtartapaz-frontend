@@ -167,7 +167,8 @@ export default function CreatePhone() {
       location: "",
       images: [],
       description: "",
-      contact: { name: "", email: "", phone: "" },
+      
+      
       liked: false,
       favorite: false,
       data: new Date(),

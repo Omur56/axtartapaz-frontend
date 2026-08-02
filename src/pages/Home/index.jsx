@@ -550,7 +550,7 @@ const getCardInfo = (item) => {
     return (
   <>
     <div className="font-semibold">
-      {item?.car?.brand} {item?.car?.model}
+      {item?.car?.brand} {item?.car?.model}  {item?.car?.generation}
     </div>
 
     <div>
@@ -566,14 +566,30 @@ const getCardInfo = (item) => {
 );
 
     case "phone":
-      return [
-        item?.model,
-        item?.storage,
-        item?.ram,
-        item?.color,
-      ]
-        .filter(Boolean)
-        .join(", ");
+    return (
+      <>
+        <div className="font-semibold">
+          {item?.title}, {item?.brand}, {item?.model}
+        </div>
+
+        <div>
+          {[
+            item?.type,
+            item?.color,
+            item?.ram && `${item.ram} GB`,
+            item?.storage && `${item.storage} GB`,
+
+          ]
+            .filter(Boolean)
+            .join(", ")
+          }
+        </div>
+        </>
+
+    )
+
+          
+
 
     case "electronics":
       return [
@@ -586,31 +602,69 @@ const getCardInfo = (item) => {
         .join(", ");
 
     case "realEstate":
-      return [
-        item?.realEstate?.rooms &&
-          `${item.realEstate.rooms} otaq`,
-        item?.realEstate?.area &&
-          `${item.realEstate.area} m²`,
-        item?.realEstate?.floor &&
-          `${item.realEstate.floor}-ci mərtəbə`,
-      ]
-        .filter(Boolean)
-        .join(", ");
+      return (
+       <>
+       <div className="font-semibold">
+        {item?.title}, {item?.type}, {item?.rooms} otaq
+       </div>
+       
+       <div>
+        {item?.area} m², {item?.floor}/{item?.totalFloors} mərtəbə
+        
+
+       </div>
+       
+
+
+
+       </>
+      )
 
     case "clothing":
-      return item?.brand || "";
+      return (
+        <>
+        <div className="font-semibold">
+          {item?.title}, {item?.brand}, {item?.model}
+        </div>
+        <div>
+          {item?.type}, {item?.size}, {item?.color}
+        </div>
+        </>
+      )
+
 
     case "homeGarden":
-      return item?.brand || "";
+      return [
+         item?.brand,
+        item?.model,
+        item?.title,
+        item?.type,
+       
+      ]
+      .filter(Boolean)
+        .join(", ");
+
 
     case "household":
-      return item?.brand || "";
+      return [
+ item?.brand,
+        item?.model,
+        item?.title,
+        item?.type,
+       
+
+      ] 
+      .filter(Boolean)
+        .join(", ");
+
 
     case "accessory":
       return [
         item?.brand,
         item?.model,
         item?.title,
+        item?.type,
+        
       ]
         .filter(Boolean)
         .join(" ");
