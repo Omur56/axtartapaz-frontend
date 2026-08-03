@@ -32,7 +32,7 @@ import PostDetailHome from "../pages/PostDetailHome";
 import PrivateRoute from "../components/PrivateRoute";
 import Search from "../pages/Search";
 import Login from "../pages/Login";
-import Reqister from "../pages/Reqister";
+import Register from "../pages/Register";
 import Profile from "../pages/Profile";
 import Admin from "../pages/AdminPanel";
 import AdsPanel from "../pages/AdsPanel";
@@ -357,8 +357,8 @@ const router = createBrowserRouter([
         Component: Login,
       },
       {
-        path: "/reqister",
-        Component: Reqister,
+        path: "/register",
+        Component: Register,
       },
 
       {

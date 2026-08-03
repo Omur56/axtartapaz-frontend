@@ -33,7 +33,7 @@ export default function Register() {
 
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/reqister`,
+        `${process.env.REACT_APP_API_URL}/api/register`,
         {
           username,
           email,
