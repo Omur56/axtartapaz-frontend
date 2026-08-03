@@ -205,28 +205,28 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
 
           <ul className="text-sm text-gray-700 space-y-1 mt-4">
             <li>
-              <span className="font-bold">Elan Başlıq:</span> {post.title}
+              <span className="font-bold">Elan Başlıq:</span> {post?.phone?.title}
             </li>
             <li>
-              <span className="font-bold">Marka:</span> {post.brand}
+              <span className="font-bold">Marka:</span> {post?.phone?.brand}
             </li>
             <li>
-              <span className="font-bold">Model:</span> {post.model}
+              <span className="font-bold">Model:</span> {post?.phone?.model}
             </li>
             <li>
-              <span className="font-bold">Yaddaş:</span> {post.storage}
+              <span className="font-bold">Yaddaş:</span> {post?.phone?.storage}
             </li>
             <li>
-              <span className="font-bold">Ram:</span> {post.rom}
+              <span className="font-bold">Ram:</span> {post?.phone?.ram}
             </li>
             <li>
-              <span className="font-bold">Rəng:</span> {post.color}
+              <span className="font-bold">Rəng:</span> {post?.phone?.color}
             </li>
             <li>
-              <span className="font-bold">Sim Kart:</span> {post.sim_card}
+              <span className="font-bold">Sim Kart:</span> {post?.phone?.sim_card}
             </li>
             <li>
-              <span className="font-bold">Yerləşmə:</span> {post.location}
+              <span className="font-bold">Yerləşmə:</span> {post?.location}
             </li>
             <li>
               <span className="font-bold">Qeyd:</span> {post?.description}

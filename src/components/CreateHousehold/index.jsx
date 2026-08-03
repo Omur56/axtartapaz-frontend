@@ -17,6 +17,8 @@ export default function CreateHousehold() {
     title: "",
     description: "",
     type_of_goods: "",
+    brand: "",
+    model: "",
     location: "",
     price: "",
     liked: false,
@@ -142,6 +144,8 @@ export default function CreateHousehold() {
       title: "",
       description: "",
       type_of_goods: "",
+      brand: "",
+      model: "",
       location: "",
       price: "",
       liked: false,
@@ -446,13 +450,22 @@ const handleOpenForm = () => {
 
                   <input
                     type="text"
-                    name="type_of_goods"
+                    name="brand"
                     placeholder="Marka"
-                    value={household.type_of_goods}
+                    value={household.brand}
                     onChange={handleChange}
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
+                    
                   />
+
+                  <input 
+                  type="text"
+                    name="model"
+                    placeholder="Model"
+                    value={household.model}
+                    onChange={handleChange}
+                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                    />
 
                   <input
                     type="text"
@@ -584,7 +597,7 @@ const handleOpenForm = () => {
                           ? item.imageUrls[0]
                           : "/placeholder.png"
                       }
-                      alt={item.title || "Image"}
+                      alt={item?.title || "Image"}
                       className="w-full h-[171px] object-cover"
                     />
                     <div className="p-4">
@@ -592,10 +605,10 @@ const handleOpenForm = () => {
                         {item.price} AZN
                       </h2>
                       <h3 className="text-lg font-semibold mb-1">
-                        {item.title} {item.category} {item.type_of_gods}
+                        {item?.household?.title} {item?.household?.category} {item?.household?.type_of_gods}
                       </h3>
 
-                      <p className="text-gray-600">{item.model}</p>
+                      <p className="text-gray-600">{item?.household?.model}</p>
                     </div>
                   </div>
                 </Link>
@@ -653,7 +666,7 @@ const handleOpenForm = () => {
                     <div className="p-2 ">
                       <h3 className="text-lg font-bold">{item.price} AZN</h3>
                       <p className="font-sans capitalize text-[16px] truncate w-50 ">
-                        {item.category} "{item.title}" {item.type_of_goods}
+                        {item?.household?.category} "{item?.household?.title}" {item?.household?.type_of_goods}
                       </p>
 
                       <div className="flex justify-between gap-1 mt-8 ">

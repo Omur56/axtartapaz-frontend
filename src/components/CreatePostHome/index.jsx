@@ -20,6 +20,7 @@ export default function CreatePostForHomeAndGarden() {
     title: "",
     description: "",
     brand: "",
+    model: "",
     price: "",
     location: "",
     contact: { name: "", email: "", phone: "" },
@@ -123,6 +124,7 @@ const handleSubmit = async (e) => {
   title: "",
   description: "",
   brand: "",
+  model: "",
   price: "",
   location: "",
   contact: { name: "", email: "", phone: "" },
@@ -447,6 +449,14 @@ const handleOpenForm = () => {
                     value={homeGardenForm.brand}
                     onChange={handleChange}
                     required
+                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                  />
+                  <input 
+                    type="text"
+                    name="model"
+                    placeholder="Model"
+                    value={homeGardenForm.model}
+                    onChange={handleChange}
                     className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
                   />
                   <input

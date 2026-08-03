@@ -549,11 +549,11 @@ const getCardInfo = (item) => {
     case "car":
     return (
   <>
-    <div className="font-semibold">
+    <div className="font-semibold capitalize">
       {item?.car?.brand} {item?.car?.model}  {item?.car?.generation}
     </div>
 
-    <div>
+    <div className="capitalize">
       {[
         item?.car?.year,
         item?.car?.motor && `${item.car.motor} L`,
@@ -568,22 +568,22 @@ const getCardInfo = (item) => {
     case "phone":
     return (
       <>
-        <div className="font-semibold">
-          {item?.title}, {item?.brand}, {item?.model}
+        <div className="font-semibold *:capitalize">
+           {item?.phone?.brand}, {item?.phone?.model}
         </div>
 
-        <div>
+        <div className="capitalize">
           {[
-            item?.type,
-            item?.color,
-            item?.ram && `${item.ram} GB`,
-            item?.storage && `${item.storage} GB`,
+           
+            item?.phone?.ram && ` ${item.phone.ram} GB Ram`,
+            item?.phone?.storage && ` ${item.phone.storage} GB Yaddaş`,
 
           ]
             .filter(Boolean)
             .join(", ")
           }
         </div>
+        
         </>
 
     )
@@ -592,27 +592,39 @@ const getCardInfo = (item) => {
 
 
     case "electronics":
-      return [
-        item?.title,
-        item?.type,
-        item?.brand,
-        item?.model,
-      ]
-        .filter(Boolean)
-        .join(", ");
+      return (
+        <>
+        <div className="font-semibold capitalize">
+          {item?.electronics?.title}, {item?.electronics?.brand}, {item?.electronics?.model}
+        </div>
+        <div className="capitalize" >
+          {[
+            item?.electronics?.type && ` ${item.electronics.type}`,
+          ]
+            
+            .filter(Boolean)
+            .join(", ")
+            }
+        </div>
+       </>
+      )
 
     case "realEstate":
       return (
        <>
-       <div className="font-semibold">
-        {item?.title}, {item?.type}, {item?.rooms} otaq
-       </div>
-       
-       <div>
-        {item?.area} m², {item?.floor}/{item?.totalFloors} mərtəbə
-        
+        <div className="font-semibold capitalize">
+          {item?.realEstate?.city},
+        </div>
 
-       </div>
+        <div className="capitalize">
+          {[
+            item?.realEstate?.rooms && `${item.realEstate.rooms} otaq`,
+            item?.realEstate?.area && `${item.realEstate.area} m²`,
+          ]
+            .filter(Boolean)
+            .join(", ")
+          }
+        </div>
        
 
 
@@ -622,52 +634,87 @@ const getCardInfo = (item) => {
 
     case "clothing":
       return (
+       <>
+       <div className="font-semibold capitalize">  
+      
+       {item?.clothing?.brand}, {item?.clothing?.model}
+
+       </div>
+       <div className="capitalize">
+        {[
+         
+          item?.clothing?.color && ` ${item.clothing.color}`,
+          item?.clothing?.size && ` ${item.clothing.size}`,
+
+        ]
+          .filter(Boolean)
+          .join(", ")
+        }
+       </div>
+       </>
+      )
+
+
+    case "homeGarden":
+      return (
         <>
-        <div className="font-semibold">
-          {item?.title}, {item?.brand}, {item?.model}
+        <div className="font-semibold capitalize">
+
+          {item?.homeGarden?.title}, {item?.homeGarden?.brand}, {item?.homeGarden?.model}
+          
         </div>
-        <div>
-          {item?.type}, {item?.size}, {item?.color}
+        <div className="capitalize">
+          {[
+            item?.homeGarden?.type && ` ${item.homeGarden.type}`,
+          ]
+            .filter(Boolean)
+            .join(", ")
+          }
+          </div>
+        </>
+      )
+
+    case "household":
+      return (
+        <>
+        <div className="font-semibold capitalize">
+          {item?.household?.title && ` ${item.household.title}`}
+           
+        </div>
+        <div className="capitalize">
+          {[
+            item?.household?.brand && ` ${item.household.brand}`,
+            item?.household?.model && ` ${item.household.model}`,
+
+          ]
+
+            .filter(Boolean)
+            .join(", ")
+          }
         </div>
         </>
       )
 
 
-    case "homeGarden":
-      return [
-         item?.brand,
-        item?.model,
-        item?.title,
-        item?.type,
-       
-      ]
-      .filter(Boolean)
-        .join(", ");
-
-
-    case "household":
-      return [
- item?.brand,
-        item?.model,
-        item?.title,
-        item?.type,
-       
-
-      ] 
-      .filter(Boolean)
-        .join(", ");
-
-
     case "accessory":
-      return [
-        item?.brand,
-        item?.model,
-        item?.title,
-        item?.type,
-        
-      ]
-        .filter(Boolean)
-        .join(" ");
+      return (
+        <>
+        <div className="font-semibold capitalize">
+          {item?.accessory?.title}, {item?.accessory?.brand}, {item?.accessory?.model}
+        </div>
+        <div className="capitalize">
+          {[
+            item?.accessory?.type && ` ${item.accessory.type}`,
+          ]
+
+            .filter(Boolean)
+            .join(", ")
+          }
+        </div>
+
+        </>
+      )
+
 
     default:
       return "";

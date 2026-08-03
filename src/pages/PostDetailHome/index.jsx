@@ -202,8 +202,8 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
             {post.price} AZN ₼
           </p>
 
-          <p className="text-gray-700 leading-relaxed"><span className="font-bold">Başlıq: </span>{post.title}</p> 
-          <p className="text-gray-700 leading-relaxed"><span className="font-bold">Brend: </span>{post.brand}</p> 
+          <p className="text-gray-700 leading-relaxed"><span className="font-bold">Başlıq: </span></p> 
+          <p className="text-gray-700 leading-relaxed"><span className="font-bold">Brend: </span>{post?.homeGarden?.brand}</p> 
           <div className="mt-4">
             
             <p className="text-gray-700 leading-relaxed"><span className="font-bold">Qeyd: </span> {post.description}</p>
@@ -295,10 +295,10 @@ if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-
                     {item.price} ₼
                   </h3>
                   <p className="text-sm font-bold truncate w-62">
-                    {item.title}
+                    {item?.homeGarden?.title} {item?.homeGarden?.type_of_goods}
                   </p>
                    <p className="text-sm font-bold truncate w-62">
-                    {item.brand} 
+                    {item?.homeGarden?.brand} 
                   </p>
                   <p className="text-[15px] text-gray-400 mt-4">
                     {item.location}, {formatDate(item.data)}{" "}

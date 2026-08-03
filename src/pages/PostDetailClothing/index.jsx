@@ -194,7 +194,7 @@ const [progress, setProgress] = React.useState(0);
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6  shadow-lg rounded-xl p-6">
         <div className="lg:col-span-2 space-y-6">
           <h1 className="text-2xl font-bold capitalize mb-2">
-            {post.category} {post.brand} {post.model} {post.type}
+            {post?.clothing?.category} {post?.clothing?.brand} {post?.clothing?.model} {post?.clothing?.type}
           </h1>
 
           <Carousel showThumbs={true} showStatus={false} autoPlay infiniteLoop>
@@ -222,13 +222,13 @@ const [progress, setProgress] = React.useState(0);
           </p>
 <div className="mt-4">
             <h2 className="text-lg font-semibold "><span className="font-semibold">Məhsul: </span>{post.title}</h2>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Məhsul tipi: </span>{post.type}</p>
+            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Məhsul tipi: </span>{post?.clothing?.type}</p>
             <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Kateqoriya: </span>{post.category}</p>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Marka: </span>{post.brand}</p>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Rəng: </span>{post.color}</p>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Ölçü: </span>{post.size}</p>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Vəziyyəti: </span>{post.condition}</p>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Qeyd: </span>{post.description}</p>
+            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Marka: </span>{post?.clothing?.brand}</p>
+            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Rəng: </span>{post?.clothing?.color}</p>
+            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Ölçü: </span>{post?.clothing?.size}</p>
+            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Vəziyyəti: </span>{post?.clothing?.condition}</p>
+            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Qeyd: </span>{post?.clothing?.description}</p>
           </div>
 
             
@@ -322,7 +322,7 @@ const [progress, setProgress] = React.useState(0);
                   <p className="text-sm font-bold truncate w-64">
                     {item.title}
                   </p>
-                  <p className="text-gray-700 leading-relaxed">{item.brand}</p>
+                  <p className="text-gray-700 leading-relaxed">{item?.clothing?.brand}</p>
                   <p className="text-base mt-1 text-gray-400">
                     {item.location}, {formatDate(item.data)}{" "}
                     {getCurrentTime(item.data)}
