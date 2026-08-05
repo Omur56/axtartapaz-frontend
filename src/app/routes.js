@@ -33,13 +33,13 @@ import PrivateRoute from "../components/PrivateRoute";
 import Search from "../pages/Search";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import ResetPassword from "../pages/ResetPassword";
 import Profile from "../pages/Profile";
 import Admin from "../pages/AdminPanel";
 import AdsPanel from "../pages/AdsPanel";
 import AdminLogin from "../pages/AdminLogin";
 import Favorites from "../pages/Favorite";
 import Cataloq from "../pages/Katalog/Cateqories/categories";
-import ResetPassword from "../pages/ResetPassword";
 import ForgotPassword from "../pages/ResetPassword/ForgotPassword";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 // import MyHomeAndGarden from "../backend/models/HomeAndGarden";
@@ -85,6 +85,7 @@ const router = createBrowserRouter([
         path: "/forgot-password",
         Component: ForgotPassword,
       },
+
       {
         path: "/",
         Component: Home,
