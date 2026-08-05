@@ -109,7 +109,7 @@ function Header() {
               </button>
               <button
                 className="flex hidden md:flex transform ease-in-out w-[80px] h-8 duration-500 items-center text-[10px] font-[500] gap-2 bg-transparent border border-blue-500 text-blue-500 hover:text-white px-2 py-2 rounded-[4px] hover:bg-blue-500"
-                onClick={() => navigate("/reqister")}
+                onClick={() => navigate("/register")}
               >
                 <FaUserPlus /> Qeydiyyat
               </button>
