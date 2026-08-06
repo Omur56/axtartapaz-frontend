@@ -767,7 +767,7 @@ const getCardInfo = (item) => {
 
 
 
-<div className="bg-white p-4 rounded-xl shadow mb-4">
+<div className=" p-4  mb-4">
 
 
 
