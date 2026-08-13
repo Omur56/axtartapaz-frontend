@@ -963,9 +963,9 @@ const getCardInfo = (item) => {
       )}
 
       {!loadingSearch && results.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid  grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
           {visibleAds.map((item, index) => (
-            <Link key={item._id} to={`${item.source}/${item._id}`}>
+            <Link key={item._id} to={`${item.source}/${item._id}/${item.__type}/${item.title?.replace(/\s+/g, "-")}`}>
               <div className="border rounded shadow p-2">
         
 
@@ -998,163 +998,183 @@ const getCardInfo = (item) => {
 </Suspense>
 
 
+{/* CARDS */}
+<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-[10px] sm:mt-[100px] justify-items-center">
 
-      {/* CARDS */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-[10px] sm:mt-[100px] justify-items-center ">
+  {isLoading
+    ? Array.from({ length: 12 }).map((_, i) => (
+        <SkeletonCard key={i} />
+      ))
+    : visibleAds.map((item) => {
 
-        {isLoading
-          ? Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
-          : visibleAds.map((item) => (
-              <div
-                key={item._id}
-                className="relative "
-              >
-                <Link  to={`/${item.__type}/${item._id}`}>
-                  <div className="z-1  bg-transparent    sm:w-[230.5px] sm:h-[268.75px] rounded-[8px] hover:shadow-xl  duration-300 ease-in-out overflow-hidden flex flex-col">
-                    {/* ICONS */}
-               
+        const slug = item.title
+          ?.trim()
+          .replace(/\s+/g, "-");
 
+        return (
+          <div
+            key={item._id}
+            className="relative"
+          >
 
-                    {/* <div className="absolute top-2 left-2 flex gap-2 z-10">
-  {item?.car?.barter === "Bəli" && (
-    <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
-      <RefreshCcw size={16} strokeWidth={1.5} />
-    </div>
-  )}
+            <Link
+              to={`/${item.__type}/${item._id}/${encodeURIComponent(slug || "")}`}
+              className="relative"
+            >
 
-  {item?.car?.credit === "Bəli" && (
-    <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
-      <Percent size={16} strokeWidth={1.5} />
-    </div>
-  )}
-</div> */}
+              <div className="z-1 bg-transparent sm:w-[230.5px] sm:h-[268.75px] rounded-[24px] overflow-hidden flex flex-col">
 
-{/* <div className="absolute top-2 left-2 flex gap-2 z-10">
-  {item?.car?.barter && (
-    <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
-      <RefreshCcw size={16} strokeWidth={1.5} />
-    </div>
-  )}
+                {/* ICONS */}
+                <div className="absolute top-2 left-2 flex gap-2 z-10">
 
-  {item?.car?.credit && (
-    <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
-      <Percent size={16} strokeWidth={1.5} />
-    </div>
-  )}
-</div> */}
-
-
-
-<div className="absolute top-2 left-2 flex gap-2 z-10">
-  {item?.car?.barter && (
-    <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
-      <RefreshCcw size={16} strokeWidth={1.5} />
-    </div>
-  )}
-
-  {item?.car?.credit && (
-    <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
-      <Percent size={16} strokeWidth={1.5} />
-    </div>
-  )}
-</div>
-
-                    {/* IMAGE */}
-                    <div className="relative sm:w-[229px] w-[178px] h-[129px] sm:h-[170.75px] overflow-hidden rounded-[4px]">
-
-
-  <img
-  src={item.images?.[item.images.length - 1] || "/no-image.jpg"}
-  className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-  alt={
-    item.title ||
-    item.brand ||
-    item.model ||
-    item.category
-  }
-  loading="lazy"
-  decoding="async"
-/>
-
-  {/* VIP / PREMIUM badge */}
-  {item.priorityType && item.priorityType !== "free" && (
-    <span
-      className={`z-20 px-2 py-1 text-xs rounded absolute bottom-2 right-2 flex items-center gap-1
-      ${
-        item.priorityType.toLowerCase() === "premium"
-          ? "bg-white text-red-500 shadow-md"
-          : "bg-white text-blue-600"
-      }`}
-    >
-      {/* Icon */}
-      {item.priorityType.toLowerCase() === "vip" && (
-       
-        <Gem size={16} />
-      )}
-
-      {item.priorityType.toLowerCase() === "premium" && (
-        
-        <Crown size={16} />
-      )}
-
-    
-    </span>
-  )}
-
-  {/* Car magazine label */}
-  {item?.car?.type_magasine && (
-    <div className="absolute p-1 bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm rounded">
-      {typeLabels?.[item.car.type_magasine] || item.car.type_magasine}
-    </div>
-  )}
-
-</div>
-
-                    {/* CONTENT */}
-                    <div className="w-[173px] h-[110.6px] sm:w-[229px] sm:h-[118px] p-2">
-                      <div className="font-bold text-[16px] sm:text-[18px]">
-                        {item.price} AZN ₼
-                      </div>
-                   
-                   
-                      <div>
-  <span className="h-[13px] text-[12px] sm:text-[16px] truncate">
-    {getCardInfo(item)}
-  </span>
-</div>
-                    <div className="flex justify-between items-center  mt-4 text-xs sm:text-sm">
-                <span className="flex items-center gap-1">
-                  <MapPin size={14} color="#75FC56" />
-                  {item.location}
-                </span>
-             
-                   <span className="capitalize text-[12px] p-1 rounded flex justify-between   truncate w-30">
-  {formatDate(item.createdAt)} {getCurrentTime(item.createdAt)}
-</span>
-              </div>
+                  {item?.car?.barter && (
+                    <div className="w-6 h-6 flex items-center justify-center bg-green-500 rounded-full text-white">
+                      <RefreshCcw
+                        size={16}
+                        strokeWidth={1.5}
+                      />
                     </div>
-                  </div>
-                </Link>
+                  )}
 
-          
-                <button
-                  onClick={() => toggleFavorite(item)}
-                  className="absolute top-2 right-2"
-                  aria-label="toggleFavoriteButton"
-                >
-                  <Heart
-                    size={22}
-                    fill={
-                      favorites.some((f) => f._id === item._id)
-                        ? "red"
-                        : "rgba(0,0,0,0.4)"
+                  {item?.car?.credit && (
+                    <div className="w-6 h-6 flex items-center justify-center bg-orange-500 rounded-full text-white">
+                      <Percent
+                        size={16}
+                        strokeWidth={1.5}
+                      />
+                    </div>
+                  )}
+
+                </div>
+
+                {/* IMAGE */}
+                <div className="relative sm:w-[229px] w-[178px] h-[129px] sm:h-[170.75px] overflow-hidden rounded-[24px]">
+
+                  <img
+                    src={
+                      item.images?.[item.images.length - 1] ||
+                      "/no-image.jpg"
                     }
-                    color="#fff"
+                    className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+                    alt={
+                      item.title ||
+                      item.brand ||
+                      item.model ||
+                      item.category
+                    }
+                    loading="lazy"
+                    decoding="async"
                   />
-                </button>
+
+                  {/* VIP / PREMIUM */}
+                  {item.priorityType &&
+                    item.priorityType !== "free" && (
+                      <span
+                        className={`z-20 px-2 py-1 text-xs rounded absolute bottom-2 right-2 flex items-center gap-1
+                        ${
+                          item.priorityType.toLowerCase() === "premium"
+                            ? "bg-white text-red-500 shadow-md"
+                            : "bg-white text-blue-600"
+                        }`}
+                      >
+
+                        {item.priorityType.toLowerCase() === "vip" && (
+                          <Gem size={16} />
+                        )}
+
+                        {item.priorityType.toLowerCase() === "premium" && (
+                          <Crown size={16} />
+                        )}
+
+                      </span>
+                    )}
+
+                  {/* MAGAZINE */}
+                  {item?.car?.type_magasine && (
+                    <div className="absolute p-1 bottom-2 left-2 bg-blue-600 text-white text-xs sm:text-sm rounded">
+                      {typeLabels?.[item.car.type_magasine] ||
+                        item.car.type_magasine}
+                    </div>
+                  )}
+
+                </div>
+
+                {/* CONTENT */}
+                <div className="w-[173px] h-[110.6px] sm:w-[229px] sm:h-[118px] p-2">
+
+                  {/* PRICE */}
+                  <div className="font-bold w-full h-[18px] text-[16px] sm:text-[18px] truncate">
+                    {item.price} AZN ₼
+                  </div>
+
+                  {/* INFO */}
+                  <div className="w-full h-[20px] mt-1">
+                    <span className="block text-[12px] sm:text-[16px] truncate">
+                      {getCardInfo(item)}
+                    </span>
+                  </div>
+
+                  {/* LOCATION + DATE */}
+                  <div className="flex items-center w-full h-[20px] mt-6 text-xs sm:text-sm">
+
+                    {/* LOCATION */}
+                    <div className="flex items-center min-w-0 flex-1 overflow-hidden">
+
+                      <MapPin
+                        size={14}
+                        color="#75FC56"
+                        className="shrink-0 mr-1"
+                      />
+
+                      <span className="truncate">
+                        {item.location}
+                      </span>
+
+                    </div>
+
+                    {/* DATE */}
+                    <div className="w-[82px] sm:w-[105px] shrink-0 text-right truncate text-[10px] sm:text-[12px]">
+                      {formatDate(item.createdAt)}{" "}
+                      {getCurrentTime(item.createdAt)}
+                    </div>
+
+                  </div>
+
+                </div>
+
               </div>
-            ))}
-      </div>
+
+            </Link>
+
+            {/* FAVORITE */}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleFavorite(item);
+              }}
+              className="absolute top-2 right-2 z-30"
+              aria-label="toggleFavoriteButton"
+            >
+
+              <Heart
+                size={22}
+                fill={
+                  favorites.some(
+                    (f) => f._id === item._id
+                  )
+                    ? "red"
+                    : "rgba(0,0,0,0.4)"
+                }
+                color="#fff"
+              />
+
+            </button>
+
+          </div>
+        );
+      })}
+</div>
 <div className="fixed right-0 top-1/2 -translate-y-1/2 w-[120px] space-y-3 z-50">
   {(Array.isArray(stickyAds) ? stickyAds : [])
     .filter(a => a.position === "right")
