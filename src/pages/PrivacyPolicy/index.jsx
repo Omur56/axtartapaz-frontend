@@ -1,178 +1,411 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
+import {
+  ShieldAlert,
+  Ban,
+  AlertTriangle,
+  FileWarning,
+  PackageX,
+  CircleDollarSign,
+  TriangleAlert,
+  HeartOff,
+  ArrowRight,
+} from "lucide-react";
 
-const sections = [
-  {
-    title: "1. Ümumi müddəalar",
-    icon: (
-      <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-    content:
-      "ProElan.az platforması istifadəçilər üçün pulsuz elan yerləşdirmə və alqı-satqı imkanı təqdim edən onlayn platformadır. Platformanın məqsədi insanların avtomobil, əmlak, elektronika, telefon, məişət avadanlıqları, bağ ləvazimatları, geyim və digər məhsullar üzrə elan yerləşdirərək alıb-satmalarını asanlaşdırmaqdır. Platforma Ömürxan Abdullayev tərəfindən yaradılmış və idarə olunur.",
-  },
-  {
-    title: "2. Toplanan məlumatlar",
-    icon: (
-      <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M3 12h18M3 17h18" />
-      </svg>
-    ),
-    list: [
-      "Ad və soyad",
-      "Email ünvanı",
-      "Telefon nömrəsi",
-      "Şifrə (şifrələnmiş formada saxlanılır)",
-      "Elan başlığı və təsviri",
-      "Şəkillər və qiymət məlumatı",
-      "IP ünvanı",
-      "Brauzer və cihaz məlumatları",
-      "Giriş tarixçəsi",
-      "Cookie məlumatları",
-    ],
-  },
-  {
-    title: "3. Məlumatların istifadə məqsədi",
-    icon: (
-      <svg className="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-      </svg>
-    ),
-    list: [
-      "İstifadəçi hesabının yaradılması və idarə olunması",
-      "Elanların platformada yayımlanması",
-      "İstifadəçilər arasında əlaqənin təmin olunması",
-      "Təhlükəsizlik və saxtakarlığın qarşısının alınması",
-      "Platformanın təkmilləşdirilməsi",
-      "Texniki problemlərin aradan qaldırılması",
-      "Qanuni öhdəliklərin yerinə yetirilməsi",
-    ],
-  },
-  {
-    title: "4. Cookie siyasəti",
-    icon: (
-      <svg className="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18m9-9H3" />
-      </svg>
-    ),
-    content:
-      "ProElan.az istifadəçi təcrübəsini yaxşılaşdırmaq üçün cookie texnologiyasından istifadə edə bilər. Cookie-lər sessiya idarəsi, təhlükəsizlik və statistik analiz məqsədli istifadə olunur. İstifadəçilər brauzer ayarları vasitəsilə cookie istifadəsini deaktiv edə bilərlər.",
-  },
-  {
-    title: "5. Məlumatların paylaşılması",
-    icon: (
-      <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4 12h16M12 4l8 8-8 8" />
-      </svg>
-    ),
-    content:
-      "ProElan.az istifadəçi məlumatlarını üçüncü şəxslərə satmır və kommersiya məqsədilə paylaşmır. Məlumatlar yalnız qanunvericiliyin tələbi olduqda və ya texniki xidmət təminatçıları ilə zəruri hallarda paylaşa bilər.",
-  },
-  {
-    title: "6. Məlumatların qorunması",
-    icon: (
-      <svg className="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c0-3.866-3.134-7-7-7S-2 7.134-2 11s3.134 7 7 7 7-3.134 7-7z" />
-      </svg>
-    ),
-    content:
-      "Platforma istifadəçi məlumatlarının qorunması üçün müvafiq texniki və inzibati təhlükəsizlik tədbirləri görür. Lakin internet üzərindən ötürülən məlumatların 100% təhlükəsizliyinə zəmanət verilmir.",
-  },
-  {
-    title: "7. İstifadəçi hüquqları",
-    icon: (
-      <svg className="w-6 h-6 text-teal-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-      </svg>
-    ),
-    list: [
-      "Öz məlumatlarına çıxış əldə etmək",
-      "Məlumatların düzəldilməsini tələb etmək",
-      "Hesabın və məlumatların silinməsini tələb etmək",
-      "Məlumat emalının məhdudlaşdırılmasını tələb etmək",
-    ],
-  },
-  {
-    title: "8. Yetkinlik yaşı",
-    icon: (
-      <svg className="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-      </svg>
-    ),
-    content: "Platformadan istifadə edən şəxslər yerli qanunvericiliyə uyğun yaş həddinə çatmış olmalıdırlar.",
-  },
-  {
-    title: "9. Dəyişikliklər",
-    icon: (
-      <svg className="w-6 h-6 text-pink-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4h16v16H4z" />
-      </svg>
-    ),
-    content: "ProElan.az bu Məxfilik Siyasətini istənilən vaxt yeniləmək hüququnu özündə saxlayır. Yenilənmiş versiya saytda dərc olunduğu andan qüvvəyə minir.",
-  },
-];
+import { useTheme } from "../../components/Main/ThemeContext";
+import BubbleBackground from "../../components/ui/BubbleBackground";
+import BottomMenu from "../../components/MobileMenu";
 
-export default function PrivacyPolicy() {
+export default function Prohibited() {
+  const { darkMode } = useTheme();
+
+  const items = [
+    {
+      icon: Ban,
+      text: "Qanunsuz silah və partlayıcı maddələr",
+      color: "red",
+    },
+    {
+      icon: PackageX,
+      text: "Narkotik vasitələr və psixotrop maddələr",
+      color: "purple",
+    },
+    {
+      icon: FileWarning,
+      text: "Saxta sənədlər",
+      color: "yellow",
+    },
+    {
+      icon: PackageX,
+      text: "Oğurluq və ya şübhəli mənşəli məhsullar",
+      color: "blue",
+    },
+    {
+      icon: CircleDollarSign,
+      text: "Fırıldaqçılıq xarakterli elanlar",
+      color: "pink",
+    },
+    {
+      icon: TriangleAlert,
+      text: "Təhlükəli və qanunla qadağan edilmiş məhsullar",
+      color: "orange",
+    },
+    {
+      icon: HeartOff,
+      text: "Nifrət və ayrı-seçkilik yaradan məzmun",
+      color: "green",
+    },
+  ];
+
+  const colors = {
+    red: {
+      light: "bg-red-50 text-red-600",
+      dark: "bg-red-500/10 text-red-400",
+      bullet: "bg-red-500",
+    },
+    purple: {
+      light: "bg-purple-50 text-purple-600",
+      dark: "bg-purple-500/10 text-purple-400",
+      bullet: "bg-purple-500",
+    },
+    yellow: {
+      light: "bg-yellow-50 text-yellow-600",
+      dark: "bg-yellow-500/10 text-yellow-400",
+      bullet: "bg-yellow-500",
+    },
+    blue: {
+      light: "bg-blue-50 text-blue-600",
+      dark: "bg-blue-500/10 text-blue-400",
+      bullet: "bg-blue-500",
+    },
+    pink: {
+      light: "bg-pink-50 text-pink-600",
+      dark: "bg-pink-500/10 text-pink-400",
+      bullet: "bg-pink-500",
+    },
+    orange: {
+      light: "bg-orange-50 text-orange-600",
+      dark: "bg-orange-500/10 text-orange-400",
+      bullet: "bg-orange-500",
+    },
+    green: {
+      light: "bg-green-50 text-green-600",
+      dark: "bg-green-500/10 text-green-400",
+      bullet: "bg-green-500",
+    },
+  };
+
   return (
-    <div className="max-w-4xl mx-auto mt-20 mb-10 p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-2xl text-gray-800 font-sans">
+    <div
+      className={`
+        relative min-h-screen overflow-hidden
+        transition-colors duration-300
+        ${darkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-800"}
+      `}
+    >
       <Helmet>
-        <title>Məxfilik Siyasəti - ProElan.az</title>
+        <title>Qadağan Olunmuş Elanlar - ProElan.az</title>
+
         <meta
           name="description"
-          content="ProElan.az Məxfilik Siyasəti. Pulsuz elan və alqı-satqı platformasında istifadəçi məlumatlarının qorunması qaydaları."
+          content="ProElan.az platformasında yerləşdirilməsi qadağan olunan elanlar."
         />
-        <link rel="canonical" href="https://proelan.az/privacy-policy" />
+
+        <link rel="canonical" href="https://proelan.az/prohibited" />
       </Helmet>
 
-      <h1 className="text-5xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-teal-600">
-        Məxfilik Siyasəti
-      </h1>
-      <p className="italic text-gray-500 mb-8">
-        <strong>Son yenilənmə:</strong> 21 Fevral 2026
-      </p>
+      {/* Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <BubbleBackground />
 
-      {sections.map((section, idx) => (
-        <section
-          key={idx}
-          className="mb-6 p-6 bg-white rounded-2xl shadow hover:shadow-xl transition-shadow duration-300 flex items-start gap-4"
-        >
-          <div className="mt-1">{section.icon}</div>
-          <div className="flex-1">
-            <h2 className="text-2xl font-semibold mb-3 text-teal-600">{section.title}</h2>
-            {section.content && <p className="text-gray-700">{section.content}</p>}
-            {section.list && (
-              <ul className="list-disc list-inside space-y-1 text-gray-700">
-                {section.list.map((item, i) => (
-                  <li key={i} className="hover:text-teal-500 transition-colors">
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            )}
+        <div
+          className={`
+            absolute -top-40 -right-40
+            w-[430px] h-[430px]
+            rounded-full blur-3xl
+            ${darkMode ? "bg-red-600/10" : "bg-red-400/10"}
+          `}
+        />
+
+        <div
+          className={`
+            absolute -bottom-40 -left-40
+            w-[430px] h-[430px]
+            rounded-full blur-3xl
+            ${darkMode ? "bg-purple-600/10" : "bg-purple-400/10"}
+          `}
+        />
+      </div>
+
+      <main className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 pt-24 pb-28">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <div
+            className={`
+              inline-flex items-center gap-2
+              px-4 py-2
+              rounded-full
+              text-sm font-bold
+              mb-5
+              ${
+                darkMode
+                  ? "bg-red-500/10 text-red-400 border border-red-500/20"
+                  : "bg-red-50 text-red-600 border border-red-100"
+              }
+            `}
+          >
+            <ShieldAlert size={17} />
+            Elan yerləşdirmə qaydaları
           </div>
-        </section>
-      ))}
 
-      <section className="mt-8 pt-6 border-t border-gray-300 flex gap-4">
-        <svg className="w-6 h-6 text-teal-500 mt-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M16 12H8m0 0l4-4m-4 4l4 4" />
-        </svg>
-        <div>
-          <h2 className="text-2xl font-semibold mb-2 text-teal-600">Əlaqə</h2>
-          <p><strong>Sahib:</strong> Ömürxan Abdullayev</p>
-          <p>
-            <strong>Email:</strong>{" "}
-            <a
-              href="mailto:omur199624@gmail.com"
-              className="text-blue-600 underline hover:text-blue-800 transition-colors"
-            >
-              omur199624@gmail.com
-            </a>
+          <h1
+            className="
+              text-4xl sm:text-5xl md:text-6xl
+              font-black
+              tracking-tight
+              bg-gradient-to-r
+              from-red-500
+              via-pink-500
+              to-[#670fff]
+              bg-clip-text
+              text-transparent
+            "
+          >
+            Qadağan Olunmuş Elanlar
+          </h1>
+
+          <p
+            className={`
+              max-w-2xl mx-auto
+              mt-5
+              text-sm sm:text-base
+              leading-7
+              ${darkMode ? "text-slate-400" : "text-slate-500"}
+            `}
+          >
+            Platformada aşağıdakı elanların yerləşdirilməsi qəti qadağandır.
           </p>
-          <p><strong>Platforma:</strong> ProElan.az</p>
         </div>
-      </section>
+
+        {/* Warning */}
+        <div
+          className={`
+            mb-6
+            rounded-3xl
+            border
+            p-5 sm:p-6
+            flex items-start gap-4
+            ${
+              darkMode
+                ? "bg-red-500/5 border-red-500/20"
+                : "bg-red-50 border-red-100"
+            }
+          `}
+        >
+          <div
+            className={`
+              shrink-0
+              w-11 h-11
+              rounded-xl
+              flex items-center justify-center
+              ${
+                darkMode
+                  ? "bg-red-500/10 text-red-400"
+                  : "bg-red-100 text-red-600"
+              }
+            `}
+          >
+            <AlertTriangle size={23} />
+          </div>
+
+          <div>
+            <h2
+              className={`
+                font-extrabold mb-1
+                ${darkMode ? "text-red-400" : "text-red-700"}
+              `}
+            >
+              Vacib məlumat
+            </h2>
+
+            <p
+              className={`
+                text-sm leading-6
+                ${darkMode ? "text-slate-400" : "text-slate-600"}
+              `}
+            >
+              Elan yerləşdirməzdən əvvəl aşağıdakı məhdudiyyətlərlə tanış olun.
+            </p>
+          </div>
+        </div>
+
+        {/* Prohibited items */}
+        <div className="space-y-4">
+          {items.map((item, idx) => {
+            const Icon = item.icon;
+            const color = colors[item.color];
+
+            return (
+              <div
+                key={idx}
+                className={`
+                  group relative overflow-hidden
+                  flex items-center gap-4
+                  p-4 sm:p-5
+                  rounded-2xl
+                  border
+                  transition-all duration-300
+                  hover:-translate-y-1
+                  ${
+                    darkMode
+                      ? "bg-slate-900/80 border-slate-800 hover:border-slate-700 shadow-lg shadow-black/10"
+                      : "bg-white/95 border-slate-200 hover:border-slate-300 shadow-lg shadow-slate-200/50"
+                  }
+                `}
+              >
+                {/* Left accent */}
+                <div
+                  className={`
+                    absolute left-0 top-0 bottom-0
+                    w-1
+                    ${color.bullet}
+                  `}
+                />
+
+                {/* Number */}
+                <div
+                  className={`
+                    hidden sm:flex
+                    shrink-0
+                    w-9 h-9
+                    rounded-xl
+                    items-center justify-center
+                    text-xs font-black
+                    ${
+                      darkMode
+                        ? "bg-slate-800 text-slate-500"
+                        : "bg-slate-100 text-slate-400"
+                    }
+                  `}
+                >
+                  {String(idx + 1).padStart(2, "0")}
+                </div>
+
+                {/* Icon */}
+                <div
+                  className={`
+                    shrink-0
+                    w-12 h-12
+                    rounded-2xl
+                    flex items-center justify-center
+                    transition-transform duration-300
+                    group-hover:scale-110
+                    ${darkMode ? color.dark : color.light}
+                  `}
+                >
+                  <Icon size={23} strokeWidth={2} />
+                </div>
+
+                {/* Text */}
+                <div className="flex-1 min-w-0">
+                  <span
+                    className={`
+                      block
+                      text-sm sm:text-base
+                      font-bold
+                      leading-6
+                      ${darkMode ? "text-slate-200" : "text-slate-800"}
+                    `}
+                  >
+                    {item.text}
+                  </span>
+                </div>
+
+                {/* Arrow */}
+                <ArrowRight
+                  size={18}
+                  className={`
+                    shrink-0
+                    transition-all duration-300
+                    group-hover:translate-x-1
+                    ${darkMode ? "text-slate-700" : "text-slate-300"}
+                  `}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Bottom warning */}
+        <div
+          className={`
+            mt-7
+            rounded-3xl
+            border
+            p-6 sm:p-7
+            text-center
+            ${
+              darkMode
+                ? "bg-slate-900/85 border-slate-800"
+                : "bg-white/95 border-slate-200"
+            }
+          `}
+        >
+          <div
+            className={`
+              mx-auto
+              w-14 h-14
+              rounded-2xl
+              flex items-center justify-center
+              mb-4
+              ${
+                darkMode
+                  ? "bg-red-500/10 text-red-400"
+                  : "bg-red-50 text-red-600"
+              }
+            `}
+          >
+            <ShieldAlert size={28} />
+          </div>
+
+          <p
+            className={`
+              text-base sm:text-lg
+              font-extrabold
+              ${darkMode ? "text-red-400" : "text-red-700"}
+            `}
+          >
+            Qadağan olunmuş elan yerləşdirən istifadəçilərin hesabları dərhal
+            bloklanacaq.
+          </p>
+
+          <p
+            className={`
+              mt-3
+              text-sm
+              leading-6
+              ${darkMode ? "text-slate-500" : "text-slate-400"}
+            `}
+          >
+            Elan yerləşdirərkən platformanın qaydalarına və qüvvədə olan
+            qanunvericiliyə riayət edin.
+          </p>
+        </div>
+
+        {/* Footer text */}
+        <p
+          className={`
+            text-center
+            text-xs
+            mt-6
+            ${darkMode ? "text-slate-600" : "text-slate-400"}
+          `}
+        >
+          ProElan.az — Azərbaycanda Pulsuz Elanlar Platforması
+        </p>
+      </main>
+
+      <BottomMenu />
     </div>
   );
 }

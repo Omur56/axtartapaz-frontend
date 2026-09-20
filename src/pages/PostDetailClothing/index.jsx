@@ -4,9 +4,8 @@ import axios from "axios";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { X } from "lucide-react";
-import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
-
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 
 export default function PostDetailClothing() {
   const { id } = useParams();
@@ -18,11 +17,9 @@ export default function PostDetailClothing() {
   const [zoomPhoto, setZoomPhoto] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
-const [progress, setProgress] = React.useState(0);
+  const [progress, setProgress] = React.useState(0);
   const [buffer, setBuffer] = React.useState(10);
 
-
-  
   const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
 
   useEffect(() => {
@@ -60,10 +57,6 @@ const [progress, setProgress] = React.useState(0);
     };
   }, [zoomIndex, zoomPhoto]);
 
-
-
-
-
   const progressRef = React.useRef(() => {});
   React.useEffect(() => {
     progressRef.current = () => {
@@ -90,36 +83,43 @@ const [progress, setProgress] = React.useState(0);
     };
   }, []);
 
+  if (loading)
+    return (
+      <Box className="min-h-screen mt-14" sx={{ width: "100%" }}>
+        <LinearProgress
+          variant="buffer"
+          value={progress}
+          valueBuffer={buffer}
+        />
+      </Box>
+    );
 
-  if (loading) return <Box className="min-h-screen mt-14" sx={{ width: '100%' }}>
-        <LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />
-      </Box>;
+  if (notFound || !post)
+    return (
+      <div class="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-r from-fuchsia-100 to-violet-200">
+        <h1 className="text-9xl font-extrabold text-white tracking-widest">
+          404
+        </h1>
+        <div className="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
+          Elan Yüklənmədi
+        </div>
+        <button className="mt-5">
+          <a className="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring">
+            <span className="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"></span>
 
-  if (notFound || !post) return <div class="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-r from-fuchsia-100 to-violet-200">
-	<h1 className="text-9xl font-extrabold text-white tracking-widest">404</h1>
-	<div className="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
-		Elan Yüklənmədi
-	</div>
-	<button className="mt-5">
-      <a
-        className="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring"
-      >
-        <span
-          className="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"
-        ></span>
-
-        <span className="relative block px-8 py-3 bg-[#1A2238] border border-current">
-          <router-link to="/">Əsas səhifə</router-link>
-        </span>
-      </a>
-    </button>
-</div>
+            <span className="relative block px-8 py-3 bg-[#1A2238] border border-current">
+              <router-link to="/">Əsas səhifə</router-link>
+            </span>
+          </a>
+        </button>
+      </div>
+    );
 
   const imageArray = Array.isArray(post.images)
     ? post.images
     : post.images
-    ? [post.images]
-    : [];
+      ? [post.images]
+      : [];
 
   const formatDate = (dateString) => {
     const postDate = new Date(dateString);
@@ -151,29 +151,25 @@ const [progress, setProgress] = React.useState(0);
   const nextImage = () =>
     setZoomIndex((prev) => (prev === imageArray.length - 1 ? 0 : prev + 1));
 
+  const handleUpgrade = async (listingId, type) => {
+    try {
+      const token = localStorage.getItem("token");
 
+      const { data } = await axios.post(
+        `${BASE_URL}/api/payments/create-checkout/${listingId}`,
+        { type },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
 
-      const handleUpgrade = async (listingId, type) => {
-  try {
-    const token = localStorage.getItem("token");
-
-    const { data } = await axios.post(
-      `${BASE_URL}/api/payments/create-checkout/${listingId}`,
-      { type },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    window.location.href = data.url;
-  } catch (err) {
-    console.log(err.response?.data || err.message);
-  }
-};
-
+      window.location.href = data.url;
+    } catch (err) {
+      console.log(err.response?.data || err.message);
+    }
+  };
 
   return (
     <div className="post-page max-w-6xl mx-auto p-4">
       <Link to="/Katalog/Geyimlər">
-        
         <button className="flex  items-center gap-2 mt-12 mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -194,7 +190,8 @@ const [progress, setProgress] = React.useState(0);
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6  shadow-lg rounded-xl p-6">
         <div className="lg:col-span-2 space-y-6">
           <h1 className="text-2xl font-bold capitalize mb-2">
-            {post?.clothing?.category} {post?.clothing?.brand} {post?.clothing?.model} {post?.clothing?.type}
+            {post?.clothing?.category} {post?.clothing?.brand}{" "}
+            {post?.clothing?.model} {post?.clothing?.type}
           </h1>
 
           <Carousel showThumbs={true} showStatus={false} autoPlay infiniteLoop>
@@ -217,22 +214,41 @@ const [progress, setProgress] = React.useState(0);
             ))}
           </Carousel>
 
-          <p className="text-3xl font-bold text-black mt-4">
-            {post.price} AZN
-          </p>
-<div className="mt-4">
-            <h2 className="text-lg font-semibold "><span className="font-semibold">Məhsul: </span>{post.title}</h2>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Məhsul tipi: </span>{post?.clothing?.type}</p>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Kateqoriya: </span>{post.category}</p>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Marka: </span>{post?.clothing?.brand}</p>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Rəng: </span>{post?.clothing?.color}</p>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Ölçü: </span>{post?.clothing?.size}</p>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Vəziyyəti: </span>{post?.clothing?.condition}</p>
-            <p className="text-gray-700 leading-relaxed"><span className="font-semibold">Qeyd: </span>{post?.clothing?.description}</p>
+          <p className="text-3xl font-bold text-black mt-4">{post.price} AZN</p>
+          <div className="mt-4">
+            <h2 className="text-lg font-semibold ">
+              <span className="font-semibold">Məhsul: </span>
+              {post.title}
+            </h2>
+            <p className="text-gray-700 leading-relaxed">
+              <span className="font-semibold">Məhsul tipi: </span>
+              {post?.clothing?.type}
+            </p>
+            <p className="text-gray-700 leading-relaxed">
+              <span className="font-semibold">Kateqoriya: </span>
+              {post.category}
+            </p>
+            <p className="text-gray-700 leading-relaxed">
+              <span className="font-semibold">Marka: </span>
+              {post?.clothing?.brand}
+            </p>
+            <p className="text-gray-700 leading-relaxed">
+              <span className="font-semibold">Rəng: </span>
+              {post?.clothing?.color}
+            </p>
+            <p className="text-gray-700 leading-relaxed">
+              <span className="font-semibold">Ölçü: </span>
+              {post?.clothing?.size}
+            </p>
+            <p className="text-gray-700 leading-relaxed">
+              <span className="font-semibold">Vəziyyəti: </span>
+              {post?.clothing?.condition}
+            </p>
+            <p className="text-gray-700 leading-relaxed">
+              <span className="font-semibold">Qeyd: </span>
+              {post?.clothing?.description}
+            </p>
           </div>
-
-            
-          
 
           <div className="flex items-center justify-between mt-6 text-sm text-gray-500">
             <p>Elanın nömrəsi: {post.id}</p>
@@ -247,7 +263,8 @@ const [progress, setProgress] = React.useState(0);
           <h2 className="text-xl font-bold mb-4">Əlaqə məlumatı</h2>
           <div className="space-y-2 text-gray-700">
             <p>
-              <span className="font-semibold">Ad:</span> {post.contact?.name || "N/A"}
+              <span className="font-semibold">Ad:</span>{" "}
+              {post.contact?.name || "N/A"}
             </p>
             <p>
               <span className="font-semibold">Telefon:</span>
@@ -275,22 +292,21 @@ const [progress, setProgress] = React.useState(0);
             </button>
           </a>
 
-                <div className="flex gap-2 mt-4">
- 
-  <button
-    onClick={() => handleUpgrade(post._id, "vip")}
-    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
-  >
-    <span className="text-blue-500 ">VIP et</span>
-  </button>
+          <div className="flex gap-2 mt-4">
+            <button
+              onClick={() => handleUpgrade(post._id, "vip")}
+              className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+            >
+              <span className="text-blue-500 ">VIP et</span>
+            </button>
 
-  <button
-    onClick={() => handleUpgrade(post._id, "premium")}
-    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
-  >
-    <span className="text-blue-500 ">Premium et</span>
-  </button>
-</div>
+            <button
+              onClick={() => handleUpgrade(post._id, "premium")}
+              className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
+            >
+              <span className="text-blue-500 ">Premium et</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -302,8 +318,12 @@ const [progress, setProgress] = React.useState(0);
           .reverse()
           .slice(0, 8)
           .map((item) => (
-            <Link  target="_blank"
-            rel="noopener noreferrer" key={item._id} to={`/PostDetailClothing/${item._id}`}>
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              key={item._id}
+              to={`/PostDetailClothing/${item._id}`}
+            >
               <div className="border w-[226px] h-[304px] rounded-lg bg-white shadow-sm hover:shadow-xl transition duration-200">
                 <img
                   src={
@@ -322,7 +342,9 @@ const [progress, setProgress] = React.useState(0);
                   <p className="text-sm font-bold truncate w-64">
                     {item.title}
                   </p>
-                  <p className="text-gray-700 leading-relaxed">{item?.clothing?.brand}</p>
+                  <p className="text-gray-700 leading-relaxed">
+                    {item?.clothing?.brand}
+                  </p>
                   <p className="text-base mt-1 text-gray-400">
                     {item.location}, {formatDate(item.data)}{" "}
                     {getCurrentTime(item.data)}

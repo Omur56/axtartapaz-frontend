@@ -1,41 +1,75 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { categories } from "../Katalog/Cateqories";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronRight,
+  faChevronLeft,
+} from "@fortawesome/free-solid-svg-icons";
 import "../../styles/scrolbarr.css";
-
-
-// import Breadcrumb from "../../components/Breadcrumb";
-import { Label } from './../../components/ui/label';
 import BottomMenu from "../../components/MobileMenu";
+import { useTheme } from "../../components/Main/ThemeContext";
 
 const Katalog = ({ className, width, height, marginTop }) => {
   const [activeId, setActiveId] = useState(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
   const navigate = useNavigate();
   const sliderRef = useRef(null);
-  
+  const { darkMode } = useTheme();
 
   useEffect(() => {
     const savedId = sessionStorage.getItem("selectedCategoryId");
+
     if (savedId) {
       setActiveId(Number(savedId));
     }
   }, []);
 
+  // Mobil slider vəziyyətini yoxlayır
+  const updateScrollButtons = () => {
+    const slider = sliderRef.current;
+
+    if (!slider) return;
+
+    setCanScrollLeft(slider.scrollLeft > 5);
+
+    setCanScrollRight(
+      slider.scrollLeft + slider.clientWidth < slider.scrollWidth - 5,
+    );
+  };
+
+  useEffect(() => {
+    const slider = sliderRef.current;
+
+    if (!slider) return;
+
+    updateScrollButtons();
+
+    slider.addEventListener("scroll", updateScrollButtons);
+
+    window.addEventListener("resize", updateScrollButtons);
+
+    return () => {
+      slider.removeEventListener("scroll", updateScrollButtons);
+      window.removeEventListener("resize", updateScrollButtons);
+    };
+  }, []);
+
   const handleCategoryClick = (id, path) => {
     setActiveId(id);
-    localStorage.setItem("selectedCategoryId", id);
+
+    sessionStorage.setItem("selectedCategoryId", id);
+
     navigate(`/Katalog/${encodeURIComponent(path)}`);
   };
 
   const scrollLeft = () => {
     if (sliderRef.current) {
       sliderRef.current.scrollBy({
-        left: -sliderRef.current.clientWidth / 2,
+        left: -sliderRef.current.clientWidth * 0.75,
         behavior: "smooth",
       });
     }
@@ -44,91 +78,542 @@ const Katalog = ({ className, width, height, marginTop }) => {
   const scrollRight = () => {
     if (sliderRef.current) {
       sliderRef.current.scrollBy({
-        left: sliderRef.current.clientWidth / 2,
+        left: sliderRef.current.clientWidth * 0.75,
         behavior: "smooth",
       });
     }
   };
 
   return (
-    <div className={`${className}  gap-6 scrollbar-hide    mx-auto  p-2 `}
-    style={{ width: width || "100%", height: height || "100px", marginTop: marginTop  || "5px" }} >
-      {/* --- Mobil versiya (slider) --- */}
-      <div
-      className="relative scrollbar-hide block md:hidden mx-auto p-2 scrollbar-hide "
-      style={{ width: width || "100%", height: height || "150px", marginTop: marginTop || "5px" }}
+    <div
+      className={`
+        ${className || ""}
+        mx-auto w-full
+        px-2 sm:px-3 lg:px-4
+        py-3 sm:py-4
+      `}
+      style={{
+        width: width || "100%",
+        minHeight: height || "100px",
+        marginTop: marginTop || "5px",
+      }}
     >
-      {/* Slider container */}
-      <div
-        ref={sliderRef}
-        className="flex gap-[10px] h-[120px] overflow-x-auto scrollbar-hide scroll-smooth"
-      >
-        {categories.map(({ id, path, icon, bgColor, hover, label }) => (
-          
-    <Link
-  key={id}
-  to={`/katalog/${path}`}
-  className={`relative min-w-[100px] max-w-[120px] h-[100px] rounded-[10px] shadow-md flex items-end justify-end p-2 transition-all ${bgColor} ${hover} snap-start`}
->
-  {typeof icon === "string" ? (
-    <img
-      src={icon}
-      alt={label}
-      className="w-[100px] h-[60px] sm:h-[80px] object-cover absolute bottom-0 right-0 rounded-[10px]"
-    />
-  ) : (
-    <icon className="w-[50px] h-[50px] text-white absolute bottom-0 right-0" />
-  )}
+      {/* =====================================================
+          MOBİL VERSİYA
+      ====================================================== */}
 
-  {/* LABEL BURADA */}
-  <div className="absolute top-1 left-2  ">
-    <span className="text-[10px] font-bold text-white drop-shadow">
-      {label}
-    </span>
-  </div>
-</Link>
-        ))}
-      </div>
-
- 
-    </div>
-
-      {/* --- Desktop versiya (grid) --- */}
-      <div className="hidden  min-h-[200px] w-full md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
-        {categories.map((cat) => {
-           const Icon = cat.icon; // 👈 BURADA
-         
-          return (
-            <Link
-              key={cat.id}
-              onClick={() => handleCategoryClick(cat.id, cat.path)}
-              aria-label={cat.label}
-              className="w-[150px] h-[90px] text-center"
+      <div className="relative block md:hidden w-full">
+        {/* Başlıq */}
+        <div className="flex items-center justify-between mb-3 px-1">
+          <div>
+            <h2
+              className={`
+                text-lg sm:text-xl
+                font-extrabold
+                tracking-tight
+                ${darkMode ? "text-white" : "text-slate-900"}
+              `}
             >
-              <div className="mt-4 ">
-                <button
-                  className={`${cat.bgColor} h- ring-2 flex-col transform hover:scale-105 border w-[150px] h-[100px] rounded-[7px] flex justify-center items-center shadow transition-all duration-200`}
+              Kateqoriyalar
+            </h2>
+
+            <p
+              className={`
+                text-[11px] sm:text-xs
+                mt-0.5
+                ${darkMode ? "text-slate-400" : "text-slate-500"}
+              `}
+            >
+              İstədiyiniz kateqoriyanı seçin
+            </p>
+          </div>
+
+          {/* Slider düymələri */}
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={scrollLeft}
+              disabled={!canScrollLeft}
+              aria-label="Əvvəlki kateqoriyalar"
+              className={`
+                flex items-center justify-center
+                w-8 h-8
+                rounded-xl
+                border
+                transition-all duration-200
+                ${
+                  darkMode
+                    ? "bg-white/5 border-white/10 text-white"
+                    : "bg-white border-slate-200 text-slate-700"
+                }
+                ${
+                  !canScrollLeft
+                    ? "opacity-30 cursor-not-allowed"
+                    : "hover:scale-105 active:scale-95"
+                }
+              `}
+            >
+              <FontAwesomeIcon icon={faChevronLeft} size="xs" />
+            </button>
+
+            <button
+              type="button"
+              onClick={scrollRight}
+              disabled={!canScrollRight}
+              aria-label="Növbəti kateqoriyalar"
+              className={`
+                flex items-center justify-center
+                w-8 h-8
+                rounded-xl
+                border
+                transition-all duration-200
+                ${
+                  darkMode
+                    ? "bg-white/5 border-white/10 text-white"
+                    : "bg-white border-slate-200 text-slate-700"
+                }
+                ${
+                  !canScrollRight
+                    ? "opacity-30 cursor-not-allowed"
+                    : "hover:scale-105 active:scale-95"
+                }
+              `}
+            >
+              <FontAwesomeIcon icon={faChevronRight} size="xs" />
+            </button>
+          </div>
+        </div>
+
+        {/* Slider */}
+        <div
+          ref={sliderRef}
+          className="
+            flex
+            gap-3
+            overflow-x-auto
+            scrollbar-hide
+            scroll-smooth
+            snap-x
+            snap-mandatory
+            pb-2
+            px-1
+          "
+        >
+          {categories.map(({ id, path, icon, bgColor, hover, label }) => {
+            const Icon = icon;
+
+            return (
+              <Link
+                key={id}
+                to={`/katalog/${path}`}
+                onClick={() => {
+                  setActiveId(id);
+                  sessionStorage.setItem("selectedCategoryId", id);
+                }}
+                className={`
+                    group
+                    relative
+                    flex-shrink-0
+                    snap-start
+
+                    w-[132px]
+                    h-[112px]
+
+                    sm:w-[145px]
+                    sm:h-[120px]
+
+                    overflow-hidden
+                    rounded-2xl
+
+                    ${bgColor}
+                    ${hover}
+
+                    border
+                    border-white/20
+
+                    shadow-md
+                    hover:shadow-xl
+
+                    transition-all
+                    duration-300
+
+                    hover:-translate-y-1
+                    active:scale-[0.97]
+
+                    ${
+                      activeId === id
+                        ? "ring-2 ring-[#670fff] ring-offset-2"
+                        : ""
+                    }
+                  `}
+              >
+                {/* Gradient overlay */}
+                <div
+                  className="
+                    absolute
+                    inset-0
+                    bg-gradient-to-t
+                    from-black/65
+                    via-black/10
+                    to-transparent
+                    z-10
+                  "
+                />
+
+                {/* İkon / şəkil */}
+                {typeof icon === "string" ? (
+                  <img
+                    src={icon}
+                    alt={label}
+                    loading="lazy"
+                    className="
+                        absolute
+                        inset-0
+                        w-full
+                        h-full
+                        object-cover
+                        transition-transform
+                        duration-500
+                        group-hover:scale-110
+                      "
+                  />
+                ) : (
+                  <div
+                    className="
+                      absolute
+                      inset-0
+                      flex
+                      items-center
+                      justify-center
+                    "
+                  >
+                    <Icon
+                      className="
+                          w-14
+                          h-14
+                          text-white
+                          drop-shadow-lg
+                          transition-transform
+                          duration-300
+                          group-hover:scale-110
+                        "
+                    />
+                  </div>
+                )}
+
+                {/* Sağ üst ox */}
+                <div
+                  className="
+                    absolute
+                    top-2
+                    right-2
+                    z-20
+
+                    w-6
+                    h-6
+
+                    rounded-full
+
+                    flex
+                    items-center
+                    justify-center
+
+                    bg-black/20
+                    backdrop-blur-md
+                    border
+                    border-white/20
+
+                    text-white
+                  "
                 >
-                  
-                  <div className="absolute top-2 right-2 opacity-50 ">
-                    <FontAwesomeIcon icon={faChevronRight} className="text-white" />
-                  </div>
-                  <div className="h-full w-full flex flex-col items-center justify-center relative">
-               {typeof cat.icon === "string" ? (
-  <img className="w-full h-full" src={cat.icon} alt={cat.label} />
-) : (
-  <Icon className="w-[50px] h-[50px] text-white" />
-)}
-                 
-                  </div>
-                   <p className="z-50 left-2 absolute p-1 mt-[-50px]   color:red text-[10px]  font-bold">{cat.label}</p>
-                </button>
-               
-              </div>
-            </Link>
-          );
-        })}
+                  <FontAwesomeIcon
+                    icon={faChevronRight}
+                    className="text-[9px]"
+                  />
+                </div>
+
+                {/* Kateqoriya adı */}
+                <div
+                  className="
+                    absolute
+                    left-2
+                    right-2
+                    bottom-2
+                    z-20
+                  "
+                >
+                  <span
+                    className="
+                        block
+                        text-[11px]
+                        sm:text-xs
+                        font-extrabold
+                        text-white
+                        leading-tight
+                        drop-shadow-lg
+                      "
+                  >
+                    {label}
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </div>
+
+      {/* =====================================================
+          DESKTOP VERSİYA
+      ====================================================== */}
+
+      <div className="hidden md:block w-full">
+        {/* Başlıq */}
+        <div className="flex items-end justify-between mb-5 px-1">
+          <div>
+            <h2
+              className={`
+                text-xl lg:text-2xl
+                font-extrabold
+                tracking-tight
+                ${darkMode ? "text-white" : "text-slate-900"}
+              `}
+            >
+              Kateqoriyalar
+            </h2>
+
+            <p
+              className={`
+                text-xs lg:text-sm
+                mt-1
+                ${darkMode ? "text-slate-400" : "text-slate-500"}
+              `}
+            >
+              Elanınızı yerləşdirmək və ya axtarış etmək üçün kateqoriya seçin
+            </p>
+          </div>
+
+          <div
+            className={`
+              hidden lg:flex
+              items-center
+              gap-2
+              text-xs
+              ${darkMode ? "text-slate-400" : "text-slate-500"}
+            `}
+          >
+            <span>{categories.length} kateqoriya</span>
+          </div>
+        </div>
+
+        {/* Desktop grid */}
+        <div
+          className="
+            grid
+            grid-cols-2
+            sm:grid-cols-3
+            md:grid-cols-4
+            lg:grid-cols-5
+            xl:grid-cols-6
+
+            gap-4
+            lg:gap-5
+
+            w-full
+          "
+        >
+          {categories.map((cat) => {
+            const Icon = cat.icon;
+
+            return (
+              <Link
+                key={cat.id}
+                to={`/katalog/${cat.path}`}
+                onClick={() => handleCategoryClick(cat.id, cat.path)}
+                aria-label={cat.label}
+                className={`
+                  group
+                  relative
+                  w-full
+                  min-w-0
+
+                  h-[125px]
+                  lg:h-[135px]
+
+                  overflow-hidden
+                  rounded-2xl
+
+                  ${cat.bgColor}
+                  ${cat.hover}
+
+                  border
+                  border-white/20
+
+                  shadow-sm
+                  hover:shadow-xl
+
+                  transition-all
+                  duration-300
+
+                  hover:-translate-y-1
+                  active:scale-[0.98]
+
+                  ${
+                    activeId === cat.id
+                      ? "ring-2 ring-[#670fff] ring-offset-2"
+                      : ""
+                  }
+                `}
+              >
+                {/* Şəkil */}
+                {typeof cat.icon === "string" ? (
+                  <img
+                    src={cat.icon}
+                    alt={cat.label}
+                    loading="lazy"
+                    className="
+                      absolute
+                      inset-0
+                      w-full
+                      h-full
+                      object-cover
+
+                      transition-transform
+                      duration-500
+
+                      group-hover:scale-110
+                    "
+                  />
+                ) : (
+                  <div
+                    className="
+                    absolute
+                    inset-0
+                    flex
+                    items-center
+                    justify-center
+                  "
+                  >
+                    <Icon
+                      className="
+                        w-14
+                        h-14
+                        lg:w-16
+                        lg:h-16
+                        text-white
+
+                        drop-shadow-lg
+
+                        transition-transform
+                        duration-300
+
+                        group-hover:scale-110
+                        group-hover:rotate-3
+                      "
+                    />
+                  </div>
+                )}
+
+                {/* Tünd gradient */}
+                <div
+                  className="
+                  absolute
+                  inset-0
+                  bg-gradient-to-t
+                  from-black/70
+                  via-black/15
+                  to-transparent
+                  z-10
+                "
+                />
+
+                {/* Sağ yuxarı ox */}
+                <div
+                  className="
+                  absolute
+                  top-3
+                  right-3
+                  z-20
+
+                  flex
+                  items-center
+                  justify-center
+
+                  w-7
+                  h-7
+
+                  rounded-full
+
+                  bg-black/20
+                  backdrop-blur-md
+
+                  border
+                  border-white/20
+
+                  text-white
+
+                  transition-all
+                  duration-300
+
+                  group-hover:bg-[#670fff]
+                  group-hover:scale-110
+                "
+                >
+                  <FontAwesomeIcon
+                    icon={faChevronRight}
+                    className="text-[10px]"
+                  />
+                </div>
+
+                {/* Aktiv indikator */}
+                {activeId === cat.id && (
+                  <div
+                    className="
+                    absolute
+                    top-3
+                    left-3
+                    z-20
+
+                    w-2
+                    h-2
+
+                    rounded-full
+                    bg-white
+
+                    shadow-[0_0_10px_rgba(255,255,255,0.9)]
+                  "
+                  />
+                )}
+
+                {/* Kateqoriya adı */}
+                <div
+                  className="
+                  absolute
+                  left-3
+                  right-3
+                  bottom-3
+                  z-20
+                "
+                >
+                  <p
+                    className="
+                      text-xs
+                      lg:text-sm
+                      font-extrabold
+                      text-white
+                      leading-tight
+                      drop-shadow-lg
+                    "
+                  >
+                    {cat.label}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Mobil aşağı menyu */}
       <BottomMenu />
     </div>
   );

@@ -1,210 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
-// import {
-//   Box,
-//   Card,
-//   CardContent,
-//   Avatar,
-//   Typography,
-//   Button,
-//   CircularProgress,
-// } from "@mui/material";
-// import BottomMenu from "../../components/MobileMenu";
-// import BubbleBackground from "../../components/ui/BubbleBackground";
-
-// export default function Profile() {
-//   const [myAds, setMyAds] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [userData, setUserData] = useState(null);
-//   const navigate = useNavigate();
-//   const token = localStorage.getItem("token");
-
-//   const fetchUser = async () => {
-//     const userId = localStorage.getItem("userId");
-//     if (!token || !userId) return navigate("/login");
-//     try {
-//       const res = await axios.get(
-//         `${process.env.REACT_APP_API_URL}/api/users/${userId}`,
-//         { headers: { Authorization: `Bearer ${token}` } }
-//       );
-//       setUserData(res.data);
-//     } catch (err) {
-//       console.error("User fetch error:", err);
-//     }
-//   };
-
-//   const fetchMyAds = async () => {
-//     try {
-//       const res = await axios.get(
-//         `${process.env.REACT_APP_API_URL}/api/my-announcements`,
-//         { headers: { Authorization: `Bearer ${token}` } }
-//       );
-
-//       // res.data array yoxdursa, array-ə çeviririk
-//       const data = Array.isArray(res.data) ? res.data : [res.data];
-//       setMyAds(data);
-//     } catch (err) {
-//       console.error("Elanları gətirərkən xəta:", err.response?.data || err);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     const init = async () => {
-//       await fetchUser();
-//       await fetchMyAds();
-//     };
-//     init();
-//   }, []);
-
-//   const handleDelete = async (ad) => {
-//     if (!window.confirm("Bu elanı silmək istədiyinizə əminsiniz?")) return;
-
-//     try {
-//       await axios.delete(
-//         `${process.env.REACT_APP_API_URL}/api/ad/${ad._id}`,
-//         { headers: { Authorization: `Bearer ${token}` } }
-//       );
-
-//       setMyAds((prev) => prev.filter((a) => a._id !== ad._id));
-//       alert("Elan uğurla silindi!");
-//     } catch (err) {
-//       console.error("Elan silinmədi:", err.response?.data || err);
-//       alert("Elan silinmədi. Backend-də problem var.");
-//     }
-//   };
-
-//   const getAdImage = (ad) => {
-//     if (ad.images && ad.images.length > 0) {
-//       const firstImage = ad.images[0];
-//       if (firstImage.startsWith("http")) return firstImage;
-//       return `${process.env.REACT_APP_API_URL}/uploads/${firstImage}`;
-//     }
-//     return "/no-image.jpg";
-//   };
-
-//   const openAdDetail = (id) => navigate(`/ad/${id}`);
-
-//   const handleLogout = () => {
-//     localStorage.removeItem("token");
-//     localStorage.removeItem("userId");
-//     navigate("/login");
-//   };
-
-//   if (loading)
-//     return (
-//       <div className="flex justify-center items-center h-screen">
-//         <CircularProgress />
-//       </div>
-//     );
-
-//   return (
-    
-//       <Box className="min-h-screen mt-12 max-w-[1000px] mx-auto p-6">
-//         {/* Profil Kartı */}
-//         {userData && (
-//           <Box className="flex justify-center items-center mb-10">
-//             <Card className="w-full max-w-md p-6 bg-white/80 rounded-xl shadow-lg">
-//               <CardContent className="text-center">
-//                 <Avatar
-//                   src="/user-avatar.png"
-//                   alt={userData.username}
-//                   className="w-24 h-24 mx-auto mb-4 border-2 border-blue-600"
-//                 />
-//                 <Typography variant="h5" className="font-bold mb-2">
-//                   Profil Məlumatları
-//                 </Typography>
-//                 <Typography className="mb-1">
-//                   <strong>İstifadəçi adı:</strong> {userData.username}
-//                 </Typography>
-//                 <Typography className="mb-1">
-//                   <strong>Email:</strong> {userData.email}
-//                 </Typography>
-//                 <Typography>
-//                   <strong>Mobil:</strong> {userData.phone || "-"}{" "}
-//                   {userData.phoneVerified && (
-//                     <span className="text-green-600 font-semibold">✅ Təsdiqlənib</span>
-//                   )}
-//                 </Typography>
-//                 <Button
-//                   variant="contained"
-//                   color="error"
-//                   className="mt-4 w-full"
-//                   onClick={handleLogout}
-//                 >
-//                   Çıxış
-//                 </Button>
-//               </CardContent>
-//             </Card>
-//           </Box>
-//         )}
-
-//         {/* İstifadəçi elanları */}
-//         <Typography variant="h4" align="center" gutterBottom>
-//           Mənim Elanlarım
-//         </Typography>
-
-//         {myAds.length === 0 ? (
-//           <Typography align="center" color="text.secondary">
-//             Hazırda heç bir elanınız yoxdur.
-//           </Typography>
-//         ) : (
-//           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-//             {myAds.map((ad) => (
-//               <div
-//                 key={ad._id}
-//                 className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer flex flex-col"
-//                 onClick={() => openAdDetail(ad._id)}
-//               >
-//                 <div className="w-full h-28 bg-gray-200">
-//                   <img
-//                     src={getAdImage(ad)}
-//                     alt={ad.title || "Elan"}
-//                     className="w-full h-full object-cover"
-//                     onError={(e) => (e.target.src = "/no-image.jpg")}
-//                   />
-//                 </div>
-//                 <div className="p-3 flex flex-col flex-grow">
-//                   <h2 className="text-md font-semibold truncate">
-//                     {ad.title || "Başlıq yoxdur"}
-//                   </h2>
-//                   <p className="text-gray-600 text-sm flex-grow truncate">
-//                     {ad.description
-//                       ? ad.description.slice(0, 80) + "..."
-//                       : "Təsvir yoxdur"}
-//                   </p>
-//                   <div className="flex justify-between items-center mt-2">
-//                     <span className="text-green-600 font-bold">
-//                       {ad.price ? ad.price + " ₼" : "-"}
-//                     </span>
-//                     <button
-//                       onClick={(e) => {
-//                         e.stopPropagation();
-//                         handleDelete(ad);
-//                       }}
-//                       className="px-2 py-1 bg-red-500 text-white rounded"
-//                     >
-//                       Sil
-//                     </button>
-//                   </div>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         )}
-//         <BottomMenu />
-//       </Box>
-    
-//   );
-// }
-
-
-
-
-
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -213,17 +6,21 @@ import {
   Card,
   CardContent,
   Avatar,
-  Typography,
   Button,
   CircularProgress,
   IconButton,
-
+  Chip,
+  Divider,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import LogoutIcon from "@mui/icons-material/Logout";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
 import Swal from "sweetalert2";
-
 
 export default function Profile() {
   const [userData, setUserData] = useState(null);
@@ -240,69 +37,39 @@ export default function Profile() {
   const fetchUser = async () => {
     try {
       const res = await axios.get(`${API}/api/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+
       setUserData(res.data);
     } catch (err) {
-      console.log(err);
+      console.log("User error:", err);
     }
   };
 
-  // 🔥 REAL BACKEND: my-ads yoxdur, hər category ayrı gəlir
-
+  // ADS
   const fetchMyAds = async () => {
-  try {
-    const res = await axios.get(`${API}/api/my-ads`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    try {
+      const res = await axios.get(`${API}/api/my-ads`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    setMyAds(res.data);
-  } catch (err) {
-    console.log(err);
-  } finally {
-    setLoading(false);
-  }
-};
-  // const fetchMyAds = async () => {
-  //   try {
-  //     const endpoints = [
-  //      "car",
-  //      "phone",
-  //      "electronika",
-  //      "Clothing",
-  //      "homeGarden",
-  //      "realEstate",
-  //      "household",
-  //      "accessories",
-
-       
-  //     ];
-
-  //     const requests = endpoints.map((cat) =>
-  //       axios.get(`${API}/api/${cat}`, {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       })
-  //     );
-
-  //     const results = await Promise.all(requests);
-
-  //     const merged = results.flatMap((res, index) =>
-  //       (res.data || []).map((item) => ({
-  //         ...item,
-  //         category: endpoints[index],
-  //       }))
-  //     );
-
-  //     setMyAds(merged);
-  //   } catch (err) {
-  //     console.log("Ads error:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      setMyAds(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.log("Ads error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!token || !userId) return navigate("/login");
+    if (!token || !userId) {
+      navigate("/login");
+      return;
+    }
 
     const init = async () => {
       await fetchUser();
@@ -312,135 +79,317 @@ export default function Profile() {
     init();
   }, []);
 
-  // 🔥 DELETE (CATEGORY FIX)
+  // DELETE
   const handleDelete = async (ad) => {
     const result = await Swal.fire({
-  title: "Əminsən?",
-  text: "Bu elan silinəcək!",
-  icon: "warning",
-  showCancelButton: true,
-  confirmButtonText: "Bəli, sil",
-  cancelButtonText: "Xeyr",
-});
+      title: "Əminsən?",
+      text: "Bu elan silinəcək!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Bəli, sil",
+      cancelButtonText: "Xeyr",
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#64748b",
+    });
 
-if (!result.isConfirmed) return;
+    if (!result.isConfirmed) return;
 
     try {
-      await axios.delete(
-        `${API}/api/${ad.category}/${ad._id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await axios.delete(`${API}/api/${ad.category}/${ad._id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setMyAds((prev) => prev.filter((x) => x._id !== ad._id));
+
+      Swal.fire({
+        title: "Silindi!",
+        text: "Elan uğurla silindi.",
+        icon: "success",
+        confirmButtonColor: "#670fff",
+      });
     } catch (err) {
-      Swal.fire("Xəta!", "Silinmədi!", "error");
+      Swal.fire("Xəta!", "Elan silinmədi.", "error");
       console.log(err);
     }
   };
 
+  // EDIT
   const handleEdit = (ad) => {
     navigate(`/edit/${ad.category}/${ad._id}`);
   };
 
-  const getImage = (ad) =>
-    ad.images?.[0]?.startsWith("http")
-      ? ad.images[0]
-      : `${API}/uploads/${ad.images?.[0]}`;
+  // IMAGE
+  const getImage = (ad) => {
+    if (ad.images?.[0]?.startsWith("http")) {
+      return ad.images[0];
+    }
 
-  if (loading) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <CircularProgress />
-      </div>
-    );
-  }
+    return ad.images?.[0] ? `${API}/uploads/${ad.images[0]}` : "/no-image.jpg";
+  };
 
-  const handleLogout = () =>{
+  // LOGOUT
+  const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
 
     navigate("/login");
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <CircularProgress />
+      </div>
+    );
+  }
+
   return (
-    <Box className="max-w-6xl mx-auto p-4 mt-20">
-
-
-      {/* USER PROFILE */}
-      <Card className="mb-6 shadow-xl rounded-2xl">
-        <CardContent className="flex items-center gap-4">
-          <Avatar sx={{ width: 70, height: 70 }} />
-
-          <div>
-            <h2 className="text-xl font-bold">
-              {userData.username}
-            </h2>
-            <p className="text-gray-600">{userData.email}</p>
-            <p className="text-gray-600">{userData.phone}</p>
-
-            
-          </div>
-          <CardContent className="flex items-center gap-4">
-              <Button variant="contained"
-              color="error"
-              onClick={handleLogout}
-              sx={{marginLeft: "auto"}}>
-                Çıxış
-              </Button>
-            </CardContent>
-        </CardContent>
-      </Card>
-
-      {/* ADS */}
-      <h2 className="text-2xl font-bold mb-4">
-        Mənim Elanlarım ({myAds.length})
-      </h2>
-
-      {myAds.length === 0 ? (
-        <p>Heç bir elan yoxdur</p>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {myAds.map((ad) => (
-            <div
-              key={ad._id}
-              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition"
-            >
-              <img
-                src={getImage(ad)}
-                className="h-32 w-full object-cover"
-              />
-
-              <div className="p-3 block">
-                <h2 className="font-semibold truncate">
-                  {ad.brand}
-                  </h2>
-                <h3 className="font-semibold truncate">
-                  {ad.model}
-                </h3>
-
-                <p className="text-green-600 font-bold">
-                  {ad.price} ₼
-                </p>
-
-                
-
-                {/* ACTIONS */}
-                <div className="flex justify-between mt-2">
-                  <IconButton onClick={() => handleEdit(ad)}>
-                    <EditIcon color="primary" />
-                  </IconButton>
-
-                  <IconButton onClick={() => handleDelete(ad)}>
-                    <DeleteIcon color="error" />
-                  </IconButton>
-                </div>
+    <Box className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 pt-24 pb-20 px-3 sm:px-6">
+      <div className="max-w-6xl mx-auto">
+        {/* ================= PROFILE ================= */}
+        {userData && (
+          <Card
+            elevation={0}
+            className="overflow-hidden rounded-3xl border border-slate-200 shadow-xl mb-8"
+          >
+            {/* COVER */}
+            <div className="h-32 sm:h-40 bg-gradient-to-r from-[#670fff] via-[#7c3aed] to-[#4f46e5] relative">
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute w-40 h-40 rounded-full bg-white -top-20 -right-10" />
+                <div className="absolute w-32 h-32 rounded-full bg-white bottom-[-60px] left-10" />
               </div>
             </div>
-          ))}
+
+            <CardContent className="relative px-5 sm:px-8 pb-7">
+              {/* AVATAR */}
+              <div className="-mt-14 sm:-mt-16 flex flex-col sm:flex-row sm:items-end gap-4">
+                <Avatar
+                  sx={{
+                    width: 90,
+                    height: 90,
+                    borderRadius: "20px",
+                    fontSize: "32px",
+                    fontWeight: 700,
+                  }}
+                  className="border-4 border-white shadow-xl bg-gradient-to-br from-purple-500 to-indigo-600"
+                  alt={userData.username}
+                >
+                  {userData.username?.charAt(0)?.toUpperCase()}
+                </Avatar>
+
+                <div className="flex-1 pb-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                      {userData.username}
+                    </h1>
+
+                    {userData.phoneVerified && (
+                      <Chip
+                        label="Təsdiqlənmiş"
+                        size="small"
+                        className="!bg-green-100 !text-green-700 !font-semibold"
+                      />
+                    )}
+                  </div>
+
+                  <p className="text-slate-500 mt-1">Şəxsi profil</p>
+                </div>
+
+                <Button
+                  onClick={handleLogout}
+                  variant="outlined"
+                  color="error"
+                  startIcon={<LogoutIcon />}
+                  className="!rounded-xl !normal-case !font-semibold"
+                >
+                  Çıxış
+                </Button>
+              </div>
+
+              <Divider className="!my-6" />
+
+              {/* USER INFO */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                  <div className="w-11 h-11 rounded-xl bg-purple-100 flex items-center justify-center">
+                    <PersonOutlineIcon className="!text-purple-600" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="text-xs text-slate-400 font-medium">
+                      İstifadəçi adı
+                    </p>
+
+                    <p className="font-bold text-slate-800 truncate">
+                      {userData.username}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                  <div className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center">
+                    <EmailOutlinedIcon className="!text-blue-600" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="text-xs text-slate-400 font-medium">Email</p>
+
+                    <p className="font-bold text-slate-800 truncate">
+                      {userData.email}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                  <div className="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center">
+                    <PhoneOutlinedIcon className="!text-green-600" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="text-xs text-slate-400 font-medium">
+                      Mobil nömrə
+                    </p>
+
+                    <p className="font-bold text-slate-800 truncate">
+                      {userData.phone || "Qeyd edilməyib"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* ================= ADS HEADER ================= */}
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-purple-100 flex items-center justify-center">
+              <CampaignOutlinedIcon className="!text-purple-600" />
+            </div>
+
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                Mənim elanlarım
+              </h2>
+
+              <p className="text-sm text-slate-500">
+                Yerləşdirdiyiniz elanları idarə edin
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-purple-100 text-purple-700 font-bold px-4 py-2 rounded-full">
+            {myAds.length} elan
+          </div>
         </div>
-      )}
+
+        {/* ================= EMPTY ================= */}
+        {myAds.length === 0 ? (
+          <Card
+            elevation={0}
+            className="rounded-3xl border border-dashed border-slate-300 bg-white/80"
+          >
+            <CardContent className="py-16 text-center">
+              <div className="w-20 h-20 mx-auto mb-5 rounded-3xl bg-purple-100 flex items-center justify-center">
+                <CampaignOutlinedIcon
+                  className="!text-purple-500"
+                  sx={{ fontSize: 40 }}
+                />
+              </div>
+
+              <h3 className="text-xl font-bold text-slate-800">
+                Hələ elanınız yoxdur
+              </h3>
+
+              <p className="text-slate-500 mt-2">
+                İlk elanınızı yerləşdirərək satışa başlayın.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          /* ================= ADS GRID ================= */
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+            {myAds.map((ad) => (
+              <Card
+                key={ad._id}
+                elevation={0}
+                className="group overflow-hidden rounded-2xl border border-slate-200 bg-white hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+              >
+                {/* IMAGE */}
+                <div
+                  className="relative h-36 sm:h-44 bg-slate-100 cursor-pointer overflow-hidden"
+                  onClick={() => navigate(`/ad/${ad._id}`)}
+                >
+                  <img
+                    src={getImage(ad)}
+                    alt={ad.title || "Elan"}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                      e.currentTarget.src = "/no-image.jpg";
+                    }}
+                  />
+
+                  {/* CATEGORY */}
+                  {ad.category && (
+                    <span className="absolute top-2 left-2 bg-black/65 backdrop-blur-md text-white text-[11px] px-2.5 py-1 rounded-full font-medium">
+                      {ad.category}
+                    </span>
+                  )}
+
+                  {/* PRICE BADGE */}
+                  <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-xl shadow-md">
+                    <span className="text-purple-700 font-extrabold text-sm">
+                      {ad.price ? `${ad.price} ₼` : "Qiymət yoxdur"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* CONTENT */}
+                <CardContent className="!p-3.5">
+                  <h3
+                    className="font-bold text-slate-800 truncate cursor-pointer hover:text-purple-600 transition"
+                    onClick={() => navigate(`/ad/${ad._id}`)}
+                  >
+                    {ad.title ||
+                      [ad.brand, ad.model].filter(Boolean).join(" ") ||
+                      "Adsız elan"}
+                  </h3>
+
+                  <p className="text-xs text-slate-500 mt-1 truncate">
+                    {ad.description
+                      ? ad.description.slice(0, 60)
+                      : "Elan haqqında məlumat yoxdur"}
+                  </p>
+
+                  <Divider className="!my-3" />
+
+                  {/* ACTIONS */}
+                  <div className="flex items-center justify-between">
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<EditIcon />}
+                      onClick={() => handleEdit(ad)}
+                      className="!rounded-xl !normal-case !font-semibold !text-purple-600 !border-purple-200 hover:!bg-purple-50"
+                    >
+                      Düzəlt
+                    </Button>
+
+                    <IconButton
+                      onClick={() => handleDelete(ad)}
+                      className="!bg-red-50 hover:!bg-red-100"
+                    >
+                      <DeleteIcon fontSize="small" className="!text-red-500" />
+                    </IconButton>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </Box>
   );
 }

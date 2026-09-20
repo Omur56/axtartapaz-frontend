@@ -1,42 +1,188 @@
+/* ================================
+   GLOBAL PAGE THEME
+================================ */
+
 .page {
   min-height: 100vh;
-  /* padding: 2rem; */
-  transition: background-color 0.3s, color 0.3s;
+  position: relative;
 
-  
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease;
+
+  background-color: #f8fafc;
+  color: #111827;
 }
+
+
+/* ================================
+   LIGHT MODE
+================================ */
 
 .page.light {
-  background-color: #ffffff;
-  color: #222;
+  background:
+    radial-gradient(circle at top right,
+      rgba(103, 15, 255, 0.04),
+      transparent 35%),
+    radial-gradient(circle at bottom left,
+      rgba(67, 210, 98, 0.035),
+      transparent 35%),
+    #f8fafc;
+
+  color: #111827;
 }
+
+
+/* ================================
+   DARK MODE
+================================ */
 
 .page.dark {
-  background-color: #010f2e;
-  color: #ffffff;
+  background:
+    radial-gradient(circle at top right,
+      rgba(103, 15, 255, 0.10),
+      transparent 35%),
+    radial-gradient(circle at bottom left,
+      rgba(67, 210, 98, 0.05),
+      transparent 35%),
+    #020617;
+
+  color: #f8fafc;
 }
+
+
+/* ================================
+   THEME TOGGLE BUTTON
+================================ */
 
 .button_toggle {
-  padding: 0.5rem 1rem;
-  margin-top: 3rem;
+  position: fixed;
+
+  top: 76px;
+  right: 18px;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  margin: 0;
+
   cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  transition: background-color 0.3s, color 0.3s;
-  right: 3%;
-  z-index: 100;
-  
+
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 14px;
+
+  font-size: 18px;
+  line-height: 1;
+
+  z-index: 90;
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 8px 25px rgba(15, 23, 42, 0.10);
+
+  transition:
+    transform 0.25s ease,
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
-.page.light button {
-    
 
-  color: #010222;
+/* Hover */
+
+.button_toggle:hover {
+  transform: translateY(-2px) scale(1.04);
+
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.16);
 }
 
-.page.dark button {
- 
+
+/* Click */
+
+.button_toggle:active {
+  transform: scale(0.94);
+}
+
+
+/* ================================
+   LIGHT MODE BUTTON
+================================ */
+
+.page.light .button_toggle {
+  background: rgba(255, 255, 255, 0.88);
+
+  color: #334155;
+
+  border-color: rgba(103, 15, 255, 0.12);
+}
+
+
+/* ================================
+   DARK MODE BUTTON
+================================ */
+
+.page.dark .button_toggle {
+  background: rgba(15, 23, 42, 0.78);
 
   color: #ffffff;
+
+  border-color: rgba(255, 255, 255, 0.10);
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.30);
+}
+
+
+/* ================================
+   DARK MODE BUTTON HOVER
+================================ */
+
+.page.dark .button_toggle:hover {
+  background: rgba(30, 41, 59, 0.90);
+
+  border-color: rgba(103, 15, 255, 0.35);
+
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.40);
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 640px) {
+  .button_toggle {
+    top: 72px;
+    right: 12px;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 13px;
+
+    font-size: 17px;
+  }
+}
+
+
+/* ================================
+   REDUCED MOTION
+================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .page,
+  .button_toggle {
+    transition: none;
+  }
 }

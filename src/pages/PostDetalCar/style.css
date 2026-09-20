@@ -12,3 +12,22 @@ header {
 #header {
   display: none !important;
 }
+
+
+@media (max-width: 767px) {
+
+  header,
+  .header,
+  #header {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+
+  header,
+  .header,
+  #header {
+    display: none !important;
+  }
+}

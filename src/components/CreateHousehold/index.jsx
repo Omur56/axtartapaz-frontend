@@ -1,16 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import { X } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
+import {
+  X,
+  Search,
+  ArrowLeft,
+  Plus,
+  RefreshCcw,
+  MapPin,
+  Edit3,
+  Trash2,
+  Heart,
+  Star,
+  ImagePlus,
+  User,
+  Mail,
+  Phone,
+  Tag,
+  Package,
+} from "lucide-react";
 import Swal from "sweetalert2";
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
-import { RefreshCcw, Percent, MapPin } from "lucide-react";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 
 export default function CreateHousehold() {
   const { id } = useParams();
+
+  const API_URL = process.env.REACT_APP_API_URL || "";
+
   const [isOpen, setIsOpen] = useState(false);
+
   const [household, setHousehold] = useState({
     id: Date.now(),
     category: "",
@@ -37,109 +56,182 @@ export default function CreateHousehold() {
   const [preview, setPreview] = useState([]);
   const [editingId, setEditingId] = useState(null);
 
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const token = localStorage.getItem("token");
+
+  // =========================================================
+  // IMAGE CHANGE
+  // =========================================================
+
   const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
+    const files = Array.from(e.target.files || []);
+
+    if (!files.length) return;
+
     setImages((prev) => [...prev, ...files]);
-    setPreview((prev) => [
-      ...prev,
-      ...files.map((file) => URL.createObjectURL(file)),
-    ]);
+
+    const newPreviews = files.map((file) => URL.createObjectURL(file));
+
+    setPreview((prev) => [...prev, ...newPreviews]);
+
+    e.target.value = "";
   };
 
+  // =========================================================
+  // FORM CHANGE
+  // =========================================================
+
   const handleChange = (e) => {
-   
     const { name, value } = e.target;
+
     if (name.startsWith("contact.")) {
       const field = name.split(".")[1];
+
       setHousehold((prev) => ({
         ...prev,
-        contact: { ...prev.contact, [field]: value },
+        contact: {
+          ...prev.contact,
+          [field]: value,
+        },
       }));
     } else if (name === "data") {
-      setHousehold((prev) => ({ ...prev, data: new Date(value) }));
+      setHousehold((prev) => ({
+        ...prev,
+        data: new Date(value),
+      }));
     } else {
-      setHousehold((prev) => ({ ...prev, [name]: value }));
+      setHousehold((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
+
+  // =========================================================
+  // FETCH ITEMS
+  // =========================================================
 
   const fetchItems = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/household`);
-      setHouseholdItems(response.data);
+      const response = await axios.get(`${API_URL}/api/household`);
+
+      setHouseholdItems(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
-      console.error("Error fetching accessory items:", error);
+      console.error("Household elanları yüklənmədi:", error);
     }
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  // =========================================================
+  // SUBMIT
+  // =========================================================
 
-  const formData = new FormData();
-  images.forEach((file) => formData.append("images", file));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  Object.entries(household).forEach(([key, value]) => {
-    if (key === "data") return;
-    if (key === "contact") {
-      Object.entries(value).forEach(([k, v]) =>
-        formData.append(`contact.${k}`, v)
-      );
-    } else if (key === "images") {
-      household.images.forEach((file) => {
-        formData.append("images", file);
+    const currentToken = localStorage.getItem("token");
+
+    if (!currentToken) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elan yerləşdirmək üçün hesabınıza daxil olun.",
+        confirmButtonColor: "#2563eb",
       });
-    } else {
-      formData.append(key, value);
+
+      return;
     }
-  });
 
-  formData.append("data", household.data.toISOString());
+    const formData = new FormData();
 
-  try {
-    const token = localStorage.getItem("token"); // tokeni oxu
+    // Şəkillər
+    images.forEach((file) => {
+      formData.append("images", file);
+    });
+
+    // Form məlumatları
+    Object.entries(household).forEach(([key, value]) => {
+      if (key === "data") return;
+
+      if (key === "contact") {
+        Object.entries(value).forEach(([contactKey, contactValue]) => {
+          formData.append(`contact.${contactKey}`, contactValue);
+        });
+      } else if (key === "images") {
+        if (Array.isArray(household.images)) {
+          household.images.forEach((file) => {
+            formData.append("images", file);
+          });
+        }
+      } else {
+        formData.append(key, value);
+      }
+    });
+
+    formData.append(
+      "data",
+      household.data instanceof Date
+        ? household.data.toISOString()
+        : new Date().toISOString(),
+    );
+
     const config = {
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`, // token əlavə et
+        Authorization: `Bearer ${currentToken}`,
       },
     };
 
-    if (editingId) {
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/household/${editingId}`,
-        formData,
-        config
-      );
-      setEditingId(null);
-    } else {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/household`,
-        formData,
-        config
-      );
+    try {
+      if (editingId) {
+        await axios.put(
+          `${API_URL}/api/household/${editingId}`,
+          formData,
+          config,
+        );
+
+        Swal.fire({
+          icon: "success",
+          title: "Elan yeniləndi!",
+          text: "Elan məlumatları uğurla yeniləndi.",
+          confirmButtonColor: "#2563eb",
+        });
+      } else {
+        await axios.post(`${API_URL}/api/household`, formData, config);
+
+        Swal.fire({
+          icon: "success",
+          title: "Elanınız uğurla yerləşdirildi!",
+          text: "Elanınız artıq sistemdə görünür.",
+          confirmButtonColor: "#2563eb",
+        });
+      }
+
+      resetForm();
+      setIsOpen(false);
+      await fetchItems();
+    } catch (err) {
+      console.error("Submit error:", err);
+
       Swal.fire({
-        icon: "success",
-        title: "Elanınız uğurla yerləşdirildi!",
-        confirmButtonColor: "#3085d6",
+        icon: "error",
+        title: "Xəta baş verdi",
+        text: err.response?.data?.message || "Server xətası baş verdi.",
+        confirmButtonColor: "#dc2626",
       });
     }
-    resetForm();
-    fetchItems();
-  } catch (err) {
-    console.error(err);
-    Swal.fire({
-      icon: "error",
-      title: "Xəta baş verdi",
-      text: err.response?.data?.message || "Server xətası",
-      confirmButtonColor: "#d33",
-    });
-  }
-};
+  };
 
-
+  // =========================================================
+  // RESET FORM
+  // =========================================================
 
   const resetForm = () => {
     setHousehold({
-      
+      id: Date.now(),
       category: "",
       title: "",
       description: "",
@@ -158,73 +250,216 @@ export default function CreateHousehold() {
         phone: "",
       },
     });
+
     setImages([]);
     setPreview([]);
     setEditingId(null);
   };
 
-  const handleDelete = async (id) => {
+  // =========================================================
+  // DELETE
+  // =========================================================
+
+  const handleDelete = async (itemId) => {
+    const currentToken = localStorage.getItem("token");
+
+    if (!currentToken) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Bu əməliyyatı etmək üçün hesabınıza daxil olun.",
+        confirmButtonColor: "#2563eb",
+      });
+
+      return;
+    }
+
+    const result = await Swal.fire({
+      icon: "warning",
+      title: "Elanı silmək istəyirsiniz?",
+      text: "Bu əməliyyat geri qaytarıla bilməz.",
+      showCancelButton: true,
+      confirmButtonText: "Bəli, sil",
+      cancelButtonText: "Ləğv et",
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#64748b",
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/household/${id}`);
-      fetchItems();
+      await axios.delete(`${API_URL}/api/household/${itemId}`, {
+        headers: {
+          Authorization: `Bearer ${currentToken}`,
+        },
+      });
+
+      await fetchItems();
+
+      Swal.fire({
+        icon: "success",
+        title: "Elan silindi",
+        text: "Elan uğurla silindi.",
+        confirmButtonColor: "#2563eb",
+      });
     } catch (error) {
       console.error("Delete error:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Xəta baş verdi",
+        text: error.response?.data?.message || "Elanı silmək mümkün olmadı.",
+        confirmButtonColor: "#dc2626",
+      });
     }
   };
 
-  const handleFavorite = async (id) => {
+  // =========================================================
+  // FAVORITE
+  // =========================================================
+
+  const handleFavorite = async (itemId) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/household/${id}/favorite`);
-      fetchItems();
+      await axios.patch(`${API_URL}/api/household/${itemId}/favorite`);
+
+      await fetchItems();
     } catch (err) {
-      console.error(err);
+      console.error("Favorite error:", err);
     }
   };
 
-  const handleLike = async (id) => {
+  // =========================================================
+  // LIKE
+  // =========================================================
+
+  const handleLike = async (itemId) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/household/${id}/like`);
-      fetchItems();
+      await axios.patch(`${API_URL}/api/household/${itemId}/like`);
+
+      await fetchItems();
     } catch (err) {
-      console.error(err);
+      console.error("Like error:", err);
     }
   };
+
+  // =========================================================
+  // EDIT
+  // =========================================================
 
   const handleEdit = (item) => {
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elanı redaktə etmək üçün hesabınıza daxil olun.",
+        confirmButtonColor: "#2563eb",
+      });
+
+      return;
+    }
+
+    const itemId = item?._id || item?.id;
+
+    if (!itemId) {
+      Swal.fire({
+        icon: "error",
+        title: "Xəta",
+        text: "Elanın ID-si tapılmadı.",
+        confirmButtonColor: "#dc2626",
+      });
+
+      return;
+    }
+
     setHousehold({
       ...item,
+
+      category: item.category || item.household?.category || "",
+
+      title: item.title || item.household?.title || "",
+
+      description: item.description || item.household?.description || "",
+
+      type_of_goods: item.type_of_goods || item.household?.type_of_goods || "",
+
+      brand: item.brand || item.household?.brand || "",
+
+      model: item.model || item.household?.model || "",
+
+      location: item.location || item.household?.location || "",
+
+      price: item.price ?? "",
+
+      contact: {
+        name: item.contact?.name || item.household?.contact?.name || "",
+
+        email: item.contact?.email || item.household?.contact?.email || "",
+
+        phone: item.contact?.phone || item.household?.contact?.phone || "",
+      },
+
       data: item.data ? new Date(item.data) : new Date(),
     });
-    setEditingId(item._id);
 
-    setPreview(
-    item.images
-      ? item.images.map((img) => (typeof img === "string" ? img : URL.createObjectURL(img)))
-      : []
-  );
-    setPreview(item.images || []);
+    setEditingId(itemId);
+
+    const existingImages = Array.isArray(item.images)
+      ? item.images
+          .map((img) => {
+            if (typeof img === "string") {
+              return img;
+            }
+
+            return img?.url || img?.secure_url || img?.path || "";
+          })
+          .filter(Boolean)
+      : item.mainImage
+        ? [item.mainImage]
+        : [];
+
+    setPreview(existingImages);
+    setImages([]);
+
+    setIsOpen(true);
   };
+
+  // =========================================================
+  // IMAGE DELETE
+  // =========================================================
 
   const handleImageDelete = async (image) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/household/images/${image}`);
-      fetchItems();
+      await axios.delete(
+        `${API_URL}/api/household/images/${encodeURIComponent(image)}`,
+      );
+
+      await fetchItems();
     } catch (error) {
-      console.error(error);
+      console.error("Image delete error:", error);
     }
   };
 
+  // =========================================================
+  // DATE
+  // =========================================================
+
   const formatDate = (dateString) => {
+    if (!dateString) return "";
+
     const postDate = new Date(dateString);
     const now = new Date();
 
-    const today = new Date(now.setHours(0, 0, 0, 0));
-    const postDay = new Date(postDate.setHours(0, 0, 0, 0));
+    const today = new Date(now);
+    today.setHours(0, 0, 0, 0);
+
+    const postDay = new Date(postDate);
+    postDay.setHours(0, 0, 0, 0);
 
     const diffTime = today - postDay;
     const oneDay = 24 * 60 * 60 * 1000;
 
     if (diffTime === 0) return "bugün";
+
     if (diffTime === oneDay) return "dünən";
 
     return postDate.toLocaleDateString("az-AZ", {
@@ -235,64 +470,94 @@ export default function CreateHousehold() {
   };
 
   const getCurrentTime = (isoString) => {
+    if (!isoString) return "";
+
     const date = new Date(isoString);
+
     return date.toTimeString().split(" ")[0].slice(0, 5);
   };
+
+  // =========================================================
+  // INITIAL FETCH
+  // =========================================================
 
   useEffect(() => {
     fetchItems();
   }, []);
 
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // =========================================================
+  // SEARCH
+  // =========================================================
 
-  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/household`];
+  const apiUrls = [`${API_URL}/api/household`];
 
   const handleSearch = async () => {
-    if (!query.trim()) return;
+    if (!query.trim()) {
+      setResults([]);
+      return;
+    }
+
     setLoading(true);
 
     try {
       const requests = apiUrls.map((url) => axios.get(url));
+
       const responses = await Promise.all(requests);
 
       let allData = [];
+
       responses.forEach((res) => {
-        if (Array.isArray(res.data)) allData = allData.concat(res.data);
+        if (Array.isArray(res.data)) {
+          allData = allData.concat(res.data);
+        }
       });
 
+      const searchText = query.toLowerCase().trim();
+
       const filtered = allData.filter((item) => {
-        const title = item.title?.toLowerCase() || "";
-        const brand = item.brand?.toLowerCase() || "";
-        const category = item.category?.toLowerCase() || "";
-        const model = item.model?.toLowerCase() || "";
-        const type_of_gods = item.type_of_gods?.toLowerCase() || "";
-        const location = item.location?.toLowerCase() || "";
-        const city = item.city?.toLowerCase() || "";
-        const engine = item.engine?.toLowerCase() || "";
-        const year = item.year?.toLowerCase() || "";
-        const motor = item.motor?.toLowerCase() || "";
-        const transmission = item.transmission?.toLowerCase() || "";
-        const ban_type = item.ban_type?.toLowerCase() || "";
-        const price = item.price?.toLowerCase() || "";
-        const description = item.description?.toLowerCase() || "";
+        const title = String(
+          item.title || item.household?.title || "",
+        ).toLowerCase();
+
+        const brand = String(
+          item.brand || item.household?.brand || "",
+        ).toLowerCase();
+
+        const category = String(
+          item.category || item.household?.category || "",
+        ).toLowerCase();
+
+        const model = String(
+          item.model || item.household?.model || "",
+        ).toLowerCase();
+
+        const typeOfGoods = String(
+          item.type_of_goods || item.household?.type_of_goods || "",
+        ).toLowerCase();
+
+        const location = String(
+          item.location || item.household?.location || "",
+        ).toLowerCase();
+
+        const city = String(item.city || "").toLowerCase();
+
+        const price = String(item.price ?? "").toLowerCase();
+
+        const description = String(
+          item.description || item.household?.description || "",
+        ).toLowerCase();
+
         return (
-          title.includes(query.toLowerCase()) ||
-          brand.includes(query.toLowerCase()) ||
-          category.includes(query.toLowerCase()) ||
-          location.includes(query.toLowerCase()) ||
-          model.includes(query.toLowerCase()) ||
-          city.includes(query.toLowerCase()) ||
-          engine.includes(query.toLowerCase()) ||
-          year.includes(query.toLowerCase()) ||
-          motor.includes(query.toLowerCase()) ||
-          transmission.includes(query.toLowerCase()) ||
-          ban_type.includes(query.toLowerCase()) ||
-          price.includes(query.toLowerCase()) ||
-          description.includes(query.toLowerCase())
+          title.includes(searchText) ||
+          brand.includes(searchText) ||
+          category.includes(searchText) ||
+          model.includes(searchText) ||
+          typeOfGoods.includes(searchText) ||
+          location.includes(searchText) ||
+          city.includes(searchText) ||
+          price.includes(searchText) ||
+          description.includes(searchText)
         );
-        type_of_gods.includes(query.toLowerCase());
       });
 
       setResults(filtered);
@@ -303,387 +568,916 @@ export default function CreateHousehold() {
     }
   };
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [accessories, setAccessories] = useState([]);
+  // =========================================================
+  // LOADING
+  // =========================================================
 
   useEffect(() => {
     const fetchAll = async () => {
-      setIsLoading(true); // loading başladı
-      try {
-        const [accessoriesRes] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/api/Household`),
-        ]);
+      setIsLoading(true);
 
-        setAccessories(accessoriesRes.data);
+      try {
+        const response = await axios.get(`${API_URL}/api/household`);
+
+        setHouseholdItems(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
         console.error("API xətası:", err);
       } finally {
-        setIsLoading(false); // loading bitdi
+        setIsLoading(false);
       }
     };
 
     fetchAll();
   }, []);
 
+  // =========================================================
+  // OPEN FORM
+  // =========================================================
 
-  const token = localStorage.getItem("token");
+  const handleOpenForm = () => {
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+        confirmButtonColor: "#2563eb",
+      });
 
-// Yeni funksiyanı elanı açan buttona əlavə edirik
-const handleOpenForm = () => {
-  if (!token) {
-    Swal.fire({
-      icon: "warning",
-      title: "Giriş tələb olunur",
-      text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-      confirmButtonColor: "#3085d6",
-    });
-    return;
-  }
-  setIsOpen(true);
-};
+      return;
+    }
+
+    resetForm();
+    setIsOpen(true);
+  };
+
+  // =========================================================
+  // CARD DATA HELPERS
+  // =========================================================
+
+  const getItemId = (item) => {
+    return item?._id || item?.id;
+  };
+
+  const getCardTitle = (item) => {
+    return item?.title || item?.household?.title || "Məişət texnikası";
+  };
+
+  const getCardCategory = (item) => {
+    return item?.category || item?.household?.category || "";
+  };
+
+  const getCardType = (item) => {
+    return item?.type_of_goods || item?.household?.type_of_goods || "";
+  };
+
+  const getCardModel = (item) => {
+    return item?.model || item?.household?.model || "";
+  };
+
+  const getCardImage = (item) => {
+    if (Array.isArray(item?.images) && item.images.length > 0) {
+      const firstImage = item.images[0];
+
+      if (typeof firstImage === "string") {
+        return firstImage;
+      }
+
+      return firstImage?.url || firstImage?.secure_url || "/placeholder.png";
+    }
+
+    if (item?.mainImage) {
+      return item.mainImage;
+    }
+
+    if (Array.isArray(item?.imageUrls) && item.imageUrls.length > 0) {
+      return item.imageUrls[0];
+    }
+
+    return "/placeholder.png";
+  };
+
+  // =========================================================
+  // OWNER CHECK
+  // =========================================================
+
+  const currentUserId = localStorage.getItem("userId");
+
+  const isOwner = (item) => {
+    const itemUserId =
+      item?.userId?._id ||
+      item?.userId?.id ||
+      item?.userId ||
+      item?.user?._id ||
+      item?.user?.id ||
+      item?.user;
+
+    return (
+      !!token &&
+      !!currentUserId &&
+      !!itemUserId &&
+      String(itemUserId) === String(currentUserId)
+    );
+  };
+
+  // =========================================================
+  // OWNER BUTTONS
+  // =========================================================
+
+  const OwnerButtons = ({ item }) => {
+    const itemId = getItemId(item);
+
+    if (!isOwner(item)) {
+      return null;
+    }
+
+    return (
+      <div
+        className="absolute right-2 top-2 z-40 flex gap-1"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleEdit(item);
+          }}
+          title="Elanı redaktə et"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-all duration-200 hover:scale-110 hover:bg-blue-700 active:scale-95"
+        >
+          <Edit3 size={15} />
+        </button>
+
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDelete(itemId);
+          }}
+          title="Elanı sil"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white shadow-lg transition-all duration-200 hover:scale-110 hover:bg-red-700 active:scale-95"
+        >
+          <Trash2 size={15} />
+        </button>
+      </div>
+    );
+  };
+
+  // =========================================================
+  // RENDER
+  // =========================================================
+
   return (
-    <div className="min-h-screen ">
-      
-      <div className=" p-6 max-w-5xl mx-auto">
-        <div className="w-full justify-center mx-auto my-auto max-w-[700px] min-w-[200px]">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 lg:px-8">
+        {/* SEARCH */}
+        <div className="mx-auto max-w-[700px]">
           <div className="relative">
+            <Search
+              size={19}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+
             <input
-              className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-              placeholder="AxtarTap..."
+              className="w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-11 pr-28 text-sm text-slate-700 shadow-sm outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-800 dark:bg-slate-900 dark:text-white"
+              placeholder="Məişət texnikası axtar..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
               }}
             />
+
             <button
-              className="absolute top-1 right-1 flex items-center rounded bg-green-500 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-blue-700 focus:shadow-none active:bg-slate-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
               type="button"
               onClick={handleSearch}
+              className="absolute right-1.5 top-1.5 flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-blue-700 active:scale-95"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-4 h-4 mr-2"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <Search size={16} />
               Axtar
             </button>
           </div>
         </div>
-        <Link to="/">
-      
-          <button className="flex mt-4 mb-4 items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+
+        {/* TOP */}
+        <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <Link to="/">
+            <button
+              type="button"
+              className="flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-100 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
             >
-              <path
-                fillRule="evenodd"
-                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Geri
-          </button>
-        </Link>
+              <ArrowLeft size={18} />
+              Geri
+            </button>
+          </Link>
 
-        <h2 className="text-2xl font-bold mb-4">Məişət Texnikası</h2>
-        <div className="p-4">
+          <div className="text-center sm:text-right">
+            <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              Məişət Texnikası
+            </h1>
+
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              Məişət texnikası elanlarını kəşf edin
+            </p>
+          </div>
+        </div>
+
+        {/* ADD BUTTON */}
+        <div className="mt-5">
           <button
+            type="button"
             onClick={handleOpenForm}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition-all hover:bg-blue-700 hover:shadow-xl active:scale-[0.98] sm:w-auto"
           >
-            Elan yerləşdirmək üçün formu aç
+            <Plus size={19} />
+            Elan yerləşdir
           </button>
+        </div>
 
-          {isOpen && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="relative w-[90%] max-w-3xl max-h-[90vh] overflow-y-auto bg-white p-6 rounded-xl shadow-lg">
+        {/* =====================================================
+            MODERN FORM MODAL
+        ====================================================== */}
+
+        {isOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-3 backdrop-blur-md">
+            <div className="relative flex max-h-[94vh] w-full max-w-3xl flex-col overflow-hidden rounded-[28px] bg-white shadow-2xl dark:bg-slate-900">
+              {/* HEADER */}
+              <div className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white/95 px-5 py-4 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 sm:px-7">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
+                    {editingId ? <RefreshCcw size={20} /> : <Plus size={21} />}
+                  </div>
+
+                  <div>
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-white sm:text-xl">
+                      {editingId ? "Elanı redaktə et" : "Yeni elan yerləşdir"}
+                    </h2>
+
+                    <p className="text-xs text-slate-500 dark:text-slate-400 sm:text-sm">
+                      {editingId
+                        ? "Elan məlumatlarını yeniləyin"
+                        : "Məişət texnikanızı sürətli şəkildə elan edin"}
+                    </p>
+                  </div>
+                </div>
+
                 <button
-                  onClick={() => setIsOpen(false)}
-                  className="absolute top-2 right-2 text-gray-600 hover:text-red-600"
+                  type="button"
+                  onClick={() => {
+                    resetForm();
+                    setIsOpen(false);
+                  }}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-all hover:bg-red-50 hover:text-red-500 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-red-500/10"
                 >
-                  <X size={28} />
+                  <X size={20} />
                 </button>
+              </div>
 
-                <form
-                  onSubmit={handleSubmit}
-                  className="grid grid-cols-2 gap-4 p-2"
-                >
-                  <input
-                    type="text"
-                    name="category"
-                    placeholder="Kateqoriya"
-                    value={household.category}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
-                  <input
-                    type="text"
-                    name="title"
-                    placeholder="Başlıq"
-                    value={household.title}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+              {/* FORM */}
+              <form
+                onSubmit={handleSubmit}
+                className="max-h-[calc(94vh-80px)] overflow-y-auto px-4 py-5 sm:px-7 sm:py-7"
+              >
+                {/* BASIC INFO */}
+                <div className="mb-7">
+                  <div className="mb-5 flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
+                      <Package size={18} />
+                    </div>
 
-                  <input
-                    type="text"
+                    <div>
+                      <h3 className="font-bold text-slate-900 dark:text-white">
+                        Əsas məlumatlar
+                      </h3>
+
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Məhsul haqqında əsas məlumatları daxil edin
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {/* CATEGORY */}
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        Kateqoriya
+                      </label>
+
+                      <div className="relative">
+                        <Tag
+                          size={17}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500"
+                        />
+
+                        <input
+                          type="text"
+                          name="category"
+                          placeholder="Məsələn: Soyuducu"
+                          value={household.category}
+                          onChange={handleChange}
+                          required
+                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 text-sm outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        />
+                      </div>
+                    </div>
+
+                    {/* TITLE */}
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        Elanın başlığı
+                      </label>
+
+                      <input
+                        type="text"
+                        name="title"
+                        placeholder="Məsələn: Samsung soyuducu"
+                        value={household.title}
+                        onChange={handleChange}
+                        required
+                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                      />
+                    </div>
+
+                    {/* TYPE */}
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        Məhsul növü
+                      </label>
+
+                      <input
+                        type="text"
+                        name="type_of_goods"
+                        placeholder="Məsələn: Böyük məişət texnikası"
+                        value={household.type_of_goods}
+                        onChange={handleChange}
+                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                      />
+                    </div>
+
+                    {/* BRAND */}
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        Marka
+                      </label>
+
+                      <input
+                        type="text"
+                        name="brand"
+                        placeholder="Məsələn: Samsung"
+                        value={household.brand}
+                        onChange={handleChange}
+                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                      />
+                    </div>
+
+                    {/* MODEL */}
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        Model
+                      </label>
+
+                      <input
+                        type="text"
+                        name="model"
+                        placeholder="Məsələn: RB34T600"
+                        value={household.model}
+                        onChange={handleChange}
+                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                      />
+                    </div>
+
+                    {/* PRICE */}
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        Qiymət
+                      </label>
+
+                      <div className="relative">
+                        <input
+                          type="number"
+                          name="price"
+                          placeholder="0"
+                          min="0"
+                          value={household.price}
+                          onChange={handleChange}
+                          required
+                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 pr-14 text-sm font-semibold outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        />
+
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">
+                          AZN
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* LOCATION */}
+                    <div className="sm:col-span-2">
+                      <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        Məkan
+                      </label>
+
+                      <div className="relative">
+                        <MapPin
+                          size={18}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500"
+                        />
+
+                        <input
+                          type="text"
+                          name="location"
+                          placeholder="Məsələn: Bakı"
+                          value={household.location}
+                          onChange={handleChange}
+                          required
+                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 text-sm outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* DESCRIPTION */}
+                <div className="mb-7 border-t border-slate-100 pt-6 dark:border-slate-800">
+                  <div className="mb-4">
+                    <h3 className="font-bold text-slate-900 dark:text-white">
+                      Elan haqqında
+                    </h3>
+
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      Məhsulun vəziyyətini və xüsusiyyətlərini ətraflı yazın
+                    </p>
+                  </div>
+
+                  <textarea
                     name="description"
-                    placeholder="Təsvir"
                     value={household.description}
                     onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                    rows={5}
+                    placeholder="Məsələn: Məhsul yaxşı vəziyyətdədir, problemsiz işləyir..."
                     required
+                    className="w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-6 outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   />
+                </div>
 
-                  <input
-                    type="text"
-                    name="brand"
-                    placeholder="Marka"
-                    value={household.brand}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    
-                  />
+                {/* CONTACT */}
+                <div className="mb-7 border-t border-slate-100 pt-6 dark:border-slate-800">
+                  <div className="mb-4">
+                    <h3 className="font-bold text-slate-900 dark:text-white">
+                      Əlaqə məlumatları
+                    </h3>
 
-                  <input 
-                  type="text"
-                    name="model"
-                    placeholder="Model"
-                    value={household.model}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    />
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      Alıcıların sizinlə əlaqə saxlaması üçün
+                    </p>
+                  </div>
 
-                  <input
-                    type="text"
-                    name="price"
-                    placeholder="Qiymət"
-                    value={household.price}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    {/* NAME */}
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        Ad
+                      </label>
 
-                  <input
-                    type="text"
-                    name="location"
-                    placeholder="Yer"
-                    value={household.location}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+                      <div className="relative">
+                        <User
+                          size={17}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                        />
 
-                  <input
-                    type="text"
-                    name="contact.name"
-                    placeholder="Əlaqə Adı"
-                    value={household.contact.name}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+                        <input
+                          type="text"
+                          name="contact.name"
+                          placeholder="Adınız"
+                          value={household.contact.name}
+                          onChange={handleChange}
+                          required
+                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 text-sm outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        />
+                      </div>
+                    </div>
 
-                  <input
-                    type="email"
-                    name="contact.email"
-                    placeholder="Əlaqə Email"
-                    value={household.contact.email}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+                    {/* EMAIL */}
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        E-mail
+                      </label>
 
-                  <input
-                    type="tel"
-                    name="contact.phone"
-                    placeholder="Əlaqə Telefon"
-                    value={household.contact.phone}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+                      <div className="relative">
+                        <Mail
+                          size={17}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                        />
 
-                  <div className="col-span-2">
+                        <input
+                          type="email"
+                          name="contact.email"
+                          placeholder="example@mail.com"
+                          value={household.contact.email}
+                          onChange={handleChange}
+                          required
+                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 text-sm outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        />
+                      </div>
+                    </div>
+
+                    {/* PHONE */}
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        Telefon
+                      </label>
+
+                      <div className="relative">
+                        <Phone
+                          size={17}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                        />
+
+                        <input
+                          type="tel"
+                          name="contact.phone"
+                          placeholder="+994 XX XXX XX XX"
+                          value={household.contact.phone}
+                          onChange={handleChange}
+                          required
+                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 text-sm outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* IMAGES */}
+                <div className="mb-7 border-t border-slate-100 pt-6 dark:border-slate-800">
+                  <div className="mb-4">
+                    <h3 className="font-bold text-slate-900 dark:text-white">
+                      Məhsul şəkilləri
+                    </h3>
+
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      Elanınızın daha cəlbedici görünməsi üçün şəkillər əlavə
+                      edin
+                    </p>
+                  </div>
+
+                  <label className="group flex min-h-[160px] cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 p-6 text-center transition-all hover:border-blue-400 hover:bg-blue-50/50 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-blue-500 dark:hover:bg-blue-500/5">
+                    <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 transition-transform group-hover:scale-110 dark:bg-blue-500/10 dark:text-blue-400">
+                      <ImagePlus size={26} />
+                    </div>
+
+                    <p className="font-semibold text-slate-700 dark:text-slate-200">
+                      Şəkilləri seçin
+                    </p>
+
+                    <p className="mt-1 text-xs text-slate-400">
+                      JPG, PNG və JPEG • Bir neçə şəkil seçə bilərsiniz
+                    </p>
+
                     <input
                       type="file"
                       name="images"
                       multiple
+                      accept="image/*"
                       onChange={handleImageChange}
-                      className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                      required
+                      required={!editingId}
+                      className="hidden"
                     />
-                    {preview.length > 0 && (
-                      <div className="flex gap-4 mt-4 flex-wrap">
-                        {preview.map((src, idx) => (
+                  </label>
+
+                  {/* PREVIEW */}
+                  {preview.length > 0 && (
+                    <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      {preview.map((src, idx) => (
+                        <div
+                          key={`${src}-${idx}`}
+                          className="group relative aspect-square overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800"
+                        >
                           <img
-                            key={idx}
                             src={src}
                             alt={`preview-${idx}`}
-                            className="w-32 h-32 object-cover border-[1px] border-green-300/100 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                           />
-                        ))}
-                      </div>
-                    )}
-                  </div>
 
-                  <button
-                    type="submit"
-                    className="col-span-2 bg-blue-600 border-[1px] border-green-300/100 text-white py-2 rounded-[10px] hover:bg-blue-700"
-                  >
-                    {editingId ? "Yenilə" : "Əlavə et"}
-                  </button>
-                </form>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPreview((prev) =>
+                                prev.filter((_, i) => i !== idx),
+                              );
+
+                              if (idx < images.length) {
+                                setImages((prev) =>
+                                  prev.filter((_, i) => i !== idx),
+                                );
+                              }
+                            }}
+                            className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white opacity-0 shadow-lg transition-all group-hover:opacity-100 hover:bg-red-600"
+                          >
+                            <X size={16} />
+                          </button>
+
+                          {idx === 0 && (
+                            <div className="absolute bottom-2 left-2 rounded-full bg-black/65 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
+                              Əsas şəkil
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* ACTIONS */}
+                <div className="sticky bottom-0 -mx-4 border-t border-slate-200 bg-white/95 px-4 py-4 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 sm:-mx-7 sm:px-7">
+                  <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        resetForm();
+                        setIsOpen(false);
+                      }}
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 sm:w-auto dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                    >
+                      Ləğv et
+                    </button>
+
+                    <button
+                      type="submit"
+                      className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition-all hover:bg-blue-700 hover:shadow-xl active:scale-[0.98] sm:w-auto"
+                    >
+                      {editingId ? (
+                        <>
+                          <RefreshCcw size={18} />
+                          Elanı yenilə
+                        </>
+                      ) : (
+                        <>
+                          <Plus size={18} />
+                          Elanı yerləşdir
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* =====================================================
+            SEARCH RESULTS
+        ====================================================== */}
+
+        <div className="mt-6">
+          {loading && (
+            <div className="flex justify-center py-8">
+              <CircularProgress />
+            </div>
+          )}
+
+          {!loading && query.trim() && results.length === 0 && (
+            <div className="rounded-3xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-slate-800">
+                <Search size={25} />
+              </div>
+
+              <h3 className="font-bold text-slate-800 dark:text-white">
+                Nəticə tapılmadı
+              </h3>
+
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                "{query}" üçün uyğun elan yoxdur.
+              </p>
+            </div>
+          )}
+
+          {!loading && results.length > 0 && (
+            <div>
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Axtarış nəticələri
+                </h3>
+
+                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
+                  {results.length} elan
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {results.map((item) => {
+                  const itemId = getItemId(item);
+
+                  return (
+                    <Link
+                      key={itemId}
+                      target="_top"
+                      rel="noopener noreferrer"
+                      to={`/PostDetailHousehold/${itemId}`}
+                    >
+                      <div className="group relative overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-slate-900 dark:ring-slate-800">
+                        <OwnerButtons item={item} />
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleFavorite(itemId);
+                          }}
+                          className="absolute left-2 top-2 z-30 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-slate-500 shadow-md backdrop-blur-sm transition-all hover:scale-110 hover:text-red-500 dark:bg-slate-900/90"
+                        >
+                          <Heart
+                            size={15}
+                            fill={item.favorite ? "currentColor" : "none"}
+                          />
+                        </button>
+
+                        <img
+                          src={getCardImage(item)}
+                          alt={getCardTitle(item)}
+                          className="h-[150px] w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+
+                        <div className="p-3">
+                          <p className="text-lg font-extrabold text-slate-900 dark:text-white">
+                            {item.price} AZN
+                          </p>
+
+                          <h3 className="mt-1 truncate text-sm font-semibold text-slate-800 dark:text-slate-200">
+                            {getCardTitle(item)}
+                          </h3>
+
+                          <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">
+                            {getCardCategory(item)} {getCardType(item)}
+                          </p>
+
+                          <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">
+                            {getCardModel(item)}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}
         </div>
 
-        <div className="mt-4">
-          {loading && <Box sx={{ display: 'flex' }}>
-      <CircularProgress />
-    </Box>}
-          {loading && results.length === 0 && (
-           <div class="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-r from-fuchsia-100 to-violet-200">
-	<h1 className="text-9xl font-extrabold text-white tracking-widest">404</h1>
-	<div className="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
-		Elan Yüklənmədi
-	</div>
-	<button className="mt-5">
-      <a
-        className="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring"
-      >
-        <span
-          className="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"
-        ></span>
+        {/* SEPARATOR */}
+        <div className="my-8 h-px w-full bg-slate-200 dark:bg-slate-800" />
 
-        <span className="relative block px-8 py-3 bg-[#1A2238] border border-current">
-          <router-link to="/">Əsas səhifə</router-link>
-        </span>
-      </a>
-    </button>
-</div>
-          )}
+        {/* ALL LISTINGS */}
+        <div className="mb-5 flex items-center justify-between">
+          <div>
+            <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
+              Əlavə olunan elanlar
+            </h3>
 
-          {!loading && results.length > 0 && (
-            <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {results.map((item, index) => (
-                <Link
-                  key={item.id || item._id}
-                  to={`/item/${item._id} || ${item.id}`}
-                >
-                  <div
-                    key={index}
-                    className="border  w-[226px] h-[304px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
-                  >
-                    <img
-                      src={
-                        item.images && item.images.length > 0
-                          ? item.images[0]
-                          : item.imageUrls && item.imageUrls.length > 0
-                          ? item.imageUrls[0]
-                          : "/placeholder.png"
-                      }
-                      alt={item?.title || "Image"}
-                      className="w-full h-[171px] object-cover"
-                    />
-                    <div className="p-4">
-                      <h2 className="text-lg font-semibold mb-1">
-                        {item.price} AZN
-                      </h2>
-                      <h3 className="text-lg font-semibold mb-1">
-                        {item?.household?.title} {item?.household?.category} {item?.household?.type_of_gods}
-                      </h3>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              Son əlavə olunan məişət texnikası elanları
+            </p>
+          </div>
 
-                      <p className="text-gray-600">{item?.household?.model}</p>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-          <div className=" ring-2 w-full my-4"></div>
+          <div className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
+            {householdItems.length} elan
+          </div>
         </div>
 
-        <h3 className="text-xl font-semibold mb-4">Əlavə olunan Elanlar</h3>
-        <div className="mx-auto   rounded-2xl   grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-4 w-full min-h-screen">
+        {/* LISTINGS */}
+        <div className="grid grid-cols-2 justify-items-center gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {isLoading ? (
-            Array.from({ length: 8 }).map((_, i) => (
-             <div
-                    key={i}
-                    className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
-                  >
-                    <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
-                      <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
-                      <div className="p-1">
-                        <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
+            Array.from({ length: 10 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-[245px] w-full max-w-[230px] animate-pulse overflow-hidden rounded-2xl bg-white shadow-sm dark:bg-slate-900"
+              >
+                <div className="h-[125px] bg-slate-200 dark:bg-slate-800" />
 
-                        <div className="flex items-center justify-between">
-                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/4 animate-shimmer "></div>
-                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/2 animate-shimmer "></div>
-                        </div>
+                <div className="space-y-3 p-3">
+                  <div className="h-5 w-3/4 rounded bg-slate-200 dark:bg-slate-800" />
+                  <div className="h-4 w-full rounded bg-slate-200 dark:bg-slate-800" />
+                  <div className="h-4 w-2/3 rounded bg-slate-200 dark:bg-slate-800" />
+                  <div className="h-4 w-1/2 rounded bg-slate-200 dark:bg-slate-800" />
+                </div>
+              </div>
+            ))
+          ) : householdItems.length === 0 ? (
+            <div className="col-span-full flex w-full flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white py-16 text-center dark:border-slate-700 dark:bg-slate-900">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-slate-800">
+                <Package size={30} />
+              </div>
+
+              <h3 className="font-bold text-slate-800 dark:text-white">
+                Hələ elan yoxdur
+              </h3>
+
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                İlk elanı siz yerləşdirə bilərsiniz.
+              </p>
+
+              <button
+                type="button"
+                onClick={handleOpenForm}
+                className="mt-5 flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-blue-700"
+              >
+                <Plus size={18} />
+                İlk elanı yerləşdir
+              </button>
+            </div>
+          ) : (
+            [...householdItems].reverse().map((item) => {
+              const itemId = getItemId(item);
+
+              return (
+                <Link
+                  target="_top"
+                  rel="noopener noreferrer"
+                  key={itemId}
+                  to={`/PostDetailHousehold/${itemId}`}
+                  className="w-full max-w-[230px]"
+                >
+                  <div className="group relative w-full overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl dark:bg-slate-900 dark:ring-slate-800">
+                    <OwnerButtons item={item} />
+
+                    {/* FAVORITE */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleFavorite(itemId);
+                      }}
+                      className="absolute left-2 top-2 z-30 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-slate-500 shadow-md backdrop-blur-sm transition-all hover:scale-110 hover:text-red-500 dark:bg-slate-900/90"
+                      title="Seçilmişlərə əlavə et"
+                    >
+                      <Heart
+                        size={15}
+                        fill={item.favorite ? "currentColor" : "none"}
+                      />
+                    </button>
+
+                    {/* IMAGE */}
+                    <div className="relative h-[125px] overflow-hidden bg-slate-100 dark:bg-slate-800">
+                      <img
+                        src={getCardImage(item)}
+                        alt={getCardTitle(item)}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+
+                      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/40 to-transparent" />
+                    </div>
+
+                    {/* CONTENT */}
+                    <div className="p-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="truncate text-lg font-extrabold text-slate-900 dark:text-white">
+                          {item.price} AZN
+                        </h3>
+
+                        {item.liked && (
+                          <Heart
+                            size={14}
+                            className="mt-1 shrink-0 text-red-500"
+                            fill="currentColor"
+                          />
+                        )}
+                      </div>
+
+                      <p className="mt-1 truncate text-sm font-semibold text-slate-800 dark:text-slate-200">
+                        {getCardCategory(item)} {getCardTitle(item)}
+                      </p>
+
+                      <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">
+                        {getCardModel(item)}
+                      </p>
+
+                      <div className="mt-4 flex items-center justify-between gap-2">
+                        <p className="flex min-w-0 items-center gap-1 truncate text-[10px] text-slate-500 dark:text-slate-400">
+                          <MapPin
+                            size={12}
+                            className="shrink-0 text-emerald-500"
+                          />
+
+                          <span className="truncate">
+                            {item.location || "Bakı"}
+                          </span>
+                        </p>
+
+                        <p className="shrink-0 text-[10px] text-slate-400">
+                          {formatDate(item.data)}
+                        </p>
                       </div>
                     </div>
                   </div>
-            ))
-          ) : (
-            <>
-              {[...householdItems].reverse().map((item) => (
-                <Link
-                target="_top"
-            rel="noopener noreferrer"
-                  key={item._id || item.id}
-                  to={`/PostDetailHousehold/${item._id}`}
-                >
-                  <div
-                    key={item._id || item.id}
-                    className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300"
-                  >
-                    <div className="flex gap-2 rounded-t-sm">
-                      {item.images && item.images.length > 0 && (
-                        <img
-                          src={item.images[0]}
-                          alt={item.title}
-                          className="w-full h-[100px] object-cover object-contain rounded-t-2xl"
-                        />
-                      )}
-                    </div>
-                    <div className="p-2 ">
-                      <h3 className="text-lg font-bold">{item.price} AZN</h3>
-                      <p className="font-sans capitalize text-[16px] truncate w-50 ">
-                        {item?.household?.category} "{item?.household?.title}" {item?.household?.type_of_goods}
-                      </p>
-
-                      <div className="flex justify-between gap-1 mt-8 ">
-                              <p className="text-[10px] rounded flex justify-between text-gray-600">
-                                <MapPin size={12} color="#75FC56" />{" "}
-                                {item.location}
-                              </p>
-                              <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
-                                {formatDate(item.data)}{" "}
-                                {getCurrentTime(item.data)}
-                              </p>
-                            </div>
-                    </div>
-                  </div>
                 </Link>
-              ))}
-            </>
+              );
+            })
           )}
         </div>
       </div>

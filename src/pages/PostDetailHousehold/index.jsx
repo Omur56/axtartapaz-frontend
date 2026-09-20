@@ -3,112 +3,125 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { X } from "lucide-react";
-import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
+
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ArrowLeft,
+  MapPin,
+  Phone,
+  Mail,
+  User,
+  Tag,
+  Crown,
+  Sparkles,
+  ShieldCheck,
+  Refrigerator,
+  Package,
+  CalendarDays,
+  Clock3,
+  Loader2,
+} from "lucide-react";
+
+import { useTheme } from "../../components/Main/ThemeContext";
+import BubbleBackground from "../../components/ui/BubbleBackground";
+import BottomMenu from "../../components/MobileMenu";
 
 export default function PostDetailHousehold() {
   const { id } = useParams();
+  const { darkMode } = useTheme();
+
   const [post, setPost] = useState(null);
   const [household, setHousehold] = useState([]);
   const [zoomIndex, setZoomIndex] = useState(null);
-  const [zoomPhoto, setZoomPhoto] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
- const [progress, setProgress] = React.useState(0);
-  const [buffer, setBuffer] = React.useState(10);
+  const [upgrading, setUpgrading] = useState(null);
 
-const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
+  const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
 
+  // ---------------------------------------------------------
+  // Bütün məişət texnikası elanlarını gətir
+  // ---------------------------------------------------------
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/Household/`)
-      .then((res) => setHousehold(res.data))
-      .catch((err) => console.error("Xəta:", err));
+      .get(`${BASE_URL}/api/Household`)
+      .then((res) => {
+        setHousehold(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch((err) => {
+        console.error("Məişət texnikası elanları yüklənmədi:", err);
+        setHousehold([]);
+      });
+  }, [BASE_URL]);
+
+  // ---------------------------------------------------------
+  // Cari elan
+  // ---------------------------------------------------------
+  useEffect(() => {
+    setLoading(true);
+    setNotFound(false);
 
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/Household/${id}`)
-      .then((res) => setPost(res.data))
-      .catch((err) => console.error("Xəta:", err));
-  }, [id]);
-
-  useEffect(() => {
-    if (zoomIndex === null) return;
-
-    const handleKeyDown = (e) => {
-      if (e.key === "ArrowRight") nextImage();
-      else if (e.key === "ArrowLeft") prevImage();
-      else if (e.key === "Escape") closeZoom();
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [zoomIndex, zoomPhoto]);
-
-
-  const progressRef = React.useRef(() => {});
-  React.useEffect(() => {
-    progressRef.current = () => {
-      if (progress === 100) {
-        setProgress(0);
-        setBuffer(10);
-      } else {
-        setProgress(progress + 1);
-        if (buffer < 100 && progress % 5 === 0) {
-          const newBuffer = buffer + 1 + Math.random() * 10;
-          setBuffer(newBuffer > 100 ? 100 : newBuffer);
+      .get(`${BASE_URL}/api/Household/${id}`)
+      .then((res) => {
+        if (res.data) {
+          setPost(res.data);
+        } else {
+          setNotFound(true);
         }
-      }
-    };
-  });
+      })
+      .catch((err) => {
+        console.error("Elan yüklənmədi:", err);
+        setNotFound(true);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [id, BASE_URL]);
 
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      progressRef.current();
-    }, 100);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
-
-  if (!post) return <Box className="min-h-screen mt-14" sx={{ width: '100%' }}>
-        <LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />
-      </Box>;
-
-if (notFound || !post) return <div className="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-r from-fuchsia-100 to-violet-200">
-	<h1 className="text-9xl font-extrabold text-white tracking-widest">404</h1>
-	<div className="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
-		Elan Yüklənmədi
-	</div>
-	<button className="mt-5">
-      <a className="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring">
-        <span
-          className="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"
-        ></span>
-
-        <span className="relative block px-8 py-3 bg-[#1A2238] border border-current">
-          < Link to="/">Əsas səhifə</Link>
-        </span>
-      </a>
-    </button>
-</div>
-
-  const imageArray = Array.isArray(post.images)
+  // ---------------------------------------------------------
+  // Şəkillər
+  // ---------------------------------------------------------
+  const imageArray = Array.isArray(post?.images)
     ? post.images
-    : post.images
-    ? [post.images]
-    : [];
+    : post?.images
+      ? [post.images]
+      : [];
 
+  const getImageUrl = (img) => {
+    if (!img) return "/no-image.jpg";
+
+    if (typeof img === "string" && img.startsWith("http")) {
+      return img;
+    }
+
+    return `${BASE_URL}/uploads/${img}`;
+  };
+
+  // ---------------------------------------------------------
+  // Tarix
+  // ---------------------------------------------------------
   const formatDate = (dateString) => {
+    if (!dateString) return "";
+
     const postDate = new Date(dateString);
-    const now = new Date();
-    const today = new Date(now.setHours(0, 0, 0, 0));
-    const postDay = new Date(postDate.setHours(0, 0, 0, 0));
+
+    if (Number.isNaN(postDate.getTime())) return "";
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const postDay = new Date(postDate);
+    postDay.setHours(0, 0, 0, 0);
+
     const diffTime = today - postDay;
     const oneDay = 24 * 60 * 60 * 1000;
+
     if (diffTime === 0) return "bugün";
     if (diffTime === oneDay) return "dünən";
+
     return postDate.toLocaleDateString("az-AZ", {
       day: "numeric",
       month: "long",
@@ -116,257 +129,819 @@ if (notFound || !post) return <div className="h-screen w-full flex flex-col just
     });
   };
 
+  // ---------------------------------------------------------
+  // Saat
+  // ---------------------------------------------------------
   const getCurrentTime = (isoString) => {
+    if (!isoString) return "";
+
     const date = new Date(isoString);
-    return date.toTimeString().split(" ")[0].slice(0, 5);
+
+    if (Number.isNaN(date.getTime())) return "";
+
+    return date.toLocaleTimeString("az-AZ", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
-  const openZoom = (index) => setZoomIndex(index);
-  const closeZoom = () => setZoomIndex(null);
-  const prevImage = () =>
+  // ---------------------------------------------------------
+  // Zoom
+  // ---------------------------------------------------------
+  const openZoom = (index) => {
+    setZoomIndex(index);
+  };
+
+  const closeZoom = () => {
+    setZoomIndex(null);
+  };
+
+  const prevImage = () => {
     setZoomIndex((prev) => (prev === 0 ? imageArray.length - 1 : prev - 1));
-  const nextImage = () =>
+  };
+
+  const nextImage = () => {
     setZoomIndex((prev) => (prev === imageArray.length - 1 ? 0 : prev + 1));
+  };
 
+  // ---------------------------------------------------------
+  // Klaviatura ilə şəkil dəyişmə
+  // ---------------------------------------------------------
+  useEffect(() => {
+    if (zoomIndex === null) return;
 
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowRight") {
+        nextImage();
+      }
+
+      if (e.key === "ArrowLeft") {
+        prevImage();
+      }
+
+      if (e.key === "Escape") {
+        closeZoom();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [zoomIndex, imageArray.length]);
+
+  // ---------------------------------------------------------
+  // VIP / Premium
+  // ---------------------------------------------------------
   const handleUpgrade = async (listingId, type) => {
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      setUpgrading(type);
 
-    const { data } = await axios.post(
-      `${BASE_URL}/api/payments/create-checkout/${listingId}`,
-      { type },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+      const token = localStorage.getItem("token");
 
-    window.location.href = data.url;
-  } catch (err) {
-    console.log(err.response?.data || err.message);
-  }
-};
+      const { data } = await axios.post(
+        `${BASE_URL}/api/payments/create-checkout/${listingId}`,
+        { type },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
- 
-  return (
-    <div className="max-w-6xl mx-auto p-4">
-      
-      <Link to="/Katalog/Məişət_Texnikası">
-       
-        <button className="flex  items-center gap-2 mt-12 mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Geri
-        </button>
-      </Link>
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      console.error("Ödəniş xətası:", err.response?.data || err.message);
+    } finally {
+      setUpgrading(null);
+    }
+  };
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6  shadow-lg rounded-xl p-6">
-        
-        <div className="lg:col-span-2 space-y-4">
-          <h1 className="text-2xl font-bold mb-4 capitalize">
-            {post.category} {post.brand} {post.model}
-          </h1>
+  // ---------------------------------------------------------
+  // Loading
+  // ---------------------------------------------------------
+  if (loading) {
+    return (
+      <div
+        className={`min-h-screen flex items-center justify-center relative overflow-hidden ${
+          darkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"
+        }`}
+      >
+        <BubbleBackground />
 
-          <Carousel showThumbs showStatus={false} autoPlay infiniteLoop>
-            {imageArray.map((img, index) => (
-              <div
-                key={index}
-                className="w-full h-[400px] cursor-pointer"
-                onClick={() => openZoom(index)}
-              >
-                <img
-                  src={
-                    img.startsWith("http")
-                      ? img
-                      : `${process.env.REACT_APP_API_URL}/uploads/${img}`
-                  }
-                  alt={`Şəkil ${index + 1}`}
-                  className="w-full h-full object-contain rounded-lg"
-                />
-              </div>
-            ))}
-          </Carousel>
-
-          <p className="text-3xl font-bold text-black mt-4">
-            {post.price} AZN
-          </p>
-
-          
-          <div className="mt-4">
-            <p className="text-black text-sm mt-2"><span className="font-bold text-black font-xs ">Məhsulun adı: </span> {post.title}</p>
-            <p className="text-black text-sm mt-2"><span className="font-bold text-black font-xs">Kateqoriya: </span> {post.category} </p>
-            <p className="text-black text-sm mt-2"><span className="font-bold text-black font-xs">Məhsul tipi: </span>{post.type_of_goods} </p>
-            
-            <p className="text-black  text-sm mt-2"><span className="font-bold text-black font-xs ">Təsvir: </span> {post.description}</p>
-
-             <div className="flex gap-2 mt-4">
- 
-  <button
-    onClick={() => handleUpgrade(post._id, "vip")}
-    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
-  >
-    <span className="text-blue-500 ">VIP et</span>
-  </button>
-
-  <button
-    onClick={() => handleUpgrade(post._id, "premium")}
-    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
-  >
-    <span className="text-blue-500 ">Premium et</span>
-  </button>
-</div>
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-xl shadow-rose-500/20">
+            <Loader2 className="w-7 h-7 text-white animate-spin" />
           </div>
 
-          <div className="flex items-center justify-between mt-6 text-sm text-gray-500">
-            <p>Elanın nömrəsi: {post.id}</p>
-            <p>
-              {post.location}, {formatDate(post.data)},
-              {getCurrentTime(post.data)}
-            </p>
-          </div>
+          <p className="font-semibold">Elan yüklənir...</p>
         </div>
 
-        <div className="bg-gray-50 border rounded-xl shadow-md p-5 h-fit">
-          <h2 className="text-xl font-bold mb-4">Əlaqə məlumatı</h2>
-          <div className="space-y-2 text-gray-700">
-            <p>
-              <span className="font-semibold">Ad:</span> {post?.contact?.name}
-            </p>
-            <p>
-              <span className="font-semibold">Telefon:</span>
-              <a
-                href={`tel:${post?.contact?.phone}`}
-                className="text-blue-600 font-bold ml-1"
-              >
-                {post?.contact?.phone}
-              </a>
-            </p>
-            <p>
-              <span className="font-semibold">Email:</span>
-              {post?.contact?.email}
-            </p>
-            <p>
-              <span className="font-semibold">Şəhər:</span> {post.location}
-            </p>
-          </div>
-          <a
-            href={`tel:${post?.contact?.phone}`}
-            className="text-white font-bold ml-1"
-          >
-          
-            <button className="w-full mt-6 py-3 bg-green-500 hover:bg-red-700 text-white font-bold rounded-lg transition">
-              Zəng et
-            </button>
-          </a>
-
-            <div className="flex gap-2 mt-4">
- 
-  <button
-    onClick={() => handleUpgrade(post._id, "vip")}
-    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
-  >
-    <span className="text-blue-500 ">VIP et</span>
-  </button>
-
-  <button
-    onClick={() => handleUpgrade(post._id, "premium")}
-    className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
-  >
-    <span className="text-blue-500 ">Premium et</span>
-  </button>
-</div>
-        </div>
+        <BottomMenu />
       </div>
+    );
+  }
 
-      <h2 className="text-[22px] font-bold text-gray-700 mt-10 mb-4">
-        Bənzər elanlar
-      </h2>
-      <div className="grid justify-items-center mx-auto max-w-[1000px] grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {[...household]
-          .reverse()
-          .slice(0, 8)
-          .map((item) => (
-            <Link  target="_blank"
-            rel="noopener noreferrer" key={item.id} to={`/PostDetailHousehold/${item._id}`}>
-              <div className="border w-[226px] h-[304px] rounded-lg bg-white shadow-sm hover:shadow-xl transition duration-200">
-                <img
-                  src={
-                    item.images?.[0]?.startsWith("http")
-                      ? item.images[0]
-                      : "/no-image.jpg"
-                  }
-                  alt={item.title}
-                  className="w-full h-[180px] object-cover rounded-t-lg cursor-pointer"
-                  onClick={() => openZoom(0)}
-                />
-                <div className="p-3">
-                  <h3 className="text-lg font-bold text-black">
-                    {item.price} AZN
-                  </h3>
-                  <p className="text-lx  font-bold truncate w-62">
-                    {item.title}
-                  </p>
-                  <p className="text-lx  font-bold truncate w-62">
-                    {item.category}
-                  </p>
-                  <p className="text-[15px] text-gray-400 mt-2">
-                    {item.location}, {formatDate(item.data)}{" "}
-                    {getCurrentTime(item.data)}
+  // ---------------------------------------------------------
+  // 404
+  // ---------------------------------------------------------
+  if (notFound || !post) {
+    return (
+      <div
+        className={`min-h-screen flex items-center justify-center px-4 relative overflow-hidden ${
+          darkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"
+        }`}
+      >
+        <BubbleBackground />
+
+        <div className="relative z-10 text-center">
+          <div className="text-[100px] sm:text-[150px] font-black leading-none bg-gradient-to-r from-rose-500 via-pink-500 to-fuchsia-500 bg-clip-text text-transparent">
+            404
+          </div>
+
+          <div className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 text-red-500 border border-red-500/20">
+            <ShieldCheck size={18} />
+            Elan yüklənmədi
+          </div>
+
+          <div className="mt-8">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 text-white font-bold shadow-lg shadow-rose-500/20 hover:scale-[1.02] transition"
+            >
+              <ArrowLeft size={18} />
+              Əsas səhifə
+            </Link>
+          </div>
+        </div>
+
+        <BottomMenu />
+      </div>
+    );
+  }
+
+  const contact = post?.contact || {};
+
+  const currentId = post?.id || post?._id;
+
+  const postDate = post?.data || post?.createdAt;
+
+  // ---------------------------------------------------------
+  // Bənzər elanlar
+  // ---------------------------------------------------------
+  const similarPosts = [...household]
+    .filter((item) => {
+      const itemId = item?.id || item?._id;
+
+      return String(itemId) !== String(currentId);
+    })
+    .reverse()
+    .slice(0, 8);
+
+  // ---------------------------------------------------------
+  // Məlumatlar
+  // ---------------------------------------------------------
+  const category = post?.category || "";
+  const title = post?.title || "Məişət texnikası";
+  const typeOfGoods = post?.type_of_goods || "";
+  const brand = post?.brand || "";
+  const model = post?.model || "";
+
+  return (
+    <div
+      className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${
+        darkMode ? "bg-slate-950 text-slate-100" : "bg-slate-50 text-slate-900"
+      }`}
+    >
+      <BubbleBackground />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 pt-24 pb-28">
+        {/* ------------------------------------------------ */}
+        {/* GERİ */}
+        {/* ------------------------------------------------ */}
+        <Link
+          to="/Katalog/Məişət_Texnikası"
+          className={`inline-flex items-center gap-2 mb-5 px-4 py-2.5 rounded-xl border backdrop-blur-md transition-all duration-200 ${
+            darkMode
+              ? "bg-slate-900/70 border-slate-700 text-slate-200 hover:bg-slate-800"
+              : "bg-white/80 border-slate-200 text-slate-700 hover:bg-white shadow-sm"
+          }`}
+        >
+          <ArrowLeft size={18} />
+          Geri
+        </Link>
+
+        {/* ------------------------------------------------ */}
+        {/* ƏSAS KONTENT */}
+        {/* ------------------------------------------------ */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* SOL TƏRƏF */}
+          <div
+            className={`lg:col-span-2 rounded-3xl border overflow-hidden backdrop-blur-xl shadow-xl ${
+              darkMode
+                ? "bg-slate-900/80 border-slate-800"
+                : "bg-white/90 border-slate-200"
+            }`}
+          >
+            {/* Başlıq */}
+            <div className="p-5 sm:p-6 pb-3">
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/20 text-xs font-bold">
+                  <Refrigerator size={14} />
+                  Məişət Texnikası
+                </span>
+
+                {post?.priorityType === "premium" && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 text-xs font-bold">
+                    <Crown size={14} />
+                    PREMIUM
+                  </span>
+                )}
+
+                {post?.priorityType === "vip" && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-violet-500/10 text-violet-500 border border-violet-500/20 text-xs font-bold">
+                    <Sparkles size={14} />
+                    VIP
+                  </span>
+                )}
+              </div>
+
+              <h1 className="text-2xl sm:text-3xl font-black leading-tight capitalize">
+                {title}
+                {brand && ` ${brand}`}
+                {model && ` ${model}`}
+              </h1>
+
+              {(brand || model || typeOfGoods) && (
+                <p
+                  className={`mt-2 text-sm ${
+                    darkMode ? "text-slate-400" : "text-slate-500"
+                  }`}
+                >
+                  {[brand, model, typeOfGoods].filter(Boolean).join(" • ")}
+                </p>
+              )}
+            </div>
+
+            {/* QALEREYA */}
+            <div className="px-3 sm:px-6">
+              <div
+                className={`rounded-2xl overflow-hidden border ${
+                  darkMode
+                    ? "border-slate-800 bg-slate-950"
+                    : "border-slate-200 bg-slate-50"
+                }`}
+              >
+                {imageArray.length > 0 ? (
+                  <Carousel
+                    showThumbs={imageArray.length > 1}
+                    showStatus={false}
+                    autoPlay
+                    infiniteLoop
+                    swipeable
+                    emulateTouch
+                    interval={4500}
+                    showIndicators={imageArray.length > 1}
+                  >
+                    {imageArray.map((img, index) => (
+                      <div
+                        key={index}
+                        className="w-full h-[300px] sm:h-[400px] lg:h-[460px] cursor-zoom-in"
+                        onClick={() => openZoom(index)}
+                      >
+                        <img
+                          src={getImageUrl(img)}
+                          alt={`Şəkil ${index + 1}`}
+                          className="w-full h-full object-contain rounded-xl"
+                        />
+                      </div>
+                    ))}
+                  </Carousel>
+                ) : (
+                  <div className="h-[300px] flex flex-col items-center justify-center text-slate-400">
+                    <Refrigerator size={44} />
+
+                    <span className="mt-2">Şəkil yoxdur</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* QİYMƏT */}
+            <div className="px-5 sm:px-6 pt-6">
+              <div className="inline-flex items-center gap-2">
+                <span className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-rose-500 to-pink-600 bg-clip-text text-transparent">
+                  {post.price}
+                </span>
+
+                <span className="text-xl font-bold text-rose-500">AZN</span>
+              </div>
+            </div>
+
+            {/* DETALLAR */}
+            <div className="p-5 sm:p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {title && (
+                  <div
+                    className={`rounded-2xl p-4 border ${
+                      darkMode
+                        ? "bg-slate-800/70 border-slate-700"
+                        : "bg-slate-50 border-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 text-rose-500 mb-1">
+                      <Package size={17} />
+
+                      <span className="text-xs font-bold uppercase">
+                        Məhsul
+                      </span>
+                    </div>
+
+                    <p className="font-bold">{title}</p>
+                  </div>
+                )}
+
+                {category && (
+                  <div
+                    className={`rounded-2xl p-4 border ${
+                      darkMode
+                        ? "bg-slate-800/70 border-slate-700"
+                        : "bg-slate-50 border-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 text-rose-500 mb-1">
+                      <Tag size={17} />
+
+                      <span className="text-xs font-bold uppercase">
+                        Kateqoriya
+                      </span>
+                    </div>
+
+                    <p className="font-bold">{category}</p>
+                  </div>
+                )}
+
+                {typeOfGoods && (
+                  <div
+                    className={`rounded-2xl p-4 border ${
+                      darkMode
+                        ? "bg-slate-800/70 border-slate-700"
+                        : "bg-slate-50 border-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 text-rose-500 mb-1">
+                      <Package size={17} />
+
+                      <span className="text-xs font-bold uppercase">
+                        Məhsul tipi
+                      </span>
+                    </div>
+
+                    <p className="font-bold">{typeOfGoods}</p>
+                  </div>
+                )}
+
+                {brand && (
+                  <div
+                    className={`rounded-2xl p-4 border ${
+                      darkMode
+                        ? "bg-slate-800/70 border-slate-700"
+                        : "bg-slate-50 border-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 text-rose-500 mb-1">
+                      <Tag size={17} />
+
+                      <span className="text-xs font-bold uppercase">Brend</span>
+                    </div>
+
+                    <p className="font-bold">{brand}</p>
+                  </div>
+                )}
+
+                {model && (
+                  <div
+                    className={`rounded-2xl p-4 border ${
+                      darkMode
+                        ? "bg-slate-800/70 border-slate-700"
+                        : "bg-slate-50 border-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 text-rose-500 mb-1">
+                      <Tag size={17} />
+
+                      <span className="text-xs font-bold uppercase">Model</span>
+                    </div>
+
+                    <p className="font-bold">{model}</p>
+                  </div>
+                )}
+
+                {post.location && (
+                  <div
+                    className={`rounded-2xl p-4 border ${
+                      darkMode
+                        ? "bg-slate-800/70 border-slate-700"
+                        : "bg-slate-50 border-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 text-rose-500 mb-1">
+                      <MapPin size={17} />
+
+                      <span className="text-xs font-bold uppercase">
+                        Yerləşmə
+                      </span>
+                    </div>
+
+                    <p className="font-bold">{post.location}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* TƏSVİR */}
+              {post.description && (
+                <div className="mt-6">
+                  <h2 className="text-lg font-black mb-2">Məhsul haqqında</h2>
+
+                  <div
+                    className={`rounded-2xl p-5 border leading-7 ${
+                      darkMode
+                        ? "bg-slate-800/60 border-slate-700 text-slate-300"
+                        : "bg-slate-50 border-slate-200 text-slate-600"
+                    }`}
+                  >
+                    {post.description}
+                  </div>
+                </div>
+              )}
+
+              {/* ELAN MƏLUMATLARI */}
+              <div
+                className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-6 pt-5 border-t text-sm ${
+                  darkMode
+                    ? "border-slate-800 text-slate-400"
+                    : "border-slate-200 text-slate-500"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <ShieldCheck size={16} />
+
+                  <span>
+                    Elanın nömrəsi: <strong>{post.id || post._id}</strong>
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="inline-flex items-center gap-1.5">
+                    <CalendarDays size={15} />
+                    {formatDate(postDate)}
+                  </span>
+
+                  <span className="inline-flex items-center gap-1.5">
+                    <Clock3 size={15} />
+                    {getCurrentTime(postDate)}
+                  </span>
+
+                  {post.location && (
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin size={15} />
+                      {post.location}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ------------------------------------------------ */}
+          {/* SAĞ ƏLAQƏ PANELİ */}
+          {/* ------------------------------------------------ */}
+          <aside className="lg:col-span-1">
+            <div
+              className={`lg:sticky lg:top-24 rounded-3xl border p-5 shadow-xl backdrop-blur-xl ${
+                darkMode
+                  ? "bg-slate-900/85 border-slate-800"
+                  : "bg-white/90 border-slate-200"
+              }`}
+            >
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg shadow-rose-500/20">
+                  <User className="text-white" size={23} />
+                </div>
+
+                <div>
+                  <h2 className="font-black text-lg">Əlaqə məlumatı</h2>
+
+                  <p
+                    className={`text-xs ${
+                      darkMode ? "text-slate-400" : "text-slate-500"
+                    }`}
+                  >
+                    Elan sahibi
                   </p>
                 </div>
               </div>
-            </Link>
-          ))}
+
+              <div className="space-y-3">
+                {contact?.name && (
+                  <div
+                    className={`flex gap-3 p-3 rounded-xl ${
+                      darkMode ? "bg-slate-800" : "bg-slate-50"
+                    }`}
+                  >
+                    <User size={18} className="text-rose-500 mt-0.5" />
+
+                    <div>
+                      <p className="text-xs text-slate-400">Ad</p>
+
+                      <p className="font-bold">{contact.name}</p>
+                    </div>
+                  </div>
+                )}
+
+                {contact?.phone && (
+                  <div
+                    className={`flex gap-3 p-3 rounded-xl ${
+                      darkMode ? "bg-slate-800" : "bg-slate-50"
+                    }`}
+                  >
+                    <Phone size={18} className="text-rose-500 mt-0.5" />
+
+                    <div>
+                      <p className="text-xs text-slate-400">Telefon</p>
+
+                      <a
+                        href={`tel:${contact.phone}`}
+                        className="font-bold text-rose-500 hover:underline"
+                      >
+                        {contact.phone}
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {contact?.email && (
+                  <div
+                    className={`flex gap-3 p-3 rounded-xl ${
+                      darkMode ? "bg-slate-800" : "bg-slate-50"
+                    }`}
+                  >
+                    <Mail size={18} className="text-rose-500 mt-0.5" />
+
+                    <div className="min-w-0">
+                      <p className="text-xs text-slate-400">Email</p>
+
+                      <p className="font-semibold break-all">{contact.email}</p>
+                    </div>
+                  </div>
+                )}
+
+                {post.location && (
+                  <div
+                    className={`flex gap-3 p-3 rounded-xl ${
+                      darkMode ? "bg-slate-800" : "bg-slate-50"
+                    }`}
+                  >
+                    <MapPin size={18} className="text-rose-500 mt-0.5" />
+
+                    <div>
+                      <p className="text-xs text-slate-400">Şəhər</p>
+
+                      <p className="font-bold">{post.location}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ZƏNG ET */}
+              {contact?.phone && (
+                <a
+                  href={`tel:${contact.phone}`}
+                  className="mt-5 flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 text-white font-black shadow-lg shadow-rose-500/20 hover:scale-[1.01] transition"
+                >
+                  <Phone size={19} />
+                  Zəng et
+                </a>
+              )}
+
+              {/* VIP / PREMIUM */}
+              <div className="grid grid-cols-2 gap-2 mt-4">
+                <button
+                  onClick={() => handleUpgrade(post._id || post.id, "vip")}
+                  disabled={upgrading !== null}
+                  className="flex items-center justify-center gap-1.5 px-3 py-3 rounded-xl border border-violet-500/30 bg-violet-500/10 text-violet-500 font-bold hover:bg-violet-500/20 transition disabled:opacity-50"
+                >
+                  {upgrading === "vip" ? (
+                    <Loader2 size={17} className="animate-spin" />
+                  ) : (
+                    <Sparkles size={17} />
+                  )}
+                  VIP et
+                </button>
+
+                <button
+                  onClick={() => handleUpgrade(post._id || post.id, "premium")}
+                  disabled={upgrading !== null}
+                  className="flex items-center justify-center gap-1.5 px-3 py-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-500 font-bold hover:bg-amber-500/20 transition disabled:opacity-50"
+                >
+                  {upgrading === "premium" ? (
+                    <Loader2 size={17} className="animate-spin" />
+                  ) : (
+                    <Crown size={17} />
+                  )}
+                  Premium
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        {/* ------------------------------------------------ */}
+        {/* BƏNZƏR ELANLAR */}
+        {/* ------------------------------------------------ */}
+        {similarPosts.length > 0 && (
+          <section className="mt-12">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-2xl font-black">Bənzər elanlar</h2>
+
+                <p
+                  className={`text-sm mt-1 ${
+                    darkMode ? "text-slate-400" : "text-slate-500"
+                  }`}
+                >
+                  Digər məişət texnikası elanlarına baxın
+                </p>
+              </div>
+
+              <div className="hidden sm:flex items-center gap-2 text-rose-500">
+                <Sparkles size={18} />
+
+                <span className="text-sm font-bold">ProElan</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              {similarPosts.map((item) => {
+                const itemId = item?.id || item?._id;
+
+                const itemDate = item?.data || item?.createdAt;
+
+                return (
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    key={itemId}
+                    to={`/PostDetailHousehold/${itemId}`}
+                    className="group"
+                  >
+                    <div
+                      className={`h-full rounded-2xl overflow-hidden border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${
+                        darkMode
+                          ? "bg-slate-900 border-slate-800"
+                          : "bg-white border-slate-200"
+                      }`}
+                    >
+                      <div className="relative h-[190px] overflow-hidden">
+                        <img
+                          src={getImageUrl(item?.images?.[0])}
+                          alt={item?.title || "Məişət texnikası"}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+
+                        <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-xs font-bold">
+                          Məişət Texnikası
+                        </div>
+
+                        {item?.priorityType === "premium" && (
+                          <div className="absolute top-3 right-3 p-1.5 rounded-full bg-amber-500 text-white">
+                            <Crown size={14} />
+                          </div>
+                        )}
+
+                        {item?.priorityType === "vip" && (
+                          <div className="absolute top-3 right-3 p-1.5 rounded-full bg-violet-500 text-white">
+                            <Sparkles size={14} />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="p-4">
+                        <p className="text-xl font-black text-rose-500">
+                          {item?.price} ₼
+                        </p>
+
+                        <h3
+                          className={`font-bold mt-1 truncate ${
+                            darkMode ? "text-white" : "text-slate-900"
+                          }`}
+                        >
+                          {item?.title || "Məişət texnikası"}
+                        </h3>
+
+                        {item?.category && (
+                          <p
+                            className={`text-sm mt-1 truncate ${
+                              darkMode ? "text-slate-400" : "text-slate-500"
+                            }`}
+                          >
+                            {item.category}
+                          </p>
+                        )}
+
+                        <div
+                          className={`flex items-center justify-between gap-2 mt-4 pt-3 border-t text-xs ${
+                            darkMode
+                              ? "border-slate-800 text-slate-500"
+                              : "border-slate-100 text-slate-400"
+                          }`}
+                        >
+                          <span className="flex items-center gap-1 truncate">
+                            <MapPin size={13} />
+
+                            {item?.location || "—"}
+                          </span>
+
+                          <span className="whitespace-nowrap">
+                            {formatDate(itemDate)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
       </div>
 
-      {zoomIndex !== null && (
+      {/* ------------------------------------------------ */}
+      {/* FULLSCREEN ZOOM */}
+      {/* ------------------------------------------------ */}
+      {zoomIndex !== null && imageArray.length > 0 && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50"
+          className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm flex items-center justify-center"
           onClick={closeZoom}
         >
+          {/* Bağla */}
           <button
-            onClick={() => setIsOpen(false)}
-            className="absolute top-5 right-[200px] text-gray-600 hover:text-red-600"
+            onClick={closeZoom}
+            className="absolute top-5 right-5 z-[10001] w-11 h-11 rounded-full bg-white/10 hover:bg-red-500/80 text-white flex items-center justify-center transition"
+            aria-label="Bağla"
           >
-            <X size={35} />
+            <X size={24} />
           </button>
-          <button
-            className="absolute left-5 w-10 h-10 text-white text-8xl font-bold z-50"
-            onClick={(e) => {
-              e.stopPropagation();
-              prevImage();
-            }}
-          >
-            ‹
-          </button>
+
+          {/* Sol */}
+          {imageArray.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                prevImage();
+              }}
+              className="absolute left-3 sm:left-6 z-[10001] w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition"
+              aria-label="Əvvəlki şəkil"
+            >
+              <ChevronLeft size={32} />
+            </button>
+          )}
+
+          {/* Şəkil */}
           <img
-            src={
-              imageArray[zoomIndex].startsWith("http")
-                ? imageArray[zoomIndex]
-                : `${process.env.REACT_APP_API_URL}/uploads/${imageArray[zoomIndex]}`
-            }
+            src={getImageUrl(imageArray[zoomIndex])}
             alt="Zoomed"
-            className="max-w-[90%] max-h-[90%] object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+            className="max-w-[92%] max-h-[88%] object-contain rounded-xl select-none"
           />
-          <button
-            className="absolute w-10 h-10 right-5 text-white text-8xl font-bold z-50"
-            onClick={(e) => {
-              e.stopPropagation();
-              nextImage();
-            }}
-          >
-            ›
-          </button>
+
+          {/* Sağ */}
+          {imageArray.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage();
+              }}
+              className="absolute right-3 sm:right-6 z-[10001] w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition"
+              aria-label="Növbəti şəkil"
+            >
+              <ChevronRight size={32} />
+            </button>
+          )}
+
+          {/* Sayğac */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md text-white text-sm font-bold">
+            {zoomIndex + 1} / {imageArray.length}
+          </div>
         </div>
       )}
+
+      <BottomMenu />
     </div>
   );
 }

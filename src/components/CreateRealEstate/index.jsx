@@ -1,17 +1,34 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import { X } from "lucide-react";
 import Swal from "sweetalert2";
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
-import { RefreshCcw, Percent, MapPin } from "lucide-react";
+import {
+  X,
+  Search,
+  Plus,
+  ArrowLeft,
+  ImagePlus,
+  MapPin,
+  Heart,
+  Edit3,
+  Trash2,
+  User,
+  Mail,
+  Phone,
+  Home,
+  Building2,
+  Ruler,
+  Layers3,
+  Save,
+  Loader2,
+  MapPinned,
+  BedDouble,
+} from "lucide-react";
 
 export default function CreateRealEstate() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { id } = useParams();
-  const [realEstatePost, setRealEstatePost] = useState({
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  const createInitialForm = () => ({
     id: Date.now(),
     title: "",
     title_type: "",
@@ -35,270 +52,536 @@ export default function CreateRealEstate() {
     favorite: false,
     data: new Date(),
   });
- 
-  const [realEstateList, setRealEstateList] = useState([]);
-  const [images, setImages] = useState([]);
-  const [preview, setPreview] = useState([]);
-  const [editingId, setEditingId] = useState(null);
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImages((prev) => [...prev, ...files]);
-    setPreview((prev) => [
-      ...prev,
-      ...files.map((file) => URL.createObjectURL(file)),
-    ]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [realEstatePost, setRealEstatePost] = useState(createInitialForm());
+
+  const [realEstateList, setRealEstateList] = useState([]);
+
+  // Yeni seçilən şəkillər
+  const [images, setImages] = useState([]);
+
+  // Yeni şəkillərin preview-ları
+  const [preview, setPreview] = useState([]);
+
+  // Serverdə artıq olan şəkillər
+  const [existingImages, setExistingImages] = useState([]);
+
+  const [editingId, setEditingId] = useState(null);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const token = localStorage.getItem("token");
+
+  // =========================================================
+  // IMAGE URL
+  // =========================================================
+
+  const getImageUrl = (image) => {
+    if (!image) return "/placeholder.png";
+
+    if (typeof image === "string") {
+      if (
+        image.startsWith("http://") ||
+        image.startsWith("https://") ||
+        image.startsWith("data:")
+      ) {
+        return image;
+      }
+
+      return `${API_URL}/uploads/${image}`;
+    }
+
+    return (
+      image.url ||
+      image.secure_url ||
+      image.path ||
+      image.src ||
+      "/placeholder.png"
+    );
   };
 
+  // =========================================================
+  // FETCH
+  // =========================================================
+
+  const fetchItems = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/realEstate`);
+
+      const data = Array.isArray(res.data) ? res.data : res.data?.ads || [];
+
+      setRealEstateList(data);
+    } catch (err) {
+      console.error("Real estate fetch error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchItems();
   }, []);
 
-
-
-
-  useEffect(() => {
-    const fetchAll = async () => {
-      setIsLoading(true);
-      try {
-        const [realEstate] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/api/realEstate`),
-        ]);
-
-        setRealEstate(realEstate.data);
-      } catch (err) {
-        console.error("API xətası:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAll();
-  }, []);
+  // =========================================================
+  // FORM INPUT
+  // =========================================================
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
     if (name.startsWith("contact.")) {
       const field = name.split(".")[1];
+
       setRealEstatePost((prev) => ({
         ...prev,
-        contact: { ...prev.contact, [field]: value },
+        contact: {
+          ...prev.contact,
+          [field]: value,
+        },
       }));
-    } else if (name === "data") {
-      setRealEstatePost((prev) => ({ ...prev, data: new Date(value) }));
-    } else {
-      setRealEstatePost((prev) => ({ ...prev, [name]: value }));
+
+      return;
     }
+
+    setRealEstatePost((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const fetchItems = async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/realEstate`
-      );
-      setRealEstateList(res.data);
-    } catch (err) {
-      console.error(err);
-    }
+  // =========================================================
+  // IMAGE SELECT
+  // =========================================================
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files || []);
+
+    if (!files.length) return;
+
+    setImages((prev) => [...prev, ...files]);
+
+    const newPreviews = files.map((file) => URL.createObjectURL(file));
+
+    setPreview((prev) => [...prev, ...newPreviews]);
+
+    e.target.value = "";
   };
+
+  // =========================================================
+  // REMOVE NEW IMAGE
+  // =========================================================
+
+  const handleRemoveImage = (index) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+
+    setPreview((prev) => {
+      const url = prev[index];
+
+      if (url?.startsWith("blob:")) {
+        URL.revokeObjectURL(url);
+      }
+
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
+  // =========================================================
+  // REMOVE EXISTING IMAGE FROM PREVIEW
+  // =========================================================
+
+  const handleRemoveExistingImage = (index) => {
+    setExistingImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // =========================================================
+  // RESET
+  // =========================================================
 
   const resetForm = () => {
-    setRealEstatePost({
-      id: Date.now(),
-      title: "",
-      title_type: "",
-      type_building: "",
-      field: "",
-      number_of_rooms: "",
-      area: "",
-      floor: "",
-      number_of_floors: "",
-
-      location: "",
-      city: "",
-      price: "",
-      images: [],
-      description: "",
-      contact: {
-        name: "",
-        email: "",
-        phone: "",
-      },
-      liked: false,
-      favorite: false,
-      data: new Date(),
+    preview.forEach((url) => {
+      if (url?.startsWith("blob:")) {
+        URL.revokeObjectURL(url);
+      }
     });
+
+    setRealEstatePost(createInitialForm());
     setImages([]);
     setPreview([]);
+    setExistingImages([]);
     setEditingId(null);
   };
 
+  // =========================================================
+  // OPEN CREATE FORM
+  // =========================================================
 
-  
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  if (!realEstatePost.price || isNaN(realEstatePost.price)) {
-    Swal.fire({
-      icon: "error",
-      title: "Qiymət düzgün deyil",
-      text: "Zəhmət olmasa düzgün qiymət daxil edin",
-    });
-    return;
-  }
-
-  if (!token) {
-    Swal.fire({
-      icon: "warning",
-      title: "Giriş tələb olunur",
-      text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-    });
-    return;
-  }
+  const handleOpenForm = () => {
     if (!token) {
       Swal.fire({
         icon: "warning",
         title: "Giriş tələb olunur",
         text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-        confirmButtonColor: "#3085d6",
+        confirmButtonColor: "#670fff",
       });
+
       return;
     }
 
+    resetForm();
+    setIsOpen(true);
+  };
+
+  // =========================================================
+  // CLOSE FORM
+  // =========================================================
+
+  const handleCloseForm = () => {
+    setIsOpen(false);
+    resetForm();
+  };
+
+  // =========================================================
+  // SUBMIT
+  // =========================================================
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+        confirmButtonColor: "#670fff",
+      });
+
+      return;
+    }
+
+    if (!realEstatePost.price || Number.isNaN(Number(realEstatePost.price))) {
+      Swal.fire({
+        icon: "error",
+        title: "Qiymət düzgün deyil",
+        text: "Zəhmət olmasa düzgün qiymət daxil edin.",
+        confirmButtonColor: "#ef4444",
+      });
+
+      return;
+    }
+
+    setIsSubmitting(true);
+
     const formData = new FormData();
 
-    // Şəkilləri əlavə et
-    images.forEach((file) => formData.append("images", file));
-
-    // Digər sahələri əlavə et
-    // Object.entries(realEstatePost).forEach(([key, value]) => {
-    //   if (key === "data") return;
-    //   if (key === "contact") {
-    //     Object.entries(value).forEach(([k, v]) =>
-    //       formData.append(`contact.${k}`, v)
-    //     );
-    //   } else {
-    //     formData.append(key, value);
-    //   }
-    // });
-
     Object.entries(realEstatePost).forEach(([key, value]) => {
-  if (key === "data") return;
+      if (key === "images") return;
 
-  if (key === "contact") {
-    Object.entries(value).forEach(([k, v]) =>
-      formData.append(`contact.${k}`, v)
-    );
-  } else if (key === "price") {
-    formData.append("price", Number(value)); // 🔥 FIX
-  } else {
-    formData.append(key, value);
-  }
-});
-    // Tarixi ISO formatında əlavə et
-    formData.append("data", realEstatePost.data.toISOString());
+      if (key === "contact") {
+        Object.entries(value || {}).forEach(([contactKey, contactValue]) => {
+          formData.append(`contact.${contactKey}`, contactValue || "");
+        });
+
+        return;
+      }
+
+      if (key === "data") {
+        formData.append(
+          "data",
+          value instanceof Date
+            ? value.toISOString()
+            : new Date(value).toISOString(),
+        );
+
+        return;
+      }
+
+      if (key === "price") {
+        formData.append("price", Number(value));
+        return;
+      }
+
+      if (typeof value === "boolean" || typeof value === "number") {
+        formData.append(key, String(value));
+        return;
+      }
+
+      if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    });
+
+    images.forEach((file) => {
+      formData.append("images", file);
+    });
 
     try {
       if (editingId) {
-        await axios.put(
-          `${process.env.REACT_APP_API_URL}/api/realEstate/${editingId}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setEditingId(null);
-      } else {
-        await axios.post(
-          `${process.env.REACT_APP_API_URL}/api/realEstate`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        await axios.put(`${API_URL}/api/realEstate/${editingId}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         Swal.fire({
           icon: "success",
-          title: "Elanınız uğurla yerləşdirildi!",
-          confirmButtonColor: "#3085d6",
+          title: "Elan yeniləndi",
+          text: "Elan məlumatları uğurla dəyişdirildi.",
+          timer: 1400,
+          showConfirmButton: false,
+        });
+      } else {
+        await axios.post(`${API_URL}/api/realEstate`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        Swal.fire({
+          icon: "success",
+          title: "Elanınız yerləşdirildi!",
+          text: "Daşınmaz əmlak elanı uğurla əlavə edildi.",
+          timer: 1600,
+          showConfirmButton: false,
         });
       }
 
+      setIsOpen(false);
       resetForm();
-      fetchItems();
+
+      await fetchItems();
     } catch (err) {
-      console.error(err);
+      console.error("Real estate submit error:", err);
+
       Swal.fire({
         icon: "error",
         title: "Xəta baş verdi",
-        text: err.response?.data?.message || "Server xətası",
-        confirmButtonColor: "#d33",
+        text:
+          err.response?.data?.message ||
+          "Elan yadda saxlanılarkən server xətası baş verdi.",
+        confirmButtonColor: "#ef4444",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // =========================================================
+  // DELETE
+  // =========================================================
+
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Elan silinsin?",
+      text: "Bu əməliyyatı geri qaytarmaq mümkün olmayacaq.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Bəli, sil",
+      cancelButtonText: "Ləğv et",
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#64748b",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await axios.delete(`${API_URL}/api/realEstate/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      await fetchItems();
+
+      Swal.fire({
+        icon: "success",
+        title: "Elan silindi",
+        timer: 1200,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      console.error("Delete error:", err);
+
+      Swal.fire({
+        icon: "error",
+        title: "Xəta baş verdi",
+        text: err.response?.data?.message || "Elan silinə bilmədi.",
+        confirmButtonColor: "#ef4444",
       });
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/realEstate/${id}`
-      );
-      fetchItems();
-    } catch (err) {
-      console.error("Delete error:", err);
+  // =========================================================
+  // EDIT
+  // =========================================================
+
+  const handleEdit = (item) => {
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Bu əməliyyat üçün hesabınıza daxil olun.",
+        confirmButtonColor: "#670fff",
+      });
+
+      return;
     }
+
+    const serverImages = Array.isArray(item.images)
+      ? item.images
+          .map((img) => {
+            if (typeof img === "string") return img;
+
+            return img?.url || img?.secure_url || img?.path || "";
+          })
+          .filter(Boolean)
+      : [];
+
+    setRealEstatePost({
+      ...createInitialForm(),
+      ...item,
+
+      title: item.title || "",
+      title_type: item.title_type || "",
+      type_building: item.type_building || "",
+      field: item.field || "",
+      number_of_rooms: item.number_of_rooms || "",
+      area: item.area || "",
+      floor: item.floor || "",
+      number_of_floors: item.number_of_floors || "",
+      location: item.location || "",
+      city: item.city || "",
+      price: item.price || "",
+      description: item.description || "",
+
+      contact: {
+        name: item.contact?.name || "",
+        email: item.contact?.email || "",
+        phone: item.contact?.phone || "",
+      },
+
+      data: item.data ? new Date(item.data) : new Date(),
+    });
+
+    setEditingId(item._id || item.id);
+    setExistingImages(serverImages);
+    setImages([]);
+    setPreview([]);
+    setIsOpen(true);
   };
+
+  // =========================================================
+  // FAVORITE
+  // =========================================================
 
   const handleFavorite = async (id) => {
     try {
-      await axios.patch(
-        `${process.env.REACT_APP_API_URL}/api/realEstate/${id}/favorite`
-      );
+      await axios.patch(`${API_URL}/api/realEstate/${id}/favorite`);
+
       fetchItems();
     } catch (err) {
-      console.error(err);
+      console.error("Favorite error:", err);
     }
   };
 
-  // Like
+  // =========================================================
+  // LIKE
+  // =========================================================
+
   const handleLike = async (id) => {
     try {
-      await axios.patch(
-        `${process.env.REACT_APP_API_URL}/api/realEstate/${id}/like`
-      );
+      await axios.patch(`${API_URL}/api/realEstate/${id}/like`);
+
       fetchItems();
     } catch (err) {
-      console.error(err);
+      console.error("Like error:", err);
     }
   };
 
-  // Edit
-  const handleEdit = (item) => {
-    setRealEstatePost({
-      ...item,
-      data: item.data ? new Date(item.data) : new Date(),
-    });
-    setEditingId(item._id);
-    setPreview(
-      item.images
-        ? item.images.map(
-            (img) => `${process.env.REACT_APP_API_URL}/uploads/${img}`
-          )
-        : []
-    );
+  // =========================================================
+  // SEARCH
+  // =========================================================
+
+  const handleSearch = async () => {
+    const searchText = query.trim().toLowerCase();
+
+    if (!searchText) {
+      setResults([]);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await axios.get(`${API_URL}/api/realEstate`);
+
+      const allData = Array.isArray(response.data)
+        ? response.data
+        : response.data?.ads || [];
+
+      const filtered = allData.filter((item) => {
+        const searchableFields = [
+          item.title,
+          item.title_type,
+          item.type_building,
+          item.category,
+          item.field,
+          item.location,
+          item.city,
+          item.engine,
+          item.year,
+          item.motor,
+          item.transmission,
+          item.ban_type,
+          item.price,
+          item.description,
+          item.number_of_rooms,
+          item.area,
+        ];
+
+        return searchableFields.some((field) =>
+          String(field || "")
+            .toLowerCase()
+            .includes(searchText),
+        );
+      });
+
+      setResults(filtered);
+    } catch (error) {
+      console.error("API axtarış xətası:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // =========================================================
+  // DATE
+  // =========================================================
+
   const formatDate = (dateString) => {
+    if (!dateString) return "";
+
     const postDate = new Date(dateString);
+
+    if (Number.isNaN(postDate.getTime())) {
+      return "";
+    }
+
     const now = new Date();
-    const today = new Date(now.setHours(0, 0, 0, 0));
-    const postDay = new Date(postDate.setHours(0, 0, 0, 0));
+
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const postDay = new Date(
+      postDate.getFullYear(),
+      postDate.getMonth(),
+      postDate.getDate(),
+    );
+
     const diffTime = today - postDay;
     const oneDay = 24 * 60 * 60 * 1000;
 
@@ -313,462 +596,1462 @@ export default function CreateRealEstate() {
   };
 
   const getCurrentTime = (isoString) => {
+    if (!isoString) return "";
+
     const date = new Date(isoString);
-    return date.toTimeString().split(" ")[0].slice(0, 5);
-  };
 
- 
-
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/realEstate`];
-
-  const handleSearch = async () => {
-    if (!query.trim()) return;
-    setLoading(true);
-
-    try {
-      const requests = apiUrls.map((url) => axios.get(url));
-      const responses = await Promise.all(requests);
-
-      let allData = [];
-      responses.forEach((res) => {
-        if (Array.isArray(res.data)) allData = allData.concat(res.data);
-      });
-
-      const filtered = allData.filter((item) => {
-        const title_type = item.title_type?.toLowerCase() || "";
-        const type_building = item.type_building?.toLowerCase() || "";
-        const category = item.category?.toLowerCase() || "";
-        const field = item.field.toLowerCase() || "";
-        const location = item.location?.toLowerCase() || "";
-        const city = item.city?.toLowerCase() || "";
-        const engine = item.engine?.toLowerCase() || "";
-        const year = item.year?.toLowerCase() || "";
-        const motor = item.motor?.toLowerCase() || "";
-        const transmission = item.transmission?.toLowerCase() || "";
-        const ban_type = item.ban_type?.toLowerCase() || "";
-        const price = item.price?.toString().toLowerCase() || "";
-        const description = item.description?.toLowerCase() || "";
-        return (
-          title_type.includes(query.toLowerCase()) ||
-          type_building.includes(query.toLowerCase()) ||
-          category.includes(query.toLowerCase()) ||
-          location.includes(query.toLowerCase()) ||
-          field.includes(query.toLowerCase()) ||
-          city.includes(query.toLowerCase()) ||
-          engine.includes(query.toLowerCase()) ||
-          year.includes(query.toLowerCase()) ||
-          motor.includes(query.toLowerCase()) ||
-          transmission.includes(query.toLowerCase()) ||
-          ban_type.includes(query.toLowerCase()) ||
-          price.includes(query.toLowerCase()) ||
-          description.includes(query.toLowerCase())
-        );
-      });
-
-      setResults(filtered);
-    } catch (error) {
-      console.error("API axtarış xətası:", error);
-    } finally {
-      setLoading(false);
+    if (Number.isNaN(date.getTime())) {
+      return "";
     }
+
+    return date.toLocaleTimeString("az-AZ", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
-  const [isLoading, setIsLoading] = useState(true);
-  const [realEstate, setRealEstate] = useState([]);
 
+  // =========================================================
+  // CARD IMAGE
+  // =========================================================
 
-  const token = localStorage.getItem("token");
+  const getFirstImage = (item) => {
+    const image = item?.images?.[0] || item?.imageUrls?.[0] || item?.mainImage;
 
-  // Yeni funksiyanı elanı açan buttona əlavə edirik
-  const handleOpenForm = () => {
-    if (!token) {
-      Swal.fire({
-        icon: "warning",
-        title: "Giriş tələb olunur",
-        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-        confirmButtonColor: "#3085d6",
-      });
-      return;
-    }
-    setIsOpen(true);
+    return getImageUrl(image);
   };
+
+  // =========================================================
+  // UI
+  // =========================================================
+
   return (
-    <div className="min-h-screen ">
-      <div className="p-6 max-w-5xl mx-auto">
-        <div className="w-full justify-center mx-auto my-auto max-w-[700px] min-w-[200px]">
-          <div className="relative">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#080b14] text-slate-900 dark:text-white transition-colors duration-300">
+      {/* MAIN */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 py-5">
+        {/* SEARCH HEADER */}
+        <div className="mb-5">
+          <div className="relative max-w-3xl mx-auto">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Search size={20} className="text-slate-400" />
+            </div>
+
             <input
-              className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-              placeholder="AxtarTap..."
+              type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
               }}
-              type="text"
-              name="search"
+              placeholder="Daşınmaz əmlak axtar..."
+              className="
+                w-full
+                h-14
+                pl-12
+                pr-28
+                rounded-2xl
+                bg-white
+                dark:bg-[#111625]
+                border
+                border-slate-200
+                dark:border-white/10
+                text-slate-900
+                dark:text-white
+                placeholder:text-slate-400
+                shadow-sm
+                focus:outline-none
+                focus:ring-4
+                focus:ring-[#670fff]/10
+                focus:border-[#670fff]
+                transition
+              "
             />
+
             <button
-              className="absolute top-1 right-1 flex items-center rounded bg-green-500 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-blue-700 focus:shadow-none active:bg-slate-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
               type="button"
               onClick={handleSearch}
+              disabled={loading}
+              className="
+                absolute
+                right-2
+                top-2
+                h-10
+                px-4
+                rounded-xl
+                bg-[#670fff]
+                hover:bg-[#5600dc]
+                text-white
+                font-semibold
+                flex
+                items-center
+                gap-2
+                transition
+                disabled:opacity-60
+              "
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-4 h-4 mr-2"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Axtar
+              {loading ? (
+                <Loader2 size={17} className="animate-spin" />
+              ) : (
+                <Search size={17} />
+              )}
+
+              <span className="hidden sm:inline">Axtar</span>
             </button>
           </div>
         </div>
-        <Link className="" to="/">
-          <button className="flex items-center gap-2 bg-gray-200 mt-4 mb-4 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Geri
-          </button>
-        </Link>
-        <h2 className="text-2xl font-bold mb-4">
-          Ən Son Daşınmaz Əmlak Elanları
-        </h2>
-        <div className="p-4">
-          <button
-            onClick={handleOpenForm}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md"
-          >
-            Elan yerləşdirmək üçün formu aç
-          </button>
 
-          {isOpen && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="relative w-[90%] max-w-3xl max-h-[90vh] overflow-y-auto bg-white p-6 rounded-xl shadow-lg">
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="absolute top-2 right-2 text-gray-600 hover:text-red-600"
+        {/* TOP BAR */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <Link
+            to="/"
+            className="
+              inline-flex
+              items-center
+              gap-2
+              px-4
+              py-2.5
+              rounded-xl
+              bg-white
+              dark:bg-[#111625]
+              border
+              border-slate-200
+              dark:border-white/10
+              text-slate-700
+              dark:text-slate-200
+              hover:border-[#670fff]
+              hover:text-[#670fff]
+              transition
+              shadow-sm
+            "
+          >
+            <ArrowLeft size={18} />
+            Geri
+          </Link>
+
+          <button
+            type="button"
+            onClick={handleOpenForm}
+            className="
+              inline-flex
+              items-center
+              justify-center
+              gap-2
+              px-5
+              py-3
+              rounded-xl
+              bg-gradient-to-r
+              from-[#670fff]
+              to-[#8b5cf6]
+              text-white
+              font-bold
+              shadow-lg
+              shadow-[#670fff]/20
+              hover:-translate-y-0.5
+              transition
+            "
+          >
+            <Plus size={20} />
+            Elan yerləşdir
+          </button>
+        </div>
+
+        {/* TITLE */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-1.5 h-8 rounded-full bg-[#670fff]" />
+
+            <h1 className="text-2xl sm:text-3xl font-black">
+              Ən Son Daşınmaz Əmlak Elanları
+            </h1>
+          </div>
+
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Mənzil, ev, torpaq və digər daşınmaz əmlak elanlarına baxın.
+          </p>
+        </div>
+
+        {/* SEARCH RESULTS */}
+        {loading && (
+          <div className="flex justify-center py-8">
+            <Loader2 size={32} className="animate-spin text-[#670fff]" />
+          </div>
+        )}
+
+        {!loading && results.length > 0 && (
+          <section className="mb-10">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold">Axtarış nəticələri</h2>
+
+              <span className="text-sm text-slate-500">
+                {results.length} elan
+              </span>
+            </div>
+
+            <div
+              className="
+                grid
+                grid-cols-2
+                sm:grid-cols-3
+                lg:grid-cols-4
+                xl:grid-cols-5
+                gap-3
+              "
+            >
+              {results.map((item) => {
+                const itemId = item._id || item.id;
+
+                return (
+                  <Link
+                    key={itemId}
+                    to={`/PostRealEstate/${itemId}`}
+                    className="group"
+                  >
+                    <div
+                      className="
+                        overflow-hidden
+                        rounded-2xl
+                        bg-white
+                        dark:bg-[#111625]
+                        border
+                        border-slate-200
+                        dark:border-white/10
+                        shadow-sm
+                        hover:shadow-xl
+                        hover:-translate-y-1
+                        transition-all
+                      "
+                    >
+                      <div className="relative h-32 overflow-hidden">
+                        <img
+                          src={getFirstImage(item)}
+                          alt={item.title_type || "Daşınmaz əmlak"}
+                          className="
+                            w-full
+                            h-full
+                            object-cover
+                            group-hover:scale-105
+                            transition-transform
+                            duration-500
+                          "
+                        />
+
+                        <div
+                          className="
+                            absolute
+                            top-2
+                            right-2
+                            px-2
+                            py-1
+                            rounded-lg
+                            bg-black/60
+                            backdrop-blur
+                            text-white
+                            text-xs
+                            font-bold
+                          "
+                        >
+                          {item.price} AZN
+                        </div>
+                      </div>
+
+                      <div className="p-3">
+                        <h3 className="font-bold truncate">
+                          {item.title_type ||
+                            item.type_building ||
+                            "Daşınmaz əmlak"}
+                        </h3>
+
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                          {item.type_building}
+                        </p>
+
+                        <div className="flex items-center gap-1 mt-2 text-xs text-slate-500">
+                          <MapPin size={13} />
+
+                          <span className="truncate">
+                            {item.location || item.city}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* ALL ADS */}
+        <section>
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black">
+                Əlavə olunan elanlar
+              </h2>
+
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Ən son əlavə edilən daşınmaz əmlaklar
+              </p>
+            </div>
+
+            <div
+              className="
+                px-3
+                py-1.5
+                rounded-full
+                bg-[#670fff]/10
+                text-[#670fff]
+                text-xs
+                font-bold
+              "
+            >
+              {realEstateList.length} elan
+            </div>
+          </div>
+
+          {/* LOADING */}
+          {isLoading ? (
+            <div
+              className="
+                grid
+                grid-cols-2
+                sm:grid-cols-3
+                md:grid-cols-4
+                lg:grid-cols-5
+                gap-4
+              "
+            >
+              {Array.from({ length: 15 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="
+                    h-[250px]
+                    rounded-2xl
+                    bg-white
+                    dark:bg-[#111625]
+                    border
+                    border-slate-200
+                    dark:border-white/10
+                    overflow-hidden
+                    animate-pulse
+                  "
                 >
-                  <X size={28} />
-                </button>
-                <form
-                  onSubmit={handleSubmit}
-                  className="grid grid-cols-2 gap-4 p-2"
+                  <div className="h-32 bg-slate-200 dark:bg-slate-800" />
+
+                  <div className="p-3 space-y-3">
+                    <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded-lg w-3/4" />
+                    <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded-lg w-full" />
+                    <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded-lg w-1/2" />
+                    <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded-lg w-2/3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : realEstateList.length === 0 ? (
+            <div
+              className="
+                py-20
+                text-center
+                rounded-3xl
+                bg-white
+                dark:bg-[#111625]
+                border
+                border-dashed
+                border-slate-300
+                dark:border-white/10
+              "
+            >
+              <Home size={50} className="mx-auto text-slate-400 mb-4" />
+
+              <h3 className="text-lg font-bold">Hələ elan yoxdur</h3>
+
+              <p className="text-sm text-slate-500 mt-1">
+                İlk daşınmaz əmlak elanını siz yerləşdirin.
+              </p>
+
+              <button
+                type="button"
+                onClick={handleOpenForm}
+                className="
+                  mt-5
+                  px-5
+                  py-2.5
+                  rounded-xl
+                  bg-[#670fff]
+                  text-white
+                  font-semibold
+                  hover:bg-[#5600dc]
+                  transition
+                "
+              >
+                Elan yerləşdir
+              </button>
+            </div>
+          ) : (
+            <div
+              className="
+                grid
+                grid-cols-2
+                sm:grid-cols-3
+                md:grid-cols-4
+                lg:grid-cols-5
+                gap-3
+                sm:gap-4
+              "
+            >
+              {[...realEstateList].reverse().map((item) => {
+                const itemId = item._id || item.id;
+
+                return (
+                  <div key={itemId} className="relative group">
+                    <Link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      to={`/PostRealEstate/${itemId}`}
+                    >
+                      <div
+                        className="
+                            relative
+                            overflow-hidden
+                            rounded-2xl
+                            bg-white
+                            dark:bg-[#111625]
+                            border
+                            border-slate-200
+                            dark:border-white/10
+                            shadow-sm
+                            hover:shadow-2xl
+                            hover:-translate-y-1
+                            transition-all
+                            duration-300
+                          "
+                      >
+                        {/* IMAGE */}
+                        <div className="relative h-[115px] sm:h-[130px] overflow-hidden">
+                          <img
+                            src={getFirstImage(item)}
+                            alt={item.title_type || "Daşınmaz əmlak"}
+                            className="
+                                w-full
+                                h-full
+                                object-cover
+                                group-hover:scale-105
+                                transition-transform
+                                duration-500
+                              "
+                          />
+
+                          {/* FAVORITE */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+
+                              handleFavorite(itemId);
+                            }}
+                            className="
+                                absolute
+                                top-2
+                                right-2
+                                w-8
+                                h-8
+                                rounded-full
+                                bg-black/40
+                                backdrop-blur-md
+                                flex
+                                items-center
+                                justify-center
+                                text-white
+                                hover:bg-white
+                                hover:text-red-500
+                                transition
+                              "
+                          >
+                            <Heart
+                              size={16}
+                              fill={item.favorite ? "currentColor" : "none"}
+                            />
+                          </button>
+
+                          {/* PRICE */}
+                          <div
+                            className="
+                                absolute
+                                left-2
+                                bottom-2
+                                px-2.5
+                                py-1
+                                rounded-lg
+                                bg-black/65
+                                backdrop-blur
+                                text-white
+                                text-sm
+                                font-black
+                              "
+                          >
+                            {item.price} AZN
+                          </div>
+                        </div>
+
+                        {/* CONTENT */}
+                        <div className="p-2.5">
+                          <h3
+                            className="
+                                font-bold
+                                text-sm
+                                truncate
+                              "
+                          >
+                            {item.title_type ||
+                              item.type_building ||
+                              "Daşınmaz əmlak"}
+                          </h3>
+
+                          <p
+                            className="
+                                text-xs
+                                text-slate-500
+                                dark:text-slate-400
+                                truncate
+                                mt-1
+                              "
+                          >
+                            {item.type_building}
+                          </p>
+
+                          <div
+                            className="
+                                flex
+                                items-center
+                                gap-1
+                                mt-2
+                                text-[11px]
+                                text-slate-500
+                                dark:text-slate-400
+                              "
+                          >
+                            <BedDouble size={12} />
+
+                            <span>{item.number_of_rooms || "-"} otaq</span>
+
+                            <span className="mx-1">•</span>
+
+                            <Ruler size={12} />
+
+                            <span>{item.area || "-"} m²</span>
+                          </div>
+
+                          <div
+                            className="
+                                flex
+                                items-center
+                                justify-between
+                                gap-2
+                                mt-2
+                              "
+                          >
+                            <div
+                              className="
+                                  flex
+                                  items-center
+                                  gap-1
+                                  min-w-0
+                                  text-[10px]
+                                  text-slate-500
+                                "
+                            >
+                              <MapPin
+                                size={12}
+                                className="text-[#670fff] shrink-0"
+                              />
+
+                              <span className="truncate">
+                                {item.location || item.city || "Ünvan yoxdur"}
+                              </span>
+                            </div>
+
+                            <span
+                              className="
+                                  text-[10px]
+                                  text-slate-400
+                                  whitespace-nowrap
+                                "
+                            >
+                              {formatDate(item.data)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+
+                    {/* EDIT / DELETE */}
+                    <div
+                      className="
+                          absolute
+                          top-2
+                          left-2
+                          right-12
+                          flex
+                          gap-1.5
+                          opacity-100
+                          sm:opacity-0
+                          sm:group-hover:opacity-100
+                          transition-opacity
+                          z-20
+                        "
+                    >
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+
+                          handleEdit(item);
+                        }}
+                        className="
+                            flex
+                            items-center
+                            gap-1
+                            px-2
+                            py-1.5
+                            rounded-lg
+                            bg-white/90
+                            backdrop-blur
+                            text-slate-700
+                            text-[11px]
+                            font-bold
+                            shadow
+                            hover:bg-[#670fff]
+                            hover:text-white
+                            transition
+                          "
+                      >
+                        <Edit3 size={13} />
+
+                        <span className="hidden sm:inline">Redaktə</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+
+                          handleDelete(itemId);
+                        }}
+                        className="
+                            flex
+                            items-center
+                            gap-1
+                            px-2
+                            py-1.5
+                            rounded-lg
+                            bg-white/90
+                            backdrop-blur
+                            text-red-500
+                            text-[11px]
+                            font-bold
+                            shadow
+                            hover:bg-red-500
+                            hover:text-white
+                            transition
+                          "
+                      >
+                        <Trash2 size={13} />
+
+                        <span className="hidden sm:inline">Sil</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* MODAL */}
+      {isOpen && (
+        <div
+          className="
+            fixed
+            inset-0
+            z-[9999]
+            bg-black/65
+            backdrop-blur-md
+            flex
+            items-center
+            justify-center
+            p-0
+            sm:p-4
+          "
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) {
+              handleCloseForm();
+            }
+          }}
+        >
+          <div
+            className="
+              relative
+              w-full
+              sm:max-w-4xl
+              h-full
+              sm:h-auto
+              sm:max-h-[94vh]
+              overflow-hidden
+              bg-white
+              dark:bg-[#0d111d]
+              sm:rounded-3xl
+              shadow-2xl
+              flex
+              flex-col
+            "
+          >
+            {/* MODAL HEADER */}
+            <div
+              className="
+                shrink-0
+                px-5
+                sm:px-7
+                py-4
+                border-b
+                border-slate-200
+                dark:border-white/10
+                flex
+                items-center
+                justify-between
+                bg-white
+                dark:bg-[#0d111d]
+              "
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className="
+                    w-11
+                    h-11
+                    rounded-2xl
+                    bg-[#670fff]/10
+                    flex
+                    items-center
+                    justify-center
+                    text-[#670fff]
+                  "
                 >
-                  <input
-                    type="text"
+                  <Building2 size={22} />
+                </div>
+
+                <div>
+                  <h2
+                    className="
+                      text-lg
+                      sm:text-xl
+                      font-black
+                    "
+                  >
+                    {editingId
+                      ? "Elanı redaktə et"
+                      : "Yeni daşınmaz əmlak elanı"}
+                  </h2>
+
+                  <p
+                    className="
+                      text-xs
+                      text-slate-500
+                      dark:text-slate-400
+                    "
+                  >
+                    Elan məlumatlarını doldurun
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleCloseForm}
+                className="
+                  w-10
+                  h-10
+                  rounded-xl
+                  bg-slate-100
+                  dark:bg-white/5
+                  flex
+                  items-center
+                  justify-center
+                  text-slate-500
+                  hover:bg-red-50
+                  hover:text-red-500
+                  transition
+                "
+              >
+                <X size={21} />
+              </button>
+            </div>
+
+            {/* FORM BODY */}
+            <form
+              onSubmit={handleSubmit}
+              className="
+                flex-1
+                overflow-y-auto
+                px-4
+                sm:px-7
+                py-5
+              "
+            >
+              {/* ELAN MƏLUMATLARI */}
+              <div className="mb-7">
+                <div className="flex items-center gap-2 mb-4">
+                  <div
+                    className="
+                      w-8
+                      h-8
+                      rounded-xl
+                      bg-[#670fff]/10
+                      flex
+                      items-center
+                      justify-center
+                      text-[#670fff]
+                    "
+                  >
+                    <Home size={17} />
+                  </div>
+
+                  <div>
+                    <h3 className="font-bold">Elan məlumatları</h3>
+
+                    <p className="text-xs text-slate-500">
+                      Əmlak haqqında əsas məlumatlar
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  className="
+                    grid
+                    grid-cols-1
+                    sm:grid-cols-2
+                    gap-4
+                  "
+                >
+                  <ModernInput
+                    label="Elanın adı"
                     name="title_type"
                     value={realEstatePost.title_type}
                     onChange={handleInputChange}
-                    placeholder="Elanın adı"
-                    className=" border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                    placeholder="Məsələn: 3 otaqlı mənzil"
+                    icon={<Home size={17} />}
                     required
                   />
-                  <input 
-                  type="text"
-                  
-                    name="number_of_floors"
-                    value={realEstatePost.number_of_floors}
-                    onChange={handleInputChange}
-                    placeholder="Mərtəbə sayı"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    
-                  />
-                  <input 
-                  type="text"
-                    name="floor"
-                    value={realEstatePost.floor}
-                    onChange={handleInputChange}
-                    placeholder="Mərtəbə"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  />
-                  
 
-                  <input
-                    type="text"
+                  <ModernInput
+                    label="Əmlakın tipi"
                     name="type_building"
                     value={realEstatePost.type_building}
                     onChange={handleInputChange}
-                    placeholder="Elanın tipi"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                    placeholder="Mənzil, həyət evi, torpaq..."
+                    icon={<Building2 size={17} />}
                     required
                   />
-                  <input
-                    type="text"
+
+                  <ModernInput
+                    label="Elanın bölməsi"
                     name="field"
                     value={realEstatePost.field}
                     onChange={handleInputChange}
-                    placeholder="Elanın bölməsi"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                    placeholder="Satılır, kirayə və s."
+                    icon={<Layers3 size={17} />}
                     required
                   />
 
+                  <ModernInput
+                    label="Otaq sayı"
+                    name="number_of_rooms"
+                    type="number"
+                    value={realEstatePost.number_of_rooms}
+                    onChange={handleInputChange}
+                    placeholder="Məsələn: 3"
+                    icon={<BedDouble size={17} />}
+                    required
+                  />
 
-                  <input
-                    type="text"
+                  <ModernInput
+                    label="Sahə"
                     name="area"
+                    type="number"
                     value={realEstatePost.area}
                     onChange={handleInputChange}
-                    placeholder="Otaq sayı"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                    placeholder="m²"
+                    icon={<Ruler size={17} />}
                     required
                   />
-                  <input
-                    type="text"
-                    name="location"
-                    value={realEstatePost.location}
+
+                  <ModernInput
+                    label="Mərtəbə"
+                    name="floor"
+                    type="number"
+                    value={realEstatePost.floor}
                     onChange={handleInputChange}
-                    placeholder="Şəhər"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                    placeholder="Məsələn: 5"
+                    icon={<Layers3 size={17} />}
+                  />
+
+                  <ModernInput
+                    label="Mərtəbə sayı"
+                    name="number_of_floors"
+                    type="number"
+                    value={realEstatePost.number_of_floors}
+                    onChange={handleInputChange}
+                    placeholder="Məsələn: 12"
+                    icon={<Building2 size={17} />}
+                  />
+
+                  <ModernInput
+                    label="Qiymət"
+                    name="price"
+                    type="number"
+                    value={realEstatePost.price}
+                    onChange={handleInputChange}
+                    placeholder="Məsələn: 125000"
+                    icon={<span className="font-bold text-sm">₼</span>}
                     required
                   />
-                  <input
-                    type="text"
+                </div>
+              </div>
+
+              {/* LOCATION */}
+              <div className="mb-7">
+                <div className="flex items-center gap-2 mb-4">
+                  <div
+                    className="
+                      w-8
+                      h-8
+                      rounded-xl
+                      bg-emerald-500/10
+                      flex
+                      items-center
+                      justify-center
+                      text-emerald-500
+                    "
+                  >
+                    <MapPinned size={17} />
+                  </div>
+
+                  <div>
+                    <h3 className="font-bold">Ünvan məlumatları</h3>
+
+                    <p className="text-xs text-slate-500">
+                      Əmlakın yerləşdiyi ərazi
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  className="
+                    grid
+                    grid-cols-1
+                    sm:grid-cols-2
+                    gap-4
+                  "
+                >
+                  <ModernInput
+                    label="Şəhər"
                     name="city"
                     value={realEstatePost.city}
                     onChange={handleInputChange}
-                    placeholder="Ünvan"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
-                  <input
-                    type="text"
-                    name="price"
-                    value={realEstatePost.price}
-                    onChange={handleInputChange}
-                    placeholder="Qiymət"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
-                  <input
-                    type="text"
-                    name="description"
-                    value={realEstatePost.description}
-                    onChange={handleInputChange}
-                    placeholder="Təsvir"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                    placeholder="Bakı"
+                    icon={<MapPin size={17} />}
                     required
                   />
 
-                  <input
-                    type="text"
-                    name="contact.name"
-                    value={realEstatePost.contact.name}
+                  <ModernInput
+                    label="Ünvan"
+                    name="location"
+                    value={realEstatePost.location}
                     onChange={handleInputChange}
-                    placeholder="İstifadəçi adı"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                    placeholder="Məsələn: Yasamal r."
+                    icon={<MapPinned size={17} />}
                     required
                   />
-                  <input
-                    type="email"
-                    name="contact.email"
-                    value={realEstatePost.contact.email}
-                    onChange={handleInputChange}
-                    placeholder="İstifadəçi emaili"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
-                  <input
-                    type="text"
-                    name="contact.phone"
-                    value={realEstatePost.contact.phone}
-                    onChange={handleInputChange}
-                    placeholder="İstifadəçi telefon nömrəsi"
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+                </div>
+              </div>
+
+              {/* IMAGES */}
+              <div className="mb-7">
+                <div className="flex items-center gap-2 mb-4">
+                  <div
+                    className="
+                      w-8
+                      h-8
+                      rounded-xl
+                      bg-pink-500/10
+                      flex
+                      items-center
+                      justify-center
+                      text-pink-500
+                    "
+                  >
+                    <ImagePlus size={17} />
+                  </div>
+
+                  <div>
+                    <h3 className="font-bold">Əmlak şəkilləri</h3>
+
+                    <p className="text-xs text-slate-500">
+                      Daha çox şəkil əlavə edərək elanı daha ətraflı göstərin
+                    </p>
+                  </div>
+                </div>
+
+                <label
+                  className="
+                    block
+                    cursor-pointer
+                    border-2
+                    border-dashed
+                    border-slate-300
+                    dark:border-white/10
+                    hover:border-[#670fff]
+                    rounded-2xl
+                    p-6
+                    text-center
+                    transition
+                    bg-slate-50
+                    dark:bg-white/[0.02]
+                  "
+                >
+                  <div
+                    className="
+                      w-12
+                      h-12
+                      mx-auto
+                      rounded-2xl
+                      bg-[#670fff]/10
+                      text-[#670fff]
+                      flex
+                      items-center
+                      justify-center
+                      mb-3
+                    "
+                  >
+                    <ImagePlus size={23} />
+                  </div>
+
+                  <p className="font-bold text-sm">Şəkilləri seçin</p>
+
+                  <p
+                    className="
+                      text-xs
+                      text-slate-500
+                      mt-1
+                    "
+                  >
+                    JPG, PNG və digər şəkil formatları
+                  </p>
 
                   <input
                     type="file"
                     multiple
                     accept="image/*"
                     onChange={handleImageChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
+                    className="hidden"
+                  />
+                </label>
+
+                {/* EXISTING IMAGES */}
+                {existingImages.length > 0 && (
+                  <div className="mt-4">
+                    <p
+                      className="
+                        text-xs
+                        font-bold
+                        text-slate-500
+                        mb-2
+                      "
+                    >
+                      Mövcud şəkillər
+                    </p>
+
+                    <div
+                      className="
+                        grid
+                        grid-cols-3
+                        sm:grid-cols-5
+                        gap-3
+                      "
+                    >
+                      {existingImages.map((img, index) => (
+                        <div
+                          key={`existing-${index}`}
+                          className="
+                            relative
+                            aspect-square
+                            rounded-xl
+                            overflow-hidden
+                            bg-slate-100
+                            dark:bg-white/5
+                            group
+                          "
+                        >
+                          <img
+                            src={getImageUrl(img)}
+                            alt={`existing-${index}`}
+                            className="
+                              w-full
+                              h-full
+                              object-cover
+                            "
+                          />
+
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveExistingImage(index)}
+                            className="
+                              absolute
+                              top-1.5
+                              right-1.5
+                              w-7
+                              h-7
+                              rounded-lg
+                              bg-black/60
+                              text-white
+                              flex
+                              items-center
+                              justify-center
+                              hover:bg-red-500
+                              transition
+                            "
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* NEW PREVIEWS */}
+                {preview.length > 0 && (
+                  <div className="mt-4">
+                    <p
+                      className="
+                        text-xs
+                        font-bold
+                        text-slate-500
+                        mb-2
+                      "
+                    >
+                      Yeni seçilən şəkillər
+                    </p>
+
+                    <div
+                      className="
+                        grid
+                        grid-cols-3
+                        sm:grid-cols-5
+                        gap-3
+                      "
+                    >
+                      {preview.map((url, index) => (
+                        <div
+                          key={`preview-${index}`}
+                          className="
+                            relative
+                            aspect-square
+                            rounded-xl
+                            overflow-hidden
+                            bg-slate-100
+                            dark:bg-white/5
+                          "
+                        >
+                          <img
+                            src={url}
+                            alt={`preview-${index}`}
+                            className="
+                              w-full
+                              h-full
+                              object-cover
+                            "
+                          />
+
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(index)}
+                            className="
+                              absolute
+                              top-1.5
+                              right-1.5
+                              w-7
+                              h-7
+                              rounded-lg
+                              bg-black/60
+                              text-white
+                              flex
+                              items-center
+                              justify-center
+                              hover:bg-red-500
+                              transition
+                            "
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* CONTACT */}
+              <div className="mb-7">
+                <div className="flex items-center gap-2 mb-4">
+                  <div
+                    className="
+                      w-8
+                      h-8
+                      rounded-xl
+                      bg-blue-500/10
+                      flex
+                      items-center
+                      justify-center
+                      text-blue-500
+                    "
+                  >
+                    <User size={17} />
+                  </div>
+
+                  <div>
+                    <h3 className="font-bold">Əlaqə məlumatları</h3>
+
+                    <p className="text-xs text-slate-500">
+                      Alıcıların sizinlə əlaqə saxlaması üçün
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  className="
+                    grid
+                    grid-cols-1
+                    sm:grid-cols-2
+                    gap-4
+                  "
+                >
+                  <ModernInput
+                    label="Ad və soyad"
+                    name="contact.name"
+                    value={realEstatePost.contact.name}
+                    onChange={handleInputChange}
+                    placeholder="Adınızı daxil edin"
+                    icon={<User size={17} />}
                     required
                   />
 
-                  {preview.length > 0 && (
-                    <div className="grid grid-cols-3 gap-2 mt-2">
-                      {preview.map((src, index) => (
-                        <img
-                          key={index}
-                          src={src}
-                          alt={`preview-${index}`}
-                          className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                        />
-                      ))}
-                    </div>
-                  )}
+                  <ModernInput
+                    label="Telefon"
+                    name="contact.phone"
+                    type="tel"
+                    value={realEstatePost.contact.phone}
+                    onChange={handleInputChange}
+                    placeholder="+994 XX XXX XX XX"
+                    icon={<Phone size={17} />}
+                    required
+                  />
 
-                  <button
-                    type="submit"
-                    className="col-span-2 bg-blue-600 border-[1px] border-green-300/100 text-white py-2 rounded-[10px] hover:bg-blue-700  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                  >
-                    {editingId ? "Elanı yenilə" : "Elanı əlavə et"}
-                  </button>
-                </form>
-              </div>
-            </div>
-          )}
-        </div>
-        <div className="mt-4">
-          {loading && (
-            <Box sx={{ display: "flex" }}>
-              <CircularProgress />
-            </Box>
-          )}
-          {loading && results.length === 0 && (
-            <div class="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-r from-fuchsia-100 to-violet-200">
-              <h1 className="text-9xl font-extrabold text-white tracking-widest">
-                404
-              </h1>
-              <div className="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
-                Elan Yüklənmədi
-              </div>
-              <button className="mt-5">
-                <a className="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring">
-                  <span className="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"></span>
-
-                  <span className="relative block px-8 py-3 bg-[#1A2238] border border-current">
-                    <router-link to="/">Əsas səhifə</router-link>
-                  </span>
-                </a>
-              </button>
-            </div>
-          )}
-
-          {!loading && results.length > 0 && (
-            <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {results.map((item, index) => (
-                <Link
-                  key={item.id || item._id}
-                  to={`/item/${item._id} || ${item.id}`}
-                >
-                  <div
-                    key={index}
-                    className="border sm:w-[240.4px] max-w-[240.4px] h-[340px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
-                  >
-                    <img
-                      src={
-                        item.images && item.images.length > 0
-                          ? item.images[0]
-                          : item.imageUrls && item.imageUrls.length > 0
-                          ? item.imageUrls[0]
-                          : "/placeholder.png"
-                      }
-                      alt={item.title || "Image"}
-                      className="w-full h-48 object-cover"
+                  <div className="sm:col-span-2">
+                    <ModernInput
+                      label="E-mail"
+                      name="contact.email"
+                      type="email"
+                      value={realEstatePost.contact.email}
+                      onChange={handleInputChange}
+                      placeholder="example@mail.com"
+                      icon={<Mail size={17} />}
+                      required
                     />
-                    <div className="p-4">
-                      <h2 className="text-lg font-semibold mb-1">
-                        {item.price} AZN
-                      </h2>
-                      <h3 className="text-lg font-semibold mb-1">
-                        {item.title_type} {item.type_building}
-                      </h3>
-                      <p className="capitalize text-gray-400 text-[16px]">
-                        {item.location}, {formatDate(item.data)}{" "}
-                        {getCurrentTime(item.data)}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-          <div className=" ring-2 w-full my-4 "></div>
-        </div>
-        <h3 className="text-xl font-semibold mt-8 mb-4">
-          Əlavə olunan Elanlar
-        </h3>
-        <div className="mx-auto   rounded-2xl   grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-4 w-full min-h-screen ">
-          {isLoading ? (
-            Array.from({ length: 20 }).map((_, i) => (
-              <div
-                key={i}
-                className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
-              >
-                <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
-                  <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
-                  <div className="p-1">
-                    <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
-                    <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
-                    <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/4 animate-shimmer "></div>
-                      <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/2 animate-shimmer "></div>
-                    </div>
                   </div>
                 </div>
               </div>
-            ))
-          ) : (
-            <>
-              {[...realEstateList].reverse().map((item) => (
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  key={item._id || item.id}
-                  to={`/PostRealEstate/${item._id}`}
-                >
-                  <div
-                    key={item._id}
-                    className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300"
-                  >
-                    {item.images && item.images.length > 0 && (
-                      <div className="flex gap-2 rounded-t-sm">
-                        {item.images?.[0] && (
-                          <img
-                            src={item.images[0]}
-                            alt="car"
-                            className="w-full h-[100px] object-cover object-contain rounded-t-2xl"
-                          />
-                        )}
-                      </div>
-                    )}
-                    <div className="p-2 ">
-                      <h2 className="text-lg font-bold">{item.price} AZN</h2>
-                      <h4 className="font-sans capitalize text-[12px] truncate w-50">
-                        {item.title_type} {item.type_building}
-                      </h4>
 
-                      <p className="capitalize text-[12px] font-sans font-[500] truncate w-50">
-                        Otaq Sayı: {item.number_of_rooms}
-                      </p>
-                      <div className="flex justify-between gap-1  ">
-                        <p className="text-[10px] rounded flex justify-between text-gray-600">
-                          <MapPin size={12} color="#75FC56" /> {item.location}
-                        </p>
-                        <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
-                          {formatDate(item.data)} {getCurrentTime(item.data)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </>
-          )}
+              {/* DESCRIPTION */}
+              <div className="mb-4">
+                <label
+                  className="
+                    block
+                    text-sm
+                    font-bold
+                    mb-2
+                  "
+                >
+                  Elanın təsviri
+                </label>
+
+                <textarea
+                  name="description"
+                  value={realEstatePost.description}
+                  onChange={handleInputChange}
+                  placeholder="Əmlak haqqında ətraflı məlumat yazın..."
+                  rows={5}
+                  required
+                  className="
+                    w-full
+                    px-4
+                    py-3
+                    rounded-2xl
+                    bg-slate-50
+                    dark:bg-[#111625]
+                    border
+                    border-slate-200
+                    dark:border-white/10
+                    text-slate-900
+                    dark:text-white
+                    placeholder:text-slate-400
+                    outline-none
+                    resize-none
+                    focus:border-[#670fff]
+                    focus:ring-4
+                    focus:ring-[#670fff]/10
+                    transition
+                  "
+                />
+              </div>
+
+              {/* SUBMIT */}
+              <div
+                className="
+                  sticky
+                  bottom-0
+                  pt-4
+                  pb-1
+                  bg-white
+                  dark:bg-[#0d111d]
+                "
+              >
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="
+                    w-full
+                    h-14
+                    rounded-2xl
+                    bg-gradient-to-r
+                    from-[#670fff]
+                    to-[#8b5cf6]
+                    text-white
+                    font-black
+                    flex
+                    items-center
+                    justify-center
+                    gap-2
+                    shadow-xl
+                    shadow-[#670fff]/20
+                    hover:-translate-y-0.5
+                    transition
+                    disabled:opacity-60
+                    disabled:cursor-not-allowed
+                  "
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin" />
+                      Yadda saxlanılır...
+                    </>
+                  ) : editingId ? (
+                    <>
+                      <Save size={20} />
+                      Elanı yenilə
+                    </>
+                  ) : (
+                    <>
+                      <Plus size={20} />
+                      Elanı yerləşdir
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+// =============================================================
+// MODERN INPUT COMPONENT
+// =============================================================
+
+function ModernInput({
+  label,
+  name,
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  icon,
+  required = false,
+}) {
+  return (
+    <div>
+      <label
+        className="
+          block
+          text-sm
+          font-bold
+          text-slate-700
+          dark:text-slate-200
+          mb-2
+        "
+      >
+        {label}
+
+        {required && <span className="text-red-500 ml-1">*</span>}
+      </label>
+
+      <div className="relative">
+        <div
+          className="
+            absolute
+            left-3.5
+            top-1/2
+            -translate-y-1/2
+            text-slate-400
+            pointer-events-none
+          "
+        >
+          {icon}
+        </div>
+
+        <input
+          type={type}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          required={required}
+          className="
+            w-full
+            h-12
+            pl-11
+            pr-4
+            rounded-xl
+            bg-slate-50
+            dark:bg-[#111625]
+            border
+            border-slate-200
+            dark:border-white/10
+            text-slate-900
+            dark:text-white
+            placeholder:text-slate-400
+            outline-none
+            focus:border-[#670fff]
+            focus:ring-4
+            focus:ring-[#670fff]/10
+            transition-all
+          "
+        />
       </div>
     </div>
   );

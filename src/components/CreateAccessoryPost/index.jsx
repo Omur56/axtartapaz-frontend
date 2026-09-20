@@ -1,698 +1,1477 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import { X } from "lucide-react";
 import Swal from "sweetalert2";
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
-import { RefreshCcw, Percent, MapPin } from "lucide-react";
-export default function CreateAccessoryPost() {
-  const { id } = useParams();
+import {
+  X,
+  Search,
+  ArrowLeft,
+  Plus,
+  Upload,
+  ImagePlus,
+  Wrench,
+  Tag,
+  DollarSign,
+  MapPin,
+  User,
+  Mail,
+  Phone,
+  Package,
+  Sparkles,
+  Heart,
+  Loader2,
+  Trash2,
+  Edit3,
+} from "lucide-react";
+
+import BottomMenu from "../MobileMenu";
+import BubbleBackground from "../ui/BubbleBackground";
+import { useTheme } from "../Main/ThemeContext";
+
+const API_URL = process.env.REACT_APP_API_URL || "";
+
+const createEmptyAccessory = () => ({
+  title: "",
+  brand: "",
+  model: "",
+  price: "",
+  location: "",
+  images: [],
+  description: "",
+  contact: {
+    name: "",
+    email: "",
+    phone: "",
+  },
+  liked: false,
+  favorite: false,
+  data: {},
+});
+
+const CreateAccessoryPost = () => {
+  const { darkMode } = useTheme();
+
   const [isOpen, setIsOpen] = useState(false);
-  const [accessory, setAccessory] = useState({
-    title: "",
-    brand: "",
-    model: "",
-    price: "",
-    location: "",
-    images: [], // çoxlu şəkil üçün array
-    description: "",
-    contact: { name: "", email: "", phone: "" },
-    liked: false,
-    favorite: false,
-    data: new Date(),
-  });
+  const [accessory, setAccessory] = useState(createEmptyAccessory());
 
-  const [image, setImage] = useState("");
-  const [preview, setPreview] = useState("");
   const [accessoryItems, setAccessoryItems] = useState([]);
+
   const [editingId, setEditingId] = useState(null);
-  const [images, setImages] = useState([]); // faylları saxlayır upload üçün
-  const [imageLoading, setImageLoading] = useState(false);
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImages((prev) => [...prev, ...files]);
-    setPreview((prev) => [
-      ...prev,
-      ...files.map((file) => URL.createObjectURL(file)),
-    ]);
-  };
+  const [images, setImages] = useState([]);
+  const [preview, setPreview] = useState([]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name.startsWith("contact.")) {
-      const field = name.split(".")[1];
-      setAccessory((prev) => ({
-        ...prev,
-        contact: { ...prev.contact, [field]: value },
-      }));
-    } else if (name === "data") {
-      // tarix inputunu stringdən Date-ə çevirə bilərsən burada, lazım gələrsə
-      setAccessory((prev) => ({ ...prev, data: new Date(value) }));
-    } else {
-      setAccessory((prev) => ({ ...prev, [name]: value }));
-    }
-  };
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  // =========================================================
+  // TOKEN
+  // =========================================================
+
+  const token = localStorage.getItem("token");
+
+  // =========================================================
+  // GET ACCESSORIES
+  // =========================================================
 
   const fetchItems = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/accessory`
-      );
-      setAccessoryItems(response.data);
+      setLoading(true);
+
+      const response = await axios.get(`${API_URL}/api/accessory`);
+
+      const data = Array.isArray(response.data)
+        ? response.data
+        : response.data?.accessories ||
+          response.data?.items ||
+          response.data?.data ||
+          [];
+
+      setAccessoryItems(data);
     } catch (error) {
-      console.error("Error fetching accessory items:", error);
-    }
-  };
+      console.error("Aksesuar elanları alınmadı:", error);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const token = localStorage.getItem("token"); // tokeni alırıq
-    if (!token) {
-      Swal.fire({
-        icon: "warning",
-        title: "Giriş tələb olunur",
-        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-        confirmButtonColor: "#3085d6",
-      });
-      return;
-    }
-
-    const formData = new FormData();
-
-    // Şəkilləri əlavə edirik
-    images.forEach((file) => formData.append("images", file));
-
-    // accessory obyektini formData-ya əlavə edirik
-    Object.entries(accessory).forEach(([key, value]) => {
-      if (key === "images" || key === "data") return; // artıq əlavə olunub və ya handled olunur
-      if (key === "contact") {
-       formData.append("contact", JSON.stringify(value));
-      } else {
-        formData.append(key, value);
-      }
-    });
-
-    formData.append("data", accessory.data.toISOString());
-
-    try {
-      if (editingId) {
-        await axios.put(
-          `${process.env.REACT_APP_API_URL}/api/accessory/${editingId}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        setEditingId(null);
-      } else {
-        await axios.post(
-          `${process.env.REACT_APP_API_URL}/api/accessory`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        Swal.fire({
-          icon: "success",
-          title: "Elanınız uğurla yerləşdirildi!",
-          confirmButtonColor: "#3085d6",
-        });
-      }
-
-      resetForm();
-      fetchItems();
-    } catch (err) {
-      console.error(err);
       Swal.fire({
         icon: "error",
-        title: "Xəta baş verdi",
-        text: err.response?.data?.message || "Server xətası",
-        confirmButtonColor: "#d33",
+        title: "Xəta",
+        text: "Aksesuar elanlarını yükləmək mümkün olmadı.",
+        confirmButtonText: "Bağla",
       });
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const resetForm = () => {
-    setAccessory({
-      title: "",
-      name: "",
-      brand: "",
-      model: "",
-      price: "",
-      location: "",
-      images: [],
-      description: "",
-      contact: { name: "", email: "", phone: "" },
-      liked: false,
-      favorite: false,
-      data: new Date(),
-    });
-    setImages([]);
-    setPreview([]);
-    setEditingId(null);
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/accessory/${id}`
-      );
-      fetchItems();
-    } catch (error) {
-      console.error("Delete error:", error);
-    }
-  };
-
-  const handleFavorite = async (id) => {
-    try {
-      await axios.patch(
-        `${process.env.REACT_APP_API_URL}/api/accessory/${id}/favorite`
-      );
-      fetchItems();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleLike = async (id) => {
-    try {
-      await axios.patch(
-        `${process.env.REACT_APP_API_URL}/api/accessory/${id}/like`
-      );
-      fetchItems();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleEdit = (item) => {
-    setAccessory({
-      ...item,
-      data: item.data ? new Date(item.data) : new Date(),
-    });
-    setEditingId(item._id);
-    setPreview(item.images || []);
-  };
-
-  const handleImageDelete = async (image) => {
-    try {
-      await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/accessory/images/${image}`
-      );
-      fetchItems();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const formatDate = (dateString) => {
-    const postDate = new Date(dateString);
-    const now = new Date();
-
-    const today = new Date(now.setHours(0, 0, 0, 0));
-    const postDay = new Date(postDate.setHours(0, 0, 0, 0));
-
-    const diffTime = today - postDay;
-    const oneDay = 24 * 60 * 60 * 1000;
-
-    if (diffTime === 0) return "bugün";
-    if (diffTime === oneDay) return "dünən";
-
-    return postDate.toLocaleDateString("az-AZ", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
-  const getCurrentTime = (isoString) => {
-    const date = new Date(isoString);
-    return date.toTimeString().split(" ")[0].slice(0, 5);
   };
 
   useEffect(() => {
     fetchItems();
   }, []);
 
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // =========================================================
+  // ESC
+  // =========================================================
 
-  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/accessory`];
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.key === "Escape" && isOpen) {
+        setIsOpen(false);
+      }
+    };
 
-  const handleSearch = async () => {
-    if (!query.trim()) return;
-    setLoading(true);
+    window.addEventListener("keydown", handleEsc);
 
-    try {
-      const requests = apiUrls.map((url) => axios.get(url));
-      const responses = await Promise.all(requests);
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, [isOpen]);
 
-      let allData = [];
-      responses.forEach((res) => {
-        if (Array.isArray(res.data)) allData = allData.concat(res.data);
+  // =========================================================
+  // BODY SCROLL
+  // =========================================================
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  // =========================================================
+  // CHANGE
+  // =========================================================
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name.startsWith("contact.")) {
+      const field = name.split(".")[1];
+
+      setAccessory((prev) => ({
+        ...prev,
+        contact: {
+          ...prev.contact,
+          [field]: value,
+        },
+      }));
+
+      return;
+    }
+
+    setAccessory((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // =========================================================
+  // IMAGE SELECT
+  // =========================================================
+
+  const handleImageSelect = (e) => {
+    const selectedFiles = Array.from(e.target.files || []);
+
+    if (!selectedFiles.length) return;
+
+    const newImages = [...images, ...selectedFiles];
+
+    setImages(newImages);
+
+    const newPreviews = selectedFiles.map((file) => URL.createObjectURL(file));
+
+    setPreview((prev) => [...prev, ...newPreviews]);
+  };
+
+  // =========================================================
+  // REMOVE IMAGE
+  // =========================================================
+
+  const handleRemoveImage = (index) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+
+    setPreview((prev) => {
+      const url = prev[index];
+
+      if (url?.startsWith("blob:")) {
+        URL.revokeObjectURL(url);
+      }
+
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
+  // =========================================================
+  // RESET FORM
+  // =========================================================
+
+  const resetForm = () => {
+    setAccessory(createEmptyAccessory());
+    setImages([]);
+    setPreview([]);
+    setEditingId(null);
+  };
+
+  // =========================================================
+  // OPEN FORM
+  // =========================================================
+
+  const handleOpenForm = () => {
+    resetForm();
+    setIsOpen(true);
+  };
+
+  // =========================================================
+  // GET ID
+  // =========================================================
+
+  const getId = (item) => {
+    return item?._id || item?.id;
+  };
+
+  // =========================================================
+  // SUBMIT
+  // =========================================================
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elan yerləşdirmək üçün hesabınıza daxil olun.",
+        confirmButtonText: "Bağla",
       });
 
-      const filtered = allData.filter((item) => {
-        const title = item.title?.toLowerCase() || "";
-        const brand = item.brand?.toLowerCase() || "";
-        const category = item.category?.toLowerCase() || "";
-        const model = item.model?.toLowerCase() || "";
-        const type_of_gods = item.type_of_gods?.toLowerCase() || "";
-        const location = item.location?.toLowerCase() || "";
-        const city = item.city?.toLowerCase() || "";
-        const engine = item.engine?.toLowerCase() || "";
-        const year = item.year?.toLowerCase() || "";
-        const motor = item.motor?.toLowerCase() || "";
-        const transmission = item.transmission?.toLowerCase() || "";
-        const ban_type = item.ban_type?.toLowerCase() || "";
-        const price = item.price?.toLowerCase() || "";
-        const description = item.description?.toLowerCase() || "";
-        return (
-          title.includes(query.toLowerCase()) ||
-          brand.includes(query.toLowerCase()) ||
-          category.includes(query.toLowerCase()) ||
-          location.includes(query.toLowerCase()) ||
-          model.includes(query.toLowerCase()) ||
-          city.includes(query.toLowerCase()) ||
-          engine.includes(query.toLowerCase()) ||
-          year.includes(query.toLowerCase()) ||
-          motor.includes(query.toLowerCase()) ||
-          transmission.includes(query.toLowerCase()) ||
-          ban_type.includes(query.toLowerCase()) ||
-          price.includes(query.toLowerCase()) ||
-          description.includes(query.toLowerCase())
+      return;
+    }
+
+    if (!accessory.title.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Başlıq daxil edin",
+        text: "Elanın başlığı boş ola bilməz.",
+        confirmButtonText: "Bağla",
+      });
+
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      const formData = new FormData();
+
+      formData.append("title", accessory.title);
+      formData.append("brand", accessory.brand);
+      formData.append("model", accessory.model);
+      formData.append("price", accessory.price);
+      formData.append("location", accessory.location);
+      formData.append("description", accessory.description);
+
+      formData.append("contact", JSON.stringify(accessory.contact || {}));
+
+      formData.append("data", JSON.stringify(accessory.data || {}));
+
+      images.forEach((image) => {
+        formData.append("images", image);
+      });
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
+      if (editingId) {
+        await axios.put(
+          `${API_URL}/api/accessory/${editingId}`,
+          formData,
+          config,
         );
-        type_of_gods.includes(query.toLowerCase());
+
+        await Swal.fire({
+          icon: "success",
+          title: "Elan yeniləndi",
+          text: "Elan uğurla redaktə edildi.",
+          confirmButtonText: "Əla",
+        });
+      } else {
+        await axios.post(`${API_URL}/api/accessory`, formData, config);
+
+        await Swal.fire({
+          icon: "success",
+          title: "Elan yerləşdirildi",
+          text: "Aksesuar elanı uğurla əlavə edildi.",
+          confirmButtonText: "Əla",
+        });
+      }
+
+      resetForm();
+      setIsOpen(false);
+
+      await fetchItems();
+    } catch (error) {
+      console.error("Elan göndərilərkən xəta:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Xəta baş verdi",
+        text:
+          error?.response?.data?.message ||
+          "Elanı yadda saxlamaq mümkün olmadı.",
+        confirmButtonText: "Bağla",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // =========================================================
+  // DELETE
+  // =========================================================
+
+  const handleDelete = async (id) => {
+    if (!id) return;
+
+    const result = await Swal.fire({
+      icon: "warning",
+      title: "Elanı silmək istəyirsiniz?",
+      text: "Bu əməliyyatı geri qaytarmaq mümkün olmayacaq.",
+      showCancelButton: true,
+      confirmButtonText: "Bəli, sil",
+      cancelButtonText: "Xeyr",
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      setIsLoading(true);
+
+      await axios.delete(`${API_URL}/api/accessory/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setAccessoryItems((prev) =>
+        prev.filter((item) => String(getId(item)) !== String(id)),
+      );
+
+      setResults((prev) =>
+        prev.filter((item) => String(getId(item)) !== String(id)),
+      );
+
+      await Swal.fire({
+        icon: "success",
+        title: "Elan silindi",
+        text: "Elan uğurla silindi.",
+        confirmButtonText: "Bağla",
+      });
+    } catch (error) {
+      console.error("Elan silinərkən xəta:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Xəta",
+        text: error?.response?.data?.message || "Elanı silmək mümkün olmadı.",
+        confirmButtonText: "Bağla",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // =========================================================
+  // EDIT
+  // =========================================================
+
+  const handleEdit = (item) => {
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elanı redaktə etmək üçün hesabınıza daxil olun.",
+        confirmButtonText: "Bağla",
+      });
+
+      return;
+    }
+
+    const id = getId(item);
+
+    if (!id) {
+      Swal.fire({
+        icon: "error",
+        title: "Xəta",
+        text: "Elanın ID-si tapılmadı.",
+        confirmButtonText: "Bağla",
+      });
+
+      return;
+    }
+
+    setEditingId(id);
+
+    setAccessory({
+      title: item.title || "",
+      brand: item.brand || item.accessory?.brand || "",
+      model: item.model || item.accessory?.model || "",
+      price: item.price || "",
+      location: item.location || item.city || "",
+      images: item.images || [],
+      description: item.description || "",
+      contact: {
+        name: item.contact?.name || item.accessory?.contact?.name || "",
+        email: item.contact?.email || item.accessory?.contact?.email || "",
+        phone: item.contact?.phone || item.accessory?.contact?.phone || "",
+      },
+      liked: item.liked || false,
+      favorite: item.favorite || item.favourite || false,
+      data: item.data || {},
+    });
+
+    // Mövcud şəkilləri göstər
+    const existingImages = Array.isArray(item.images)
+      ? item.images
+      : item.mainImage
+        ? [item.mainImage]
+        : [];
+
+    setPreview(existingImages);
+    setImages([]);
+
+    setIsOpen(true);
+  };
+
+  // =========================================================
+  // FAVORITE
+  // =========================================================
+
+  const handleFavorite = async (item) => {
+    const id = getId(item);
+
+    if (!id) return;
+
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elanı favoritlərə əlavə etmək üçün hesabınıza daxil olun.",
+        confirmButtonText: "Bağla",
+      });
+
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${API_URL}/api/accessory/${id}/favorite`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const updatedFavorite =
+        response?.data?.favorite ?? response?.data?.favourite ?? !item.favorite;
+
+      setAccessoryItems((prev) =>
+        prev.map((currentItem) =>
+          String(getId(currentItem)) === String(id)
+            ? {
+                ...currentItem,
+                favorite: updatedFavorite,
+              }
+            : currentItem,
+        ),
+      );
+
+      setResults((prev) =>
+        prev.map((currentItem) =>
+          String(getId(currentItem)) === String(id)
+            ? {
+                ...currentItem,
+                favorite: updatedFavorite,
+              }
+            : currentItem,
+        ),
+      );
+    } catch (error) {
+      console.error("Favorite xətası:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Xəta",
+        text: "Favorit əməliyyatı alınmadı.",
+        confirmButtonText: "Bağla",
+      });
+    }
+  };
+
+  // =========================================================
+  // LIKE
+  // =========================================================
+
+  const handleLike = async (item) => {
+    const id = getId(item);
+
+    if (!id) return;
+
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elanı bəyənmək üçün hesabınıza daxil olun.",
+        confirmButtonText: "Bağla",
+      });
+
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${API_URL}/api/accessory/${id}/like`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const updatedLiked = response?.data?.liked ?? !item.liked;
+
+      setAccessoryItems((prev) =>
+        prev.map((currentItem) =>
+          String(getId(currentItem)) === String(id)
+            ? {
+                ...currentItem,
+                liked: updatedLiked,
+              }
+            : currentItem,
+        ),
+      );
+
+      setResults((prev) =>
+        prev.map((currentItem) =>
+          String(getId(currentItem)) === String(id)
+            ? {
+                ...currentItem,
+                liked: updatedLiked,
+              }
+            : currentItem,
+        ),
+      );
+    } catch (error) {
+      console.error("Like xətası:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Xəta",
+        text: "Bəyənmə əməliyyatı alınmadı.",
+        confirmButtonText: "Bağla",
+      });
+    }
+  };
+
+  // =========================================================
+  // SEARCH
+  // =========================================================
+
+  const handleSearch = async () => {
+    const searchText = query.trim().toLowerCase();
+
+    if (!searchText) {
+      setResults([]);
+      setHasSearched(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await axios.get(`${API_URL}/api/accessory`);
+
+      const data = Array.isArray(response.data)
+        ? response.data
+        : response.data?.accessories ||
+          response.data?.items ||
+          response.data?.data ||
+          [];
+
+      const filtered = data.filter((item) => {
+        const text = [
+          item.title,
+          item.brand,
+          item.model,
+          item.location,
+          item.city,
+          item.description,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        return text.includes(searchText);
       });
 
       setResults(filtered);
+      setHasSearched(true);
     } catch (error) {
-      console.error("API axtarış xətası:", error);
+      console.error("Axtarış xətası:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Xəta",
+        text: "Axtarış zamanı xəta baş verdi.",
+        confirmButtonText: "Bağla",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const [isLoading, setIsLoading] = useState(true);
-  // const [accessory, setAccessory] = useState([]);
+  // =========================================================
+  // ENTER SEARCH
+  // =========================================================
 
-useEffect(() => {
-  const fetchAll = async () => {
-    setIsLoading(true);
-
-    try {
-      await fetchItems(); // artıq accessoryItems state-ni doldurur
-    } catch (err) {
-      console.error("API xətası:", err);
-    } finally {
-      setIsLoading(false);
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
     }
   };
 
-  fetchAll();
-}, []);useEffect(() => {
-  const fetchAll = async () => {
-    setIsLoading(true);
+  // =========================================================
+  // DATE
+  // =========================================================
+
+  const formatDate = (date) => {
+    if (!date) return "";
 
     try {
-      await fetchItems(); // artıq accessoryItems state-ni doldurur
-    } catch (err) {
-      console.error("API xətası:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  fetchAll();
-}, []);
-
-  const token = localStorage.getItem("token");
-
-  // Yeni funksiyanı elanı açan buttona əlavə edirik
-  const handleOpenForm = () => {
-    if (!token) {
-      Swal.fire({
-        icon: "warning",
-        title: "Giriş tələb olunur",
-        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-        confirmButtonColor: "#3085d6",
+      return new Date(date).toLocaleDateString("az-AZ", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
       });
-      return;
+    } catch {
+      return "";
     }
-    setIsOpen(true);
   };
-  return (
-    <div className="min-h-screen ">
-      <div className=" p-6 max-w-5xl mx-auto">
-        <div className="w-full justify-center mx-auto my-auto max-w-[700px] min-w-[200px]">
-          <div className="relative">
-            <input
-              className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-              placeholder="AxtarTap..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
-              }}
+
+  // =========================================================
+  // CURRENT TIME
+  // =========================================================
+
+  const getCurrentTime = () => {
+    return new Date().toLocaleTimeString("az-AZ", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  // =========================================================
+  // MAIN IMAGE
+  // =========================================================
+
+  const getMainImage = (item) => {
+    if (item?.mainImage) {
+      return item.mainImage;
+    }
+
+    if (Array.isArray(item?.images) && item.images.length > 0) {
+      const firstImage = item.images[0];
+
+      if (typeof firstImage === "string") {
+        return firstImage;
+      }
+
+      return firstImage?.url || firstImage?.secure_url || "";
+    }
+
+    return "";
+  };
+
+  // =========================================================
+  // FIELD
+  // =========================================================
+
+  const Field = ({
+    label,
+    name,
+    value,
+    onChange,
+    icon: Icon,
+    type = "text",
+    placeholder = "",
+  }) => {
+    return (
+      <div className="space-y-2">
+        <label
+          className={`text-sm font-semibold ${
+            darkMode ? "text-gray-200" : "text-gray-700"
+          }`}
+        >
+          {label}
+        </label>
+
+        <div className="relative">
+          {Icon && (
+            <Icon
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
             />
-            <button
-              className="absolute top-1 right-1 flex items-center rounded bg-green-500 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-blue-700 focus:shadow-none active:bg-slate-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-              type="button"
-              onClick={handleSearch}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-4 h-4 mr-2"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Axtar
-            </button>
-          </div>
+          )}
+
+          <input
+            type={type}
+            name={name}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            className={`w-full rounded-xl border px-10 py-3 outline-none transition
+              ${
+                darkMode
+                  ? "border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:border-purple-500"
+                  : "border-gray-200 bg-white text-gray-800 placeholder:text-gray-400 focus:border-purple-500"
+              }`}
+          />
         </div>
-        <Link to="/">
-          <button className="flex mb-4 mt-4 items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Geri
-          </button>
-        </Link>
-        <h2 className="text-2xl font-bold mb-4">
-          Ehtiyyat hissələri və aksesuarlar Elanları
-        </h2>
-        <div className="p-4">
-          <button
-            onClick={handleOpenForm}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md"
-          >
-            Elan yerləşdirmək üçün formu aç
-          </button>
+      </div>
+    );
+  };
 
-          {isOpen && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="relative w-[90%] max-w-3xl max-h-[90vh] overflow-y-auto bg-white p-6 rounded-xl shadow-lg">
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="absolute top-2 right-2 text-gray-600 hover:text-red-600"
-                >
-                  <X size={28} />
-                </button>
+  // =========================================================
+  // OWNER CHECK
+  // =========================================================
 
-                <form
-                  onSubmit={handleSubmit}
-                  className="grid grid-cols-2 gap-4 p-2"
-                >
-                  <input
-                    type="text"
-                    name="title"
-                    placeholder="Başlıq"
-                    value={accessory.title}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+  const isOwner = (item) => {
+    const currentUserId = localStorage.getItem("userId");
 
-                  <input
-                    type="text"
-                    name="description"
-                    placeholder="Təsvir"
-                    value={accessory.description}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+    const itemUserId =
+      item?.userId?._id ||
+      item?.userId?.id ||
+      item?.userId ||
+      item?.user?._id ||
+      item?.user?.id ||
+      item?.user;
 
-                  <input
-                    type="text"
-                    name="brand"
-                    placeholder="Marka"
-                    value={accessory.brand}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+    return (
+      !!token &&
+      !!currentUserId &&
+      !!itemUserId &&
+      String(itemUserId) === String(currentUserId)
+    );
+  };
 
-                  <input
-                    type="text"
-                    name="price"
-                    placeholder="Qiymət"
-                    value={accessory.price}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
-                  <input
-                    type="text"
-                    name="model"
-                    placeholder="Model"
-                    value={accessory.model}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+  // =========================================================
+  // CARD
+  // =========================================================
 
-                  <input
-                    type="text"
-                    name="location"
-                    placeholder="Yer"
-                    value={accessory.location}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+  const renderCard = (item) => {
+    const id = getId(item);
+    const image = getMainImage(item);
 
-                  <input
-                    type="text"
-                    name="contact.name"
-                    placeholder="Əlaqə Adı"
-                    value={accessory?.contact?.name}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px] capitalize  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+    const owner = isOwner(item);
 
-                  <input
-                    type="email"
-                    name="contact.email"
-                    placeholder="Əlaqə Email"
-                    value={accessory?.contact?.email}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+    const priorityType =
+      item?.priorityType || item?.priority?.type || item?.type || "free";
 
-                  <input
-                    type="tel"
-                    name="contact.phone"
-                    placeholder="Əlaqə Telefon"
-                    value={accessory?.contact?.phone}
-                    onChange={handleChange}
-                    className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                    required
-                  />
+    const isPremium = priorityType === "premium";
+    const isVip = priorityType === "vip";
 
-                  <div className="col-span-2">
-                    <input
-                      type="file"
-                      name="images"
-                      multiple
-                      onChange={handleImageChange}
-                      className="border-[1px] border-green-300/100 p-2 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                      required
-                    />
-                    {preview.length > 0 && (
-                      <div className="flex gap-4 mt-4 flex-wrap">
-                        {preview.map((src, idx) => (
-                          <img
-                            key={idx}
-                            src={src}
-                            alt={`preview-${idx}`}
-                            className="w-32 h-32 object-cover border-[1px] border-green-300/100 rounded-[10px]  invalid:border-red-500 invalid:text-red-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-red-500 focus:invalid:outline-red-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 "
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
+    return (
+      <div
+        key={id}
+        className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl
+          ${
+            darkMode
+              ? "border-white/10 bg-[#17171c] hover:border-purple-500/40"
+              : "border-gray-200 bg-white hover:border-purple-300"
+          }`}
+      >
+        {/* =====================================================
+            ŞƏKİL
+        ====================================================== */}
 
-                  <button
-                    type="submit"
-                    className="col-span-2 bg-blue-600 border-[1px] border-green-300/100 text-white py-2 rounded hover:bg-blue-700"
-                  >
-                    {editingId ? "Yenilə" : "Əlavə et"}
-                  </button>
-                </form>
+        <div className="relative h-52 overflow-hidden bg-gray-100 dark:bg-[#101014]">
+          {image ? (
+            <img
+              src={image}
+              alt={item.title || "Aksesuar"}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center">
+              <ImagePlus size={42} className="text-gray-400" />
+            </div>
+          )}
+
+          {/* =================================================
+              PREMIUM / VIP
+          ================================================== */}
+
+          {(isPremium || isVip) && (
+            <div className="absolute left-3 top-3 z-20">
+              <div
+                className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold text-white shadow-lg
+                  ${
+                    isPremium
+                      ? "bg-gradient-to-r from-amber-500 to-orange-500"
+                      : "bg-gradient-to-r from-purple-600 to-fuchsia-600"
+                  }`}
+              >
+                <Sparkles size={13} />
+
+                {isPremium ? "PREMIUM" : "VIP"}
               </div>
             </div>
           )}
-        </div>
 
-        <div className="mt-4">
-          {loading && (
-            <Box sx={{ display: "flex" }}>
-              <CircularProgress />
-            </Box>
-          )}
-          {loading && results.length === 0 && (
-            <div class="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-r from-fuchsia-100 to-violet-200">
-              <h1 class="text-9xl font-extrabold text-white tracking-widest">
-                404
-              </h1>
-              <div class="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
-                Elan Yüklənmədi
-              </div>
-              <button class="mt-5">
-                <a class="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring">
-                  <span class="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"></span>
+          {/* =================================================
+              SAHİBİN REDAKTƏ / SİL DÜYMƏLƏRİ
+          ================================================== */}
 
-                  <span class="relative block px-8 py-3 bg-[#1A2238] border border-current">
-                    <router-link to="/">Əsas səhifə</router-link>
-                  </span>
-                </a>
+          {owner && (
+            <div className="absolute right-3 top-3 z-30 flex items-center gap-2">
+              {/* REDAKTƏ */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+
+                  handleEdit(item);
+                }}
+                title="Elanı redaktə et"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/65 text-white shadow-lg backdrop-blur-md transition hover:scale-110 hover:bg-blue-600"
+              >
+                <Edit3 size={17} />
+              </button>
+
+              {/* SİL */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+
+                  handleDelete(id);
+                }}
+                title="Elanı sil"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/65 text-white shadow-lg backdrop-blur-md transition hover:scale-110 hover:bg-red-600"
+              >
+                <Trash2 size={17} />
               </button>
             </div>
           )}
 
-          {!loading && results.length > 0 && (
-            <div className=" mt-6  justify-items-center gap-[10px] p-[5px] rounded-[4px] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5  w-full">
-              {results.map((item, index) => (
-                <Link
-                  key={item.id || item._id}
-                  to={`/item/${item._id} || ${item.id}`}
-                >
-                  <div
-                    key={index}
-                    className="border w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
-                  >
-                    <img
-                      src={
-                        item.images && item.images.length > 0
-                          ? item.images[0]
-                          : item.imageUrls && item.imageUrls.length > 0
-                          ? item.imageUrls[0]
-                          : "/placeholder.png"
-                      }
-                      alt={item.title || "Image"}
-                      className="w-full h-[171px] object-cover"
-                    />
-                    <div className="p-4">
-                      <h2 className="text-lg font-semibold mb-1">
-                        {item.price} AZN
-                      </h2>
-                      <h3 className="text-lg font-semibold mb-1">
-                        {item.title} {item.category} {item.type}{" "}
-                      </h3>
-                      <p className="text-gray-600">{item.brand}</p>
-                      <p className="text-gray-600">{item.model}</p>
-                      <p className="text-gray-500 text-sm mt-1">
-                        {item.location}, {formatDate(item.data)},{" "}
-                        {getCurrentTime(item.data)}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-          <div className=" ring-2 w-full my-4"></div>
+          {/* =================================================
+              FAVORITE
+          ================================================== */}
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+
+              handleFavorite(item);
+            }}
+            className="absolute bottom-3 right-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur-md transition hover:scale-110"
+            title="Favoritlərə əlavə et"
+          >
+            <Heart
+              size={19}
+              className={
+                item.favorite ? "fill-red-500 text-red-500" : "text-white"
+              }
+            />
+          </button>
         </div>
 
-        <h3 className="text-xl font-semibold mb-4">Əlavə olunan Elanlar</h3>
-        <div className="mx-auto   rounded-2xl   grid justify-items-center grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-4 w-full min-h-screen4">
-          {isLoading ? (
-            Array.from({ length: 20 }).map((_, i) => (
-              <div
-                    key={i}
-                    className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] rounded-2xl shadow-md bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-[shimmer_1.5s_infinite]"
-                  >
-                    <div className=" w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-md ">
-                      <div className="w-full h-[100px] rounded-t-[8px] mb-2 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 animate-shimmer"></div>
-                      <div className="p-1">
-                        <div className="h-6 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-3/4 animate-shimmerh-6 bg-gray-300 rounded mb-1 w-3/4 animate-shimmer"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded mb-1 w-2/3 animate-shimmer"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 rounded w-1/2 animate-shimmer"></div>
+        {/* =====================================================
+            CONTENT
+        ====================================================== */}
 
-                        <div className="flex items-center justify-between">
-                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/4 animate-shimmer "></div>
-                          <div className="h-4 mt-4 bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-gray-300 rounded w-1/2 animate-shimmer "></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-            ))
-          ) : (
-            <>
-              {[...accessoryItems].reverse().map((item) => (
-                <Link
-                  target="_top"
-                  rel="noopener noreferrer"
-                  key={item._id || item.id}
-                  to={`/PostDetailAcsesuar/${item._id || item.id}`}
-                >
-                  <div
-                    key={item._id || item.id}
-                    className="w-[185.7px] h-[222.6px]  max-w-[240.4px] max-h-[268.8px] bg-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:scale-105 transition-all duration-300"
-                  >
-                    <div className="flex gap-2 rounded-t-sm">
-                      {item.images && item.images.length > 0 && (
-                        <img
-                          src={item.images[0]}
-                          alt={item.title}
-                          className="w-full h-[100px] object-cover object-contain rounded-t-2xl"
-                        />
-                      )}
-                    </div>
-                    <div className="p-2">
-                      <p className="text-lg font-bold">{item.price} AZN</p>
-                      <h4 className="font-sans capitalize text-[12px] truncate w-50 ">
-                        {item.title} {item.brand} {item.model}
-                      </h4>
-                      <p className="capitalize text-[12px] font-sans font-[500] truncate w-50">{item.brand}</p>
-                       <div className="flex justify-between gap-1  ">
-                              <p className="text-[10px] rounded flex justify-between text-gray-600">
-                                <MapPin size={12} color="#75FC56" />{" "}
-                                {item.location}
-                              </p>
-                              <p className="capitalize text-[12px]  rounded flex justify-between text-gray-600 truncate w-30">
-                                {formatDate(item.data)}{" "}
-                                {getCurrentTime(item.data)}
-                              </p>
-                            </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </>
-          )}
+        <div className="p-4">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <span className="text-xs text-gray-500">
+              {formatDate(item.createdAt) ||
+                formatDate(item.date) ||
+                getCurrentTime()}
+            </span>
+
+            {item.liked && (
+              <span className="flex items-center gap-1 text-xs text-pink-500">
+                <Heart size={13} className="fill-current" />
+                Bəyənilib
+              </span>
+            )}
+          </div>
+
+          <h3
+            className={`line-clamp-1 text-lg font-bold ${
+              darkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            {item.title || "Aksesuar elanı"}
+          </h3>
+
+          <div className="mt-2 flex items-center gap-2 text-sm">
+            <Tag size={15} className="text-purple-500" />
+
+            <span className={darkMode ? "text-gray-300" : "text-gray-600"}>
+              {item.brand || "Marka"}
+            </span>
+
+            {item.model && (
+              <>
+                <span className="text-gray-400">•</span>
+
+                <span className={darkMode ? "text-gray-300" : "text-gray-600"}>
+                  {item.model}
+                </span>
+              </>
+            )}
+          </div>
+
+          <div className="mt-4 flex items-center justify-between">
+            <div
+              className={`text-xl font-extrabold ${
+                darkMode ? "text-white" : "text-gray-900"
+              }`}
+            >
+              {item.price
+                ? `${Number(item.price).toLocaleString("az-AZ")} ₼`
+                : "Qiymət yoxdur"}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => handleLike(item)}
+              className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                item.liked
+                  ? "bg-pink-500/10 text-pink-500"
+                  : darkMode
+                    ? "bg-white/5 text-gray-300 hover:bg-white/10"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              <Heart size={14} className={item.liked ? "fill-current" : ""} />
+              Bəyən
+            </button>
+          </div>
+
+          <div
+            className={`mt-3 flex items-center gap-1.5 border-t pt-3 text-sm ${
+              darkMode
+                ? "border-white/10 text-gray-400"
+                : "border-gray-100 text-gray-500"
+            }`}
+          >
+            <MapPin size={15} />
+
+            <span className="line-clamp-1">
+              {item.location || item.city || "Ünvan göstərilməyib"}
+            </span>
+          </div>
         </div>
       </div>
+    );
+  };
+
+  // =========================================================
+  // DATA TO DISPLAY
+  // =========================================================
+
+  const displayedItems = hasSearched ? results : accessoryItems;
+
+  // =========================================================
+  // RENDER
+  // =========================================================
+
+  return (
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        darkMode ? "bg-[#0b0b0f] text-white" : "bg-gray-50 text-gray-900"
+      }`}
+    >
+      <BubbleBackground />
+
+      {/* =====================================================
+          HEADER
+      ====================================================== */}
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 pb-28 pt-6 md:px-6 lg:px-8">
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <button
+              type="button"
+              onClick={() => window.history.back()}
+              className={`mb-4 flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                darkMode
+                  ? "bg-white/5 text-gray-300 hover:bg-white/10"
+                  : "bg-white text-gray-600 shadow-sm hover:bg-gray-100"
+              }`}
+            >
+              <ArrowLeft size={17} />
+              Geri
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 to-fuchsia-500 text-white shadow-lg">
+                <Wrench size={25} />
+              </div>
+
+              <div>
+                <h1 className="text-2xl font-extrabold md:text-3xl">
+                  Aksesuar elanları
+                </h1>
+
+                <p
+                  className={
+                    darkMode ? "text-sm text-gray-400" : "text-sm text-gray-500"
+                  }
+                >
+                  Aksesuar al və ya elanını yerləşdir
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleOpenForm}
+            className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-600 px-5 py-3.5 font-bold text-white shadow-lg shadow-purple-500/20 transition hover:-translate-y-0.5 hover:shadow-xl"
+          >
+            <Plus size={20} />
+            Elan yerləşdir
+          </button>
+        </div>
+
+        {/* =====================================================
+            SEARCH
+        ====================================================== */}
+
+        <div
+          className={`mb-8 flex flex-col gap-2 rounded-2xl border p-2 sm:flex-row ${
+            darkMode
+              ? "border-white/10 bg-white/5"
+              : "border-gray-200 bg-white shadow-sm"
+          }`}
+        >
+          <div className="relative flex-1">
+            <Search
+              size={19}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+            />
+
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+              placeholder="Marka, model, elan adı, şəhər..."
+              className={`w-full rounded-xl border-0 bg-transparent py-3.5 pl-11 pr-4 outline-none ${
+                darkMode
+                  ? "text-white placeholder:text-gray-500"
+                  : "text-gray-800 placeholder:text-gray-400"
+              }`}
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleSearch}
+            className="flex items-center justify-center gap-2 rounded-xl bg-purple-600 px-6 py-3 font-semibold text-white transition hover:bg-purple-700"
+          >
+            <Search size={18} />
+            Axtar
+          </button>
+
+          {hasSearched && (
+            <button
+              type="button"
+              onClick={() => {
+                setQuery("");
+                setResults([]);
+                setHasSearched(false);
+              }}
+              className={`rounded-xl px-4 py-3 font-semibold transition ${
+                darkMode
+                  ? "bg-white/5 text-gray-300 hover:bg-white/10"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              Təmizlə
+            </button>
+          )}
+        </div>
+
+        {/* =====================================================
+            TITLE
+        ====================================================== */}
+
+        <div className="mb-5 flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-extrabold">
+              {hasSearched ? "Axtarış nəticələri" : "Son aksesuar elanları"}
+            </h2>
+
+            <p
+              className={
+                darkMode
+                  ? "mt-1 text-sm text-gray-500"
+                  : "mt-1 text-sm text-gray-500"
+              }
+            >
+              {displayedItems.length} elan
+            </p>
+          </div>
+        </div>
+
+        {/* =====================================================
+            LOADING
+        ====================================================== */}
+
+        {loading ? (
+          <div className="flex min-h-[300px] items-center justify-center">
+            <Loader2 size={35} className="animate-spin text-purple-500" />
+          </div>
+        ) : displayedItems.length === 0 ? (
+          <div
+            className={`flex min-h-[300px] flex-col items-center justify-center rounded-3xl border p-8 text-center ${
+              darkMode
+                ? "border-white/10 bg-white/5"
+                : "border-gray-200 bg-white"
+            }`}
+          >
+            <Package size={50} className="mb-4 text-gray-400" />
+
+            <h3 className="text-lg font-bold">
+              {hasSearched ? "Axtarış nəticəsi tapılmadı" : "Hələ elan yoxdur"}
+            </h3>
+
+            <p className="mt-2 max-w-md text-sm text-gray-500">
+              {hasSearched
+                ? "Başqa marka, model və ya açar sözlə axtarmağı yoxlayın."
+                : "İlk aksesuar elanını siz yerləşdirə bilərsiniz."}
+            </p>
+
+            {!hasSearched && (
+              <button
+                type="button"
+                onClick={handleOpenForm}
+                className="mt-5 flex items-center gap-2 rounded-xl bg-purple-600 px-5 py-3 font-semibold text-white"
+              >
+                <Plus size={18} />
+                Elan yerləşdir
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {displayedItems.map(renderCard)}
+          </div>
+        )}
+      </div>
+
+      {/* =======================================================
+          CREATE / EDIT MODAL
+      ======================================================== */}
+
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsOpen(false);
+            }
+          }}
+        >
+          <div
+            className={`relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-3xl border shadow-2xl ${
+              darkMode
+                ? "border-white/10 bg-[#15151a]"
+                : "border-gray-200 bg-white"
+            }`}
+          >
+            {/* MODAL HEADER */}
+
+            <div
+              className={`sticky top-0 z-20 flex items-center justify-between border-b px-5 py-4 backdrop-blur-xl ${
+                darkMode
+                  ? "border-white/10 bg-[#15151a]/95"
+                  : "border-gray-100 bg-white/95"
+              }`}
+            >
+              <div>
+                <h2 className="text-xl font-extrabold">
+                  {editingId ? "Elanı redaktə et" : "Yeni aksesuar elanı"}
+                </h2>
+
+                <p className="mt-1 text-xs text-gray-500">
+                  {editingId
+                    ? "Elanın məlumatlarını yeniləyin"
+                    : "Aksesuar haqqında məlumatları daxil edin"}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className={`flex h-10 w-10 items-center justify-center rounded-full transition ${
+                  darkMode
+                    ? "bg-white/5 text-gray-300 hover:bg-white/10"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* FORM */}
+
+            <form onSubmit={handleSubmit} className="space-y-6 p-5 md:p-7">
+              {/* =================================================
+                  BASIC INFO
+              ================================================== */}
+
+              <div className="grid gap-5 md:grid-cols-2">
+                <Field
+                  label="Elan başlığı"
+                  name="title"
+                  value={accessory.title}
+                  onChange={handleChange}
+                  icon={Tag}
+                  placeholder="Məsələn: Mercedes aksesuarı"
+                />
+
+                <Field
+                  label="Marka"
+                  name="brand"
+                  value={accessory.brand}
+                  onChange={handleChange}
+                  icon={Wrench}
+                  placeholder="Marka"
+                />
+
+                <Field
+                  label="Model"
+                  name="model"
+                  value={accessory.model}
+                  onChange={handleChange}
+                  icon={Package}
+                  placeholder="Model"
+                />
+
+                <Field
+                  label="Qiymət"
+                  name="price"
+                  type="number"
+                  value={accessory.price}
+                  onChange={handleChange}
+                  icon={DollarSign}
+                  placeholder="0"
+                />
+
+                <Field
+                  label="Şəhər / Rayon"
+                  name="location"
+                  value={accessory.location}
+                  onChange={handleChange}
+                  icon={MapPin}
+                  placeholder="Bakı"
+                />
+              </div>
+
+              {/* =================================================
+                  CONTACT
+              ================================================== */}
+
+              <div>
+                <h3 className="mb-4 flex items-center gap-2 text-base font-bold">
+                  <User size={18} className="text-purple-500" />
+                  Əlaqə məlumatları
+                </h3>
+
+                <div className="grid gap-5 md:grid-cols-3">
+                  <Field
+                    label="Ad"
+                    name="contact.name"
+                    value={accessory.contact.name}
+                    onChange={handleChange}
+                    icon={User}
+                    placeholder="Adınız"
+                  />
+
+                  <Field
+                    label="E-mail"
+                    name="contact.email"
+                    value={accessory.contact.email}
+                    onChange={handleChange}
+                    icon={Mail}
+                    type="email"
+                    placeholder="example@mail.com"
+                  />
+
+                  <Field
+                    label="Telefon"
+                    name="contact.phone"
+                    value={accessory.contact.phone}
+                    onChange={handleChange}
+                    icon={Phone}
+                    placeholder="+994..."
+                  />
+                </div>
+              </div>
+
+              {/* =================================================
+                  DESCRIPTION
+              ================================================== */}
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">Açıqlama</label>
+
+                <textarea
+                  name="description"
+                  value={accessory.description}
+                  onChange={handleChange}
+                  rows={5}
+                  placeholder="Aksesuar haqqında ətraflı məlumat yazın..."
+                  className={`w-full resize-none rounded-xl border px-4 py-3 outline-none transition ${
+                    darkMode
+                      ? "border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:border-purple-500"
+                      : "border-gray-200 bg-white text-gray-800 placeholder:text-gray-400 focus:border-purple-500"
+                  }`}
+                />
+              </div>
+
+              {/* =================================================
+                  IMAGES
+              ================================================== */}
+
+              <div>
+                <div className="mb-3 flex items-center justify-between">
+                  <label className="flex items-center gap-2 text-sm font-semibold">
+                    <ImagePlus size={18} className="text-purple-500" />
+                    Şəkillər
+                  </label>
+
+                  <span className="text-xs text-gray-500">
+                    {preview.length} şəkil
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                  {preview.map((src, index) => (
+                    <div
+                      key={`${src}-${index}`}
+                      className="group relative aspect-square overflow-hidden rounded-xl border border-gray-200 dark:border-white/10"
+                    >
+                      <img
+                        src={src}
+                        alt={`preview-${index}`}
+                        className="h-full w-full object-cover"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white opacity-0 shadow-lg transition group-hover:opacity-100"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  ))}
+
+                  <label
+                    className={`flex aspect-square cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition ${
+                      darkMode
+                        ? "border-white/10 bg-white/5 hover:border-purple-500 hover:bg-purple-500/5"
+                        : "border-gray-200 bg-gray-50 hover:border-purple-400 hover:bg-purple-50"
+                    }`}
+                  >
+                    <Upload size={25} className="mb-2 text-purple-500" />
+
+                    <span className="text-xs font-semibold text-gray-500">
+                      Şəkil əlavə et
+                    </span>
+
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageSelect}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* =================================================
+                  BUTTONS
+              ================================================== */}
+
+              <div className="flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-end dark:border-white/10">
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetForm();
+                    setIsOpen(false);
+                  }}
+                  className={`rounded-xl px-5 py-3 font-semibold transition ${
+                    darkMode
+                      ? "bg-white/5 text-gray-300 hover:bg-white/10"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  Ləğv et
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 px-6 py-3 font-bold text-white shadow-lg transition hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Gözləyin...
+                    </>
+                  ) : (
+                    <>
+                      {editingId ? <Edit3 size={18} /> : <Plus size={18} />}
+
+                      {editingId
+                        ? "Dəyişiklikləri yadda saxla"
+                        : "Elanı yerləşdir"}
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <BottomMenu />
     </div>
   );
-}
+};
+
+export default CreateAccessoryPost;

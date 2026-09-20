@@ -1,33 +1,60 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import './ThemeContext.css'
 
-// Context yaradılır
+import "./ThemeContext.css";
+
+// Context
 const ThemeContext = createContext();
 
-// Provider komponent
+// Provider
 export const ThemeProvider = ({ children }) => {
-  const [darkMode, setDarkMode] = useState(false);
+  // LocalStorage-dan başlanğıc temanı birbaşa oxu
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("darkMode") === "true";
+  });
 
-  // LocalStorage-dan mövcud temayı oxumaq
+  // Dark mode dəyişəndə həm localStorage,
+  // həm də HTML elementini yenilə
   useEffect(() => {
-    const savedMode = localStorage.getItem("darkMode") === "true";
-    setDarkMode(savedMode);
-  }, []);
+    localStorage.setItem("darkMode", String(darkMode));
 
-  // Toggle funksiyası
+    const root = document.documentElement;
+
+    if (darkMode) {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+
+    // Browser rəng sxemini də uyğunlaşdır
+    root.style.colorScheme = darkMode ? "dark" : "light";
+  }, [darkMode]);
+
+  // Theme dəyiş
   const toggleTheme = () => {
-    setDarkMode(prev => {
-      localStorage.setItem("darkMode", !prev);
-      return !prev;
-    });
+    setDarkMode((prev) => !prev);
   };
 
   return (
-    <ThemeContext.Provider  value={{ darkMode, toggleTheme }}>
+    <ThemeContext.Provider
+      value={{
+        darkMode,
+        toggleTheme,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );
 };
 
-// Hook yaradılır: istifadə etmək üçün
-export const useTheme = () => useContext(ThemeContext);
+// Theme Hook
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+
+  if (!context) {
+    throw new Error(
+      "useTheme yalnız ThemeProvider daxilində istifadə olunmalıdır.",
+    );
+  }
+
+  return context;
+};
