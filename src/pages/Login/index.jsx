@@ -81,6 +81,8 @@ export default function Login() {
 
         transition-colors
         duration-300
+        rounded-[28px]
+       
 
         ${darkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"}
       `}

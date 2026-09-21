@@ -792,7 +792,7 @@ export default function CreateelectronicsPost() {
   // =========================================================
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <div className="p-4 sm:p-6 max-w-6xl mx-auto">
         {/* SEARCH */}
 
@@ -897,7 +897,7 @@ export default function CreateelectronicsPost() {
                 text-2xl
                 sm:text-3xl
                 font-bold
-                text-slate-800
+                
               "
             >
               Elektronika
@@ -906,7 +906,7 @@ export default function CreateelectronicsPost() {
             <p
               className="
                 text-sm
-                text-slate-500
+                
                 mt-1
               "
             >

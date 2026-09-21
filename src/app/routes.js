@@ -80,7 +80,8 @@ import PrivacyPolicy from "../pages/PrivacyPolicy";
 import Terms from "../pages/Terms";
 import Prohibited from "../pages/Prohibited";
 import PostingRules from "../pages/PostingRules";
-
+import BusinessProfile from "../pages/Business/BusinessProfile";
+import CreateBusiness from "../pages/Business/CreateBusiness";
 
 // =====================================================
 // ROUTER
@@ -92,7 +93,6 @@ const router = createBrowserRouter([
     Component: RootLayout,
 
     children: [
-
       // =================================================
       // HOME
       // =================================================
@@ -101,7 +101,6 @@ const router = createBrowserRouter([
         index: true,
         Component: Home,
       },
-
 
       // =================================================
       // PAYMENT
@@ -121,7 +120,6 @@ const router = createBrowserRouter([
         path: "payment/:listingId",
         Component: PaymentPage,
       },
-
 
       // =================================================
       // AUTH
@@ -143,10 +141,17 @@ const router = createBrowserRouter([
       },
 
       {
+        path: "/biznes/:slug",
+        Component: BusinessProfile,
+      },
+      {
+        path: "/biznes-yarat",
+        Component: CreateBusiness,
+      },
+      {
         path: "reset-password",
         Component: ResetPassword,
       },
-
 
       // =================================================
       // MAIN PAGES
@@ -192,7 +197,6 @@ const router = createBrowserRouter([
         Component: Profile,
       },
 
-
       // =================================================
       // ADS
       // =================================================
@@ -212,7 +216,6 @@ const router = createBrowserRouter([
         Component: PostDetailHome,
       },
 
-
       // =================================================
       // CATALOG
       // =================================================
@@ -231,7 +234,6 @@ const router = createBrowserRouter([
         path: "categories",
         Component: Cataloq,
       },
-
 
       // =================================================
       // CATALOG CATEGORY PAGES
@@ -282,7 +284,6 @@ const router = createBrowserRouter([
         Component: Ehtiyyat_hissələri_ve_aksesuarlar,
       },
 
-
       // =================================================
       // CAR
       // =================================================
@@ -307,7 +308,6 @@ const router = createBrowserRouter([
         Component: PostDetalCar,
       },
 
-
       // =================================================
       // HOME & GARDEN
       // =================================================
@@ -326,7 +326,6 @@ const router = createBrowserRouter([
         path: "PostDetailHome/:id/:title?",
         Component: PostDetailHome,
       },
-
 
       // =================================================
       // ELECTRONICS
@@ -347,7 +346,6 @@ const router = createBrowserRouter([
         Component: PostDetailElectronika,
       },
 
-
       // =================================================
       // ACCESSORIES
       // =================================================
@@ -367,10 +365,9 @@ const router = createBrowserRouter([
         Component: PostDetailAcsesuar,
       },
       {
-  path: "accessory/:id/:title?",
-  Component: PostDetailAcsesuar,
-},
-
+        path: "accessory/:id/:title?",
+        Component: PostDetailAcsesuar,
+      },
 
       // =================================================
       // REAL ESTATE
@@ -390,7 +387,6 @@ const router = createBrowserRouter([
         path: "PostRealEstate/:id/:title?",
         Component: PostRealEstate,
       },
-
 
       // =================================================
       // HOUSEHOLD
@@ -421,7 +417,6 @@ const router = createBrowserRouter([
         Component: PostDetailHousehold,
       },
 
-
       // =================================================
       // PHONE
       // =================================================
@@ -450,7 +445,6 @@ const router = createBrowserRouter([
         path: "PostDetailPhone/:id/:title?",
         Component: PostDetailPhone,
       },
-
 
       // =================================================
       // CLOTHING
@@ -481,7 +475,6 @@ const router = createBrowserRouter([
         Component: PostDetailClothing,
       },
 
-
       // =================================================
       // JEWELRY
       // =================================================
@@ -511,7 +504,6 @@ const router = createBrowserRouter([
         Component: PostDetailJewelry,
       },
 
-
       // =================================================
       // ADMIN
       // =================================================
@@ -525,7 +517,6 @@ const router = createBrowserRouter([
         path: "admin/login",
         Component: AdminLogin,
       },
-
 
       // =================================================
       // INFORMATION / RULES

@@ -175,7 +175,7 @@ export default function Register() {
         relative
         min-h-screen
         w-full
-
+rounded-2xl
         overflow-hidden
 
         transition-colors

@@ -114,6 +114,7 @@ const RootLayout = () => {
             pt-[78px]
             pb-20
             sm:pb-10
+           
           "
         >
           <Outlet />

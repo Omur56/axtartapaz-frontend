@@ -11,7 +11,7 @@ export default function Neqliyyat() {
 
   return (
     <div
-      className={`relative min-h-screen w-full overflow-hidden transition-colors duration-300 ${
+      className={`relative min-h-screen rounded-2xl w-full overflow-hidden transition-colors duration-300 ${
         darkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"
       }`}
     >

@@ -1095,7 +1095,7 @@ const Home = () => {
    */
 
   return (
-    <div className="min-h-screen bg-[#f7f7fb] dark:bg-[#09090b] text-gray-900 dark:text-white">
+    <div className="min-h-screen ">
       <Helmet>
         <title>ProElan.az - Azərbaycanda Pulsuz Elanlar</title>
 

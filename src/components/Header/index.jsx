@@ -106,7 +106,7 @@ function Header() {
           </Link>
 
           {/* DESKTOP KATALOQ */}
-          <div className="hidden sm:flex items-center">
+          <div className="hidden sm:flex items-center gap-1.5">
             <DownNavbar />
           </div>
         </div>
@@ -379,8 +379,8 @@ function Header() {
         className="
           sm:hidden
           absolute
-          top-[64px]
-          left-0
+          top-20
+          left-3
           w-full
           flex
           justify-center
@@ -389,20 +389,14 @@ function Header() {
       >
         <div
           className="
+          
+            absolute
+            inset-0
             pointer-events-auto
-            mt-1
-            px-3
-            py-1
-            rounded-b-2xl
-            bg-white/95
-            dark:bg-gray-950/95
-            backdrop-blur-xl
-            border
-            border-t-0
-            border-gray-200
-            dark:border-gray-800
-            shadow-md
+            
+            flex
           "
+          
         >
           <DownNavbar />
         </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import index from "./index.css";
 import {
   X,
@@ -20,6 +20,7 @@ import confetti from "canvas-confetti";
 import Checkbox from "@mui/material/Checkbox";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import CitySelect from "./CitySelect";
+
 
 export default function CreatePost() {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,6 +43,13 @@ export default function CreatePost() {
 
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  
+const [query, setQuery] = useState("");
+const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  
 
 const [form, setForm] = useState({
   id: Date.now(),
@@ -77,6 +85,37 @@ const [form, setForm] = useState({
   favorite: false,
   createdAt: new Date(),
 });
+
+  const location = useLocation();
+
+  // =====================================================
+  // BİZNES PROFİLİNDƏN GƏLƏN MƏLUMATLAR
+  // =====================================================
+
+const savedBusinessContext = JSON.parse(
+  sessionStorage.getItem("businessAdContext") || "null",
+);
+
+const businessId =
+  location.state?.businessId || savedBusinessContext?.businessId || null;
+
+const businessName =
+  location.state?.businessName || savedBusinessContext?.businessName || "";
+
+const businessCategory =
+  location.state?.businessCategory ||
+  savedBusinessContext?.businessCategory ||
+  null;
+
+console.log("🏪 BUSINESS ID:", businessId);
+console.log("🏪 BUSINESS NAME:", businessName);
+console.log("🏪 BUSINESS CATEGORY:", businessCategory);
+
+  console.log("🏪 BUSINESS ID:", businessId);
+  console.log("🏪 BUSINESS NAME:", businessName);
+  console.log("🏪 BUSINESS CATEGORY:", businessCategory);
+
+
 
   const typeOptions = ["sifarisle", "magaza", "resmi"];
 
@@ -642,326 +681,267 @@ const fetchCars = async () => {
 };
 
   // ❌ contact burada YOXDUR
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
 
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
+  // =====================================================
+  // LOGIN YOXLAMASI
+  // =====================================================
 
-    if (!token || !userId) {
-      Swal.fire({
-        icon: "warning",
-        title: "Giriş tələb olunur",
-        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-      });
-      return;
-    }
+  if (!token || !userId) {
+    Swal.fire({
+      icon: "warning",
+      title: "Giriş tələb olunur",
+      text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+      confirmButtonText: "Bağla",
+    });
 
-    setIsUploading(true);
-    setUploadProgress(0);
+    return;
+  }
 
-    const formData = new FormData();
+  // =====================================================
+  // BİZNES KATEQORİYASI YOXLAMASI
+  // =====================================================
 
-    // images
-    form.images.forEach((file) => formData.append("images", file));
+  if (businessId && businessCategory !== "car") {
+    Swal.fire({
+      icon: "warning",
+      title: "Yanlış kateqoriya",
+      text: `${
+        businessName || "Bu biznes"
+      } avtomobil kateqoriyasına aid deyil.`,
+      confirmButtonText: "Bağla",
+    });
 
-    if (mainImageIndex !== null) {
-      formData.append("mainImageIndex", mainImageIndex);
-    }
+    return;
+  }
 
-    const cleanedPrice = Number(String(form.price).replace(/\s/g, ""));
+  setIsUploading(true);
+  setUploadProgress(0);
 
-    const cleanedKm = Number(String(form.km).replace(/\s/g, ""));
-    // ❌ contact burada YOXDUR
-    //   const carObject = {
-    //     title: form.title,
-    //     brand: form.brand,
-    //     model: form.model,
-    //     ban_type: form.ban_type,
-    //     year: form.year,
-    //     engine: form.engine,
-    //     motor: form.motor,
-    //     transmission: form.transmission,
-    //     km: form.km,
-    //     color: form.color,
-    //     modification: form.modification,
-    // generation: form.generation,
-    //     // barter: options.barter ? "Bəli" : "Xeyr",
-    //     // credit: options.credit ? "Bəli" : "Xeyr",
-    //     // salon: options.salon ? "Bəli" : "Xeyr",
+  const formData = new FormData();
 
-    //     //  barter: options.barter,
-    //   // credit: options.credit,
-    //   // salon: options.salon,
+  // =====================================================
+  // ŞƏKİLLƏR
+  // =====================================================
 
-    // //   barter: !!options.barter,
-    // // credit: !!options.credit,
-    // // salon: !!options.salon,
+  form.images.forEach((file) => {
+    formData.append("images", file);
+  });
 
-    // salon: form.salon,
-    //     type_magasine: form.type_magasine,
+  // =====================================================
+  // ƏSAS ŞƏKİL
+  // =====================================================
 
-    //      contact: {
+  if (mainImageIndex !== null) {
+    formData.append("mainImageIndex", mainImageIndex);
+  }
 
-    //         name: form.contact.name,
+  // =====================================================
+  // QİYMƏT
+  // =====================================================
 
-    //         email: form.contact.email,
+  const cleanedPrice = Number(String(form.price || "").replace(/\s/g, ""));
 
-    //         phone: form.contact.phone,
-    //     }
+  // =====================================================
+  // KM
+  // =====================================================
 
-    //   };
+  const cleanedKm = Number(String(form.km || "").replace(/\s/g, ""));
 
-   const carObject = {
-     title: form.title,
-     brand: form.brand,
-     model: form.model,
-     ban_type: form.ban_type,
-     year: form.year,
-     engine: form.engine,
-     motor: form.motor,
-     transmission: form.transmission,
-     km: isNaN(cleanedKm) ? 0 : cleanedKm,
-     color: form.color,
-     modification: form.modification,
-     generation: form.generation,
+  // =====================================================
+  // CAR OBJECT
+  // =====================================================
 
-     credit: Boolean(form.credit),
-     barter: Boolean(form.barter),
-     salon: Boolean(form.salon),
+  const carObject = {
+    title: form.title,
 
-     type_magasine: form.type_magasine,
+    brand: form.brand,
 
-     contact: {
-       name: form.contact.name || "",
-       email: form.contact.email || "",
-       phone: form.contact.phone || "",
-     },
-   };
+    model: form.model,
 
-    formData.set("car", JSON.stringify(carObject));
+    ban_type: form.ban_type,
 
+    year: form.year,
+
+    engine: form.engine,
+
+    motor: form.motor,
+
+    transmission: form.transmission,
+
+    km: isNaN(cleanedKm) ? 0 : cleanedKm,
+
+    color: form.color,
+
+    modification: form.modification,
+
+    generation: form.generation,
+
+    credit: Boolean(form.credit),
+
+    barter: Boolean(form.barter),
+
+    salon: Boolean(form.salon),
+
+    type_magasine: form.type_magasine,
+
+    contact: {
+      name: form.contact.name || "",
+
+      email: form.contact.email || "",
+
+      phone: form.contact.phone || "",
+    },
+  };
+
+  // =====================================================
+  // CAR MƏLUMATLARI
+  // =====================================================
+
+  formData.set("car", JSON.stringify(carObject));
+
+  // =====================================================
+  // ELAN MƏLUMATLARI
+  // =====================================================
 
   formData.set("price", isNaN(cleanedPrice) ? 0 : cleanedPrice);
 
   formData.set("location", form.location || "");
+
   formData.set("description", form.description || "");
-   
 
-    // 🔥 CONTACT FIX (BURASI KRİTİK)
-    // formData.set("contact.name", form.contact.name || "");
-    // formData.set("contact.email", form.contact.email || "");
-    // formData.set("contact.phone", form.contact.phone || "");
+  // =====================================================
+  // BİZNES ID
+  // =====================================================
 
-    formData.set("price", isNaN(cleanedPrice) ? 0 : cleanedPrice);
-    formData.set("location", form.location || "");
-    formData.set("description", form.description || "");
+  // Şəxsi elandırsa businessId göndərilmir.
+  // Biznesdən yerləşdirilirsə businessId göndərilir.
 
-    try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/car`, formData, {
+  if (businessId) {
+    formData.set("businessId", businessId);
+  }
+
+  // =====================================================
+  // API
+  // =====================================================
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/api/car`,
+      formData,
+      {
         headers: {
           Authorization: `Bearer ${token}`,
+
           "Content-Type": "multipart/form-data",
         },
+
         onUploadProgress: (progressEvent) => {
+          if (!progressEvent.total) {
+            return;
+          }
+
           const percent = Math.round(
             (progressEvent.loaded * 100) / progressEvent.total,
           );
+
           setUploadProgress(percent);
         },
-      });
+      },
+    );
 
-      resetForm();
-      fetchCars();
+    console.log("✅ Elan yaradıldı:", response.data);
 
-      Swal.fire({
-        icon: "success",
-        title: "Elan uğurla yerləşdirildi!",
-      });
-    } catch (err) {
-      console.error(err);
+    // ===================================================
+    // FORMU SIFIRLA
+    // ===================================================
 
-      Swal.fire({
-        icon: "error",
-        title: "Xəta baş verdi",
-      });
-    } finally {
-      setIsUploading(false);
-      setUploadProgress(0);
-    }
-  };
+    resetForm();
+
+    await fetchCars();
+
+    // ===================================================
+    // SUCCESS
+    // ===================================================
+
+    Swal.fire({
+      icon: "success",
+
+      title: "Elan uğurla yerləşdirildi!",
+
+      text: businessId
+        ? `${businessName || "Biznes"} profilinə elan əlavə edildi.`
+        : "Elanınız uğurla yerləşdirildi.",
+
+      confirmButtonText: "Bağla",
+    });
+  } catch (err) {
+    console.error("❌ Elan yerləşdirmə xətası:", err);
+
+    Swal.fire({
+      icon: "error",
+
+      title: "Xəta baş verdi",
+
+      text: err.response?.data?.message || "Elan yerləşdirilə bilmədi.",
+
+      confirmButtonText: "Bağla",
+    });
+  } finally {
+    setIsUploading(false);
+
+    setUploadProgress(0);
+  }
+};
 
   const resetForm = () => {
-    setForm({
-      id: Date.now(),
-      title: "",
-      modification: "",
-      color: "",
-      type: "",
-      city: "",
-      category: "",
-      generation: "",
-      brand: "",
-      model: "",
-      ban_type: "",
-      year: "",
-      price: "",
-      location: "",
-      description: "",
-      images: [],
-      km: "",
-      motor: "",
-      salon: false,
-      barter: false,
-      transmission: "",
-      credit: false,
-      engine: "",
-      type_magasine: "",
-      contact: {
-        name: "",
-        email: "",
-        phone: "",
-      },
-      liked: false,
-      favorite: false,
-      createdAt: new Date(),
-    });
+  setForm({
+    id: Date.now(),
+    title: "",
+    modification: "",
+    color: "",
+    type: "",
+    city: "",
+    category: "",
+    generation: "",
+    brand: "",
+    model: "",
+    ban_type: "",
+    year: "",
+    price: "",
+    location: "",
+    description: "",
+    images: [],
+    km: "",
+    motor: "",
+    salon: false,
+    barter: false,
+    transmission: "",
+    credit: false,
+    engine: "",
+    type_magasine: "",
+    contact: {
+      name: "",
+      email: "",
+      phone: "",
+    },
+    liked: false,
+    favorite: false,
+    createdAt: new Date(),
+  });
 
-    setImages([]);
-    setPreview([]);
-    setEditingId(null);
-    setMainImageIndex(null);
-    setModelImagePreview("");
-  };
+  setImages([]);
+  setPreview([]);
+  setEditingId(null);
+  setMainImageIndex(null);
+  setModelImagePreview("");
+};
 
-  useEffect(() => {
-    fetchCars();
-  }, []);
-
-  const formatDate = (dateString) => {
-    const postDate = new Date(dateString);
-    const now = new Date();
-    const today = new Date(now.setHours(0, 0, 0, 0));
-    const postDay = new Date(postDate.setHours(0, 0, 0, 0));
-    const diffTime = today - postDay;
-    const oneDay = 24 * 60 * 60 * 1000;
-
-    if (diffTime === 0) return "bugün";
-    if (diffTime === oneDay) return "dünən";
-
-    return postDate.toLocaleDateString("az-AZ", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
-  const getCurrentTime = (isoString) => {
-    const date = new Date(isoString);
-    const time = date.toTimeString().split(" ")[0].slice(0, 5);
-    return time;
-  };
-
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/car`];
-
-  const handleSearch = async () => {
-    if (!query.trim()) return;
-    setLoading(true);
-
-    try {
-      const requests = apiUrls.map((url) => axios.get(url));
-      const responses = await Promise.all(requests);
-
-      let allData = [];
-      responses.forEach((res) => {
-        if (Array.isArray(res.data)) allData = allData.concat(res.data);
-      });
-
-      const filtered = allData.filter((item) => {
-        const title = item.title?.toLowerCase() || "";
-        const brand = item.brand?.toLowerCase() || "";
-        const category = item.category?.toLowerCase() || "";
-        const model = item.model?.toLowerCase() || "";
-        const location = item.location?.toLowerCase() || "";
-        const city = item.city?.toLowerCase() || "";
-        const engine = item.engine?.toLowerCase() || "";
-        const year = item.year?.toLowerCase() || "";
-        const motor = item.motor?.toLowerCase() || "";
-        const transmission = item.transmission?.toLowerCase() || "";
-        const ban_type = item.ban_type?.toLowerCase() || "";
-        const price = item.price?.toLowerCase() || "";
-        const description = item.description?.toLowerCase() || "";
-        return (
-          title.includes(query.toLowerCase()) ||
-          brand.includes(query.toLowerCase()) ||
-          category.includes(query.toLowerCase()) ||
-          location.includes(query.toLowerCase()) ||
-          model.includes(query.toLowerCase()) ||
-          city.includes(query.toLowerCase()) ||
-          engine.includes(query.toLowerCase()) ||
-          year.includes(query.toLowerCase()) ||
-          motor.includes(query.toLowerCase()) ||
-          transmission.includes(query.toLowerCase()) ||
-          ban_type.includes(query.toLowerCase()) ||
-          price.includes(query.toLowerCase()) ||
-          description.includes(query.toLowerCase())
-        );
-      });
-
-      setResults(filtered);
-    } catch (error) {
-      console.error("API axtarış xətası:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const [isLoading, setIsLoading] = useState(true);
   
-
-
-useEffect(() => {
-  const loadCars = async () => {
-    setIsLoading(true);
-
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/car`);
-
-      const data = Array.isArray(res.data) ? res.data : res.data?.ads || [];
-
-      setCars(data);
-    } catch (err) {
-      console.error("API xətası:", err);
-      setCars([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  loadCars();
-}, []);
-
-  const token = localStorage.getItem("token");
-
-  // Yeni funksiyanı elanı açan buttona əlavə edirik
-  const handleOpenForm = () => {
-    if (!token) {
-      Swal.fire({
-        icon: "warning",
-        title: "Giriş tələb olunur",
-        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
-        confirmButtonColor: "#3085d6",
-      });
-      return;
-    }
-    setIsOpen(true);
-  };
-
   function handleClick(event) {
     event.preventDefault();
   }
@@ -990,7 +970,27 @@ useEffect(() => {
   setModelImagePreview("");
 }, [form.brand, form.model, form.year]);
 
+useEffect(() => {
+  const loadCars = async () => {
+    setIsLoading(true);
 
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/car`);
+
+      const data = Array.isArray(res.data) ? res.data : res.data?.ads || [];
+
+      setCars(data);
+    } catch (err) {
+      console.error("API xətası:", err);
+
+      setCars([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  loadCars();
+}, []);
 
   const handleEdit = (car) => {
     setForm({
@@ -1022,6 +1022,95 @@ useEffect(() => {
     setIsOpen(true);
   };
 
+
+  const apiUrls = [`${process.env.REACT_APP_API_URL}/api/car`];
+
+  const handleSearch = async () => {
+    if (!query.trim()) return;
+
+    setLoading(true);
+
+    try {
+      const requests = apiUrls.map((url) => axios.get(url));
+
+      const responses = await Promise.all(requests);
+
+      let allData = [];
+
+      responses.forEach((res) => {
+        if (Array.isArray(res.data)) {
+          allData = allData.concat(res.data);
+        } else if (Array.isArray(res.data?.ads)) {
+          allData = allData.concat(res.data.ads);
+        }
+      });
+
+      const searchText = query.toLowerCase();
+
+      const filtered = allData.filter((item) => {
+        const title = String(item.title || "").toLowerCase();
+        const brand = String(item.brand || item.car?.brand || "").toLowerCase();
+        const category = String(item.category || "").toLowerCase();
+        const model = String(item.model || item.car?.model || "").toLowerCase();
+        const location = String(item.location || "").toLowerCase();
+        const city = String(item.city || "").toLowerCase();
+        const engine = String(
+          item.engine || item.car?.engine || "",
+        ).toLowerCase();
+        const year = String(item.year || item.car?.year || "").toLowerCase();
+        const motor = String(item.motor || item.car?.motor || "").toLowerCase();
+        const transmission = String(
+          item.transmission || item.car?.transmission || "",
+        ).toLowerCase();
+        const ban_type = String(
+          item.ban_type || item.car?.ban_type || "",
+        ).toLowerCase();
+        const price = String(item.price || "").toLowerCase();
+        const description = String(item.description || "").toLowerCase();
+
+        return (
+          title.includes(searchText) ||
+          brand.includes(searchText) ||
+          category.includes(searchText) ||
+          location.includes(searchText) ||
+          model.includes(searchText) ||
+          city.includes(searchText) ||
+          engine.includes(searchText) ||
+          year.includes(searchText) ||
+          motor.includes(searchText) ||
+          transmission.includes(searchText) ||
+          ban_type.includes(searchText) ||
+          price.includes(searchText) ||
+          description.includes(searchText)
+        );
+      });
+
+      setResults(filtered);
+    } catch (error) {
+      console.error("API axtarış xətası:", error);
+
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const token = localStorage.getItem("token");
+
+  const handleOpenForm = () => {
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giriş tələb olunur",
+        text: "Elan paylaşmaq üçün hesabınıza daxil olun.",
+        confirmButtonColor: "#3085d6",
+      });
+
+      return;
+    }
+
+    setIsOpen(true);
+  };
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -1067,6 +1156,69 @@ useEffect(() => {
       });
     }
   };
+
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+
+    const postDate = new Date(dateString);
+
+    if (Number.isNaN(postDate.getTime())) {
+      return "";
+    }
+
+    const now = new Date();
+
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const postDay = new Date(
+      postDate.getFullYear(),
+      postDate.getMonth(),
+      postDate.getDate(),
+    );
+
+    const diffTime = today.getTime() - postDay.getTime();
+
+    const oneDay = 24 * 60 * 60 * 1000;
+
+    if (diffTime === 0) {
+      return "bugün";
+    }
+
+    if (diffTime === oneDay) {
+      return "dünən";
+    }
+
+    return postDate.toLocaleDateString("az-AZ", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  useEffect(() => {
+    if (!form.brand || !form.model || !form.year) {
+      setModelImagePreview("");
+      return;
+    }
+
+    const model = carData[form.brand]?.find(
+      (item) => item.model === form.model,
+    );
+
+    if (!model) {
+      setModelImagePreview("");
+      return;
+    }
+
+    if (model.imagesByYear?.[form.year]) {
+      setModelImagePreview(model.imagesByYear[form.year]);
+
+      return;
+    }
+
+    setModelImagePreview("");
+  }, [form.brand, form.model, form.year]);
 
   const modernInputClass = `
   w-full
@@ -1197,9 +1349,9 @@ useEffect(() => {
 
           {isOpen && (
             <div className="fixed inset-0 z-[999] flex items-center justify-center bg-slate-950/70 backdrop-blur-md p-0 sm:p-4">
-              <div className="relative w-full h-full sm:h-[96vh] max-w-6xl overflow-hidden rounded-none sm:rounded-3xl bg-white dark:bg-slate-950 shadow-2xl border border-white/20">
+              <div className="relative w-full h-full  sm:h-[96vh] max-w-6xl overflow-hidden rounded-none sm:rounded-3xl bg-white dark:bg-slate-950 shadow-2xl border border-white/20">
                 {/* HEADER */}
-                <div className="sticky top-0 z-30 flex items-center justify-between px-5 sm:px-7 py-4 border-b border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl">
+                <div className="sticky top-0 z-30  flex items-center justify-between px-5 sm:px-7 py-4 border-b border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl">
                   <div>
                     <div className="flex items-center gap-3">
                       <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center shadow-lg shadow-blue-500/20">

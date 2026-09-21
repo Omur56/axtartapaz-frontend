@@ -1,131 +1,223 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { X } from "lucide-react";
-import Box from "@mui/material/Box";
-import LinearProgress from "@mui/material/LinearProgress";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CalendarDays,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Clock3,
+  Crown,
+  ExternalLink,
+  Heart,
+  Mail,
+  MapPin,
+  Maximize2,
+  Phone,
+  ShieldCheck,
+  Sparkles,
+  Tag,
+  User,
+  X,
+} from "lucide-react";
+import { useTheme } from "../../components/Main/ThemeContext";
 
 export default function PostDetailClothing() {
   const { id } = useParams();
+  const { darkMode } = useTheme();
+
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [clothing, setClothing] = useState([]);
-  const [zoomIndex, setZoomIndex] = useState(null);
-  const [zoomPhoto, setZoomPhoto] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
 
-  const [progress, setProgress] = React.useState(0);
-  const [buffer, setBuffer] = React.useState(10);
+  const [zoomIndex, setZoomIndex] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  const [isUpgrading, setIsUpgrading] = useState(false);
 
   const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
 
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/Clothing/`)
-      .then((res) => setClothing(res.data))
-      .catch((err) => console.error("Xəta:", err));
-  }, []);
+  /* =========================================================
+     ELANI GƏTİR
+  ========================================================= */
 
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/Clothing/${id}`)
-      .then((res) => {
+    let mounted = true;
+
+    const fetchPost = async () => {
+      try {
+        setLoading(true);
+        setNotFound(false);
+
+        const res = await axios.get(`${BASE_URL}/api/Clothing/${id}`);
+
+        if (!mounted) return;
+
         setPost(res.data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setNotFound(true);
-        setLoading(false);
-      });
-  }, [id]);
+      } catch (err) {
+        console.error("Clothing detail error:", err);
+
+        if (mounted) {
+          setNotFound(true);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    if (id) {
+      fetchPost();
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [id, BASE_URL]);
+
+  /* =========================================================
+     BƏNZƏR ELANLAR
+  ========================================================= */
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchClothing = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/api/Clothing/`);
+
+        if (!mounted) return;
+
+        const data = Array.isArray(res.data) ? res.data : res.data?.ads || [];
+
+        setClothing(data);
+      } catch (err) {
+        console.error("Bənzər elanlar yüklənmədi:", err);
+      }
+    };
+
+    fetchClothing();
+
+    return () => {
+      mounted = false;
+    };
+  }, [BASE_URL]);
+
+  /* =========================================================
+     ŞƏKİLLƏR
+  ========================================================= */
+
+  const getImageUrl = (image) => {
+    if (!image) return "/no-image.jpg";
+
+    if (typeof image === "object") {
+      image =
+        image.url || image.secure_url || image.path || image.filename || "";
+    }
+
+    if (!image) return "/no-image.jpg";
+
+    if (String(image).startsWith("http")) {
+      return image;
+    }
+
+    if (String(image).startsWith("/")) {
+      return `${BASE_URL}${image}`;
+    }
+
+    return `${BASE_URL}/uploads/${image}`;
+  };
+
+  const imageArray = useMemo(() => {
+    if (!post?.images) return [];
+
+    const images = Array.isArray(post.images) ? post.images : [post.images];
+
+    return images.map((image) => getImageUrl(image)).filter(Boolean);
+  }, [post]);
+
+  /* =========================================================
+     ZOOM
+  ========================================================= */
+
+  const openZoom = (index) => {
+    setSelectedImage(index);
+    setZoomIndex(index);
+  };
+
+  const closeZoom = () => {
+    setZoomIndex(null);
+  };
+
+  const prevImage = () => {
+    setZoomIndex((prev) => {
+      if (prev === null) return 0;
+
+      return prev === 0 ? imageArray.length - 1 : prev - 1;
+    });
+  };
+
+  const nextImage = () => {
+    setZoomIndex((prev) => {
+      if (prev === null) return 0;
+
+      return prev === imageArray.length - 1 ? 0 : prev + 1;
+    });
+  };
 
   useEffect(() => {
     if (zoomIndex === null) return;
 
     const handleKeyDown = (e) => {
-      if (e.key === "ArrowRight") nextImage();
-      else if (e.key === "ArrowLeft") prevImage();
-      else if (e.key === "Escape") closeZoom();
+      if (e.key === "Escape") {
+        closeZoom();
+      }
+
+      if (e.key === "ArrowLeft") {
+        prevImage();
+      }
+
+      if (e.key === "ArrowRight") {
+        nextImage();
+      }
     };
+
+    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [zoomIndex, zoomPhoto]);
+  }, [zoomIndex, imageArray.length]);
 
-  const progressRef = React.useRef(() => {});
-  React.useEffect(() => {
-    progressRef.current = () => {
-      if (progress === 100) {
-        setProgress(0);
-        setBuffer(10);
-      } else {
-        setProgress(progress + 1);
-        if (buffer < 100 && progress % 5 === 0) {
-          const newBuffer = buffer + 1 + Math.random() * 10;
-          setBuffer(newBuffer > 100 ? 100 : newBuffer);
-        }
-      }
-    };
-  });
-
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      progressRef.current();
-    }, 100);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
-
-  if (loading)
-    return (
-      <Box className="min-h-screen mt-14" sx={{ width: "100%" }}>
-        <LinearProgress
-          variant="buffer"
-          value={progress}
-          valueBuffer={buffer}
-        />
-      </Box>
-    );
-
-  if (notFound || !post)
-    return (
-      <div class="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-r from-fuchsia-100 to-violet-200">
-        <h1 className="text-9xl font-extrabold text-white tracking-widest">
-          404
-        </h1>
-        <div className="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
-          Elan Yüklənmədi
-        </div>
-        <button className="mt-5">
-          <a className="relative inline-block text-sm font-medium text-green-500 group active:text-green-500 focus:outline-none focus:ring">
-            <span className="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-red-500 group-hover:translate-y-0 group-hover:translate-x-0"></span>
-
-            <span className="relative block px-8 py-3 bg-[#1A2238] border border-current">
-              <router-link to="/">Əsas səhifə</router-link>
-            </span>
-          </a>
-        </button>
-      </div>
-    );
-
-  const imageArray = Array.isArray(post.images)
-    ? post.images
-    : post.images
-      ? [post.images]
-      : [];
+  /* =========================================================
+     TARİX
+  ========================================================= */
 
   const formatDate = (dateString) => {
+    if (!dateString) return "";
+
     const postDate = new Date(dateString);
+
+    if (Number.isNaN(postDate.getTime())) {
+      return "";
+    }
+
     const now = new Date();
-    const today = new Date(now.setHours(0, 0, 0, 0));
-    const postDay = new Date(postDate.setHours(0, 0, 0, 0));
+
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const postDay = new Date(
+      postDate.getFullYear(),
+      postDate.getMonth(),
+      postDate.getDate(),
+    );
+
     const diffTime = today - postDay;
     const oneDay = 24 * 60 * 60 * 1000;
 
@@ -140,261 +232,916 @@ export default function PostDetailClothing() {
   };
 
   const getCurrentTime = (isoString) => {
+    if (!isoString) return "";
+
     const date = new Date(isoString);
-    return date.toTimeString().split(" ")[0].slice(0, 5);
+
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+
+    return date.toLocaleTimeString("az-AZ", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
-  const openZoom = (index) => setZoomIndex(index);
-  const closeZoom = () => setZoomIndex(null);
-  const prevImage = () =>
-    setZoomIndex((prev) => (prev === 0 ? imageArray.length - 1 : prev - 1));
-  const nextImage = () =>
-    setZoomIndex((prev) => (prev === imageArray.length - 1 ? 0 : prev + 1));
+  /* =========================================================
+     VIP / PREMIUM
+  ========================================================= */
 
   const handleUpgrade = async (listingId, type) => {
     try {
+      setIsUpgrading(true);
+
       const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Bu əməliyyat üçün əvvəlcə hesabınıza daxil olun.");
+        return;
+      }
 
       const { data } = await axios.post(
         `${BASE_URL}/api/payments/create-checkout/${listingId}`,
         { type },
-        { headers: { Authorization: `Bearer ${token}` } },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
-      window.location.href = data.url;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Ödəniş səhifəsi yaradıla bilmədi.");
+      }
     } catch (err) {
-      console.log(err.response?.data || err.message);
+      console.error("Upgrade error:", err.response?.data || err.message);
+
+      alert(err.response?.data?.message || "Ödəniş zamanı xəta baş verdi.");
+    } finally {
+      setIsUpgrading(false);
     }
   };
 
-  return (
-    <div className="post-page max-w-6xl mx-auto p-4">
-      <Link to="/Katalog/Geyimlər">
-        <button className="flex  items-center gap-2 mt-12 mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+  /* =========================================================
+     LOADING
+  ========================================================= */
+
+  if (loading) {
+    return (
+      <div
+        className={`min-h-screen flex items-center justify-center px-4 ${
+          darkMode
+            ? "bg-[#080b14]"
+            : "bg-gradient-to-br from-slate-50 via-white to-violet-50"
+        }`}
+      >
+        <div className="w-full max-w-md text-center">
+          <div
+            className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg ${
+              darkMode
+                ? "bg-[#111827] text-violet-400"
+                : "bg-white text-[#670fff]"
+            }`}
           >
-            <path
-              fillRule="evenodd"
-              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Geri
-        </button>
-      </Link>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6  shadow-lg rounded-xl p-6">
-        <div className="lg:col-span-2 space-y-6">
-          <h1 className="text-2xl font-bold capitalize mb-2">
-            {post?.clothing?.category} {post?.clothing?.brand}{" "}
-            {post?.clothing?.model} {post?.clothing?.type}
-          </h1>
-
-          <Carousel showThumbs={true} showStatus={false} autoPlay infiniteLoop>
-            {imageArray?.map((img, index) => (
-              <div
-                className="w-full h-[400px] cursor-pointer"
-                key={index}
-                onClick={() => openZoom(index)}
-              >
-                <img
-                  src={
-                    img.startsWith("http")
-                      ? img
-                      : `${process.env.REACT_APP_API_URL}/uploads/${img}`
-                  }
-                  alt={`Şəkil ${index + 1}`}
-                  className="w-full h-full object-contain rounded-lg"
-                />
-              </div>
-            ))}
-          </Carousel>
-
-          <p className="text-3xl font-bold text-black mt-4">{post.price} AZN</p>
-          <div className="mt-4">
-            <h2 className="text-lg font-semibold ">
-              <span className="font-semibold">Məhsul: </span>
-              {post.title}
-            </h2>
-            <p className="text-gray-700 leading-relaxed">
-              <span className="font-semibold">Məhsul tipi: </span>
-              {post?.clothing?.type}
-            </p>
-            <p className="text-gray-700 leading-relaxed">
-              <span className="font-semibold">Kateqoriya: </span>
-              {post.category}
-            </p>
-            <p className="text-gray-700 leading-relaxed">
-              <span className="font-semibold">Marka: </span>
-              {post?.clothing?.brand}
-            </p>
-            <p className="text-gray-700 leading-relaxed">
-              <span className="font-semibold">Rəng: </span>
-              {post?.clothing?.color}
-            </p>
-            <p className="text-gray-700 leading-relaxed">
-              <span className="font-semibold">Ölçü: </span>
-              {post?.clothing?.size}
-            </p>
-            <p className="text-gray-700 leading-relaxed">
-              <span className="font-semibold">Vəziyyəti: </span>
-              {post?.clothing?.condition}
-            </p>
-            <p className="text-gray-700 leading-relaxed">
-              <span className="font-semibold">Qeyd: </span>
-              {post?.clothing?.description}
-            </p>
+            <Sparkles size={30} className="animate-pulse" />
           </div>
 
-          <div className="flex items-center justify-between mt-6 text-sm text-gray-500">
-            <p>Elanın nömrəsi: {post.id}</p>
-            <p>
-              {post.location}, {formatDate(post.data)},{" "}
-              {getCurrentTime(post.data)}
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-gray-50 border rounded-xl shadow-md p-5 h-fit">
-          <h2 className="text-xl font-bold mb-4">Əlaqə məlumatı</h2>
-          <div className="space-y-2 text-gray-700">
-            <p>
-              <span className="font-semibold">Ad:</span>{" "}
-              {post.contact?.name || "N/A"}
-            </p>
-            <p>
-              <span className="font-semibold">Telefon:</span>
-              <a
-                href={`tel:${post.contact?.phone || "N/A"}`}
-                className="text-blue-600 font-bold ml-1"
-              >
-                {post.contact?.phone || "N/A"}
-              </a>
-            </p>
-            <p>
-              <span className="font-semibold">Email:</span>{" "}
-              {post.contact?.email || "N/A"}
-            </p>
-            <p>
-              <span className="font-semibold">Şəhər:</span> {post.location}
-            </p>
-          </div>
-          <a
-            href={`tel:${post.contact?.phone || "N/A"}`}
-            className="text-white font-bold ml-1"
+          <h2
+            className={`text-xl font-black ${
+              darkMode ? "text-white" : "text-gray-900"
+            }`}
           >
-            <button className="w-full mt-6 py-3 bg-green-500 hover:bg-red-700 text-white font-bold rounded-lg transition">
-              Zəng et
-            </button>
-          </a>
+            Elan yüklənir...
+          </h2>
 
-          <div className="flex gap-2 mt-4">
-            <button
-              onClick={() => handleUpgrade(post._id, "vip")}
-              className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
-            >
-              <span className="text-blue-500 ">VIP et</span>
-            </button>
+          <p
+            className={`mt-2 text-sm ${
+              darkMode ? "text-gray-400" : "text-gray-500"
+            }`}
+          >
+            Məlumatlar hazırlanır
+          </p>
 
-            <button
-              onClick={() => handleUpgrade(post._id, "premium")}
-              className="px-4 py-2 bg-gray-300/50 border border-gray-300 rounded hover:border-blue-500 hover:bg-blue-50 transition-all duration-300"
-            >
-              <span className="text-blue-500 ">Premium et</span>
-            </button>
+          <div className="mt-6 h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
+            <div className="h-full w-1/2 animate-pulse rounded-full bg-gradient-to-r from-[#670fff] to-violet-400" />
           </div>
         </div>
       </div>
+    );
+  }
 
-      <h2 className="text-[22px] font-bold text-gray-700 mt-10 mb-4">
-        Bənzər elanlar
-      </h2>
-      <div className="grid justify-items-center mx-auto my-auto max-w-[1000px] grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {[...clothing]
-          .reverse()
-          .slice(0, 8)
-          .map((item) => (
-            <Link
-              target="_blank"
-              rel="noopener noreferrer"
-              key={item._id}
-              to={`/PostDetailClothing/${item._id}`}
+  /* =========================================================
+     404
+  ========================================================= */
+
+  if (notFound || !post) {
+    return (
+      <div
+        className={`min-h-screen flex items-center justify-center px-4 ${
+          darkMode
+            ? "bg-[#080b14]"
+            : "bg-gradient-to-br from-violet-50 via-white to-fuchsia-50"
+        }`}
+      >
+        <div className="text-center">
+          <div className="text-[110px] sm:text-[150px] font-black leading-none bg-gradient-to-r from-[#670fff] to-fuchsia-500 bg-clip-text text-transparent">
+            404
+          </div>
+
+          <div
+            className={`mx-auto max-w-md text-lg font-bold ${
+              darkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            Elan yüklənmədi
+          </div>
+
+          <p
+            className={`mt-2 text-sm ${
+              darkMode ? "text-gray-400" : "text-gray-500"
+            }`}
+          >
+            Elan silinmiş və ya mövcud olmaya bilər.
+          </p>
+
+          <Link
+            to="/"
+            className="mt-7 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#670fff] to-violet-500 px-6 py-3 font-bold text-white shadow-lg shadow-[#670fff]/20 transition hover:-translate-y-0.5"
+          >
+            <ArrowLeft size={18} />
+            Əsas səhifəyə qayıt
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  /* =========================================================
+     DATA
+  ========================================================= */
+
+  const clothingData = post?.clothing || {};
+
+  const title =
+    [
+      clothingData.category,
+      clothingData.brand,
+      clothingData.model,
+      clothingData.type,
+    ]
+      .filter(Boolean)
+      .join(" ") ||
+    post.title ||
+    "Geyim elanı";
+
+  const phone = post.contact?.phone || "";
+  const email = post.contact?.email || "";
+  const contactName = post.contact?.name || "N/A";
+
+  const similarClothing = [...clothing]
+    .filter((item) => {
+      const itemId = item?._id || item?.id;
+      return String(itemId) !== String(post?._id || post?.id);
+    })
+    .reverse()
+    .slice(0, 8);
+
+  /* =========================================================
+     RETURN
+  ========================================================= */
+
+  return (
+    <div
+      className={`min-h-screen transition-colors duration-300 rounded-2xl ${
+        darkMode ? "bg-[#080b14] text-white" : "bg-[#f7f8fc] text-gray-900"
+      }`}
+    >
+      <div className="mx-auto max-w-7xl px-3 pb-12 pt-20 sm:px-5 lg:px-6">
+        {/* =====================================================
+            GERİ
+        ===================================================== */}
+
+        <div className="mb-5">
+          <Link
+            to="/Katalog/Geyimlər"
+            className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold transition ${
+              darkMode
+                ? "border-gray-800 bg-[#111827] text-gray-200 hover:bg-[#182033]"
+                : "border-gray-200 bg-white text-gray-700 shadow-sm hover:border-[#670fff]/30 hover:text-[#670fff]"
+            }`}
+          >
+            <ArrowLeft size={18} />
+            Geri
+          </Link>
+        </div>
+
+        {/* =====================================================
+            ƏSAS KART
+        ===================================================== */}
+
+        <div
+          className={`overflow-hidden rounded-3xl border shadow-xl ${
+            darkMode
+              ? "border-gray-800 bg-[#0d111d] shadow-black/20"
+              : "border-gray-100 bg-white shadow-gray-200/60"
+          }`}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px]">
+            {/* =================================================
+                SOL
+            ================================================= */}
+
+            <div className="min-w-0 p-4 sm:p-6 lg:p-8">
+              {/* TITLE */}
+
+              <div className="mb-6">
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#670fff]/10 px-3 py-1 text-xs font-black text-[#670fff]">
+                    <Tag size={13} />
+                    Geyim
+                  </span>
+
+                  {clothingData.condition && (
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${
+                        darkMode
+                          ? "bg-emerald-500/10 text-emerald-400"
+                          : "bg-emerald-50 text-emerald-600"
+                      }`}
+                    >
+                      <CheckCircle2 size={13} />
+                      {clothingData.condition}
+                    </span>
+                  )}
+                </div>
+
+                <h1
+                  className={`text-2xl font-black leading-tight sm:text-3xl lg:text-4xl ${
+                    darkMode ? "text-white" : "text-gray-950"
+                  }`}
+                >
+                  {title}
+                </h1>
+
+                <div
+                  className={`mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm ${
+                    darkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5">
+                    <MapPin size={15} />
+                    {post.location || "Məlum deyil"}
+                  </span>
+
+                  <span className="flex items-center gap-1.5">
+                    <CalendarDays size={15} />
+                    {formatDate(post.data)}
+                  </span>
+
+                  {post.data && (
+                    <span className="flex items-center gap-1.5">
+                      <Clock3 size={15} />
+                      {getCurrentTime(post.data)}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* =================================================
+                  GALEREYA
+              ================================================= */}
+
+              <div
+                className={`overflow-hidden rounded-3xl border ${
+                  darkMode
+                    ? "border-gray-800 bg-[#080b14]"
+                    : "border-gray-100 bg-gray-50"
+                }`}
+              >
+                <div className="relative">
+                  {imageArray.length > 0 ? (
+                    <div
+                      className="group relative flex h-[320px] cursor-zoom-in items-center justify-center sm:h-[450px] lg:h-[500px]"
+                      onClick={() => openZoom(selectedImage)}
+                    >
+                      <img
+                        src={imageArray[selectedImage]}
+                        alt={title}
+                        className="h-full w-full object-contain p-3 transition duration-300 group-hover:scale-[1.015]"
+                        onError={(e) => {
+                          e.currentTarget.src = "/no-image.jpg";
+                        }}
+                      />
+
+                      <div className="absolute right-4 top-4 flex items-center gap-2">
+                        <span className="rounded-full bg-black/60 px-3 py-1.5 text-xs font-bold text-white backdrop-blur">
+                          {selectedImage + 1} / {imageArray.length}
+                        </span>
+
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur">
+                          <Maximize2 size={18} />
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex h-[320px] items-center justify-center sm:h-[450px]">
+                      <div className="text-center">
+                        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-200 dark:bg-gray-800">
+                          <Tag size={25} />
+                        </div>
+
+                        <p
+                          className={`font-bold ${
+                            darkMode ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          Şəkil yoxdur
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* THUMBNAILS */}
+
+                {imageArray.length > 1 && (
+                  <div className="flex gap-2 overflow-x-auto p-3">
+                    {imageArray.map((image, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => setSelectedImage(index)}
+                        className={`h-16 w-20 shrink-0 overflow-hidden rounded-xl border-2 transition sm:h-20 sm:w-24 ${
+                          selectedImage === index
+                            ? "border-[#670fff] shadow-md"
+                            : darkMode
+                              ? "border-gray-800"
+                              : "border-gray-200"
+                        }`}
+                      >
+                        <img
+                          src={image}
+                          alt={`Şəkil ${index + 1}`}
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = "/no-image.jpg";
+                          }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* PRICE */}
+
+              <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p
+                    className={`mb-1 text-sm font-semibold ${
+                      darkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    Elanın qiyməti
+                  </p>
+
+                  <div className="text-3xl font-black text-[#670fff] sm:text-4xl">
+                    {post.price ?? "0"} ₼
+                  </div>
+                </div>
+
+                <div
+                  className={`flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold ${
+                    darkMode
+                      ? "bg-pink-500/10 text-pink-400"
+                      : "bg-pink-50 text-pink-500"
+                  }`}
+                >
+                  <Heart size={17} />
+                  Elanı yadda saxla
+                </div>
+              </div>
+
+              {/* =================================================
+                  ELAN DETALLARI
+              ================================================= */}
+
+              <div className="mt-8">
+                <h2 className="mb-4 text-xl font-black">Elan haqqında</h2>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <DetailItem
+                    label="Məhsul"
+                    value={post.title}
+                    darkMode={darkMode}
+                  />
+
+                  <DetailItem
+                    label="Məhsul tipi"
+                    value={clothingData.type}
+                    darkMode={darkMode}
+                  />
+
+                  <DetailItem
+                    label="Kateqoriya"
+                    value={post.category}
+                    darkMode={darkMode}
+                  />
+
+                  <DetailItem
+                    label="Marka"
+                    value={clothingData.brand}
+                    darkMode={darkMode}
+                  />
+
+                  <DetailItem
+                    label="Model"
+                    value={clothingData.model}
+                    darkMode={darkMode}
+                  />
+
+                  <DetailItem
+                    label="Rəng"
+                    value={clothingData.color}
+                    darkMode={darkMode}
+                  />
+
+                  <DetailItem
+                    label="Ölçü"
+                    value={clothingData.size}
+                    darkMode={darkMode}
+                  />
+
+                  <DetailItem
+                    label="Vəziyyəti"
+                    value={clothingData.condition}
+                    darkMode={darkMode}
+                  />
+                </div>
+              </div>
+
+              {/* DESCRIPTION */}
+
+              {clothingData.description && (
+                <div className="mt-8">
+                  <h2 className="mb-3 text-xl font-black">Qeyd</h2>
+
+                  <div
+                    className={`rounded-2xl border p-5 leading-7 ${
+                      darkMode
+                        ? "border-gray-800 bg-[#111827] text-gray-300"
+                        : "border-gray-100 bg-gray-50 text-gray-700"
+                    }`}
+                  >
+                    {clothingData.description}
+                  </div>
+                </div>
+              )}
+
+              {/* AD META */}
+
+              <div
+                className={`mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-t pt-5 text-sm ${
+                  darkMode
+                    ? "border-gray-800 text-gray-400"
+                    : "border-gray-100 text-gray-500"
+                }`}
+              >
+                <span>
+                  Elanın nömrəsi:{" "}
+                  <strong
+                    className={darkMode ? "text-gray-200" : "text-gray-800"}
+                  >
+                    {post.id || post._id}
+                  </strong>
+                </span>
+
+                <span className="flex items-center gap-1.5">
+                  <MapPin size={15} />
+                  {post.location || "Məlum deyil"}
+                </span>
+              </div>
+            </div>
+
+            {/* =================================================
+                SAĞ ƏLAQƏ
+            ================================================= */}
+
+            <div
+              className={`border-t p-4 sm:p-6 lg:border-l lg:border-t-0 lg:p-7 ${
+                darkMode
+                  ? "border-gray-800 bg-[#0a0e18]"
+                  : "border-gray-100 bg-gray-50/70"
+              }`}
             >
-              <div className="border w-[226px] h-[304px] rounded-lg bg-white shadow-sm hover:shadow-xl transition duration-200">
-                <img
-                  src={
-                    item.images?.[0]?.startsWith("http")
-                      ? item.images[0]
-                      : "/no-image.jpg"
-                  }
-                  alt={item.title}
-                  className="w-full h-[180px] object-cover rounded-t-lg cursor-pointer"
-                  onClick={() => openZoom(0)}
-                />
-                <div className="p-4">
-                  <h3 className="text-lg font-bold text-black">
-                    {item.price} ₼
-                  </h3>
-                  <p className="text-sm font-bold truncate w-64">
-                    {item.title}
-                  </p>
-                  <p className="text-gray-700 leading-relaxed">
-                    {item?.clothing?.brand}
-                  </p>
-                  <p className="text-base mt-1 text-gray-400">
-                    {item.location}, {formatDate(item.data)}{" "}
-                    {getCurrentTime(item.data)}
+              <div
+                className={`rounded-3xl border p-5 shadow-sm ${
+                  darkMode
+                    ? "border-gray-800 bg-[#111827]"
+                    : "border-gray-200 bg-white"
+                }`}
+              >
+                <div className="mb-5 flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#670fff] to-violet-400 text-white shadow-lg shadow-[#670fff]/20">
+                    <User size={23} />
+                  </div>
+
+                  <div>
+                    <h2 className="font-black">Əlaqə məlumatı</h2>
+
+                    <p
+                      className={`text-xs ${
+                        darkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      Elan sahibi
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <ContactRow
+                    icon={<User size={17} />}
+                    label="Ad"
+                    value={contactName}
+                    darkMode={darkMode}
+                  />
+
+                  <ContactRow
+                    icon={<MapPin size={17} />}
+                    label="Şəhər"
+                    value={post.location || "N/A"}
+                    darkMode={darkMode}
+                  />
+
+                  <ContactRow
+                    icon={<Phone size={17} />}
+                    label="Telefon"
+                    value={phone || "N/A"}
+                    darkMode={darkMode}
+                  />
+
+                  <ContactRow
+                    icon={<Mail size={17} />}
+                    label="Email"
+                    value={email || "N/A"}
+                    darkMode={darkMode}
+                  />
+                </div>
+
+                {/* ZƏNG */}
+
+                {phone && (
+                  <a
+                    href={`tel:${phone}`}
+                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-500 py-3.5 font-black text-white shadow-lg shadow-green-500/20 transition hover:-translate-y-0.5"
+                  >
+                    <Phone size={19} />
+                    Zəng et
+                  </a>
+                )}
+
+                {/* EMAIL */}
+
+                {email && (
+                  <a
+                    href={`mailto:${email}`}
+                    className={`mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border py-3.5 font-bold transition ${
+                      darkMode
+                        ? "border-gray-700 text-gray-200 hover:bg-gray-800"
+                        : "border-gray-200 text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    <Mail size={18} />
+                    Email göndər
+                  </a>
+                )}
+              </div>
+
+              {/* TRUST */}
+
+              <div
+                className={`mt-4 flex gap-3 rounded-2xl border p-4 ${
+                  darkMode
+                    ? "border-gray-800 bg-[#111827]"
+                    : "border-gray-100 bg-white"
+                }`}
+              >
+                <ShieldCheck className="shrink-0 text-emerald-500" size={22} />
+
+                <div>
+                  <p className="text-sm font-black">Təhlükəsiz alış-veriş</p>
+
+                  <p
+                    className={`mt-1 text-xs leading-5 ${
+                      darkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    Satıcı ilə əlaqə saxlamazdan əvvəl elan məlumatlarını
+                    diqqətlə yoxlayın.
                   </p>
                 </div>
               </div>
-            </Link>
-          ))}
+
+              {/* VIP / PREMIUM */}
+
+              <div
+                className={`mt-4 rounded-3xl border p-5 ${
+                  darkMode
+                    ? "border-gray-800 bg-[#111827]"
+                    : "border-gray-200 bg-white"
+                }`}
+              >
+                <div className="mb-4">
+                  <h3 className="font-black">Elanı önə çıxar</h3>
+
+                  <p
+                    className={`mt-1 text-xs ${
+                      darkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    Elanınızı daha görünən etmək üçün seçimlərdən istifadə edin.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    disabled={isUpgrading}
+                    onClick={() => handleUpgrade(post._id, "vip")}
+                    className="flex flex-col items-center justify-center gap-1 rounded-2xl border border-blue-200 bg-blue-50 px-3 py-3 text-blue-600 transition hover:-translate-y-0.5 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-400"
+                  >
+                    <Crown size={20} />
+                    <span className="text-sm font-black">VIP et</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={isUpgrading}
+                    onClick={() => handleUpgrade(post._id, "premium")}
+                    className="flex flex-col items-center justify-center gap-1 rounded-2xl border border-violet-200 bg-violet-50 px-3 py-3 text-violet-600 transition hover:-translate-y-0.5 hover:bg-violet-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-violet-500/20 dark:bg-violet-500/10 dark:text-violet-400"
+                  >
+                    <Sparkles size={20} />
+                    <span className="text-sm font-black">Premium</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* =====================================================
+            BƏNZƏR ELANLAR
+        ===================================================== */}
+
+        {similarClothing.length > 0 && (
+          <section className="mt-12">
+            <div className="mb-5 flex items-end justify-between gap-3">
+              <div>
+                <p className="mb-1 text-sm font-bold text-[#670fff]">
+                  Sizə uyğun
+                </p>
+
+                <h2 className="text-2xl font-black">Bənzər elanlar</h2>
+              </div>
+
+              <Link
+                to="/Katalog/Geyimlər"
+                className={`hidden items-center gap-1 text-sm font-bold sm:flex ${
+                  darkMode ? "text-violet-400" : "text-[#670fff]"
+                }`}
+              >
+                Hamısına bax
+                <ArrowRight size={16} />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
+              {similarClothing.map((item) => {
+                const itemId = item?._id || item?.id;
+
+                const itemImage =
+                  Array.isArray(item.images) && item.images.length > 0
+                    ? getImageUrl(item.images[0])
+                    : "/no-image.jpg";
+
+                return (
+                  <Link
+                    key={itemId}
+                    to={`/PostDetailClothing/${itemId}`}
+                    className="group min-w-0"
+                  >
+                    <div
+                      className={`overflow-hidden rounded-2xl border transition duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                        darkMode
+                          ? "border-gray-800 bg-[#0d111d] hover:border-gray-700"
+                          : "border-gray-100 bg-white hover:border-violet-100"
+                      }`}
+                    >
+                      <div className="relative h-40 overflow-hidden sm:h-48">
+                        <img
+                          src={itemImage}
+                          alt={item.title || "Geyim elanı"}
+                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                          onError={(e) => {
+                            e.currentTarget.src = "/no-image.jpg";
+                          }}
+                        />
+
+                        <div className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur">
+                          <ExternalLink size={14} />
+                        </div>
+                      </div>
+
+                      <div className="p-3 sm:p-4">
+                        <div className="mb-1 text-lg font-black text-[#670fff]">
+                          {item.price ?? "0"} ₼
+                        </div>
+
+                        <h3
+                          className={`truncate text-sm font-black ${
+                            darkMode ? "text-white" : "text-gray-900"
+                          }`}
+                        >
+                          {item.title ||
+                            [item?.clothing?.brand, item?.clothing?.model]
+                              .filter(Boolean)
+                              .join(" ") ||
+                            "Geyim"}
+                        </h3>
+
+                        {item?.clothing?.brand && (
+                          <p
+                            className={`mt-1 truncate text-xs font-semibold ${
+                              darkMode ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            {item.clothing.brand}
+                          </p>
+                        )}
+
+                        <div
+                          className={`mt-2 flex items-center gap-1 truncate text-xs ${
+                            darkMode ? "text-gray-500" : "text-gray-400"
+                          }`}
+                        >
+                          <MapPin size={12} />
+                          {item.location || "Məlum deyil"}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
       </div>
 
-      {zoomIndex !== null && (
+      {/* =======================================================
+          FULLSCREEN ZOOM
+      ======================================================= */}
+
+      {zoomIndex !== null && imageArray.length > 0 && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50"
+          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/95 p-3 backdrop-blur-sm sm:p-6"
           onClick={closeZoom}
         >
+          {/* CLOSE */}
+
           <button
-            onClick={() => setIsOpen(false)}
-            className="absolute top-5 right-[200px] text-gray-600 hover:text-red-600"
+            type="button"
+            onClick={closeZoom}
+            className="absolute right-3 top-3 z-[100001] flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-red-500 sm:right-6 sm:top-6"
+            aria-label="Bağla"
           >
-            <X size={35} />
+            <X size={24} />
           </button>
-          <button
-            className="absolute w-10 h-10 left-5 text-white text-8xl font-bold z-50"
-            onClick={(e) => {
-              e.stopPropagation();
-              prevImage();
-            }}
-          >
-            ‹
-          </button>
+
+          {/* COUNTER */}
+
+          <div className="absolute left-1/2 top-4 z-[100001] -translate-x-1/2 rounded-full bg-white/10 px-4 py-2 text-sm font-bold text-white backdrop-blur sm:top-6">
+            {zoomIndex + 1} / {imageArray.length}
+          </div>
+
+          {/* PREVIOUS */}
+
+          {imageArray.length > 1 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                prevImage();
+              }}
+              className="absolute left-2 z-[100001] flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 sm:left-6"
+            >
+              <ChevronLeft size={30} />
+            </button>
+          )}
+
+          {/* IMAGE */}
+
           <img
-            src={
-              imageArray[zoomIndex].startsWith("http")
-                ? imageArray[zoomIndex]
-                : `${process.env.REACT_APP_API_URL}/uploads/${imageArray[zoomIndex]}`
-            }
-            alt="Zoomed"
-            className="max-w-[90%] max-h-[90%] object-contain rounded-lg"
-          />
-          <button
-            className="absolute w-10 h-10 right-5 text-white text-8xl font-bold z-50"
-            onClick={(e) => {
-              e.stopPropagation();
-              nextImage();
+            src={imageArray[zoomIndex]}
+            alt={`${title} ${zoomIndex + 1}`}
+            className="max-h-[88vh] max-w-[92vw] rounded-2xl object-contain shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+            onError={(e) => {
+              e.currentTarget.src = "/no-image.jpg";
             }}
-          >
-            ›
-          </button>
+          />
+
+          {/* NEXT */}
+
+          {imageArray.length > 1 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage();
+              }}
+              className="absolute right-2 z-[100001] flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 sm:right-6"
+            >
+              <ChevronRight size={30} />
+            </button>
+          )}
         </div>
       )}
+    </div>
+  );
+}
+
+/* ===========================================================
+   DETAIL ITEM
+=========================================================== */
+
+function DetailItem({ label, value, darkMode }) {
+  return (
+    <div
+      className={`rounded-2xl border p-4 ${
+        darkMode ? "border-gray-800 bg-[#111827]" : "border-gray-100 bg-gray-50"
+      }`}
+    >
+      <div
+        className={`mb-1 text-xs font-bold uppercase tracking-wide ${
+          darkMode ? "text-gray-500" : "text-gray-400"
+        }`}
+      >
+        {label}
+      </div>
+
+      <div
+        className={`break-words text-sm font-bold ${
+          darkMode ? "text-gray-200" : "text-gray-800"
+        }`}
+      >
+        {value || "N/A"}
+      </div>
+    </div>
+  );
+}
+
+/* ===========================================================
+   CONTACT ROW
+=========================================================== */
+
+function ContactRow({ icon, label, value, darkMode }) {
+  return (
+    <div
+      className={`flex items-center gap-3 rounded-2xl p-3 ${
+        darkMode ? "bg-[#0d111d]" : "bg-gray-50"
+      }`}
+    >
+      <div
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+          darkMode
+            ? "bg-violet-500/10 text-violet-400"
+            : "bg-violet-50 text-[#670fff]"
+        }`}
+      >
+        {icon}
+      </div>
+
+      <div className="min-w-0">
+        <div
+          className={`text-[11px] font-bold uppercase ${
+            darkMode ? "text-gray-500" : "text-gray-400"
+          }`}
+        >
+          {label}
+        </div>
+
+        <div
+          className={`truncate text-sm font-bold ${
+            darkMode ? "text-gray-200" : "text-gray-800"
+          }`}
+        >
+          {value}
+        </div>
+      </div>
     </div>
   );
 }
