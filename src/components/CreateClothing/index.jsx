@@ -32,6 +32,7 @@ const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
 const API_URL = `${BASE_URL}/api/Clothing`;
 
 const INITIAL_FORM = {
+  businessId: null,
   title: "",
   type: "",
   description: "",
@@ -133,13 +134,23 @@ const normalizeText = (value) =>
     .toLocaleLowerCase("az-AZ")
     .trim();
 
-export default function CreateClothing() {
+export default function CreateClothing({
+  businessId = null,
+  businessName = "",
+  businessCategory = null,
+}) {
   const { darkMode } = useTheme();
 
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  const [clothingPost, setClothingPost] = useState(INITIAL_FORM);
+const [clothingPost, setClothingPost] = useState({
+  ...INITIAL_FORM,
+  businessId: businessId || null,
+});
+  
+  
+
 
   const [clothingItems, setClothingItems] = useState([]);
 
@@ -322,12 +333,13 @@ export default function CreateClothing() {
     });
 
     setClothingPost({
-      ...INITIAL_FORM,
-      data: new Date(),
-      contact: {
-        ...INITIAL_FORM.contact,
-      },
-    });
+  ...INITIAL_FORM,
+  businessId: businessId || null,
+  data: new Date(),
+  contact: {
+    ...INITIAL_FORM.contact,
+  },
+});
 
     setImages([]);
     setPreview([]);
@@ -422,6 +434,14 @@ export default function CreateClothing() {
       formData.append("contact.email", clothingPost.contact?.email || "");
 
       formData.append("contact.phone", clothingPost.contact?.phone || "");
+
+// Business
+const finalBusinessId =
+  clothingPost.businessId || businessId || null;
+
+if (finalBusinessId) {
+  formData.append("businessId", finalBusinessId);
+}
 
       // User
       const userId = localStorage.getItem("userId");
@@ -544,6 +564,8 @@ export default function CreateClothing() {
     setEditingId(getId(item));
 
     setClothingPost({
+        businessId: item.businessId || businessId || null,
+
       title: item.title || "",
       type: item.type || "",
       description: item.description || "",

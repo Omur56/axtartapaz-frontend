@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+
 import axios from "axios";
+
 import Swal from "sweetalert2";
+
 import {
   X,
   Search,
@@ -29,7 +32,7 @@ import { useTheme } from "../Main/ThemeContext";
 
 const API_URL = process.env.REACT_APP_API_URL || "";
 
-const createEmptyAccessory = () => ({
+const createEmptyAccessory = (businessId = null) => ({
   title: "",
   brand: "",
   model: "",
@@ -45,25 +48,25 @@ const createEmptyAccessory = () => ({
   liked: false,
   favorite: false,
   data: {},
+  businessId: businessId || null,
 });
 
-const CreateAccessoryPost = () => {
+const CreateAccessoryPost = ({
+  businessId = null,
+  businessName = "",
+  businessCategory = null,
+}) => {
   const { darkMode } = useTheme();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [accessory, setAccessory] = useState(createEmptyAccessory());
-
+  const [accessory, setAccessory] = useState(createEmptyAccessory(businessId));
   const [accessoryItems, setAccessoryItems] = useState([]);
-
   const [editingId, setEditingId] = useState(null);
-
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
-
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -212,7 +215,7 @@ const CreateAccessoryPost = () => {
   // =========================================================
 
   const resetForm = () => {
-    setAccessory(createEmptyAccessory());
+    setAccessory(createEmptyAccessory(businessId));
     setImages([]);
     setPreview([]);
     setEditingId(null);
@@ -275,10 +278,18 @@ const CreateAccessoryPost = () => {
       formData.append("price", accessory.price);
       formData.append("location", accessory.location);
       formData.append("description", accessory.description);
-
       formData.append("contact", JSON.stringify(accessory.contact || {}));
-
       formData.append("data", JSON.stringify(accessory.data || {}));
+
+      // =========================================================
+      // BUSINESS ID
+      // =========================================================
+
+      const finalBusinessId = businessId || accessory.businessId || null;
+
+      if (finalBusinessId) {
+        formData.append("businessId", finalBusinessId);
+      }
 
       images.forEach((image) => {
         formData.append("images", image);
@@ -430,14 +441,23 @@ const CreateAccessoryPost = () => {
       location: item.location || item.city || "",
       images: item.images || [],
       description: item.description || "",
+
       contact: {
         name: item.contact?.name || item.accessory?.contact?.name || "",
         email: item.contact?.email || item.accessory?.contact?.email || "",
         phone: item.contact?.phone || item.accessory?.contact?.phone || "",
       },
+
       liked: item.liked || false,
       favorite: item.favorite || item.favourite || false,
+
       data: item.data || {},
+
+      // =========================================================
+      // BUSINESS ID QORUNUR
+      // =========================================================
+
+      businessId: item.businessId || businessId || null,
     });
 
     // Mövcud şəkilləri göstər
@@ -449,7 +469,6 @@ const CreateAccessoryPost = () => {
 
     setPreview(existingImages);
     setImages([]);
-
     setIsOpen(true);
   };
 
@@ -741,12 +760,11 @@ const CreateAccessoryPost = () => {
             value={value}
             onChange={onChange}
             placeholder={placeholder}
-            className={`w-full rounded-xl border px-10 py-3 outline-none transition
-              ${
-                darkMode
-                  ? "border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:border-purple-500"
-                  : "border-gray-200 bg-white text-gray-800 placeholder:text-gray-400 focus:border-purple-500"
-              }`}
+            className={`w-full rounded-xl border px-10 py-3 outline-none transition ${
+              darkMode
+                ? "border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:border-purple-500"
+                : "border-gray-200 bg-white text-gray-800 placeholder:text-gray-400 focus:border-purple-500"
+            }`}
           />
         </div>
       </div>
@@ -783,7 +801,6 @@ const CreateAccessoryPost = () => {
   const renderCard = (item) => {
     const id = getId(item);
     const image = getMainImage(item);
-
     const owner = isOwner(item);
 
     const priorityType =
@@ -795,12 +812,11 @@ const CreateAccessoryPost = () => {
     return (
       <div
         key={id}
-        className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl
-          ${
-            darkMode
-              ? "border-white/10 bg-[#17171c] hover:border-purple-500/40"
-              : "border-gray-200 bg-white hover:border-purple-300"
-          }`}
+        className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+          darkMode
+            ? "border-white/10 bg-[#17171c] hover:border-purple-500/40"
+            : "border-gray-200 bg-white hover:border-purple-300"
+        }`}
       >
         {/* =====================================================
             ŞƏKİL
@@ -827,15 +843,13 @@ const CreateAccessoryPost = () => {
           {(isPremium || isVip) && (
             <div className="absolute left-3 top-3 z-20">
               <div
-                className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold text-white shadow-lg
-                  ${
-                    isPremium
-                      ? "bg-gradient-to-r from-amber-500 to-orange-500"
-                      : "bg-gradient-to-r from-purple-600 to-fuchsia-600"
-                  }`}
+                className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold text-white shadow-lg ${
+                  isPremium
+                    ? "bg-gradient-to-r from-amber-500 to-orange-500"
+                    : "bg-gradient-to-r from-purple-600 to-fuchsia-600"
+                }`}
               >
                 <Sparkles size={13} />
-
                 {isPremium ? "PREMIUM" : "VIP"}
               </div>
             </div>
@@ -848,12 +862,12 @@ const CreateAccessoryPost = () => {
           {owner && (
             <div className="absolute right-3 top-3 z-30 flex items-center gap-2">
               {/* REDAKTƏ */}
+
               <button
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-
                   handleEdit(item);
                 }}
                 title="Elanı redaktə et"
@@ -863,12 +877,12 @@ const CreateAccessoryPost = () => {
               </button>
 
               {/* SİL */}
+
               <button
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-
                   handleDelete(id);
                 }}
                 title="Elanı sil"
@@ -888,7 +902,6 @@ const CreateAccessoryPost = () => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-
               handleFavorite(item);
             }}
             className="absolute bottom-3 right-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur-md transition hover:scale-110"

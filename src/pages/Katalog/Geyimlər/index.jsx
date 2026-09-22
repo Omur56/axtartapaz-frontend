@@ -1,13 +1,26 @@
 import React from "react";
+
+import { useLocation } from "react-router-dom";
+
 import { Shirt, Sparkles } from "lucide-react";
 
 import CreateClothing from "../../../components/CreateClothing";
+
 import BottomMenu from "../../../components/MobileMenu";
+
 import { useTheme } from "../../../components/Main/ThemeContext";
+
 import BubbleBackground from "../../../components/ui/BubbleBackground";
 
 function Geyimlər() {
   const { darkMode } = useTheme();
+  const location = useLocation();
+
+  const businessId = location.state?.businessId || null;
+
+  const businessName = location.state?.businessName || "";
+
+  const businessCategory = location.state?.businessCategory || null;
 
   return (
     <div
@@ -17,12 +30,8 @@ function Geyimlər() {
     >
       <BubbleBackground />
 
-      <main className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 pt-24 pb-28 sm:pb-12">
-        {/* =====================================================
-            Header
-        ===================================================== */}
-
-        <div className="mx-auto mb-8 sm:mb-10 max-w-3xl text-center">
+      <main className="relative z-10 mx-auto w-full max-w-6xl px-4 pt-24 pb-28 sm:px-6 sm:pb-12 lg:px-8">
+        <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-10">
           <div
             className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold ${
               darkMode
@@ -58,10 +67,6 @@ function Geyimlər() {
           </p>
         </div>
 
-        {/* =====================================================
-            Form Card
-        ===================================================== */}
-
         <section
           className={`relative overflow-hidden rounded-[28px] border p-3 sm:p-5 lg:p-7 ${
             darkMode
@@ -69,13 +74,16 @@ function Geyimlər() {
               : "border-slate-200 bg-white shadow-xl shadow-slate-300/20"
           }`}
         >
-          {/* Decorative glow */}
           <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-teal-500/10 blur-3xl" />
 
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-emerald-500/10 blur-3xl" />
 
           <div className="relative z-10">
-            <CreateClothing />
+            <CreateClothing
+              businessId={businessId}
+              businessName={businessName}
+              businessCategory={businessCategory}
+            />
           </div>
         </section>
       </main>

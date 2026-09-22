@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
-import { categories } from "../Katalog/Cateqories";
+import { categories } from "./Cateqories";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -29,31 +29,75 @@ const Katalog = ({
   const { darkMode } = useTheme();
 
   // =====================================================
-  // BİZNES KATEQORİYALARININ KATALOG PATH-LƏRİ
-  // =====================================================
-
-  const businessCategoryPathMap = {
-    car: "Nəqliyyat",
-    phone: "Telefon",
-    electronics: "Elektronika",
-    clothing: "Geyim",
-    realEstate: "Daşınmaz əmlak",
-    homeGarden: "Ev və bağ",
-    household: "Məişət",
-    accessory: "Aksesuar",
-    listing: "Digər",
-  };
-
-  // =====================================================
-  // BİZNES MƏLUMATLARINI NORMALİZƏ ET
+  // BİZNES KATEQORİYASINI NORMALİZƏ ET
   // =====================================================
 
   const normalizedBusinessCategory =
     typeof businessCategory === "string" ? businessCategory.trim() : "";
 
+  // =====================================================
+  // BACKEND KATEQORİYASINI CATEQORIES.JS PATH-INA
+  // ÇEVİR
+  // =====================================================
+
+  const businessCategoryPathMap = {
+    car: "Nəqliyyat",
+    homeGarden: "Ev_veBag",
+    electronics: "Elektronika",
+    accessory: "Ehtiyyat_hissələri_ve_aksesuarlar",
+    realEstate: "Daşınmaz_əmlak",
+    household: "Məişət_Texnikası",
+    phone: "Telefonlar",
+    clothing: "Geyimlər",
+    listing: null,
+  };
+
   const businessCategoryPath =
-    businessCategoryPathMap[normalizedBusinessCategory] ||
-    normalizedBusinessCategory;
+    businessCategoryPathMap[normalizedBusinessCategory] || null;
+
+  // =====================================================
+  // DEBUG - BUSINESS MƏLUMATLARI
+  // =====================================================
+
+  useEffect(() => {
+    console.log("========================================");
+    console.log("🏪 KATALOG BUSINESS INFO");
+    console.log("🏪 BUSINESS ID:", businessId);
+    console.log("🏪 BUSINESS NAME:", businessName);
+    console.log("🏪 BUSINESS CATEGORY:", normalizedBusinessCategory);
+    console.log("🏪 BUSINESS CATEGORY PATH:", businessCategoryPath);
+    console.log("========================================");
+  }, [
+    businessId,
+    businessName,
+    normalizedBusinessCategory,
+    businessCategoryPath,
+  ]);
+
+  // =====================================================
+  // IMPORT EDİLƏN KATEQORİYALARI YOXLAMA
+  // =====================================================
+
+  useEffect(() => {
+    console.log("========================================");
+    console.log("🔥 IMPORT EDİLƏN CATEGORIES");
+    console.log("🔥 CATEGORIES:", categories);
+
+    console.log(
+      "🔥 CATEGORY INFO:",
+      categories.map((category) => ({
+        id: category.id,
+        label: category.label,
+        path: category.path,
+      })),
+    );
+
+    console.log("🔥 BUSINESS CATEGORY:", normalizedBusinessCategory);
+
+    console.log("🔥 EXPECTED CATEGORY PATH:", businessCategoryPath);
+
+    console.log("========================================");
+  }, [normalizedBusinessCategory, businessCategoryPath]);
 
   // =====================================================
   // BİZNES MƏLUMATLARINI SESSION STORAGE-DA SAXLA
@@ -77,50 +121,95 @@ const Katalog = ({
   }, [businessId, businessName, normalizedBusinessCategory]);
 
   // =====================================================
-  // DEBUG
-  // =====================================================
-
-  useEffect(() => {
-    console.log("🏪 KATALOG BUSINESS ID:", businessId);
-    console.log("🏪 KATALOG BUSINESS NAME:", businessName);
-    console.log("🏪 KATALOG BUSINESS CATEGORY:", normalizedBusinessCategory);
-    console.log("🏪 KATALOG BUSINESS PATH:", businessCategoryPath);
-  }, [
-    businessId,
-    businessName,
-    normalizedBusinessCategory,
-    businessCategoryPath,
-  ]);
-
-  // =====================================================
-  // BİZNES ÜÇÜN YALNIZCA ÖZ KATEQORİYASINI GÖSTƏR
-  // ADİ İSTİFADƏÇİ ÜÇÜN BÜTÜN KATEQORİYALAR
-  // =====================================================
-
-  const visibleCategories =
-    businessId && normalizedBusinessCategory
-      ? categories.filter((cat) => {
-          return (
-            cat.path === businessCategoryPath ||
-            cat.category === normalizedBusinessCategory ||
-            cat.categoryKey === normalizedBusinessCategory ||
-            cat.type === normalizedBusinessCategory ||
-            cat.slug === normalizedBusinessCategory
-          );
-        })
-      : categories;
-
-  // =====================================================
-  // ƏGƏR YUXARIDAKI MÜQAYİSƏDƏ KATEQORİYA TAPILMADI
-  // car ÜÇÜN "Nəqliyyat" KATEQORİYASINI TAP
+  // KATEQORİYALARI FİLTRLƏ
+  //
+  // Adi istifadəçi:
+  // bütün kateqoriyalar
+  //
+  // Biznes:
+  // yalnız öz biznes kateqoriyası
   // =====================================================
 
   const finalVisibleCategories =
     businessId && normalizedBusinessCategory
-      ? visibleCategories.length > 0
-        ? visibleCategories
-        : categories.filter((cat) => cat.path === businessCategoryPath)
+      ? categories.filter((category) => category.path === businessCategoryPath)
       : categories;
+
+  // =====================================================
+  // FINAL CATEGORY DEBUG
+  // =====================================================
+
+  useEffect(() => {
+    console.log("========================================");
+    console.log("🔥 FINAL CATEGORY RESULT");
+
+    console.log("🔥 BUSINESS ID:", businessId);
+
+    console.log("🔥 BUSINESS CATEGORY:", normalizedBusinessCategory);
+
+    console.log("🔥 BUSINESS CATEGORY PATH:", businessCategoryPath);
+
+    console.log("🔥 TOTAL CATEGORIES:", categories.length);
+
+    console.log("🔥 FINAL VISIBLE CATEGORIES:", finalVisibleCategories);
+
+    console.log("🔥 FINAL VISIBLE COUNT:", finalVisibleCategories.length);
+
+    console.log("========================================");
+  }, [
+    businessId,
+    normalizedBusinessCategory,
+    businessCategoryPath,
+    finalVisibleCategories.length,
+  ]);
+
+  // =====================================================
+  // ƏGƏR BİZNES KATEQORİYASI TAPILMAYIBSA DEBUG
+  // =====================================================
+
+  useEffect(() => {
+    if (
+      businessId &&
+      normalizedBusinessCategory &&
+      finalVisibleCategories.length === 0
+    ) {
+      console.error(
+        "❌ BUSINESS CATEGORY KATALOGDA TAPILMADI:",
+        normalizedBusinessCategory,
+      );
+
+      console.error("❌ AXTARILAN PATH:", businessCategoryPath);
+
+      console.log(
+        "📋 MÖVCUD KATEQORİYALAR:",
+        categories.map((category) => ({
+          id: category.id,
+          label: category.label,
+          path: category.path,
+        })),
+      );
+    }
+
+    if (
+      businessId &&
+      normalizedBusinessCategory &&
+      finalVisibleCategories.length > 0
+    ) {
+      console.log(
+        "✅ BUSINESS CATEGORY TAPILDI:",
+        finalVisibleCategories.map((category) => ({
+          id: category.id,
+          label: category.label,
+          path: category.path,
+        })),
+      );
+    }
+  }, [
+    businessId,
+    normalizedBusinessCategory,
+    businessCategoryPath,
+    finalVisibleCategories.length,
+  ]);
 
   // =====================================================
   // YADDA SAXLANILMIŞ AKTİV KATEQORİYA
@@ -158,6 +247,7 @@ const Katalog = ({
     updateScrollButtons();
 
     slider.addEventListener("scroll", updateScrollButtons);
+
     window.addEventListener("resize", updateScrollButtons);
 
     return () => {
@@ -205,15 +295,12 @@ const Katalog = ({
 
   // =====================================================
   // BİZNES STATE
-  //
-  // BURADA ARTİQ cat.businessCategory İSTİFADƏ EDİLMİR
-  // HƏMİŞƏ KATALOGA GƏLƏN businessCategory GÖNDƏRİLİR
   // =====================================================
 
   const businessState =
     businessId && normalizedBusinessCategory
       ? {
-          businessId: businessId,
+          businessId,
           businessName: businessName || "",
           businessCategory: normalizedBusinessCategory,
         }
@@ -235,10 +322,12 @@ const Katalog = ({
 
     console.log("➡️ KATEQORİYAYA KEÇİD:", {
       ...state,
-      path: category.path,
+      categoryId: category.id,
+      categoryPath: category.path,
+      categoryLabel: category.label,
     });
 
-    // Biznes məlumatını bir daha yadda saxla
+    // Biznes məlumatını yenidən yadda saxla
     if (businessId && normalizedBusinessCategory) {
       sessionStorage.setItem(
         "businessAdContext",
@@ -359,180 +448,213 @@ const Katalog = ({
           )}
         </div>
 
+        {/* Biznes kateqoriyası tapılmadı */}
+
+        {businessId &&
+          normalizedBusinessCategory &&
+          finalVisibleCategories.length === 0 && (
+            <div
+              className={`
+                rounded-2xl
+                border
+                p-5
+                text-center
+                ${
+                  darkMode
+                    ? "bg-slate-900 border-slate-800 text-slate-300"
+                    : "bg-white border-slate-200 text-slate-600"
+                }
+              `}
+            >
+              <p className="font-bold">Kateqoriya tapılmadı</p>
+
+              <p className="text-xs mt-1 opacity-70">
+                Biznes kateqoriyası: {normalizedBusinessCategory}
+              </p>
+
+              <p className="text-xs mt-1 opacity-70">
+                Axtarılan bölmə: {businessCategoryPath || "tapılmadı"}
+              </p>
+            </div>
+          )}
+
         {/* Slider */}
 
-        <div
-          ref={sliderRef}
-          className="
-            flex
-            gap-3
-            overflow-x-auto
-            scrollbar-hide
-            scroll-smooth
-            snap-x
-            snap-mandatory
-            pb-2
-            px-1
-          "
-        >
-          {finalVisibleCategories.map(
-            ({ id, path, icon, bgColor, hover, label }) => {
-              const Icon = icon;
+        {finalVisibleCategories.length > 0 && (
+          <div
+            ref={sliderRef}
+            className="
+              flex
+              gap-3
+              overflow-x-auto
+              scrollbar-hide
+              scroll-smooth
+              snap-x
+              snap-mandatory
+              pb-2
+              px-1
+            "
+          >
+            {finalVisibleCategories.map(
+              ({ id, path, icon, bgColor, hover, label }) => {
+                const Icon = icon;
 
-              return (
-                <Link
-                  key={id}
-                  to={`/katalog/${path}`}
-                  state={businessState}
-                  onClick={() => {
-                    handleCategoryClick(id);
+                return (
+                  <Link
+                    key={id}
+                    to={`/katalog/${path}`}
+                    state={businessState}
+                    onClick={() => {
+                      handleCategoryClick(id);
 
-                    handleCategoryNavigation({
-                      id,
-                      path,
-                    });
-                  }}
-                  className={`
-                    group
-                    relative
-                    flex-shrink-0
-                    snap-start
-                    w-[132px]
-                    h-[112px]
-                    sm:w-[145px]
-                    sm:h-[120px]
-                    overflow-hidden
-                    rounded-2xl
-                    ${bgColor}
-                    ${hover}
-                    border
-                    border-white/20
-                    shadow-md
-                    hover:shadow-xl
-                    transition-all
-                    duration-300
-                    hover:-translate-y-1
-                    active:scale-[0.97]
-                    ${
-                      activeId === id
-                        ? "ring-2 ring-[#670fff] ring-offset-2"
-                        : ""
-                    }
-                  `}
-                >
-                  {/* Gradient overlay */}
+                      handleCategoryNavigation({
+                        id,
+                        path,
+                        label,
+                      });
+                    }}
+                    className={`
+                      group
+                      relative
+                      flex-shrink-0
+                      snap-start
+                      w-[132px]
+                      h-[112px]
+                      sm:w-[145px]
+                      sm:h-[120px]
+                      overflow-hidden
+                      rounded-2xl
+                      ${bgColor || "bg-slate-500"}
+                      ${hover || ""}
+                      border
+                      border-white/20
+                      shadow-md
+                      hover:shadow-xl
+                      transition-all
+                      duration-300
+                      hover:-translate-y-1
+                      active:scale-[0.97]
+                      ${
+                        activeId === id
+                          ? "ring-2 ring-[#670fff] ring-offset-2"
+                          : ""
+                      }
+                    `}
+                  >
+                    {/* Gradient overlay */}
 
-                  <div
-                    className="
-                      absolute
-                      inset-0
-                      bg-gradient-to-t
-                      from-black/65
-                      via-black/10
-                      to-transparent
-                      z-10
-                    "
-                  />
-
-                  {/* İkon / şəkil */}
-
-                  {typeof icon === "string" ? (
-                    <img
-                      src={icon}
-                      alt={label}
-                      loading="lazy"
-                      className="
-                        absolute
-                        inset-0
-                        w-full
-                        h-full
-                        object-cover
-                        transition-transform
-                        duration-500
-                        group-hover:scale-110
-                      "
-                    />
-                  ) : (
                     <div
                       className="
                         absolute
                         inset-0
-                        flex
-                        items-center
-                        justify-center
+                        bg-gradient-to-t
+                        from-black/65
+                        via-black/10
+                        to-transparent
+                        z-10
                       "
-                    >
-                      <Icon
+                    />
+
+                    {/* İkon / şəkil */}
+
+                    {typeof icon === "string" ? (
+                      <img
+                        src={icon}
+                        alt={label}
+                        loading="lazy"
                         className="
-                          w-14
-                          h-14
-                          text-white
-                          drop-shadow-lg
+                          absolute
+                          inset-0
+                          w-full
+                          h-full
+                          object-cover
                           transition-transform
-                          duration-300
+                          duration-500
                           group-hover:scale-110
                         "
                       />
-                    </div>
-                  )}
+                    ) : (
+                      <div
+                        className="
+                          absolute
+                          inset-0
+                          flex
+                          items-center
+                          justify-center
+                        "
+                      >
+                        <Icon
+                          className="
+                            w-14
+                            h-14
+                            text-white
+                            drop-shadow-lg
+                            transition-transform
+                            duration-300
+                            group-hover:scale-110
+                          "
+                        />
+                      </div>
+                    )}
 
-                  {/* Sağ üst ox */}
+                    {/* Sağ üst ox */}
 
-                  <div
-                    className="
-                      absolute
-                      top-2
-                      right-2
-                      z-20
-                      w-6
-                      h-6
-                      rounded-full
-                      flex
-                      items-center
-                      justify-center
-                      bg-black/20
-                      backdrop-blur-md
-                      border
-                      border-white/20
-                      text-white
-                    "
-                  >
-                    <FontAwesomeIcon
-                      icon={faChevronRight}
-                      className="text-[9px]"
-                    />
-                  </div>
-
-                  {/* Kateqoriya adı */}
-
-                  <div
-                    className="
-                      absolute
-                      left-2
-                      right-2
-                      bottom-2
-                      z-20
-                    "
-                  >
-                    <span
+                    <div
                       className="
-                        block
-                        text-[11px]
-                        sm:text-xs
-                        font-extrabold
+                        absolute
+                        top-2
+                        right-2
+                        z-20
+                        w-6
+                        h-6
+                        rounded-full
+                        flex
+                        items-center
+                        justify-center
+                        bg-black/20
+                        backdrop-blur-md
+                        border
+                        border-white/20
                         text-white
-                        leading-tight
-                        drop-shadow-lg
                       "
                     >
-                      {label}
-                    </span>
-                  </div>
-                </Link>
-              );
-            },
-          )}
-        </div>
+                      <FontAwesomeIcon
+                        icon={faChevronRight}
+                        className="text-[9px]"
+                      />
+                    </div>
+
+                    {/* Kateqoriya adı */}
+
+                    <div
+                      className="
+                        absolute
+                        left-2
+                        right-2
+                        bottom-2
+                        z-20
+                      "
+                    >
+                      <span
+                        className="
+                          block
+                          text-[11px]
+                          sm:text-xs
+                          font-extrabold
+                          text-white
+                          leading-tight
+                          drop-shadow-lg
+                        "
+                      >
+                        {label}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              },
+            )}
+          </div>
+        )}
       </div>
 
       {/* =====================================================
@@ -581,197 +703,228 @@ const Katalog = ({
           </div>
         </div>
 
+        {/* Biznes kateqoriyası tapılmadı */}
+
+        {businessId &&
+          normalizedBusinessCategory &&
+          finalVisibleCategories.length === 0 && (
+            <div
+              className={`
+                rounded-2xl
+                border
+                p-6
+                text-center
+                ${
+                  darkMode
+                    ? "bg-slate-900 border-slate-800 text-slate-300"
+                    : "bg-white border-slate-200 text-slate-600"
+                }
+              `}
+            >
+              <p className="font-bold text-lg">Kateqoriya tapılmadı</p>
+
+              <p className="text-sm mt-1 opacity-70">
+                Biznes kateqoriyası: {normalizedBusinessCategory}
+              </p>
+
+              <p className="text-sm mt-1 opacity-70">
+                Axtarılan bölmə: {businessCategoryPath || "tapılmadı"}
+              </p>
+            </div>
+          )}
+
         {/* Desktop grid */}
 
-        <div
-          className="
-            grid
-            grid-cols-2
-            sm:grid-cols-3
-            md:grid-cols-4
-            lg:grid-cols-5
-            xl:grid-cols-6
-            gap-4
-            lg:gap-5
-            w-full
-          "
-        >
-          {finalVisibleCategories.map((cat) => {
-            const Icon = cat.icon;
+        {finalVisibleCategories.length > 0 && (
+          <div
+            className="
+              grid
+              grid-cols-2
+              sm:grid-cols-3
+              md:grid-cols-4
+              lg:grid-cols-5
+              xl:grid-cols-6
+              gap-4
+              lg:gap-5
+              w-full
+            "
+          >
+            {finalVisibleCategories.map((cat) => {
+              const Icon = cat.icon;
 
-            return (
-              <Link
-                key={cat.id}
-                to={`/katalog/${cat.path}`}
-                state={businessState}
-                onClick={() => {
-                  handleCategoryClick(cat.id);
+              return (
+                <Link
+                  key={cat.id}
+                  to={`/katalog/${cat.path}`}
+                  state={businessState}
+                  onClick={() => {
+                    handleCategoryClick(cat.id);
+                    handleCategoryNavigation(cat);
+                  }}
+                  aria-label={cat.label}
+                  className={`
+                    group
+                    relative
+                    w-full
+                    min-w-0
+                    h-[125px]
+                    lg:h-[135px]
+                    overflow-hidden
+                    rounded-2xl
+                    ${cat.bgColor || "bg-slate-500"}
+                    ${cat.hover || ""}
+                    border
+                    border-white/20
+                    shadow-sm
+                    hover:shadow-xl
+                    transition-all
+                    duration-300
+                    hover:-translate-y-1
+                    active:scale-[0.98]
+                    ${
+                      activeId === cat.id
+                        ? "ring-2 ring-[#670fff] ring-offset-2"
+                        : ""
+                    }
+                  `}
+                >
+                  {/* Şəkil */}
 
-                  handleCategoryNavigation(cat);
-                }}
-                aria-label={cat.label}
-                className={`
-                  group
-                  relative
-                  w-full
-                  min-w-0
-                  h-[125px]
-                  lg:h-[135px]
-                  overflow-hidden
-                  rounded-2xl
-                  ${cat.bgColor}
-                  ${cat.hover}
-                  border
-                  border-white/20
-                  shadow-sm
-                  hover:shadow-xl
-                  transition-all
-                  duration-300
-                  hover:-translate-y-1
-                  active:scale-[0.98]
-                  ${
-                    activeId === cat.id
-                      ? "ring-2 ring-[#670fff] ring-offset-2"
-                      : ""
-                  }
-                `}
-              >
-                {/* Şəkil */}
+                  {typeof cat.icon === "string" ? (
+                    <img
+                      src={cat.icon}
+                      alt={cat.label}
+                      loading="lazy"
+                      className="
+                        absolute
+                        inset-0
+                        w-full
+                        h-full
+                        object-cover
+                        transition-transform
+                        duration-500
+                        group-hover:scale-110
+                      "
+                    />
+                  ) : (
+                    <div
+                      className="
+                        absolute
+                        inset-0
+                        flex
+                        items-center
+                        justify-center
+                      "
+                    >
+                      <Icon
+                        className="
+                          w-14
+                          h-14
+                          lg:w-16
+                          lg:h-16
+                          text-white
+                          drop-shadow-lg
+                          transition-transform
+                          duration-300
+                          group-hover:scale-110
+                          group-hover:rotate-3
+                        "
+                      />
+                    </div>
+                  )}
 
-                {typeof cat.icon === "string" ? (
-                  <img
-                    src={cat.icon}
-                    alt={cat.label}
-                    loading="lazy"
-                    className="
-                      absolute
-                      inset-0
-                      w-full
-                      h-full
-                      object-cover
-                      transition-transform
-                      duration-500
-                      group-hover:scale-110
-                    "
-                  />
-                ) : (
+                  {/* Tünd gradient */}
+
                   <div
                     className="
                       absolute
                       inset-0
-                      flex
-                      items-center
-                      justify-center
+                      bg-gradient-to-t
+                      from-black/70
+                      via-black/15
+                      to-transparent
+                      z-10
                     "
-                  >
-                    <Icon
-                      className="
-                        w-14
-                        h-14
-                        lg:w-16
-                        lg:h-16
-                        text-white
-                        drop-shadow-lg
-                        transition-transform
-                        duration-300
-                        group-hover:scale-110
-                        group-hover:rotate-3
-                      "
-                    />
-                  </div>
-                )}
-
-                {/* Tünd gradient */}
-
-                <div
-                  className="
-                    absolute
-                    inset-0
-                    bg-gradient-to-t
-                    from-black/70
-                    via-black/15
-                    to-transparent
-                    z-10
-                  "
-                />
-
-                {/* Sağ yuxarı ox */}
-
-                <div
-                  className="
-                    absolute
-                    top-3
-                    right-3
-                    z-20
-                    flex
-                    items-center
-                    justify-center
-                    w-7
-                    h-7
-                    rounded-full
-                    bg-black/20
-                    backdrop-blur-md
-                    border
-                    border-white/20
-                    text-white
-                    transition-all
-                    duration-300
-                    group-hover:bg-[#670fff]
-                    group-hover:scale-110
-                  "
-                >
-                  <FontAwesomeIcon
-                    icon={faChevronRight}
-                    className="text-[10px]"
                   />
-                </div>
 
-                {/* Aktiv indikator */}
+                  {/* Sağ yuxarı ox */}
 
-                {activeId === cat.id && (
                   <div
                     className="
                       absolute
                       top-3
-                      left-3
+                      right-3
                       z-20
-                      w-2
-                      h-2
+                      flex
+                      items-center
+                      justify-center
+                      w-7
+                      h-7
                       rounded-full
-                      bg-white
-                      shadow-[0_0_10px_rgba(255,255,255,0.9)]
-                    "
-                  />
-                )}
-
-                {/* Kateqoriya adı */}
-
-                <div
-                  className="
-                    absolute
-                    left-3
-                    right-3
-                    bottom-3
-                    z-20
-                  "
-                >
-                  <p
-                    className="
-                      text-xs
-                      lg:text-sm
-                      font-extrabold
+                      bg-black/20
+                      backdrop-blur-md
+                      border
+                      border-white/20
                       text-white
-                      leading-tight
-                      drop-shadow-lg
+                      transition-all
+                      duration-300
+                      group-hover:bg-[#670fff]
+                      group-hover:scale-110
                     "
                   >
-                    {cat.label}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+                    <FontAwesomeIcon
+                      icon={faChevronRight}
+                      className="text-[10px]"
+                    />
+                  </div>
+
+                  {/* Aktiv indikator */}
+
+                  {activeId === cat.id && (
+                    <div
+                      className="
+                        absolute
+                        top-3
+                        left-3
+                        z-20
+                        w-2
+                        h-2
+                        rounded-full
+                        bg-white
+                        shadow-[0_0_10px_rgba(255,255,255,0.9)]
+                      "
+                    />
+                  )}
+
+                  {/* Kateqoriya adı */}
+
+                  <div
+                    className="
+                      absolute
+                      left-3
+                      right-3
+                      bottom-3
+                      z-20
+                    "
+                  >
+                    <p
+                      className="
+                        text-xs
+                        lg:text-sm
+                        font-extrabold
+                        text-white
+                        leading-tight
+                        drop-shadow-lg
+                      "
+                    >
+                      {cat.label}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Mobil aşağı menyu */}

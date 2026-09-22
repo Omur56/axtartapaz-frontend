@@ -30,7 +30,11 @@ import {
   Save,
 } from "lucide-react";
 
-export default function CreatePhone() {
+export default function CreatePhone({
+  businessId = null,
+  businessName = "",
+  businessCategory = null,
+}) {
   const API_URL = process.env.REACT_APP_API_URL;
   const PHONE_URL = `${API_URL}/api/phone`;
 
@@ -312,6 +316,14 @@ export default function CreatePhone() {
     setSubmitting(true);
 
     const formData = new FormData();
+
+    // =====================================================
+    // BİZNES PROFİLİNDƏN GƏLƏN ELAN
+    // =====================================================
+
+    if (businessId) {
+      formData.append("businessId", String(businessId));
+    }
 
     Object.entries(phonePost).forEach(([key, value]) => {
       if (key === "data") {

@@ -1,13 +1,59 @@
 import React from "react";
+
+import { useLocation } from "react-router-dom";
+
 import { Building2, Sparkles } from "lucide-react";
 
 import CreateRealEstate from "../../../components/CreateRealEstate";
+
 import BottomMenu from "../../../components/MobileMenu";
+
 import { useTheme } from "../../../components/Main/ThemeContext";
+
 import BubbleBackground from "../../../components/ui/BubbleBackground";
 
 function Daşınmaz_əmlak() {
   const { darkMode } = useTheme();
+
+  const location = useLocation();
+
+  // Route-dan gələn business məlumatları
+  const routeBusinessId = location.state?.businessId || null;
+
+  const routeBusinessName = location.state?.businessName || "";
+
+  const routeBusinessCategory = location.state?.businessCategory || null;
+
+  // SessionStorage-dan business məlumatlarını götür
+  let savedBusinessContext = null;
+
+  try {
+    const saved = sessionStorage.getItem("businessAdContext");
+
+    if (saved) {
+      savedBusinessContext = JSON.parse(saved);
+    }
+  } catch (error) {
+    console.error("❌ Daşınmaz_əmlak - Business context oxunmadı:", error);
+  }
+
+  // Son business məlumatları
+  const businessId =
+    routeBusinessId || savedBusinessContext?.businessId || null;
+
+  const businessName =
+    routeBusinessName || savedBusinessContext?.businessName || "";
+
+  const businessCategory =
+    routeBusinessCategory || savedBusinessContext?.businessCategory || null;
+
+  console.log("========================================");
+  console.log("🏠 DAŞINMAZ ƏMLAK BUSINESS INFO");
+  console.log("🏠 ROUTE BUSINESS ID:", routeBusinessId);
+  console.log("🏠 FINAL BUSINESS ID:", businessId);
+  console.log("🏠 BUSINESS NAME:", businessName);
+  console.log("🏠 BUSINESS CATEGORY:", businessCategory);
+  console.log("========================================");
 
   return (
     <div
@@ -65,10 +111,15 @@ function Daşınmaz_əmlak() {
         >
           {/* Decorative glow */}
           <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-violet-500/10 blur-3xl" />
+
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-fuchsia-500/10 blur-3xl" />
 
           <div className="relative z-10">
-            <CreateRealEstate />
+            <CreateRealEstate
+              businessId={businessId}
+              businessName={businessName}
+              businessCategory={businessCategory}
+            />
           </div>
         </section>
       </main>

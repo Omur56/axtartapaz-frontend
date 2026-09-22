@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+
 import axios from "axios";
+
 import { Link, useParams } from "react-router-dom";
+
 import {
   X,
   MapPin,
@@ -11,12 +14,19 @@ import {
   ArrowLeft,
   Plus,
 } from "lucide-react";
+
 import Swal from "sweetalert2";
+
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 
-export default function CreateelectronicsPost() {
+export default function CreateelectronicsPost({
+  businessId = null,
+  businessName = "",
+  businessCategory = null,
+}) {
   const { id } = useParams();
+
   const API_URL = process.env.REACT_APP_API_URL || "";
 
   const [isOpen, setIsOpen] = useState(false);
@@ -30,6 +40,7 @@ export default function CreateelectronicsPost() {
     location: "",
     images: [],
     description: "",
+    businessId: businessId || null,
     contact: {
       name: "",
       email: "",
@@ -52,6 +63,12 @@ export default function CreateelectronicsPost() {
 
   const token = localStorage.getItem("token");
   const currentUserId = localStorage.getItem("userId");
+
+  // =========================================================
+  // BUSINESS ID
+  // =========================================================
+
+  const finalBusinessId = businessId || elektronikaPost?.businessId || null;
 
   // =========================================================
   // ID
@@ -163,9 +180,41 @@ export default function CreateelectronicsPost() {
 
     const formData = new FormData();
 
+    // =======================================================
+    // ŞƏKİLLƏR
+    // =======================================================
+
     images.forEach((file) => {
       formData.append("images", file);
     });
+
+    // =======================================================
+    // BİZNES ELANI
+    // =======================================================
+
+    const submitBusinessId = businessId || elektronikaPost?.businessId || null;
+
+    if (submitBusinessId) {
+      formData.append("businessId", String(submitBusinessId));
+    }
+
+    console.log("========================================");
+
+    console.log("💻 ELEKTRONİKA ELAN GÖNDƏRİLİR");
+
+    console.log("🏪 Business ID:", submitBusinessId);
+
+    console.log("🏪 Business Name:", businessName);
+
+    console.log("🏪 Business Category:", businessCategory);
+
+    console.log("🏪 FormData businessId:", formData.get("businessId"));
+
+    console.log("========================================");
+
+    // =======================================================
+    // ƏSAS MƏLUMATLAR
+    // =======================================================
 
     formData.append("title", elektronikaPost.title);
 
@@ -179,7 +228,15 @@ export default function CreateelectronicsPost() {
 
     formData.append("description", elektronikaPost.description);
 
+    // =======================================================
+    // CONTACT
+    // =======================================================
+
     formData.append("contact", JSON.stringify(elektronikaPost.contact));
+
+    // =======================================================
+    // TARİX
+    // =======================================================
 
     formData.append(
       "data",
@@ -193,6 +250,10 @@ export default function CreateelectronicsPost() {
         Authorization: `Bearer ${token}`,
       };
 
+      // =====================================================
+      // REDAKTƏ
+      // =====================================================
+
       if (editingId) {
         await axios.put(`${API_URL}/api/electronics/${editingId}`, formData, {
           headers,
@@ -204,7 +265,12 @@ export default function CreateelectronicsPost() {
           text: "Elan məlumatları uğurla dəyişdirildi.",
           confirmButtonText: "Bağla",
         });
-      } else {
+      }
+
+      // =====================================================
+      // YENİ ELAN
+      // =====================================================
+      else {
         await axios.post(`${API_URL}/api/electronics`, formData, {
           headers,
         });
@@ -217,6 +283,7 @@ export default function CreateelectronicsPost() {
       }
 
       resetForm();
+
       setIsOpen(false);
 
       await fetchItems();
@@ -246,11 +313,16 @@ export default function CreateelectronicsPost() {
       location: "",
       images: [],
       description: "",
+
+      // BİZNES ƏLAQƏSİ QORUNUR
+      businessId: businessId || null,
+
       contact: {
         name: "",
         email: "",
         phone: "",
       },
+
       liked: false,
       favorite: false,
       data: new Date(),
@@ -454,9 +526,14 @@ export default function CreateelectronicsPost() {
     setelectronicsPost({
       ...editItem,
 
+      // MÖVCUD BİZNES ID QORUNUR
+      businessId: editItem.businessId || businessId || null,
+
       contact: {
         name: editItem.contact?.name || "",
+
         email: editItem.contact?.email || "",
+
         phone: editItem.contact?.phone || "",
       },
 
@@ -511,9 +588,13 @@ export default function CreateelectronicsPost() {
 
     const oneDay = 24 * 60 * 60 * 1000;
 
-    if (diffTime === 0) return "bugün";
+    if (diffTime === 0) {
+      return "bugün";
+    }
 
-    if (diffTime === oneDay) return "dünən";
+    if (diffTime === oneDay) {
+      return "dünən";
+    }
 
     return postDate.toLocaleDateString("az-AZ", {
       day: "numeric",
@@ -673,6 +754,7 @@ export default function CreateelectronicsPost() {
     }
 
     resetForm();
+
     setIsOpen(true);
   };
 
@@ -731,6 +813,7 @@ export default function CreateelectronicsPost() {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
+
             handleEdit(item);
           }}
           title="Elanı redaktə et"
@@ -761,6 +844,7 @@ export default function CreateelectronicsPost() {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
+
             handleDelete(itemId);
           }}
           title="Elanı sil"
@@ -897,7 +981,6 @@ export default function CreateelectronicsPost() {
                 text-2xl
                 sm:text-3xl
                 font-bold
-                
               "
             >
               Elektronika
@@ -906,7 +989,6 @@ export default function CreateelectronicsPost() {
             <p
               className="
                 text-sm
-                
                 mt-1
               "
             >
@@ -971,6 +1053,7 @@ export default function CreateelectronicsPost() {
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-3 backdrop-blur-md">
             <div className="relative max-h-[94vh] w-full max-w-3xl overflow-hidden rounded-[28px] bg-white shadow-2xl dark:bg-slate-900">
               {/* HEADER */}
+
               <div className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white/95 px-5 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 sm:px-7">
                 <div>
                   <div className="flex items-center gap-3">
@@ -1005,11 +1088,13 @@ export default function CreateelectronicsPost() {
               </div>
 
               {/* FORM CONTENT */}
+
               <form
                 onSubmit={handleSubmit}
                 className="max-h-[calc(94vh-80px)] overflow-y-auto px-4 py-5 sm:px-7 sm:py-7"
               >
                 {/* BASIC INFO */}
+
                 <div className="mb-6">
                   <div className="mb-4 flex items-center gap-3">
                     <div className="h-9 w-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 dark:bg-blue-500/10">
@@ -1020,6 +1105,7 @@ export default function CreateelectronicsPost() {
                       <h3 className="font-bold text-slate-900 dark:text-white">
                         Əsas məlumatlar
                       </h3>
+
                       <p className="text-xs text-slate-500 dark:text-slate-400">
                         Məhsul haqqında əsas məlumatları daxil edin
                       </p>
@@ -1028,6 +1114,7 @@ export default function CreateelectronicsPost() {
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {/* TITLE */}
+
                     <div className="sm:col-span-2">
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Elanın başlığı
@@ -1045,6 +1132,7 @@ export default function CreateelectronicsPost() {
                     </div>
 
                     {/* BRAND */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Brend
@@ -1061,6 +1149,7 @@ export default function CreateelectronicsPost() {
                     </div>
 
                     {/* MODEL */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Model
@@ -1077,6 +1166,7 @@ export default function CreateelectronicsPost() {
                     </div>
 
                     {/* PRICE */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Qiymət
@@ -1101,6 +1191,7 @@ export default function CreateelectronicsPost() {
                     </div>
 
                     {/* LOCATION */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Məkan
@@ -1126,11 +1217,13 @@ export default function CreateelectronicsPost() {
                 </div>
 
                 {/* DESCRIPTION */}
+
                 <div className="mb-6 border-t border-slate-100 pt-6 dark:border-slate-800">
                   <div className="mb-4">
                     <h3 className="font-bold text-slate-900 dark:text-white">
                       Elan haqqında
                     </h3>
+
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                       Məhsul haqqında mümkün qədər ətraflı məlumat yazın
                     </p>
@@ -1147,11 +1240,13 @@ export default function CreateelectronicsPost() {
                 </div>
 
                 {/* CONTACT */}
+
                 <div className="mb-6 border-t border-slate-100 pt-6 dark:border-slate-800">
                   <div className="mb-4">
                     <h3 className="font-bold text-slate-900 dark:text-white">
                       Əlaqə məlumatları
                     </h3>
+
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                       Alıcıların sizinlə əlaqə saxlaması üçün
                     </p>
@@ -1206,6 +1301,7 @@ export default function CreateelectronicsPost() {
                 </div>
 
                 {/* IMAGES */}
+
                 <div className="mb-6 border-t border-slate-100 pt-6 dark:border-slate-800">
                   <div className="mb-4">
                     <h3 className="font-bold text-slate-900 dark:text-white">
@@ -1241,6 +1337,7 @@ export default function CreateelectronicsPost() {
                   </label>
 
                   {/* PREVIEW */}
+
                   {preview.length > 0 && (
                     <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
                       {preview.map((src, index) => (
@@ -1284,6 +1381,7 @@ export default function CreateelectronicsPost() {
                 </div>
 
                 {/* ACTIONS */}
+
                 <div className="sticky bottom-0 -mx-4 border-t border-slate-200 bg-white/95 px-4 py-4 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 sm:-mx-7 sm:px-7">
                   <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                     <button
@@ -1579,59 +1677,59 @@ export default function CreateelectronicsPost() {
                 <div
                   key={i}
                   className="
-                  w-[185.7px]
-                  h-[222.6px]
-                  rounded-2xl
-                  shadow-md
-                  bg-white
-                  overflow-hidden
-                  animate-pulse
-                "
+                    w-[185.7px]
+                    h-[222.6px]
+                    rounded-2xl
+                    shadow-md
+                    bg-white
+                    overflow-hidden
+                    animate-pulse
+                  "
                 >
                   <div
                     className="
-                    w-full
-                    h-[100px]
-                    bg-slate-200
-                  "
+                      w-full
+                      h-[100px]
+                      bg-slate-200
+                    "
                   />
 
                   <div className="p-2 space-y-2">
                     <div
                       className="
-                      h-5
-                      bg-slate-200
-                      rounded
-                      w-3/4
-                    "
+                        h-5
+                        bg-slate-200
+                        rounded
+                        w-3/4
+                      "
                     />
 
                     <div
                       className="
-                      h-3
-                      bg-slate-200
-                      rounded
-                      w-full
-                    "
+                        h-3
+                        bg-slate-200
+                        rounded
+                        w-full
+                      "
                     />
 
                     <div
                       className="
-                      h-3
-                      bg-slate-200
-                      rounded
-                      w-2/3
-                    "
+                        h-3
+                        bg-slate-200
+                        rounded
+                        w-2/3
+                      "
                     />
 
                     <div
                       className="
-                      h-3
-                      bg-slate-200
-                      rounded
-                      w-1/2
-                      mt-4
-                    "
+                        h-3
+                        bg-slate-200
+                        rounded
+                        w-1/2
+                        mt-4
+                      "
                     />
                   </div>
                 </div>
@@ -1649,22 +1747,22 @@ export default function CreateelectronicsPost() {
                   >
                     <div
                       className="
-                        relative
-                        w-[185.7px]
-                        h-[222.6px]
-                        bg-white
-                        rounded-2xl
-                        shadow-lg
-                        overflow-hidden
-                        border
-                        border-slate-100
-                        transform
-                        hover:-translate-y-2
-                        hover:scale-[1.03]
-                        hover:shadow-2xl
-                        transition-all
-                        duration-300
-                      "
+                          relative
+                          w-[185.7px]
+                          h-[222.6px]
+                          bg-white
+                          rounded-2xl
+                          shadow-lg
+                          overflow-hidden
+                          border
+                          border-slate-100
+                          transform
+                          hover:-translate-y-2
+                          hover:scale-[1.03]
+                          hover:shadow-2xl
+                          transition-all
+                          duration-300
+                        "
                     >
                       {/* REDAKTƏ / SİL */}
 
@@ -1681,22 +1779,22 @@ export default function CreateelectronicsPost() {
                           handleFavorite(itemId);
                         }}
                         className="
-                          absolute
-                          left-2
-                          top-2
-                          z-30
-                          flex
-                          h-8
-                          w-8
-                          items-center
-                          justify-center
-                          rounded-full
-                          bg-black/50
-                          text-white
-                          backdrop-blur-sm
-                          hover:bg-black/70
-                          transition
-                        "
+                            absolute
+                            left-2
+                            top-2
+                            z-30
+                            flex
+                            h-8
+                            w-8
+                            items-center
+                            justify-center
+                            rounded-full
+                            bg-black/50
+                            text-white
+                            backdrop-blur-sm
+                            hover:bg-black/70
+                            transition
+                          "
                         title="Favorit"
                       >
                         <Heart
@@ -1711,37 +1809,37 @@ export default function CreateelectronicsPost() {
 
                       <div
                         className="
-                          relative
-                          w-full
-                          h-[100px]
-                          overflow-hidden
-                        "
+                            relative
+                            w-full
+                            h-[100px]
+                            overflow-hidden
+                          "
                       >
                         <img
                           src={getCardImage(item)}
                           alt={item.title || "Elektronika"}
                           className="
-                            w-full
-                            h-full
-                            object-cover
-                            rounded-t-2xl
-                            transition-transform
-                            duration-500
-                            hover:scale-110
-                          "
+                              w-full
+                              h-full
+                              object-cover
+                              rounded-t-2xl
+                              transition-transform
+                              duration-500
+                              hover:scale-110
+                            "
                         />
 
                         {/* IMAGE OVERLAY */}
 
                         <div
                           className="
-                            absolute
-                            inset-0
-                            bg-gradient-to-t
-                            from-black/20
-                            to-transparent
-                            pointer-events-none
-                          "
+                              absolute
+                              inset-0
+                              bg-gradient-to-t
+                              from-black/20
+                              to-transparent
+                              pointer-events-none
+                            "
                         />
                       </div>
 
@@ -1750,66 +1848,66 @@ export default function CreateelectronicsPost() {
                       <div className="p-2">
                         <p
                           className="
-                            text-lg
-                            font-bold
-                            text-slate-800
-                            leading-tight
-                          "
+                              text-lg
+                              font-bold
+                              text-slate-800
+                              leading-tight
+                            "
                         >
                           {item.price} AZN
                         </p>
 
                         <h4
                           className="
-                            font-semibold
-                            capitalize
-                            text-[12px]
-                            text-slate-700
-                            truncate
-                            mt-1
-                          "
+                              font-semibold
+                              capitalize
+                              text-[12px]
+                              text-slate-700
+                              truncate
+                              mt-1
+                            "
                         >
                           {item.title} {item.brand}
                         </h4>
 
                         <p
                           className="
-                            capitalize
-                            text-[12px]
-                            font-medium
-                            text-slate-500
-                            truncate
-                            mt-0.5
-                          "
+                              capitalize
+                              text-[12px]
+                              font-medium
+                              text-slate-500
+                              truncate
+                              mt-0.5
+                            "
                         >
                           {item.model}
                         </p>
 
                         <div
                           className="
-                            flex
-                            justify-between
-                            gap-1
-                            mt-2
-                          "
+                              flex
+                              justify-between
+                              gap-1
+                              mt-2
+                            "
                         >
                           <p
                             className="
-                              text-[10px]
-                              rounded
-                              flex
-                              items-center
-                              text-slate-500
-                              truncate
-                              max-w-[100px]
-                            "
+                                text-[10px]
+                                rounded
+                                flex
+                                items-center
+                                text-slate-500
+                                truncate
+                                max-w-[100px]
+                              "
                           >
                             <MapPin
                               size={12}
                               className="
-                                text-green-500
-                                flex-shrink-0
-                              "
+                                  text-green-500
+                                  flex-shrink-0
+                                "
                             />
 
                             <span className="ml-1 truncate">
@@ -1819,13 +1917,13 @@ export default function CreateelectronicsPost() {
 
                           <p
                             className="
-                              text-[10px]
-                              rounded
-                              flex
-                              justify-between
-                              text-slate-400
-                              truncate
-                            "
+                                text-[10px]
+                                rounded
+                                flex
+                                justify-between
+                                text-slate-400
+                                truncate
+                              "
                           >
                             {formatDate(item.data || item.createdAt)}{" "}
                             {getCurrentTime(item.data || item.createdAt)}

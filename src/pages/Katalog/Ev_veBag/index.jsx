@@ -1,13 +1,57 @@
 import React from "react";
+
 import { Sofa, Sparkles } from "lucide-react";
 
 import CreatePostForHomeAndGarden from "../../../components/CreatePostHome";
+
 import BottomMenu from "../../../components/MobileMenu";
+
 import { useTheme } from "../../../components/Main/ThemeContext";
+
 import BubbleBackground from "../../../components/ui/BubbleBackground";
+
+import { useLocation } from "react-router-dom";
 
 function EvVəBag() {
   const { darkMode } = useTheme();
+  const location = useLocation();
+
+  // =====================================================
+  // BUSINESS CONTEXT
+  // =====================================================
+
+  const routeBusinessId = location.state?.businessId || null;
+  const routeBusinessName = location.state?.businessName || "";
+  const routeBusinessCategory = location.state?.businessCategory || null;
+
+  let savedBusinessContext = null;
+
+  try {
+    const saved = sessionStorage.getItem("businessAdContext");
+
+    if (saved) {
+      savedBusinessContext = JSON.parse(saved);
+    }
+  } catch (error) {
+    console.error("❌ Ev və Bağ - Business context oxunmadı:", error);
+  }
+
+  const businessId =
+    routeBusinessId || savedBusinessContext?.businessId || null;
+
+  const businessName =
+    routeBusinessName || savedBusinessContext?.businessName || "";
+
+  const businessCategory =
+    routeBusinessCategory || savedBusinessContext?.businessCategory || null;
+
+  console.log("========================================");
+  console.log("🏡 EV VƏ BAĞ BUSINESS INFO");
+  console.log("🏡 ROUTE BUSINESS ID:", routeBusinessId);
+  console.log("🏡 FINAL BUSINESS ID:", businessId);
+  console.log("🏡 BUSINESS NAME:", businessName);
+  console.log("🏡 BUSINESS CATEGORY:", businessCategory);
+  console.log("========================================");
 
   return (
     <div
@@ -70,12 +114,17 @@ function EvVəBag() {
           }`}
         >
           {/* Decorative glow */}
+
           <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-emerald-500/10 blur-3xl" />
 
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-green-500/10 blur-3xl" />
 
           <div className="relative z-10">
-            <CreatePostForHomeAndGarden />
+            <CreatePostForHomeAndGarden
+              businessId={businessId}
+              businessName={businessName}
+              businessCategory={businessCategory}
+            />
           </div>
         </section>
       </main>

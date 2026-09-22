@@ -26,7 +26,11 @@ import {
   MapPinned,
 } from "lucide-react";
 
-export default function CreatePostForHomeAndGarden() {
+export default function CreatePostForHomeAndGarden({
+  businessId = null,
+  businessName = "",
+  businessCategory = null,
+}) {
   const API_URL = process.env.REACT_APP_API_URL;
   const HOME_GARDEN_URL = `${API_URL}/api/homeGarden`;
 
@@ -35,6 +39,7 @@ export default function CreatePostForHomeAndGarden() {
   // =========================================================
 
   const createInitialHomeGarden = () => ({
+    businessId: null,
     category: "",
     title: "",
     description: "",
@@ -252,38 +257,61 @@ export default function CreatePostForHomeAndGarden() {
   // =========================================================
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const token = getToken();
+  const token = getToken();
 
-    if (!token) {
-      Swal.fire({
-        icon: "warning",
-        title: "Giriş tələb olunur",
-        text: "Bu əməliyyatı etmək üçün hesabınıza daxil olun.",
-        confirmButtonColor: "#670fff",
-      });
+  if (!token) {
+    Swal.fire({
+      icon: "warning",
+      title: "Giriş tələb olunur",
+      text: "Bu əməliyyatı etmək üçün hesabınıza daxil olun.",
+      confirmButtonColor: "#670fff",
+    });
+    return;
+  }
 
+  const formData = new FormData();
+
+  const finalBusinessId =
+    businessId ||
+    homeGardenForm.businessId ||
+    null;
+
+  if (finalBusinessId) {
+    formData.append("businessId", finalBusinessId);
+  }
+
+  Object.entries(homeGardenForm).forEach(([key, value]) => {
+    if (key === "businessId") {
       return;
     }
 
-    const formData = new FormData();
+    if (key === "data") {
+      formData.append("data", new Date(value).toISOString());
+    } else if (key === "contact") {
+      Object.entries(value || {}).forEach(([k, v]) => {
+        formData.append(`contact.${k}`, v ?? "");
+      });
+    } else {
+      formData.append(key, value ?? "");
+    }
+  });
 
-    Object.entries(homeGardenForm).forEach(([key, value]) => {
-      if (key === "data") {
-        formData.append("data", new Date(value).toISOString());
-      } else if (key === "contact") {
-        Object.entries(value || {}).forEach(([k, v]) => {
-          formData.append(`contact.${k}`, v ?? "");
-        });
-      } else {
-        formData.append(key, value ?? "");
-      }
-    });
+  images.forEach((file) => {
+    formData.append("images", file);
+  });
 
-    images.forEach((file) => {
-      formData.append("images", file);
-    });
+  console.log("========================================");
+  console.log("🏡 EV VƏ BAĞ ELANI GÖNDƏRİLİR");
+  console.log("🏪 Business ID:", finalBusinessId);
+  console.log("🏪 Business Name:", businessName);
+  console.log("🏪 Business Category:", businessCategory);
+  console.log(
+    "🏪 FormData businessId:",
+    formData.get("businessId")
+  );
+  console.log("========================================");
 
     try {
       if (editingId) {
@@ -401,6 +429,12 @@ export default function CreatePostForHomeAndGarden() {
     const contact = item?.contact || {};
 
     setHomeGardenForm({
+
+      businessId:
+    item?.businessId ||
+    businessId ||
+        null,
+      
       category: item?.category || "",
       title: item?.title || "",
       description: item?.description || "",

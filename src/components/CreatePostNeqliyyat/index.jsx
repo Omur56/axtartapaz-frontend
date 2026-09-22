@@ -1257,8 +1257,8 @@ useEffect(() => {
 `;
   return (
     <div className="min-h-screen ">
-      <div className="p-6 max-w-5xl mx-auto">
-        <div className="w-full justify-center  mx-auto my-auto max-w-[700px] min-w-[200px]">
+      <div className="">
+        <div className="w-full justify-center max-w-[700px] min-w-[200px]">
           <div className="relative">
             <input
               className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"

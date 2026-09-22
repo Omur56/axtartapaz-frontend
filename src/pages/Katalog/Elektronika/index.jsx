@@ -1,13 +1,66 @@
 import React from "react";
+
 import { Laptop, Sparkles } from "lucide-react";
 
 import CreateElectronikaPost from "../../../components/CreateElektronikaPost";
+
 import BottomMenu from "../../../components/MobileMenu";
+
 import { useTheme } from "../../../components/Main/ThemeContext";
+
 import BubbleBackground from "../../../components/ui/BubbleBackground";
+
+import { useLocation } from "react-router-dom";
 
 function Elektronika() {
   const { darkMode } = useTheme();
+
+  const location = useLocation();
+
+  // =====================================================
+  // BİZNES MƏLUMATLARINI ROUTE STATE-DƏN GÖTÜR
+  // =====================================================
+  const routeBusinessId = location.state?.businessId || null;
+  const routeBusinessName = location.state?.businessName || "";
+  const routeBusinessCategory = location.state?.businessCategory || null;
+
+  // =====================================================
+  // ƏGƏR ROUTE STATE YOXDURSA SESSION STORAGE-DAN GÖTÜR
+  // =====================================================
+  let savedBusinessContext = null;
+
+  try {
+    const saved = sessionStorage.getItem("businessAdContext");
+
+    if (saved) {
+      savedBusinessContext = JSON.parse(saved);
+    }
+  } catch (error) {
+    console.error("❌ Elektronika - Business context oxunmadı:", error);
+  }
+
+  // =====================================================
+  // FINAL BUSINESS MƏLUMATLARI
+  // =====================================================
+  const businessId =
+    routeBusinessId || savedBusinessContext?.businessId || null;
+
+  const businessName =
+    routeBusinessName || savedBusinessContext?.businessName || "";
+
+  const businessCategory =
+    routeBusinessCategory || savedBusinessContext?.businessCategory || null;
+
+  // =====================================================
+  // DEBUG
+  // =====================================================
+  console.log("========================================");
+  console.log("💻 ELEKTRONIKA BUSINESS INFO");
+  console.log("💻 ROUTE BUSINESS ID:", routeBusinessId);
+  console.log("💻 FINAL BUSINESS ID:", businessId);
+  console.log("💻 BUSINESS NAME:", businessName);
+  console.log("💻 BUSINESS CATEGORY:", businessCategory);
+  console.log("========================================");
 
   return (
     <div
@@ -70,12 +123,17 @@ function Elektronika() {
           }`}
         >
           {/* Decorative glow */}
+
           <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-cyan-500/10 blur-3xl" />
 
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-blue-500/10 blur-3xl" />
 
           <div className="relative z-10">
-            <CreateElectronikaPost />
+            <CreateElectronikaPost
+              businessId={businessId}
+              businessName={businessName}
+              businessCategory={businessCategory}
+            />
           </div>
         </section>
       </main>

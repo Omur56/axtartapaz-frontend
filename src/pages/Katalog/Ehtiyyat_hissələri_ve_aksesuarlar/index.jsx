@@ -1,13 +1,75 @@
 import React from "react";
+
+import { useLocation } from "react-router-dom";
+
 import { Wrench, Sparkles } from "lucide-react";
 
 import CreateAccessoryPost from "../../../components/CreateAccessoryPost";
+
 import BottomMenu from "../../../components/MobileMenu";
+
 import { useTheme } from "../../../components/Main/ThemeContext";
+
 import BubbleBackground from "../../../components/ui/BubbleBackground";
 
 function Ehtiyyat_hissələri_ve_aksesuarlar() {
   const { darkMode } = useTheme();
+
+  const location = useLocation();
+
+  // =====================================================
+  // BUSINESS CONTEXT - ROUTE STATE
+  // =====================================================
+
+  const routeBusinessId = location.state?.businessId || null;
+
+  const routeBusinessName = location.state?.businessName || "";
+
+  const routeBusinessCategory = location.state?.businessCategory || null;
+
+  // =====================================================
+  // BUSINESS CONTEXT - SESSION STORAGE
+  // =====================================================
+
+  let savedBusinessContext = null;
+
+  try {
+    const saved = sessionStorage.getItem("businessAdContext");
+
+    if (saved) {
+      savedBusinessContext = JSON.parse(saved);
+    }
+  } catch (error) {
+    console.error(
+      "❌ Ehtiyyat_hissələri_ve_aksesuarlar - Business context oxunmadı:",
+      error,
+    );
+  }
+
+  // =====================================================
+  // FINAL BUSINESS DATA
+  // =====================================================
+
+  const businessId =
+    routeBusinessId || savedBusinessContext?.businessId || null;
+
+  const businessName =
+    routeBusinessName || savedBusinessContext?.businessName || "";
+
+  const businessCategory =
+    routeBusinessCategory || savedBusinessContext?.businessCategory || null;
+
+  // =====================================================
+  // DEBUG
+  // =====================================================
+
+  console.log("========================================");
+  console.log("🔧 AKSESUAR BUSINESS INFO");
+  console.log("🔧 ROUTE BUSINESS ID:", routeBusinessId);
+  console.log("🔧 FINAL BUSINESS ID:", businessId);
+  console.log("🔧 BUSINESS NAME:", businessName);
+  console.log("🔧 BUSINESS CATEGORY:", businessCategory);
+  console.log("========================================");
 
   return (
     <div
@@ -17,12 +79,12 @@ function Ehtiyyat_hissələri_ve_aksesuarlar() {
     >
       <BubbleBackground />
 
-      <main className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 pt-24 pb-28 sm:pb-12">
+      <main className="relative z-10 mx-auto w-full max-w-6xl px-4 pt-24 pb-28 sm:px-6 sm:pb-12 lg:px-8">
         {/* =====================================================
             Header
         ===================================================== */}
 
-        <div className="mx-auto mb-8 sm:mb-10 max-w-3xl text-center">
+        <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-10">
           <div
             className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold ${
               darkMode
@@ -70,12 +132,17 @@ function Ehtiyyat_hissələri_ve_aksesuarlar() {
           }`}
         >
           {/* Decorative glow */}
+
           <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-orange-500/10 blur-3xl" />
 
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-amber-400/10 blur-3xl" />
 
           <div className="relative z-10">
-            <CreateAccessoryPost />
+            <CreateAccessoryPost
+              businessId={businessId}
+              businessName={businessName}
+              businessCategory={businessCategory}
+            />
           </div>
         </section>
       </main>

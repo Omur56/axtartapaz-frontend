@@ -1,13 +1,71 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
+
 import { Refrigerator, Sparkles } from "lucide-react";
 
 import CreateHousehold from "../../../components/CreateHousehold";
+
 import BottomMenu from "../../../components/MobileMenu";
+
 import { useTheme } from "../../../components/Main/ThemeContext";
+
 import BubbleBackground from "../../../components/ui/BubbleBackground";
 
 export default function Məişət_Texnikası() {
   const { darkMode } = useTheme();
+
+  const location = useLocation();
+
+  // =====================================================
+  // KATALOG-DAN GƏLƏN BİZNES MƏLUMATLARI
+  // =====================================================
+
+  const routeBusinessId = location.state?.businessId || null;
+
+  const routeBusinessName = location.state?.businessName || "";
+
+  const routeBusinessCategory = location.state?.businessCategory || null;
+
+  // =====================================================
+  // SESSION STORAGE-DAN BİZNES MƏLUMATLARI
+  // =====================================================
+
+  let savedBusinessContext = null;
+
+  try {
+    const saved = sessionStorage.getItem("businessAdContext");
+
+    if (saved) {
+      savedBusinessContext = JSON.parse(saved);
+    }
+  } catch (error) {
+    console.error("❌ Business context sessionStorage-dan oxunmadı:", error);
+  }
+
+  // =====================================================
+  // SON BİZNES CONTEXT
+  // =====================================================
+
+  const businessId =
+    routeBusinessId || savedBusinessContext?.businessId || null;
+
+  const businessName =
+    routeBusinessName || savedBusinessContext?.businessName || "";
+
+  const businessCategory =
+    routeBusinessCategory || savedBusinessContext?.businessCategory || null;
+
+  // =====================================================
+  // DEBUG
+  // =====================================================
+
+  console.log("🏪 Məişət_Texnikası business context:", {
+    businessId,
+    businessName,
+    businessCategory,
+    routeState: location.state,
+    savedBusinessContext,
+  });
 
   return (
     <div
@@ -18,10 +76,6 @@ export default function Məişət_Texnikası() {
       <BubbleBackground />
 
       <main className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 pt-24 pb-28 sm:pb-12">
-        {/* =====================================================
-            Header
-        ===================================================== */}
-
         <div className="mx-auto mb-8 sm:mb-10 max-w-3xl text-center">
           <div
             className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold ${
@@ -58,10 +112,6 @@ export default function Məişət_Texnikası() {
           </p>
         </div>
 
-        {/* =====================================================
-            Form Card
-        ===================================================== */}
-
         <section
           className={`relative overflow-hidden rounded-[28px] border p-3 sm:p-5 lg:p-7 ${
             darkMode
@@ -69,13 +119,16 @@ export default function Məişət_Texnikası() {
               : "border-slate-200 bg-white shadow-xl shadow-slate-300/20"
           }`}
         >
-          {/* Decorative glow */}
           <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-rose-500/10 blur-3xl" />
 
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-pink-500/10 blur-3xl" />
 
           <div className="relative z-10">
-            <CreateHousehold />
+            <CreateHousehold
+              businessId={businessId}
+              businessName={businessName}
+              businessCategory={businessCategory}
+            />
           </div>
         </section>
       </main>

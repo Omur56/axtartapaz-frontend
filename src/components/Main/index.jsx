@@ -59,7 +59,7 @@ const RootLayout = () => {
             dark:opacity-20
           "
         >
-          <BubbleBackground />
+          {/* <BubbleBackground /> */}
         </div>
 
         {/* THEME TOGGLE */}
@@ -71,7 +71,7 @@ const RootLayout = () => {
             fixed
             right-4
             sm:right-6
-            top-[76px]
+            top-[200px]
             z-[90]
             w-10
             h-10

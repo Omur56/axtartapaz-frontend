@@ -11,7 +11,6 @@ import {
   Edit3,
   Trash2,
   Heart,
-  Star,
   ImagePlus,
   User,
   Mail,
@@ -21,11 +20,13 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
 
-export default function CreateHousehold() {
+export default function CreateHousehold({
+  businessId = null,
+  businessName = "",
+  businessCategory = null,
+}) {
   const { id } = useParams();
-
   const API_URL = process.env.REACT_APP_API_URL || "";
 
   const [isOpen, setIsOpen] = useState(false);
@@ -55,13 +56,24 @@ export default function CreateHousehold() {
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
   const [editingId, setEditingId] = useState(null);
-
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const token = localStorage.getItem("token");
+
+  // =========================================================
+  // BUSINESS DEBUG
+  // =========================================================
+
+  useEffect(() => {
+    console.log("🏪 CreateHousehold business context:", {
+      businessId,
+      businessName,
+      businessCategory,
+    });
+  }, [businessId, businessName, businessCategory]);
 
   // =========================================================
   // IMAGE CHANGE
@@ -145,14 +157,44 @@ export default function CreateHousehold() {
       return;
     }
 
+    // Yeni elan zamanı ən azı 1 şəkil tələb olunur
+    if (!editingId && images.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Şəkil əlavə edin",
+        text: "Elan yerləşdirmək üçün ən azı 1 şəkil seçməlisiniz.",
+        confirmButtonColor: "#2563eb",
+      });
+
+      return;
+    }
+
     const formData = new FormData();
 
-    // Şəkillər
+    // =======================================================
+    // BUSINESS ID
+    // =======================================================
+
+    if (businessId) {
+      formData.append("businessId", businessId);
+
+      console.log("🏪 Elan biznesdən yerləşdirilir:", businessId);
+    } else {
+      console.log("👤 Elan şəxsi profil üçün yerləşdirilir.");
+    }
+
+    // =======================================================
+    // IMAGES
+    // =======================================================
+
     images.forEach((file) => {
       formData.append("images", file);
     });
 
-    // Form məlumatları
+    // =======================================================
+    // FORM DATA
+    // =======================================================
+
     Object.entries(household).forEach(([key, value]) => {
       if (key === "data") return;
 
@@ -178,6 +220,20 @@ export default function CreateHousehold() {
         : new Date().toISOString(),
     );
 
+    // =======================================================
+    // DEBUG FORMDATA
+    // =======================================================
+
+    console.log("📦 Göndərilən FormData:");
+
+    for (const [key, value] of formData.entries()) {
+      if (key === "images") {
+        console.log("images:", value?.name || value);
+      } else {
+        console.log(`${key}:`, value);
+      }
+    }
+
     const config = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -200,7 +256,13 @@ export default function CreateHousehold() {
           confirmButtonColor: "#2563eb",
         });
       } else {
-        await axios.post(`${API_URL}/api/household`, formData, config);
+        const response = await axios.post(
+          `${API_URL}/api/household`,
+          formData,
+          config,
+        );
+
+        console.log("✅ Household elan cavabı:", response.data);
 
         Swal.fire({
           icon: "success",
@@ -212,9 +274,12 @@ export default function CreateHousehold() {
 
       resetForm();
       setIsOpen(false);
+
       await fetchItems();
     } catch (err) {
       console.error("Submit error:", err);
+
+      console.error("❌ API RESPONSE:", err.response?.data);
 
       Swal.fire({
         icon: "error",
@@ -365,7 +430,7 @@ export default function CreateHousehold() {
         icon: "error",
         title: "Xəta",
         text: "Elanın ID-si tapılmadı.",
-        confirmButtonColor: "#dc2626",
+        confirmButtonColor: "#2563eb",
       });
 
       return;
@@ -419,7 +484,6 @@ export default function CreateHousehold() {
 
     setPreview(existingImages);
     setImages([]);
-
     setIsOpen(true);
   };
 
@@ -459,7 +523,6 @@ export default function CreateHousehold() {
     const oneDay = 24 * 60 * 60 * 1000;
 
     if (diffTime === 0) return "bugün";
-
     if (diffTime === oneDay) return "dünən";
 
     return postDate.toLocaleDateString("az-AZ", {
@@ -735,6 +798,7 @@ export default function CreateHousehold() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 lg:px-8">
         {/* SEARCH */}
+
         <div className="mx-auto max-w-[700px]">
           <div className="relative">
             <Search
@@ -766,6 +830,7 @@ export default function CreateHousehold() {
         </div>
 
         {/* TOP */}
+
         <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <Link to="/">
             <button
@@ -788,7 +853,20 @@ export default function CreateHousehold() {
           </div>
         </div>
 
+        {/* BUSINESS INFO */}
+
+        {businessId && (
+          <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 dark:border-blue-900/40 dark:bg-blue-950/30">
+            <p className="text-xs font-medium text-blue-500">Biznes profili</p>
+
+            <p className="mt-1 font-bold text-blue-700 dark:text-blue-300">
+              {businessName || "Biznes"}
+            </p>
+          </div>
+        )}
+
         {/* ADD BUTTON */}
+
         <div className="mt-5">
           <button
             type="button"
@@ -800,14 +878,13 @@ export default function CreateHousehold() {
           </button>
         </div>
 
-        {/* =====================================================
-            MODERN FORM MODAL
-        ====================================================== */}
+        {/* MODAL */}
 
         {isOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-3 backdrop-blur-md">
             <div className="relative flex max-h-[94vh] w-full max-w-3xl flex-col overflow-hidden rounded-[28px] bg-white shadow-2xl dark:bg-slate-900">
               {/* HEADER */}
+
               <div className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white/95 px-5 py-4 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 sm:px-7">
                 <div className="flex items-center gap-3">
                   <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
@@ -840,11 +917,13 @@ export default function CreateHousehold() {
               </div>
 
               {/* FORM */}
+
               <form
                 onSubmit={handleSubmit}
                 className="max-h-[calc(94vh-80px)] overflow-y-auto px-4 py-5 sm:px-7 sm:py-7"
               >
                 {/* BASIC INFO */}
+
                 <div className="mb-7">
                   <div className="mb-5 flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
@@ -864,6 +943,7 @@ export default function CreateHousehold() {
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {/* CATEGORY */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Kateqoriya
@@ -888,6 +968,7 @@ export default function CreateHousehold() {
                     </div>
 
                     {/* TITLE */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Elanın başlığı
@@ -905,6 +986,7 @@ export default function CreateHousehold() {
                     </div>
 
                     {/* TYPE */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Məhsul növü
@@ -921,6 +1003,7 @@ export default function CreateHousehold() {
                     </div>
 
                     {/* BRAND */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Marka
@@ -937,6 +1020,7 @@ export default function CreateHousehold() {
                     </div>
 
                     {/* MODEL */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Model
@@ -953,6 +1037,7 @@ export default function CreateHousehold() {
                     </div>
 
                     {/* PRICE */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Qiymət
@@ -977,6 +1062,7 @@ export default function CreateHousehold() {
                     </div>
 
                     {/* LOCATION */}
+
                     <div className="sm:col-span-2">
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Məkan
@@ -1003,6 +1089,7 @@ export default function CreateHousehold() {
                 </div>
 
                 {/* DESCRIPTION */}
+
                 <div className="mb-7 border-t border-slate-100 pt-6 dark:border-slate-800">
                   <div className="mb-4">
                     <h3 className="font-bold text-slate-900 dark:text-white">
@@ -1026,6 +1113,7 @@ export default function CreateHousehold() {
                 </div>
 
                 {/* CONTACT */}
+
                 <div className="mb-7 border-t border-slate-100 pt-6 dark:border-slate-800">
                   <div className="mb-4">
                     <h3 className="font-bold text-slate-900 dark:text-white">
@@ -1039,6 +1127,7 @@ export default function CreateHousehold() {
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     {/* NAME */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Ad
@@ -1063,6 +1152,7 @@ export default function CreateHousehold() {
                     </div>
 
                     {/* EMAIL */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         E-mail
@@ -1087,6 +1177,7 @@ export default function CreateHousehold() {
                     </div>
 
                     {/* PHONE */}
+
                     <div>
                       <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Telefon
@@ -1113,6 +1204,7 @@ export default function CreateHousehold() {
                 </div>
 
                 {/* IMAGES */}
+
                 <div className="mb-7 border-t border-slate-100 pt-6 dark:border-slate-800">
                   <div className="mb-4">
                     <h3 className="font-bold text-slate-900 dark:text-white">
@@ -1144,12 +1236,12 @@ export default function CreateHousehold() {
                       multiple
                       accept="image/*"
                       onChange={handleImageChange}
-                      required={!editingId}
                       className="hidden"
                     />
                   </label>
 
                   {/* PREVIEW */}
+
                   {preview.length > 0 && (
                     <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
                       {preview.map((src, idx) => (
@@ -1193,6 +1285,7 @@ export default function CreateHousehold() {
                 </div>
 
                 {/* ACTIONS */}
+
                 <div className="sticky bottom-0 -mx-4 border-t border-slate-200 bg-white/95 px-4 py-4 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 sm:-mx-7 sm:px-7">
                   <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                     <button
@@ -1229,9 +1322,7 @@ export default function CreateHousehold() {
           </div>
         )}
 
-        {/* =====================================================
-            SEARCH RESULTS
-        ====================================================== */}
+        {/* SEARCH RESULTS */}
 
         <div className="mt-6">
           {loading && (
@@ -1330,9 +1421,11 @@ export default function CreateHousehold() {
         </div>
 
         {/* SEPARATOR */}
+
         <div className="my-8 h-px w-full bg-slate-200 dark:bg-slate-800" />
 
         {/* ALL LISTINGS */}
+
         <div className="mb-5 flex items-center justify-between">
           <div>
             <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
@@ -1350,6 +1443,7 @@ export default function CreateHousehold() {
         </div>
 
         {/* LISTINGS */}
+
         <div className="grid grid-cols-2 justify-items-center gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {isLoading ? (
             Array.from({ length: 10 }).map((_, i) => (
@@ -1405,7 +1499,6 @@ export default function CreateHousehold() {
                   <div className="group relative w-full overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl dark:bg-slate-900 dark:ring-slate-800">
                     <OwnerButtons item={item} />
 
-                    {/* FAVORITE */}
                     <button
                       type="button"
                       onClick={(e) => {
@@ -1422,7 +1515,6 @@ export default function CreateHousehold() {
                       />
                     </button>
 
-                    {/* IMAGE */}
                     <div className="relative h-[125px] overflow-hidden bg-slate-100 dark:bg-slate-800">
                       <img
                         src={getCardImage(item)}
@@ -1433,7 +1525,6 @@ export default function CreateHousehold() {
                       <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/40 to-transparent" />
                     </div>
 
-                    {/* CONTENT */}
                     <div className="p-3">
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="truncate text-lg font-extrabold text-slate-900 dark:text-white">

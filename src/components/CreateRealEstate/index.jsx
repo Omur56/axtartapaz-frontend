@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   X,
@@ -25,36 +25,49 @@ import {
   BedDouble,
 } from "lucide-react";
 
-export default function CreateRealEstate() {
+export default function CreateRealEstate({
+  businessId = null,
+  businessName = "",
+  businessCategory = null,
+}) {
   const API_URL = process.env.REACT_APP_API_URL;
 
-  const createInitialForm = () => ({
-    id: Date.now(),
-    title: "",
-    title_type: "",
-    type_building: "",
-    field: "",
-    number_of_rooms: "",
-    area: "",
-    floor: "",
-    number_of_floors: "",
-    location: "",
-    city: "",
-    price: "",
-    images: [],
-    description: "",
-    contact: {
-      name: "",
-      email: "",
-      phone: "",
-    },
-    liked: false,
-    favorite: false,
-    data: new Date(),
-  });
+const createInitialForm = (currentBusinessId = null) => ({
+  id: Date.now(),
 
+  businessId: businessId || null,
+  businessName: businessName || "",
+  businessCategory: businessCategory || null,
+
+  title: "",
+  title_type: "",
+  type_building: "",
+  field: "",
+  number_of_rooms: "",
+  area: "",
+  floor: "",
+  number_of_floors: "",
+  location: "",
+  city: "",
+  price: "",
+  images: [],
+  description: "",
+
+  contact: {
+    name: "",
+    email: "",
+    phone: "",
+  },
+
+  liked: false,
+  favorite: false,
+  data: new Date(),
+  businessId: currentBusinessId || null,
+});
   const [isOpen, setIsOpen] = useState(false);
-  const [realEstatePost, setRealEstatePost] = useState(createInitialForm());
+const [realEstatePost, setRealEstatePost] = useState(
+  createInitialForm(businessId),
+);
 
   const [realEstateList, setRealEstateList] = useState([]);
 
@@ -201,20 +214,19 @@ export default function CreateRealEstate() {
   // RESET
   // =========================================================
 
-  const resetForm = () => {
-    preview.forEach((url) => {
-      if (url?.startsWith("blob:")) {
-        URL.revokeObjectURL(url);
-      }
-    });
+const resetForm = () => {
+  preview.forEach((url) => {
+    if (url?.startsWith("blob:")) {
+      URL.revokeObjectURL(url);
+    }
+  });
 
-    setRealEstatePost(createInitialForm());
-    setImages([]);
-    setPreview([]);
-    setExistingImages([]);
-    setEditingId(null);
-  };
-
+  setRealEstatePost(createInitialForm(businessId));
+  setImages([]);
+  setPreview([]);
+  setExistingImages([]);
+  setEditingId(null);
+};
   // =========================================================
   // OPEN CREATE FORM
   // =========================================================
@@ -275,48 +287,55 @@ export default function CreateRealEstate() {
 
     setIsSubmitting(true);
 
-    const formData = new FormData();
+   const formData = new FormData();
 
-    Object.entries(realEstatePost).forEach(([key, value]) => {
-      if (key === "images") return;
+   const finalBusinessId = realEstatePost.businessId || businessId || null;
 
-      if (key === "contact") {
-        Object.entries(value || {}).forEach(([contactKey, contactValue]) => {
-          formData.append(`contact.${contactKey}`, contactValue || "");
-        });
+   if (finalBusinessId) {
+     formData.append("businessId", finalBusinessId);
+   }
 
-        return;
-      }
+   Object.entries(realEstatePost).forEach(([key, value]) => {
+     if (key === "images") return;
+     if (key === "businessId") return;
 
-      if (key === "data") {
-        formData.append(
-          "data",
-          value instanceof Date
-            ? value.toISOString()
-            : new Date(value).toISOString(),
-        );
+     if (key === "contact") {
+       Object.entries(value || {}).forEach(([contactKey, contactValue]) => {
+         formData.append(`contact.${contactKey}`, contactValue || "");
+       });
+       return;
+     }
 
-        return;
-      }
+     if (key === "data") {
+       formData.append(
+         "data",
+         value instanceof Date
+           ? value.toISOString()
+           : new Date(value).toISOString(),
+       );
+       return;
+     }
 
-      if (key === "price") {
-        formData.append("price", Number(value));
-        return;
-      }
+     if (key === "price") {
+       formData.append("price", Number(value));
+       return;
+     }
 
-      if (typeof value === "boolean" || typeof value === "number") {
-        formData.append(key, String(value));
-        return;
-      }
+     if (typeof value === "boolean" || typeof value === "number") {
+       formData.append(key, String(value));
+       return;
+     }
 
-      if (value !== undefined && value !== null) {
-        formData.append(key, value);
-      }
-    });
+     if (value !== undefined && value !== null) {
+       formData.append(key, value);
+     }
+   });
 
-    images.forEach((file) => {
-      formData.append("images", file);
-    });
+   images.forEach((file) => {
+     formData.append("images", file);
+   });
+
+    
 
     try {
       if (editingId) {
@@ -443,7 +462,7 @@ export default function CreateRealEstate() {
       : [];
 
     setRealEstatePost({
-      ...createInitialForm(),
+      ...createInitialForm(businessId),
       ...item,
 
       title: item.title || "",
@@ -466,6 +485,9 @@ export default function CreateRealEstate() {
       },
 
       data: item.data ? new Date(item.data) : new Date(),
+
+      // BUSINESS
+      businessId: item.businessId || businessId || null,
     });
 
     setEditingId(item._id || item.id);
@@ -1031,15 +1053,20 @@ export default function CreateRealEstate() {
                         <div className="relative h-[115px] sm:h-[130px] overflow-hidden">
                           <img
                             src={getFirstImage(item)}
-                            alt={item.title_type || "Daşınmaz əmlak"}
+                            alt={
+                              item.title_type ||
+                              item.realEstate?.title ||
+                              item.title ||
+                              "Daşınmaz əmlak"
+                            }
                             className="
-                                w-full
-                                h-full
-                                object-cover
-                                group-hover:scale-105
-                                transition-transform
-                                duration-500
-                              "
+      w-full
+      h-full
+      object-cover
+      group-hover:scale-105
+      transition-transform
+      duration-500
+    "
                           />
 
                           {/* FAVORITE */}
@@ -1048,26 +1075,25 @@ export default function CreateRealEstate() {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-
                               handleFavorite(itemId);
                             }}
                             className="
-                                absolute
-                                top-2
-                                right-2
-                                w-8
-                                h-8
-                                rounded-full
-                                bg-black/40
-                                backdrop-blur-md
-                                flex
-                                items-center
-                                justify-center
-                                text-white
-                                hover:bg-white
-                                hover:text-red-500
-                                transition
-                              "
+      absolute
+      top-2
+      right-2
+      w-8
+      h-8
+      rounded-full
+      bg-black/40
+      backdrop-blur-md
+      flex
+      items-center
+      justify-center
+      text-white
+      hover:bg-white
+      hover:text-red-500
+      transition
+    "
                           >
                             <Heart
                               size={16}
@@ -1078,18 +1104,18 @@ export default function CreateRealEstate() {
                           {/* PRICE */}
                           <div
                             className="
-                                absolute
-                                left-2
-                                bottom-2
-                                px-2.5
-                                py-1
-                                rounded-lg
-                                bg-black/65
-                                backdrop-blur
-                                text-white
-                                text-sm
-                                font-black
-                              "
+      absolute
+      left-2
+      bottom-2
+      px-2.5
+      py-1
+      rounded-lg
+      bg-black/65
+      backdrop-blur
+      text-white
+      text-sm
+      font-black
+    "
                           >
                             {item.price} AZN
                           </div>
@@ -1099,68 +1125,81 @@ export default function CreateRealEstate() {
                         <div className="p-2.5">
                           <h3
                             className="
-                                font-bold
-                                text-sm
-                                truncate
-                              "
+      font-bold
+      text-sm
+      truncate
+    "
                           >
                             {item.title_type ||
+                              item.realEstate?.title ||
+                              item.title ||
                               item.type_building ||
+                              item.realEstate?.type_building ||
                               "Daşınmaz əmlak"}
                           </h3>
 
                           <p
                             className="
-                                text-xs
-                                text-slate-500
-                                dark:text-slate-400
-                                truncate
-                                mt-1
-                              "
+      text-xs
+      text-slate-500
+      dark:text-slate-400
+      truncate
+      mt-1
+    "
                           >
-                            {item.type_building}
+                            {item.type_building ||
+                              item.realEstate?.type_building ||
+                              "-"}
                           </p>
 
                           <div
                             className="
-                                flex
-                                items-center
-                                gap-1
-                                mt-2
-                                text-[11px]
-                                text-slate-500
-                                dark:text-slate-400
-                              "
+      flex
+      items-center
+      gap-1
+      mt-2
+      text-[11px]
+      text-slate-500
+      dark:text-slate-400
+    "
                           >
                             <BedDouble size={12} />
 
-                            <span>{item.number_of_rooms || "-"} otaq</span>
+                            <span>
+                              {item.number_of_rooms ||
+                                item.realEstate?.number_of_rooms ||
+                                item.realEstate?.rooms ||
+                                "-"}{" "}
+                              otaq
+                            </span>
 
                             <span className="mx-1">•</span>
 
                             <Ruler size={12} />
 
-                            <span>{item.area || "-"} m²</span>
+                            <span>
+                              {item.area || item.realEstate?.area || "-"} m²
+                            </span>
                           </div>
 
                           <div
                             className="
-                                flex
-                                items-center
-                                justify-between
-                                gap-2
-                                mt-2
-                              "
+      flex
+      items-center
+      justify-between
+      gap-2
+      mt-2
+    "
                           >
                             <div
                               className="
-                                  flex
-                                  items-center
-                                  gap-1
-                                  min-w-0
-                                  text-[10px]
-                                  text-slate-500
-                                "
+        flex
+        items-center
+        gap-1
+        min-w-0
+        text-[10px]
+        text-slate-500
+      "
                             >
                               <MapPin
                                 size={12}
@@ -1168,18 +1207,22 @@ export default function CreateRealEstate() {
                               />
 
                               <span className="truncate">
-                                {item.location || item.city || "Ünvan yoxdur"}
+                                {item.location ||
+                                  item.realEstate?.location ||
+                                  item.city ||
+                                  item.realEstate?.city ||
+                                  "Ünvan yoxdur"}
                               </span>
                             </div>
 
                             <span
                               className="
-                                  text-[10px]
-                                  text-slate-400
-                                  whitespace-nowrap
-                                "
+        text-[10px]
+        text-slate-400
+        whitespace-nowrap
+      "
                             >
-                              {formatDate(item.data)}
+                              {formatDate(item.data || item.createdAt)}
                             </span>
                           </div>
                         </div>

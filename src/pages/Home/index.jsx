@@ -868,7 +868,7 @@ const Home = () => {
     const image = item.images?.[item.images.length - 1] || "/no-image.jpg";
 
     return (
-      <div className="relative w-full max-w-[270px] group">
+      <div className="relative w-full rounded-[14px] max-w-[270px] group">
         <Link
           to={`/${item.__type}/${item._id}/${encodeURIComponent(slug || "")}`}
           className="block"
@@ -877,10 +877,13 @@ const Home = () => {
             className={`
               relative
               overflow-hidden
-              rounded-[22px]
-              bg-white
-              dark:bg-zinc-900
-              border
+              rounded-[14px]
+             dark:bg-zinc-900
+            
+              
+             
+            
+              
               ${
                 isPremium
                   ? "border-red-200 dark:border-red-900/50"
@@ -1030,7 +1033,7 @@ const Home = () => {
             </div>
 
             {/* CONTENT */}
-            <div className="p-3">
+            <div className="p-3  ">
               {/* PRICE */}
               <div className="flex items-center justify-between gap-2">
                 <div
@@ -1137,7 +1140,7 @@ const Home = () => {
           MAIN
       --------------------------------------------------- */}
 
-      <main className="max-w-[1240px] mx-auto px-3 sm:px-5 lg:px-6 pt-[82px] pb-24">
+      <main className="max-w-[1240px] mx-auto px-1 sm:px-1 lg:px-3 pt-[82px] pb-24">
         {/* -------------------------------------------------
             HERO / SEARCH
         ------------------------------------------------- */}
