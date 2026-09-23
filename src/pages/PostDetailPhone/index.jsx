@@ -25,6 +25,7 @@ import {
   ShieldCheck,
   ZoomIn,
   Zap,
+  Package,
 } from "lucide-react";
 
 import { useTheme } from "../../components/Main/ThemeContext";
@@ -35,6 +36,7 @@ export default function PostDetailPhone() {
 
   const [post, setPost] = useState(null);
   const [phoneAds, setPhoneAds] = useState([]);
+  const [business, setBusiness] = useState(null);
   const [zoomIndex, setZoomIndex] = useState(null);
   const [notFound, setNotFound] = useState(false);
 
@@ -56,24 +58,75 @@ export default function PostDetailPhone() {
   }, [BASE_URL]);
 
   /* =========================================================
-     CARI ELAN
+     CARİ ELAN + BİZNES
   ========================================================= */
   useEffect(() => {
     setPost(null);
+    setBusiness(null);
     setNotFound(false);
 
     axios
       .get(`${BASE_URL}/api/Phone/${id}`)
-      .then((res) => {
-        if (res.data) {
-          setPost(res.data);
-        } else {
+      .then(async (res) => {
+        if (!res.data) {
           setNotFound(true);
+          return;
+        }
+
+        setPost(res.data);
+
+        /*
+         * businessId iki formada gələ bilər:
+         *
+         * 1. Populate olunmuş obyekt:
+         * {
+         *   _id: "...",
+         *   businessName: "...",
+         *   slug: "..."
+         * }
+         *
+         * 2. Sadəcə ObjectId:
+         * "68xxxxxxxx..."
+         */
+
+        const businessData = res.data?.businessId;
+
+        if (
+          businessData &&
+          typeof businessData === "object" &&
+          businessData.slug
+        ) {
+          setBusiness(businessData);
+          return;
+        }
+
+        if (businessData) {
+          try {
+            const businessRes = await axios.get(
+              `${BASE_URL}/api/business/by-id/${businessData}`,
+            );
+
+            if (businessRes.data) {
+              setBusiness(businessRes.data);
+            } else {
+              setBusiness(null);
+            }
+          } catch (businessError) {
+            console.error(
+              "Biznes məlumatı yüklənmədi:",
+              businessError.response?.data || businessError.message,
+            );
+
+            setBusiness(null);
+          }
+        } else {
+          setBusiness(null);
         }
       })
       .catch((err) => {
         console.error("Elan yüklənmədi:", err);
         setNotFound(true);
+        setBusiness(null);
       });
   }, [id, BASE_URL]);
 
@@ -362,13 +415,9 @@ export default function PostDetailPhone() {
     } ${phoneData?.type || post?.type || ""}`.trim();
 
   const brand = phoneData?.brand || post?.brand || "";
-
   const model = phoneData?.model || post?.model || "";
-
   const storage = phoneData?.storage || post?.storage || "";
-
   const ram = phoneData?.ram || post?.ram || "";
-
   const color = phoneData?.color || post?.color || "";
 
   const simCard =
@@ -379,9 +428,7 @@ export default function PostDetailPhone() {
     "";
 
   const postDate = post?.data || post?.createdAt;
-
   const contact = post?.contact || {};
-
   const location = post?.location || post?.city || "Yer göstərilməyib";
 
   return (
@@ -523,7 +570,6 @@ export default function PostDetailPhone() {
                         size={50}
                         className="mx-auto mb-3 opacity-30"
                       />
-
                       <p className="text-sm opacity-50">Şəkil yoxdur</p>
                     </div>
                   </div>
@@ -590,7 +636,6 @@ export default function PostDetailPhone() {
 
                       <div className="min-w-0">
                         <p className="text-xs opacity-50">Marka</p>
-
                         <p className="truncate text-sm font-bold">{brand}</p>
                       </div>
                     </div>
@@ -611,7 +656,6 @@ export default function PostDetailPhone() {
 
                       <div className="min-w-0">
                         <p className="text-xs opacity-50">Model</p>
-
                         <p className="truncate text-sm font-bold">{model}</p>
                       </div>
                     </div>
@@ -632,7 +676,6 @@ export default function PostDetailPhone() {
 
                       <div className="min-w-0">
                         <p className="text-xs opacity-50">Yaddaş</p>
-
                         <p className="truncate text-sm font-bold">{storage}</p>
                       </div>
                     </div>
@@ -653,7 +696,6 @@ export default function PostDetailPhone() {
 
                       <div className="min-w-0">
                         <p className="text-xs opacity-50">RAM</p>
-
                         <p className="truncate text-sm font-bold">{ram}</p>
                       </div>
                     </div>
@@ -674,7 +716,6 @@ export default function PostDetailPhone() {
 
                       <div className="min-w-0">
                         <p className="text-xs opacity-50">Rəng</p>
-
                         <p className="truncate text-sm font-bold">{color}</p>
                       </div>
                     </div>
@@ -695,7 +736,6 @@ export default function PostDetailPhone() {
 
                       <div className="min-w-0">
                         <p className="text-xs opacity-50">SIM kart</p>
-
                         <p className="truncate text-sm font-bold">{simCard}</p>
                       </div>
                     </div>
@@ -827,7 +867,6 @@ export default function PostDetailPhone() {
 
                         <div>
                           <p className="text-xs opacity-50">Ad</p>
-
                           <p className="font-semibold">{contact.name}</p>
                         </div>
                       </div>
@@ -900,6 +939,23 @@ export default function PostDetailPhone() {
                     </div>
                   </div>
                 </div>
+
+                {/* =================================================
+                    MAĞAZAYA KEÇİD
+                ================================================= */}
+                {business?.slug && (
+                  <Link
+                    to={`/biznes/${business.slug}`}
+                    className={`mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border px-4 py-3.5 font-black transition-all hover:-translate-y-0.5 ${
+                      darkMode
+                        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                        : "border-emerald-500/20 bg-emerald-500/5 text-emerald-600 hover:bg-emerald-500/10"
+                    }`}
+                  >
+                    <Package size={19} />
+                    Mağazaya keçid et
+                  </Link>
+                )}
 
                 {/* CALL */}
                 {contact?.phone && (
@@ -1073,7 +1129,6 @@ export default function PostDetailPhone() {
                         >
                           <span className="flex min-w-0 items-center gap-1 truncate">
                             <MapPin size={13} />
-
                             {item?.location || item?.city || "—"}
                           </span>
 

@@ -1209,7 +1209,7 @@ const CreateAccessoryPost = ({
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+          className="fixed inset-0 top-16 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) {
               setIsOpen(false);
@@ -1226,7 +1226,7 @@ const CreateAccessoryPost = ({
             {/* MODAL HEADER */}
 
             <div
-              className={`sticky top-0 z-20 flex items-center justify-between border-b px-5 py-4 backdrop-blur-xl ${
+              className={`sticky  top-0 z-20 flex items-center justify-between border-b px-5 py-4 backdrop-blur-xl ${
                 darkMode
                   ? "border-white/10 bg-[#15151a]/95"
                   : "border-gray-100 bg-white/95"
@@ -1247,7 +1247,7 @@ const CreateAccessoryPost = ({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className={`flex h-10 w-10 items-center justify-center rounded-full transition ${
+                className={`flex h-10 w-10  items-center justify-center rounded-full transition ${
                   darkMode
                     ? "bg-white/5 text-gray-300 hover:bg-white/10"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"

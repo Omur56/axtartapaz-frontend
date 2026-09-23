@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
+
 import { useParams, Link } from "react-router-dom";
+
 import axios from "axios";
+
 import {
   ArrowLeft,
   ArrowRight,
@@ -15,6 +18,7 @@ import {
   Mail,
   MapPin,
   Maximize2,
+  Package,
   Phone,
   ShieldCheck,
   Sparkles,
@@ -22,6 +26,7 @@ import {
   User,
   X,
 } from "lucide-react";
+
 import { useTheme } from "../../components/Main/ThemeContext";
 
 export default function PostDetailClothing() {
@@ -32,10 +37,8 @@ export default function PostDetailClothing() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [clothing, setClothing] = useState([]);
-
   const [zoomIndex, setZoomIndex] = useState(null);
   const [selectedImage, setSelectedImage] = useState(0);
-
   const [isUpgrading, setIsUpgrading] = useState(false);
 
   const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
@@ -187,10 +190,12 @@ export default function PostDetailClothing() {
     };
 
     document.body.style.overflow = "hidden";
+
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       document.body.style.overflow = "";
+
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [zoomIndex, imageArray.length]);
@@ -219,9 +224,11 @@ export default function PostDetailClothing() {
     );
 
     const diffTime = today - postDay;
+
     const oneDay = 24 * 60 * 60 * 1000;
 
     if (diffTime === 0) return "bugün";
+
     if (diffTime === oneDay) return "dünən";
 
     return postDate.toLocaleDateString("az-AZ", {
@@ -404,6 +411,7 @@ export default function PostDetailClothing() {
   const similarClothing = [...clothing]
     .filter((item) => {
       const itemId = item?._id || item?.id;
+
       return String(itemId) !== String(post?._id || post?.id);
     })
     .reverse()
@@ -819,6 +827,24 @@ export default function PostDetailClothing() {
                     Email göndər
                   </a>
                 )}
+
+                {/* =================================================
+                    MAĞAZAYA KEÇİD
+                ================================================= */}
+
+                {post.businessId?.slug && (
+                  <Link
+                    to={`/biznes/${post.businessId.slug}`}
+                    className={`mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border px-4 py-3.5 font-black transition-all hover:-translate-y-0.5 ${
+                      darkMode
+                        ? "border-[#670fff]/30 bg-[#670fff]/10 text-white hover:bg-[#670fff]/20"
+                        : "border-[#670fff]/20 bg-[#670fff]/5 text-[#670fff] hover:bg-[#670fff]/10"
+                    }`}
+                  >
+                    <Package size={19} />
+                    Mağazaya keçid et
+                  </Link>
+                )}
               </div>
 
               {/* TRUST */}
@@ -875,6 +901,7 @@ export default function PostDetailClothing() {
                     className="flex flex-col items-center justify-center gap-1 rounded-2xl border border-blue-200 bg-blue-50 px-3 py-3 text-blue-600 transition hover:-translate-y-0.5 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-400"
                   >
                     <Crown size={20} />
+
                     <span className="text-sm font-black">VIP et</span>
                   </button>
 
@@ -885,6 +912,7 @@ export default function PostDetailClothing() {
                     className="flex flex-col items-center justify-center gap-1 rounded-2xl border border-violet-200 bg-violet-50 px-3 py-3 text-violet-600 transition hover:-translate-y-0.5 hover:bg-violet-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-violet-500/20 dark:bg-violet-500/10 dark:text-violet-400"
                   >
                     <Sparkles size={20} />
+
                     <span className="text-sm font-black">Premium</span>
                   </button>
                 </div>

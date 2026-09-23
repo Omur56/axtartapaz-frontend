@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
+
 import { useParams, Link } from "react-router-dom";
+
 import axios from "axios";
+
 import { Carousel } from "react-responsive-carousel";
+
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import {
@@ -25,14 +29,18 @@ import {
 } from "lucide-react";
 
 import { useTheme } from "../../components/Main/ThemeContext";
+
 import BubbleBackground from "../../components/ui/BubbleBackground";
+
 import BottomMenu from "../../components/MobileMenu";
 
 export default function PostDetailHousehold() {
   const { id } = useParams();
+
   const { darkMode } = useTheme();
 
   const [post, setPost] = useState(null);
+  const [business, setBusiness] = useState(null);
   const [household, setHousehold] = useState([]);
   const [zoomIndex, setZoomIndex] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -44,6 +52,7 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // Bütün məişət texnikası elanlarını gətir
   // ---------------------------------------------------------
+
   useEffect(() => {
     axios
       .get(`${BASE_URL}/api/Household`)
@@ -52,6 +61,7 @@ export default function PostDetailHousehold() {
       })
       .catch((err) => {
         console.error("Məişət texnikası elanları yüklənmədi:", err);
+
         setHousehold([]);
       });
   }, [BASE_URL]);
@@ -59,22 +69,61 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // Cari elan
   // ---------------------------------------------------------
+
   useEffect(() => {
     setLoading(true);
     setNotFound(false);
+    setBusiness(null);
 
     axios
       .get(`${BASE_URL}/api/Household/${id}`)
-      .then((res) => {
-        if (res.data) {
-          setPost(res.data);
-        } else {
+      .then(async (res) => {
+        if (!res.data) {
           setNotFound(true);
+          return;
+        }
+
+        setPost(res.data);
+
+        // ---------------------------------------------------
+        // BİZNES MƏLUMATI
+        // ---------------------------------------------------
+
+        const businessData = res.data?.businessId;
+
+        // Əgər backend businessId-ni populate edib obyekt kimi göndəribsə
+        if (
+          businessData &&
+          typeof businessData === "object" &&
+          businessData.slug
+        ) {
+          setBusiness(businessData);
+          return;
+        }
+
+        // Əgər businessId sadəcə ID kimi gəlirsə
+        if (businessData) {
+          try {
+            const businessRes = await axios.get(
+              `${BASE_URL}/api/business/by-id/${businessData}`,
+            );
+
+            if (businessRes.data) {
+              setBusiness(businessRes.data);
+            }
+          } catch (businessError) {
+            console.error("Biznes məlumatı alınmadı:", businessError);
+
+            setBusiness(null);
+          }
+        } else {
+          setBusiness(null);
         }
       })
       .catch((err) => {
         console.error("Elan yüklənmədi:", err);
         setNotFound(true);
+        setBusiness(null);
       })
       .finally(() => {
         setLoading(false);
@@ -84,6 +133,7 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // Şəkillər
   // ---------------------------------------------------------
+
   const imageArray = Array.isArray(post?.images)
     ? post.images
     : post?.images
@@ -103,6 +153,7 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // Tarix
   // ---------------------------------------------------------
+
   const formatDate = (dateString) => {
     if (!dateString) return "";
 
@@ -111,15 +162,19 @@ export default function PostDetailHousehold() {
     if (Number.isNaN(postDate.getTime())) return "";
 
     const today = new Date();
+
     today.setHours(0, 0, 0, 0);
 
     const postDay = new Date(postDate);
+
     postDay.setHours(0, 0, 0, 0);
 
     const diffTime = today - postDay;
+
     const oneDay = 24 * 60 * 60 * 1000;
 
     if (diffTime === 0) return "bugün";
+
     if (diffTime === oneDay) return "dünən";
 
     return postDate.toLocaleDateString("az-AZ", {
@@ -132,6 +187,7 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // Saat
   // ---------------------------------------------------------
+
   const getCurrentTime = (isoString) => {
     if (!isoString) return "";
 
@@ -148,6 +204,7 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // Zoom
   // ---------------------------------------------------------
+
   const openZoom = (index) => {
     setZoomIndex(index);
   };
@@ -167,6 +224,7 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // Klaviatura ilə şəkil dəyişmə
   // ---------------------------------------------------------
+
   useEffect(() => {
     if (zoomIndex === null) return;
 
@@ -185,10 +243,12 @@ export default function PostDetailHousehold() {
     };
 
     window.addEventListener("keydown", handleKeyDown);
+
     document.body.style.overflow = "hidden";
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+
       document.body.style.overflow = "";
     };
   }, [zoomIndex, imageArray.length]);
@@ -196,6 +256,7 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // VIP / Premium
   // ---------------------------------------------------------
+
   const handleUpgrade = async (listingId, type) => {
     try {
       setUpgrading(type);
@@ -225,6 +286,7 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // Loading
   // ---------------------------------------------------------
+
   if (loading) {
     return (
       <div
@@ -250,6 +312,7 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // 404
   // ---------------------------------------------------------
+
   if (notFound || !post) {
     return (
       <div
@@ -294,6 +357,7 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // Bənzər elanlar
   // ---------------------------------------------------------
+
   const similarPosts = [...household]
     .filter((item) => {
       const itemId = item?.id || item?._id;
@@ -306,10 +370,15 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // Məlumatlar
   // ---------------------------------------------------------
+
   const category = post?.category || "";
+
   const title = post?.title || "Məişət texnikası";
+
   const typeOfGoods = post?.type_of_goods || "";
+
   const brand = post?.brand || "";
+
   const model = post?.model || "";
 
   return (
@@ -324,6 +393,7 @@ export default function PostDetailHousehold() {
         {/* ------------------------------------------------ */}
         {/* GERİ */}
         {/* ------------------------------------------------ */}
+
         <Link
           to="/Katalog/Məişət_Texnikası"
           className={`inline-flex items-center gap-2 mb-5 px-4 py-2.5 rounded-xl border backdrop-blur-md transition-all duration-200 ${
@@ -339,8 +409,10 @@ export default function PostDetailHousehold() {
         {/* ------------------------------------------------ */}
         {/* ƏSAS KONTENT */}
         {/* ------------------------------------------------ */}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* SOL TƏRƏF */}
+
           <div
             className={`lg:col-span-2 rounded-3xl border overflow-hidden backdrop-blur-xl shadow-xl ${
               darkMode
@@ -349,6 +421,7 @@ export default function PostDetailHousehold() {
             }`}
           >
             {/* Başlıq */}
+
             <div className="p-5 sm:p-6 pb-3">
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/20 text-xs font-bold">
@@ -389,6 +462,7 @@ export default function PostDetailHousehold() {
             </div>
 
             {/* QALEREYA */}
+
             <div className="px-3 sm:px-6">
               <div
                 className={`rounded-2xl overflow-hidden border ${
@@ -433,6 +507,7 @@ export default function PostDetailHousehold() {
             </div>
 
             {/* QİYMƏT */}
+
             <div className="px-5 sm:px-6 pt-6">
               <div className="inline-flex items-center gap-2">
                 <span className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-rose-500 to-pink-600 bg-clip-text text-transparent">
@@ -444,6 +519,7 @@ export default function PostDetailHousehold() {
             </div>
 
             {/* DETALLAR */}
+
             <div className="p-5 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {title && (
@@ -564,6 +640,7 @@ export default function PostDetailHousehold() {
               </div>
 
               {/* TƏSVİR */}
+
               {post.description && (
                 <div className="mt-6">
                   <h2 className="text-lg font-black mb-2">Məhsul haqqında</h2>
@@ -581,6 +658,7 @@ export default function PostDetailHousehold() {
               )}
 
               {/* ELAN MƏLUMATLARI */}
+
               <div
                 className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-6 pt-5 border-t text-sm ${
                   darkMode
@@ -599,17 +677,20 @@ export default function PostDetailHousehold() {
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="inline-flex items-center gap-1.5">
                     <CalendarDays size={15} />
+
                     {formatDate(postDate)}
                   </span>
 
                   <span className="inline-flex items-center gap-1.5">
                     <Clock3 size={15} />
+
                     {getCurrentTime(postDate)}
                   </span>
 
                   {post.location && (
                     <span className="inline-flex items-center gap-1.5">
                       <MapPin size={15} />
+
                       {post.location}
                     </span>
                   )}
@@ -621,6 +702,7 @@ export default function PostDetailHousehold() {
           {/* ------------------------------------------------ */}
           {/* SAĞ ƏLAQƏ PANELİ */}
           {/* ------------------------------------------------ */}
+
           <aside className="lg:col-span-1">
             <div
               className={`lg:sticky lg:top-24 rounded-3xl border p-5 shadow-xl backdrop-blur-xl ${
@@ -718,7 +800,28 @@ export default function PostDetailHousehold() {
                 )}
               </div>
 
+              {/* ------------------------------------------------ */}
+              {/* MAĞAZAYA KEÇİD */}
+              {/* ------------------------------------------------ */}
+
+              {business?.slug && (
+                <Link
+                  to={`/biznes/${business.slug}`}
+                  className={`mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border px-4 py-3.5 font-black transition-all hover:-translate-y-0.5 ${
+                    darkMode
+                      ? "border-rose-500/30 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20"
+                      : "border-rose-500/20 bg-rose-500/5 text-rose-600 hover:bg-rose-500/10"
+                  }`}
+                >
+                  <Package size={19} />
+                  Mağazaya keçid et
+                </Link>
+              )}
+
+              {/* ------------------------------------------------ */}
               {/* ZƏNG ET */}
+              {/* ------------------------------------------------ */}
+
               {contact?.phone && (
                 <a
                   href={`tel:${contact.phone}`}
@@ -729,7 +832,10 @@ export default function PostDetailHousehold() {
                 </a>
               )}
 
+              {/* ------------------------------------------------ */}
               {/* VIP / PREMIUM */}
+              {/* ------------------------------------------------ */}
+
               <div className="grid grid-cols-2 gap-2 mt-4">
                 <button
                   onClick={() => handleUpgrade(post._id || post.id, "vip")}
@@ -764,6 +870,7 @@ export default function PostDetailHousehold() {
         {/* ------------------------------------------------ */}
         {/* BƏNZƏR ELANLAR */}
         {/* ------------------------------------------------ */}
+
         {similarPosts.length > 0 && (
           <section className="mt-12">
             <div className="flex items-center justify-between mb-5">
@@ -884,12 +991,14 @@ export default function PostDetailHousehold() {
       {/* ------------------------------------------------ */}
       {/* FULLSCREEN ZOOM */}
       {/* ------------------------------------------------ */}
+
       {zoomIndex !== null && imageArray.length > 0 && (
         <div
           className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm flex items-center justify-center"
           onClick={closeZoom}
         >
           {/* Bağla */}
+
           <button
             onClick={closeZoom}
             className="absolute top-5 right-5 z-[10001] w-11 h-11 rounded-full bg-white/10 hover:bg-red-500/80 text-white flex items-center justify-center transition"
@@ -899,6 +1008,7 @@ export default function PostDetailHousehold() {
           </button>
 
           {/* Sol */}
+
           {imageArray.length > 1 && (
             <button
               onClick={(e) => {
@@ -913,6 +1023,7 @@ export default function PostDetailHousehold() {
           )}
 
           {/* Şəkil */}
+
           <img
             src={getImageUrl(imageArray[zoomIndex])}
             alt="Zoomed"
@@ -921,6 +1032,7 @@ export default function PostDetailHousehold() {
           />
 
           {/* Sağ */}
+
           {imageArray.length > 1 && (
             <button
               onClick={(e) => {
@@ -935,6 +1047,7 @@ export default function PostDetailHousehold() {
           )}
 
           {/* Sayğac */}
+
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md text-white text-sm font-bold">
             {zoomIndex + 1} / {imageArray.length}
           </div>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
@@ -23,6 +22,8 @@ import {
   CalendarDays,
   Clock3,
   Loader2,
+  Store,
+  ExternalLink,
 } from "lucide-react";
 
 import { useTheme } from "../../components/Main/ThemeContext";
@@ -35,19 +36,21 @@ export default function PostDetailelectronics() {
 
   const [post, setPost] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(null);
   const [upgrading, setUpgrading] = useState(null);
+  const [businessLoading, setBusinessLoading] = useState(false);
 
-  const BASE_URL =
-    process.env.REACT_APP_API_URL || "http://localhost:10000";
+  const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
 
   const contact = post?.contact ?? {};
 
   // =====================================================
   // BÜTÜN ELEKTRONİKA ELANLARI
   // =====================================================
+
   useEffect(() => {
     axios
       .get(`${BASE_URL}/api/electronics`)
@@ -62,6 +65,7 @@ export default function PostDetailelectronics() {
   // =====================================================
   // SEÇİLMİŞ ELAN
   // =====================================================
+
   useEffect(() => {
     setLoading(true);
     setNotFound(false);
@@ -80,13 +84,92 @@ export default function PostDetailelectronics() {
   }, [id, BASE_URL]);
 
   // =====================================================
+  // BİZNES / MAĞAZA MƏLUMATLARI
+  // =====================================================
+
+  useEffect(() => {
+    if (!post) {
+      setBusiness(null);
+      setBusinessLoading(false);
+      return;
+    }
+
+    /*
+      Biznes ID bir neçə formada gələ bilər:
+
+      1. post.businessId
+      2. post.electronikaPost.businessId
+      3. post.businessId._id
+      4. post.electronikaPost.businessId._id
+    */
+
+    const rawBusinessId =
+      post?.businessId || post?.electronikaPost?.businessId || null;
+
+    const businessId =
+      typeof rawBusinessId === "object"
+        ? rawBusinessId?._id || rawBusinessId?.id
+        : rawBusinessId;
+
+    // Əgər backend artıq business obyektini göndəribsə
+    if (typeof rawBusinessId === "object" && rawBusinessId?.slug) {
+      setBusiness(rawBusinessId);
+      setBusinessLoading(false);
+      return;
+    }
+
+    // Biznes ID yoxdursa, adi istifadəçi elanıdır
+    if (!businessId) {
+      setBusiness(null);
+      setBusinessLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadBusiness = async () => {
+      try {
+        setBusinessLoading(true);
+
+        const res = await axios.get(
+          `${BASE_URL}/api/business/by-id/${businessId}`,
+        );
+
+        if (!cancelled) {
+          setBusiness(res.data || null);
+        }
+      } catch (err) {
+        console.error(
+          "Biznes məlumatları yüklənmədi:",
+          err.response?.data || err.message,
+        );
+
+        if (!cancelled) {
+          setBusiness(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setBusinessLoading(false);
+        }
+      }
+    };
+
+    loadBusiness();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [post, BASE_URL]);
+
+  // =====================================================
   // ŞƏKİLLƏR
   // =====================================================
+
   const imageArray = Array.isArray(post?.images)
     ? post.images
     : post?.images
-    ? [post.images]
-    : [];
+      ? [post.images]
+      : [];
 
   const getImageUrl = (img) => {
     if (!img) return "/no-image.jpg";
@@ -104,6 +187,7 @@ export default function PostDetailelectronics() {
   // =====================================================
   // TARİX
   // =====================================================
+
   const formatDate = (dateString) => {
     if (!dateString) return "Tarix yoxdur";
 
@@ -123,6 +207,7 @@ export default function PostDetailelectronics() {
   // =====================================================
   // SAAT
   // =====================================================
+
   const getCurrentTime = (iso) => {
     if (!iso) return "";
 
@@ -141,6 +226,7 @@ export default function PostDetailelectronics() {
   // =====================================================
   // ZOOM
   // =====================================================
+
   const openZoom = (index) => {
     setZoomIndex(index);
   };
@@ -155,9 +241,7 @@ export default function PostDetailelectronics() {
         return prev;
       }
 
-      return prev === 0
-        ? imageArray.length - 1
-        : prev - 1;
+      return prev === 0 ? imageArray.length - 1 : prev - 1;
     });
   };
 
@@ -167,15 +251,14 @@ export default function PostDetailelectronics() {
         return prev;
       }
 
-      return prev === imageArray.length - 1
-        ? 0
-        : prev + 1;
+      return prev === imageArray.length - 1 ? 0 : prev + 1;
     });
   };
 
   // =====================================================
   // KLAVİATURA ZOOM
   // =====================================================
+
   useEffect(() => {
     if (zoomIndex === null) return;
 
@@ -203,6 +286,7 @@ export default function PostDetailelectronics() {
   // =====================================================
   // VIP / PREMIUM
   // =====================================================
+
   const handleUpgrade = async (listingId, type) => {
     try {
       setUpgrading(type);
@@ -216,16 +300,14 @@ export default function PostDetailelectronics() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (data?.url) {
         window.location.href = data.url;
       }
     } catch (err) {
-      console.log(
-        err.response?.data || err.message
-      );
+      console.log(err.response?.data || err.message);
     } finally {
       setUpgrading(null);
     }
@@ -234,13 +316,12 @@ export default function PostDetailelectronics() {
   // =====================================================
   // LOADING
   // =====================================================
+
   if (loading) {
     return (
       <div
         className={`relative min-h-screen overflow-hidden ${
-          darkMode
-            ? "bg-[#09090f] text-white"
-            : "bg-slate-50 text-slate-900"
+          darkMode ? "bg-[#09090f] text-white" : "bg-slate-50 text-slate-900"
         }`}
       >
         <BubbleBackground />
@@ -254,22 +335,15 @@ export default function PostDetailelectronics() {
             }`}
           >
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
-              <Loader2
-                size={30}
-                className="text-white animate-spin"
-              />
+              <Loader2 size={30} className="text-white animate-spin" />
             </div>
 
             <div className="text-center">
-              <p className="font-black text-lg">
-                Elan yüklənir...
-              </p>
+              <p className="font-black text-lg">Elan yüklənir...</p>
 
               <p
                 className={`text-sm mt-1 ${
-                  darkMode
-                    ? "text-white/50"
-                    : "text-slate-500"
+                  darkMode ? "text-white/50" : "text-slate-500"
                 }`}
               >
                 Zəhmət olmasa gözləyin
@@ -286,13 +360,12 @@ export default function PostDetailelectronics() {
   // =====================================================
   // 404
   // =====================================================
+
   if (notFound || !post) {
     return (
       <div
         className={`relative min-h-screen overflow-hidden ${
-          darkMode
-            ? "bg-[#09090f] text-white"
-            : "bg-slate-50 text-slate-900"
+          darkMode ? "bg-[#09090f] text-white" : "bg-slate-50 text-slate-900"
         }`}
       >
         <BubbleBackground />
@@ -306,29 +379,21 @@ export default function PostDetailelectronics() {
             }`}
           >
             <div className="mx-auto mb-6 w-20 h-20 rounded-3xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-xl">
-              <Smartphone
-                size={38}
-                className="text-white"
-              />
+              <Smartphone size={38} className="text-white" />
             </div>
 
             <div className="text-7xl sm:text-8xl font-black bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">
               404
             </div>
 
-            <h1 className="text-2xl font-black mt-4">
-              Elan tapılmadı
-            </h1>
+            <h1 className="text-2xl font-black mt-4">Elan tapılmadı</h1>
 
             <p
               className={`mt-2 text-sm ${
-                darkMode
-                  ? "text-white/55"
-                  : "text-slate-500"
+                darkMode ? "text-white/55" : "text-slate-500"
               }`}
             >
-              Axtardığınız elektronika elanı silinmiş və
-              ya artıq mövcud deyil.
+              Axtardığınız elektronika elanı silinmiş və ya artıq mövcud deyil.
             </p>
 
             <Link
@@ -349,19 +414,15 @@ export default function PostDetailelectronics() {
   // =====================================================
   // BƏNZƏR ELANLAR
   // =====================================================
+
   const similarPosts = posts
-    .filter(
-      (item) =>
-        String(item?._id || item?.id) !== String(id)
-    )
+    .filter((item) => String(item?._id || item?.id) !== String(id))
     .slice(0, 8);
 
   return (
     <div
       className={`relative min-h-screen overflow-hidden transition-colors duration-300 ${
-        darkMode
-          ? "bg-[#09090f] text-white"
-          : "bg-slate-50 text-slate-900"
+        darkMode ? "bg-[#09090f] text-white" : "bg-slate-50 text-slate-900"
       }`}
     >
       <BubbleBackground />
@@ -370,6 +431,7 @@ export default function PostDetailelectronics() {
         {/* ================================================= */}
         {/* GERİ */}
         {/* ================================================= */}
+
         <Link
           to="/Katalog/Elektronika"
           className={`inline-flex items-center gap-2 mb-5 px-4 py-2.5 rounded-2xl border backdrop-blur-xl transition-all hover:-translate-x-0.5 ${
@@ -385,6 +447,7 @@ export default function PostDetailelectronics() {
         {/* ================================================= */}
         {/* ƏSAS KART */}
         {/* ================================================= */}
+
         <div
           className={`rounded-[30px] border shadow-2xl overflow-hidden backdrop-blur-xl ${
             darkMode
@@ -396,8 +459,10 @@ export default function PostDetailelectronics() {
             {/* ================================================= */}
             {/* SOL */}
             {/* ================================================= */}
+
             <div className="lg:col-span-2 p-4 sm:p-6 lg:p-8">
               {/* BADGES */}
+
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md">
                   <Smartphone size={14} />
@@ -420,6 +485,7 @@ export default function PostDetailelectronics() {
               </div>
 
               {/* BAŞLIQ */}
+
               <h1 className="text-2xl sm:text-3xl font-black leading-tight mb-5">
                 {post?.brand || ""}
                 {post?.brand && post?.model ? " " : ""}
@@ -427,6 +493,7 @@ export default function PostDetailelectronics() {
               </h1>
 
               {/* GALEREYA */}
+
               <div
                 className={`rounded-3xl overflow-hidden border ${
                   darkMode
@@ -449,14 +516,15 @@ export default function PostDetailelectronics() {
                       <div
                         key={index}
                         className="h-[300px] sm:h-[420px] lg:h-[500px] cursor-zoom-in"
-                        onClick={() =>
-                          openZoom(index)
-                        }
+                        onClick={() => openZoom(index)}
                       >
                         <img
                           src={getImageUrl(img)}
                           alt={`Şəkil ${index + 1}`}
                           className="w-full h-full object-contain"
+                          onError={(e) => {
+                            e.currentTarget.src = "/no-image.jpg";
+                          }}
                         />
                       </div>
                     ))}
@@ -464,44 +532,36 @@ export default function PostDetailelectronics() {
                 ) : (
                   <div className="h-[300px] sm:h-[420px] flex items-center justify-center">
                     <div className="text-center">
-                      <Smartphone
-                        size={60}
-                        className="mx-auto opacity-30"
-                      />
-
-                      <p className="mt-3 opacity-50">
-                        Şəkil yoxdur
-                      </p>
+                      <Smartphone size={60} className="mx-auto opacity-30" />
+                      <p className="mt-3 opacity-50">Şəkil yoxdur</p>
                     </div>
                   </div>
                 )}
               </div>
 
               {/* QİYMƏT */}
+
               <div className="mt-6">
                 <div className="inline-flex items-center px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg">
                   <span className="text-3xl sm:text-4xl font-black">
                     {post?.price ?? "0"}
                   </span>
 
-                  <span className="text-lg font-bold ml-2">
-                    AZN
-                  </span>
+                  <span className="text-lg font-bold ml-2">AZN</span>
                 </div>
               </div>
 
               {/* DETALLAR */}
+
               <div className="mt-7">
                 <h2 className="text-xl font-black mb-4 flex items-center gap-2">
-                  <Package
-                    size={21}
-                    className="text-cyan-500"
-                  />
+                  <Package size={21} className="text-cyan-500" />
                   Məhsul haqqında
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* MARKA */}
+
                   <div
                     className={`p-4 rounded-2xl border ${
                       darkMode
@@ -509,21 +569,16 @@ export default function PostDetailelectronics() {
                         : "bg-slate-50 border-slate-200"
                     }`}
                   >
-                    <p className="text-xs opacity-50 mb-1">
-                      Marka
-                    </p>
+                    <p className="text-xs opacity-50 mb-1">Marka</p>
 
                     <p className="font-bold flex items-center gap-2">
-                      <Tag
-                        size={16}
-                        className="text-cyan-500"
-                      />
-
+                      <Tag size={16} className="text-cyan-500" />
                       {post?.brand || "—"}
                     </p>
                   </div>
 
                   {/* MODEL */}
+
                   <div
                     className={`p-4 rounded-2xl border ${
                       darkMode
@@ -531,16 +586,13 @@ export default function PostDetailelectronics() {
                         : "bg-slate-50 border-slate-200"
                     }`}
                   >
-                    <p className="text-xs opacity-50 mb-1">
-                      Model
-                    </p>
+                    <p className="text-xs opacity-50 mb-1">Model</p>
 
-                    <p className="font-bold">
-                      {post?.model || "—"}
-                    </p>
+                    <p className="font-bold">{post?.model || "—"}</p>
                   </div>
 
                   {/* KATEQORİYA */}
+
                   <div
                     className={`p-4 rounded-2xl border ${
                       darkMode
@@ -548,16 +600,13 @@ export default function PostDetailelectronics() {
                         : "bg-slate-50 border-slate-200"
                     }`}
                   >
-                    <p className="text-xs opacity-50 mb-1">
-                      Kateqoriya
-                    </p>
+                    <p className="text-xs opacity-50 mb-1">Kateqoriya</p>
 
-                    <p className="font-bold">
-                      {post?.category || "—"}
-                    </p>
+                    <p className="font-bold">{post?.category || "—"}</p>
                   </div>
 
                   {/* ŞƏHƏR */}
+
                   <div
                     className={`p-4 rounded-2xl border ${
                       darkMode
@@ -565,16 +614,10 @@ export default function PostDetailelectronics() {
                         : "bg-slate-50 border-slate-200"
                     }`}
                   >
-                    <p className="text-xs opacity-50 mb-1">
-                      Şəhər
-                    </p>
+                    <p className="text-xs opacity-50 mb-1">Şəhər</p>
 
                     <p className="font-bold flex items-center gap-2">
-                      <MapPin
-                        size={16}
-                        className="text-red-500"
-                      />
-
+                      <MapPin size={16} className="text-red-500" />
                       {post?.location || "—"}
                     </p>
                   </div>
@@ -582,6 +625,7 @@ export default function PostDetailelectronics() {
               </div>
 
               {/* QEYD */}
+
               {post?.description && (
                 <div
                   className={`mt-5 p-5 rounded-2xl border ${
@@ -590,15 +634,11 @@ export default function PostDetailelectronics() {
                       : "bg-slate-50 border-slate-200"
                   }`}
                 >
-                  <h3 className="font-black mb-2">
-                    Qeyd
-                  </h3>
+                  <h3 className="font-black mb-2">Qeyd</h3>
 
                   <p
                     className={`leading-7 ${
-                      darkMode
-                        ? "text-white/65"
-                        : "text-slate-600"
+                      darkMode ? "text-white/65" : "text-slate-600"
                     }`}
                   >
                     {post.description}
@@ -607,25 +647,19 @@ export default function PostDetailelectronics() {
               )}
 
               {/* ELAN MƏLUMATLARI */}
+
               <div
                 className={`grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 pt-6 border-t ${
-                  darkMode
-                    ? "border-white/10"
-                    : "border-slate-200"
+                  darkMode ? "border-white/10" : "border-slate-200"
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center">
-                    <Tag
-                      size={18}
-                      className="text-violet-500"
-                    />
+                    <Tag size={18} className="text-violet-500" />
                   </div>
 
                   <div>
-                    <p className="text-xs opacity-50">
-                      Elanın nömrəsi
-                    </p>
+                    <p className="text-xs opacity-50">Elanın nömrəsi</p>
 
                     <p className="font-bold text-sm break-all">
                       {post?.id || post?._id || "—"}
@@ -635,16 +669,11 @@ export default function PostDetailelectronics() {
 
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                    <CalendarDays
-                      size={18}
-                      className="text-blue-500"
-                    />
+                    <CalendarDays size={18} className="text-blue-500" />
                   </div>
 
                   <div>
-                    <p className="text-xs opacity-50">
-                      Tarix
-                    </p>
+                    <p className="text-xs opacity-50">Tarix</p>
 
                     <p className="font-bold text-sm">
                       {formatDate(post?.createdAt)}
@@ -654,21 +683,14 @@ export default function PostDetailelectronics() {
 
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                    <Clock3
-                      size={18}
-                      className="text-emerald-500"
-                    />
+                    <Clock3 size={18} className="text-emerald-500" />
                   </div>
 
                   <div>
-                    <p className="text-xs opacity-50">
-                      Saat
-                    </p>
+                    <p className="text-xs opacity-50">Saat</p>
 
                     <p className="font-bold text-sm">
-                      {getCurrentTime(
-                        post?.createdAt
-                      )}
+                      {getCurrentTime(post?.createdAt)}
                     </p>
                   </div>
                 </div>
@@ -678,11 +700,10 @@ export default function PostDetailelectronics() {
             {/* ================================================= */}
             {/* SAĞ - ƏLAQƏ */}
             {/* ================================================= */}
+
             <div
               className={`p-4 sm:p-6 lg:p-8 border-t lg:border-t-0 lg:border-l ${
-                darkMode
-                  ? "border-white/10"
-                  : "border-slate-200"
+                darkMode ? "border-white/10" : "border-slate-200"
               }`}
             >
               <div
@@ -694,41 +715,28 @@ export default function PostDetailelectronics() {
               >
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
-                    <User
-                      size={23}
-                      className="text-white"
-                    />
+                    <User size={23} className="text-white" />
                   </div>
 
                   <div>
-                    <p className="text-xs opacity-50">
-                      Elan sahibi
-                    </p>
+                    <p className="text-xs opacity-50">Elan sahibi</p>
 
-                    <h2 className="font-black text-lg">
-                      Əlaqə məlumatı
-                    </h2>
+                    <h2 className="font-black text-lg">Əlaqə məlumatı</h2>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   {/* AD */}
+
                   <div
                     className={`flex items-start gap-3 p-3 rounded-2xl ${
-                      darkMode
-                        ? "bg-white/[0.04]"
-                        : "bg-white"
+                      darkMode ? "bg-white/[0.04]" : "bg-white"
                     }`}
                   >
-                    <User
-                      size={18}
-                      className="mt-0.5 text-violet-500"
-                    />
+                    <User size={18} className="mt-0.5 text-violet-500" />
 
                     <div className="min-w-0">
-                      <p className="text-xs opacity-50">
-                        Ad
-                      </p>
+                      <p className="text-xs opacity-50">Ad</p>
 
                       <p className="font-bold break-words">
                         {contact?.name || "—"}
@@ -737,22 +745,16 @@ export default function PostDetailelectronics() {
                   </div>
 
                   {/* TELEFON */}
+
                   <div
                     className={`flex items-start gap-3 p-3 rounded-2xl ${
-                      darkMode
-                        ? "bg-white/[0.04]"
-                        : "bg-white"
+                      darkMode ? "bg-white/[0.04]" : "bg-white"
                     }`}
                   >
-                    <Phone
-                      size={18}
-                      className="mt-0.5 text-emerald-500"
-                    />
+                    <Phone size={18} className="mt-0.5 text-emerald-500" />
 
                     <div className="min-w-0">
-                      <p className="text-xs opacity-50">
-                        Telefon
-                      </p>
+                      <p className="text-xs opacity-50">Telefon</p>
 
                       {contact?.phone ? (
                         <a
@@ -762,30 +764,22 @@ export default function PostDetailelectronics() {
                           {contact.phone}
                         </a>
                       ) : (
-                        <p className="font-bold">
-                          —
-                        </p>
+                        <p className="font-bold">—</p>
                       )}
                     </div>
                   </div>
 
                   {/* EMAIL */}
+
                   <div
                     className={`flex items-start gap-3 p-3 rounded-2xl ${
-                      darkMode
-                        ? "bg-white/[0.04]"
-                        : "bg-white"
+                      darkMode ? "bg-white/[0.04]" : "bg-white"
                     }`}
                   >
-                    <Mail
-                      size={18}
-                      className="mt-0.5 text-blue-500"
-                    />
+                    <Mail size={18} className="mt-0.5 text-blue-500" />
 
                     <div className="min-w-0">
-                      <p className="text-xs opacity-50">
-                        Email
-                      </p>
+                      <p className="text-xs opacity-50">Email</p>
 
                       <p className="font-bold break-all">
                         {contact?.email || "—"}
@@ -794,31 +788,73 @@ export default function PostDetailelectronics() {
                   </div>
 
                   {/* ŞƏHƏR */}
+
                   <div
                     className={`flex items-start gap-3 p-3 rounded-2xl ${
-                      darkMode
-                        ? "bg-white/[0.04]"
-                        : "bg-white"
+                      darkMode ? "bg-white/[0.04]" : "bg-white"
                     }`}
                   >
-                    <MapPin
-                      size={18}
-                      className="mt-0.5 text-red-500"
-                    />
+                    <MapPin size={18} className="mt-0.5 text-red-500" />
 
                     <div>
-                      <p className="text-xs opacity-50">
-                        Şəhər
-                      </p>
+                      <p className="text-xs opacity-50">Şəhər</p>
 
-                      <p className="font-bold">
-                        {post?.location || "—"}
-                      </p>
+                      <p className="font-bold">{post?.location || "—"}</p>
                     </div>
                   </div>
                 </div>
 
+                {/* ================================================= */}
+                {/* MAĞAZAYA KEÇİD */}
+                {/* ================================================= */}
+
+                {business?.slug && (
+                  <div className="mt-5">
+                    <Link
+                      to={`/biznes/${business.slug}`}
+                      className="group flex items-center justify-between gap-3 w-full p-4 rounded-2xl border border-violet-500/20 bg-gradient-to-r from-violet-500/10 via-purple-500/10 to-fuchsia-500/10 hover:from-violet-500/20 hover:via-purple-500/20 hover:to-fuchsia-500/20 transition-all duration-300 hover:-translate-y-0.5"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-11 h-11 shrink-0 rounded-xl bg-gradient-to-br from-[#670fff] to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
+                          <Store size={22} className="text-white" />
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="text-xs opacity-50 mb-0.5">
+                            Biznes mağazası
+                          </p>
+
+                          <p className="font-black truncate">
+                            {business?.businessName || "Mağazaya bax"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <ExternalLink
+                        size={18}
+                        className="shrink-0 text-violet-500 group-hover:translate-x-0.5 transition-transform"
+                      />
+                    </Link>
+                  </div>
+                )}
+
+                {/* BİZNES YÜKLƏNİR */}
+
+                {businessLoading && (
+                  <div
+                    className={`mt-5 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm ${
+                      darkMode
+                        ? "bg-white/[0.04] text-white/50"
+                        : "bg-white text-slate-400"
+                    }`}
+                  >
+                    <Loader2 size={16} className="animate-spin" />
+                    Mağaza məlumatları yüklənir...
+                  </div>
+                )}
+
                 {/* ZƏNG */}
+
                 {contact?.phone && (
                   <a
                     href={`tel:${contact.phone}`}
@@ -830,62 +866,44 @@ export default function PostDetailelectronics() {
                 )}
 
                 {/* VIP / PREMIUM */}
+
                 <div className="mt-5 pt-5 border-t border-slate-200/10">
                   <div className="flex items-center gap-2 mb-3">
-                    <ShieldCheck
-                      size={18}
-                      className="text-violet-500"
-                    />
+                    <ShieldCheck size={18} className="text-violet-500" />
 
-                    <p className="font-black">
-                      Elanı önə çıxar
-                    </p>
+                    <p className="font-black">Elanı önə çıxar</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
+                    {/* VIP */}
+
                     <button
                       type="button"
-                      onClick={() =>
-                        handleUpgrade(
-                          post?._id,
-                          "vip"
-                        )
-                      }
+                      onClick={() => handleUpgrade(post?._id, "vip")}
                       disabled={upgrading !== null}
                       className="flex items-center justify-center gap-1.5 px-3 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold text-sm shadow-md hover:-translate-y-0.5 transition disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {upgrading === "vip" ? (
-                        <Loader2
-                          size={16}
-                          className="animate-spin"
-                        />
+                        <Loader2 size={16} className="animate-spin" />
                       ) : (
                         <Sparkles size={16} />
                       )}
-
                       VIP et
                     </button>
 
+                    {/* PREMIUM */}
+
                     <button
                       type="button"
-                      onClick={() =>
-                        handleUpgrade(
-                          post?._id,
-                          "premium"
-                        )
-                      }
+                      onClick={() => handleUpgrade(post?._id, "premium")}
                       disabled={upgrading !== null}
                       className="flex items-center justify-center gap-1.5 px-3 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 text-white font-bold text-sm shadow-md hover:-translate-y-0.5 transition disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {upgrading === "premium" ? (
-                        <Loader2
-                          size={16}
-                          className="animate-spin"
-                        />
+                        <Loader2 size={16} className="animate-spin" />
                       ) : (
                         <Crown size={16} />
                       )}
-
                       Premium
                     </button>
                   </div>
@@ -898,6 +916,7 @@ export default function PostDetailelectronics() {
         {/* ================================================= */}
         {/* BƏNZƏR ELANLAR */}
         {/* ================================================= */}
+
         {similarPosts.length > 0 && (
           <section className="mt-12">
             <div className="mb-5">
@@ -913,8 +932,7 @@ export default function PostDetailelectronics() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {similarPosts.map((item) => {
-                const itemId =
-                  item?._id || item?.id;
+                const itemId = item?._id || item?.id;
 
                 return (
                   <Link
@@ -930,26 +948,20 @@ export default function PostDetailelectronics() {
                       }`}
                     >
                       {/* ŞƏKİL */}
+
                       <div className="relative h-[210px] overflow-hidden">
                         <img
-                          src={getImageUrl(
-                            item?.images?.[0]
-                          )}
-                          alt={
-                            item?.title ||
-                            "Elektronika"
-                          }
+                          src={getImageUrl(item?.images?.[0])}
+                          alt={item?.title || "Elektronika"}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           onError={(e) => {
-                            e.currentTarget.src =
-                              "/no-image.jpg";
+                            e.currentTarget.src = "/no-image.jpg";
                           }}
                         />
 
                         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
 
-                        {item?.priorityType ===
-                          "premium" && (
+                        {item?.priorityType === "premium" && (
                           <span className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500 text-white text-[11px] font-black shadow-lg">
                             <Crown size={12} />
                             PREMIUM
@@ -965,6 +977,7 @@ export default function PostDetailelectronics() {
                       </div>
 
                       {/* MƏLUMAT */}
+
                       <div className="p-4">
                         <p className="text-xl font-black">
                           {item?.price ?? "0"} ₼
@@ -972,17 +985,14 @@ export default function PostDetailelectronics() {
 
                         <h3 className="font-bold mt-1 truncate">
                           {item?.title ||
-                            `${item?.brand || ""} ${
-                              item?.model || ""
-                            }`}
+                            `${item?.brand || ""} ${item?.model || ""}`}
                         </h3>
 
                         <div className="flex items-center gap-1.5 mt-2 text-sm text-cyan-500 font-semibold">
                           <Tag size={14} />
 
                           <span className="truncate">
-                            {item?.brand ||
-                              "Marka yoxdur"}
+                            {item?.brand || "Marka yoxdur"}
                           </span>
                         </div>
 
@@ -1000,9 +1010,7 @@ export default function PostDetailelectronics() {
 
                           <span className="flex items-center gap-1 whitespace-nowrap">
                             <Clock3 size={13} />
-                            {getCurrentTime(
-                              item?.createdAt
-                            )}
+                            {getCurrentTime(item?.createdAt)}
                           </span>
                         </div>
                       </div>
@@ -1018,74 +1026,75 @@ export default function PostDetailelectronics() {
       {/* ================================================= */}
       {/* FULLSCREEN ZOOM */}
       {/* ================================================= */}
-      {zoomIndex !== null &&
-        imageArray.length > 0 && (
-          <div
-            className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4"
+
+      {zoomIndex !== null && imageArray.length > 0 && (
+        <div
+          className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={closeZoom}
+        >
+          {/* BAĞLA */}
+
+          <button
+            type="button"
             onClick={closeZoom}
+            className="absolute top-5 right-5 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-red-500/80 text-white flex items-center justify-center transition"
+            aria-label="Bağla"
           >
-            {/* BAĞLA */}
+            <X size={25} />
+          </button>
+
+          {/* SAYĞAC */}
+
+          <div className="absolute top-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/10 text-white text-sm font-bold backdrop-blur-md">
+            {zoomIndex + 1} / {imageArray.length}
+          </div>
+
+          {/* SOL */}
+
+          {imageArray.length > 1 && (
             <button
               type="button"
-              onClick={closeZoom}
-              className="absolute top-5 right-5 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-red-500/80 text-white flex items-center justify-center transition"
-              aria-label="Bağla"
+              onClick={(e) => {
+                e.stopPropagation();
+                prevImage();
+              }}
+              className="absolute left-3 sm:left-7 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition"
+              aria-label="Əvvəlki şəkil"
             >
-              <X size={25} />
+              <ChevronLeft size={32} />
             </button>
+          )}
 
-            {/* SAYĞAC */}
-            <div className="absolute top-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/10 text-white text-sm font-bold backdrop-blur-md">
-              {zoomIndex + 1} / {imageArray.length}
-            </div>
+          {/* ŞƏKİL */}
 
-            {/* SOL */}
-            {imageArray.length > 1 && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  prevImage();
-                }}
-                className="absolute left-3 sm:left-7 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition"
-                aria-label="Əvvəlki şəkil"
-              >
-                <ChevronLeft size={32} />
-              </button>
-            )}
+          <img
+            src={getImageUrl(imageArray[zoomIndex])}
+            alt="Böyük görünüş"
+            className="max-w-[92vw] max-h-[88vh] object-contain rounded-xl select-none"
+            onClick={(e) => e.stopPropagation()}
+          />
 
-            {/* ŞƏKİL */}
-            <img
-              src={getImageUrl(
-                imageArray[zoomIndex]
-              )}
-              alt="Böyük görünüş"
-              className="max-w-[92vw] max-h-[88vh] object-contain rounded-xl select-none"
-              onClick={(e) =>
-                e.stopPropagation()
-              }
-            />
+          {/* SAĞ */}
 
-            {/* SAĞ */}
-            {imageArray.length > 1 && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  nextImage();
-                }}
-                className="absolute right-3 sm:right-7 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition"
-                aria-label="Növbəti şəkil"
-              >
-                <ChevronRight size={32} />
-              </button>
-            )}
+          {imageArray.length > 1 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage();
+              }}
+              className="absolute right-3 sm:right-7 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition"
+              aria-label="Növbəti şəkil"
+            >
+              <ChevronRight size={32} />
+            </button>
+          )}
 
-            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/10 text-white/60 text-xs backdrop-blur-md hidden sm:block">
-              ← → ilə dəyişdir · ESC ilə bağla
-            </div>
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/10 text-white/60 text-xs backdrop-blur-md hidden sm:block">
+            ← → ilə dəyişdir · ESC ilə bağla
           </div>
-        )}
+        </div>
+      )}
 
       <BottomMenu />
     </div>

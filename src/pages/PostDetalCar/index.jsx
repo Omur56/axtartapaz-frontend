@@ -32,6 +32,7 @@ import {
   Mail,
   MapPinned,
   ArrowLeft,
+  Store,
 } from "lucide-react";
 
 import { Avatar } from "@mui/material";
@@ -1026,6 +1027,20 @@ export default function PostDetailCar() {
                     <Mail size={16} />
                     <span className="truncate">{contactEmail}</span>
                   </div>
+                )}
+{/* ---magaza buttonu */}
+                {post.businessId?.slug && (
+                  <Link
+                    to={`/biznes/${post.businessId.slug}`}
+                    className={`mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border px-4 py-3.5 font-black transition-all hover:-translate-y-0.5 ${
+                      darkMode
+                        ? "border-[#670fff]/30 bg-[#670fff]/10 text-white hover:bg-[#670fff]/20"
+                        : "border-[#670fff]/20 bg-[#670fff]/5 text-[#670fff] hover:bg-[#670fff]/10"
+                    }`}
+                  >
+                    <Store size={19} />
+                    Mağazaya keçid et
+                  </Link>
                 )}
               </div>
 

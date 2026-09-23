@@ -3,7 +3,6 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-
 import {
   X,
   ChevronLeft,
@@ -23,7 +22,6 @@ import {
   Clock3,
   Loader2,
 } from "lucide-react";
-
 import { useTheme } from "../../components/Main/ThemeContext";
 import BubbleBackground from "../../components/ui/BubbleBackground";
 import BottomMenu from "../../components/MobileMenu";
@@ -110,8 +108,6 @@ export default function PostDetail() {
 
     if (Number.isNaN(postDate.getTime())) return "";
 
-    const now = new Date();
-
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -187,7 +183,6 @@ export default function PostDetail() {
     };
 
     window.addEventListener("keydown", handleKeyDown);
-
     document.body.style.overflow = "hidden";
 
     return () => {
@@ -289,7 +284,6 @@ export default function PostDetail() {
   }
 
   const contact = post?.contact || {};
-
   const currentId = post?.id || post?._id;
 
   // ---------------------------------------------------------
@@ -298,6 +292,7 @@ export default function PostDetail() {
   const similarPosts = [...home]
     .filter((item) => {
       const itemId = item?.id || item?._id;
+
       return String(itemId) !== String(currentId);
     })
     .reverse()
@@ -319,6 +314,11 @@ export default function PostDetail() {
     `${brand} ${typeOfGoods}`.trim() ||
     "Ev və bağ məhsulu";
 
+  // ---------------------------------------------------------
+  // Biznes məlumatı
+  // ---------------------------------------------------------
+  const business = post?.businessId || null;
+
   return (
     <div
       className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${
@@ -331,6 +331,7 @@ export default function PostDetail() {
         {/* ------------------------------------------------ */}
         {/* GERİ */}
         {/* ------------------------------------------------ */}
+
         <Link
           to="/Katalog/Ev_veBag"
           className={`inline-flex items-center gap-2 mb-5 px-4 py-2.5 rounded-xl border backdrop-blur-md transition-all duration-200 ${
@@ -346,8 +347,10 @@ export default function PostDetail() {
         {/* ------------------------------------------------ */}
         {/* ƏSAS KONTENT */}
         {/* ------------------------------------------------ */}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* SOL TƏRƏF */}
+
           <div
             className={`lg:col-span-2 rounded-3xl border overflow-hidden backdrop-blur-xl shadow-xl ${
               darkMode
@@ -356,6 +359,7 @@ export default function PostDetail() {
             }`}
           >
             {/* Başlıq hissəsi */}
+
             <div className="p-5 sm:p-6 pb-3">
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-xs font-bold">
@@ -394,6 +398,7 @@ export default function PostDetail() {
             </div>
 
             {/* QALEREYA */}
+
             <div className="px-3 sm:px-6">
               <div
                 className={`rounded-2xl overflow-hidden border ${
@@ -437,6 +442,7 @@ export default function PostDetail() {
             </div>
 
             {/* QİYMƏT */}
+
             <div className="px-5 sm:px-6 pt-6">
               <div className="inline-flex items-center gap-2">
                 <span className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-emerald-500 to-green-600 bg-clip-text text-transparent">
@@ -448,6 +454,7 @@ export default function PostDetail() {
             </div>
 
             {/* DETALLAR */}
+
             <div className="p-5 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {brand && (
@@ -477,6 +484,7 @@ export default function PostDetail() {
                   >
                     <div className="flex items-center gap-2 text-emerald-500 mb-1">
                       <Package size={17} />
+
                       <span className="text-xs font-bold uppercase">
                         Məhsul növü
                       </span>
@@ -496,6 +504,7 @@ export default function PostDetail() {
                   >
                     <div className="flex items-center gap-2 text-emerald-500 mb-1">
                       <Home size={17} />
+
                       <span className="text-xs font-bold uppercase">
                         Kateqoriya
                       </span>
@@ -515,6 +524,7 @@ export default function PostDetail() {
                   >
                     <div className="flex items-center gap-2 text-emerald-500 mb-1">
                       <MapPin size={17} />
+
                       <span className="text-xs font-bold uppercase">
                         Yerləşmə
                       </span>
@@ -526,6 +536,7 @@ export default function PostDetail() {
               </div>
 
               {/* QEYD */}
+
               {post.description && (
                 <div className="mt-6">
                   <h2 className="text-lg font-black mb-2">Elan haqqında</h2>
@@ -543,6 +554,7 @@ export default function PostDetail() {
               )}
 
               {/* ELAN MƏLUMATLARI */}
+
               <div
                 className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-6 pt-5 border-t text-sm ${
                   darkMode
@@ -552,6 +564,7 @@ export default function PostDetail() {
               >
                 <div className="flex items-center gap-2">
                   <ShieldCheck size={16} />
+
                   <span>
                     Elanın nömrəsi:{" "}
                     <strong className="text-current">
@@ -576,6 +589,7 @@ export default function PostDetail() {
           </div>
 
           {/* SAĞ ƏLAQƏ PANELİ */}
+
           <aside className="lg:col-span-1">
             <div
               className={`lg:sticky lg:top-24 rounded-3xl border p-5 shadow-xl backdrop-blur-xl ${
@@ -674,6 +688,7 @@ export default function PostDetail() {
               </div>
 
               {/* ZƏNG ET */}
+
               {contact?.phone && (
                 <a
                   href={`tel:${contact.phone}`}
@@ -684,7 +699,26 @@ export default function PostDetail() {
                 </a>
               )}
 
+              {/* ------------------------------------------------ */}
+              {/* MAĞAZAYA KEÇİD */}
+              {/* ------------------------------------------------ */}
+
+              {business?.slug && (
+                <Link
+                  to={`/biznes/${business.slug}`}
+                  className={`mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border px-4 py-3.5 font-black transition-all hover:-translate-y-0.5 ${
+                    darkMode
+                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                      : "border-emerald-500/20 bg-emerald-500/5 text-emerald-600 hover:bg-emerald-500/10"
+                  }`}
+                >
+                  <Package size={19} />
+                  Mağazaya keçid et
+                </Link>
+              )}
+
               {/* VIP / PREMIUM */}
+
               <div className="grid grid-cols-2 gap-2 mt-4">
                 <button
                   onClick={() => handleUpgrade(post._id || post.id, "vip")}
@@ -719,6 +753,7 @@ export default function PostDetail() {
         {/* ------------------------------------------------ */}
         {/* BƏNZƏR ELANLAR */}
         {/* ------------------------------------------------ */}
+
         {similarPosts.length > 0 && (
           <section className="mt-12">
             <div className="flex items-center justify-between mb-5">
@@ -743,7 +778,6 @@ export default function PostDetail() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {similarPosts.map((item) => {
                 const itemId = item?.id || item?._id;
-
                 const itemGarden = item?.homeGarden || {};
 
                 const itemTitle =
@@ -835,12 +869,14 @@ export default function PostDetail() {
       {/* ------------------------------------------------ */}
       {/* FULLSCREEN ZOOM */}
       {/* ------------------------------------------------ */}
+
       {zoomIndex !== null && imageArray.length > 0 && (
         <div
           className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm flex items-center justify-center"
           onClick={closeZoom}
         >
           {/* Bağla */}
+
           <button
             onClick={closeZoom}
             className="absolute top-5 right-5 z-[10001] w-11 h-11 rounded-full bg-white/10 hover:bg-red-500/80 text-white flex items-center justify-center transition"
@@ -850,6 +886,7 @@ export default function PostDetail() {
           </button>
 
           {/* Sol */}
+
           {imageArray.length > 1 && (
             <button
               onClick={(e) => {
@@ -864,6 +901,7 @@ export default function PostDetail() {
           )}
 
           {/* Şəkil */}
+
           <img
             src={getImageUrl(imageArray[zoomIndex])}
             alt="Zoomed"
@@ -872,6 +910,7 @@ export default function PostDetail() {
           />
 
           {/* Sağ */}
+
           {imageArray.length > 1 && (
             <button
               onClick={(e) => {
@@ -886,6 +925,7 @@ export default function PostDetail() {
           )}
 
           {/* Sayğac */}
+
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md text-white text-sm font-bold">
             {zoomIndex + 1} / {imageArray.length}
           </div>

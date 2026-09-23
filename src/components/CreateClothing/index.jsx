@@ -763,7 +763,7 @@ if (finalBusinessId) {
               backdrop-blur-xl
             `}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 via-fuchsia-500/5 to-emerald-500/10 pointer-events-none" />
+            <div className="absolute inset-0  bg-gradient-to-r from-violet-500/10 via-fuchsia-500/5 to-emerald-500/10 pointer-events-none" />
 
             <div className="relative p-5 sm:p-7">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
@@ -1253,6 +1253,7 @@ if (finalBusinessId) {
           className="
             fixed
             inset-0
+            
             z-[9999]
             bg-black/70
             backdrop-blur-sm
@@ -1345,6 +1346,7 @@ if (finalBusinessId) {
                   w-10
                   h-10
                   rounded-xl
+                  
                   flex
                   items-center
                   justify-center
