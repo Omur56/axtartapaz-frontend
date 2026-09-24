@@ -376,6 +376,9 @@ export default function PostDetailCar() {
   };
 
   // VIP / Premium
+  // =========================================================
+  // VIP / PREMIUM - KAPİTAL BANK
+  // =========================================================
   const handleUpgrade = async (listingId, type) => {
     try {
       const token = localStorage.getItem("token");
@@ -395,14 +398,23 @@ export default function PostDetailCar() {
         },
       );
 
-      if (data?.url) {
-        window.location.href = data.url;
+      console.log("Kapital Bank ödəniş cavabı:", data);
+
+      // Kapital Bank HPP ödəniş səhifəsinə keç
+      if (data?.success && data?.paymentUrl) {
+        window.location.href = data.paymentUrl;
+        return;
       }
+
+      console.error("Kapital Bank paymentUrl qaytarmadı:", data);
+
+      alert(data?.message || "Ödəniş səhifəsi yaradıla bilmədi.");
     } catch (error) {
       console.error("Ödəniş səhvi:", error.response?.data || error.message);
+
+      alert(error.response?.data?.message || "Ödəniş zamanı xəta baş verdi.");
     }
   };
-
   const showPhoneNumber = () => {
     if (!phone) return;
 
@@ -1028,7 +1040,7 @@ export default function PostDetailCar() {
                     <span className="truncate">{contactEmail}</span>
                   </div>
                 )}
-{/* ---magaza buttonu */}
+                {/* ---magaza buttonu */}
                 {post.businessId?.slug && (
                   <Link
                     to={`/biznes/${post.businessId.slug}`}

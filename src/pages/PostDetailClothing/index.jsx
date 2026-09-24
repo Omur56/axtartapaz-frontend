@@ -257,40 +257,37 @@ export default function PostDetailClothing() {
      VIP / PREMIUM
   ========================================================= */
 
-  const handleUpgrade = async (listingId, type) => {
-    try {
-      setIsUpgrading(true);
-
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        alert("Bu əməliyyat üçün əvvəlcə hesabınıza daxil olun.");
-        return;
-      }
-
-      const { data } = await axios.post(
-        `${BASE_URL}/api/payments/create-checkout/${listingId}`,
-        { type },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        alert("Ödəniş səhifəsi yaradıla bilmədi.");
-      }
-    } catch (err) {
-      console.error("Upgrade error:", err.response?.data || err.message);
-
-      alert(err.response?.data?.message || "Ödəniş zamanı xəta baş verdi.");
-    } finally {
-      setIsUpgrading(false);
+const handleUpgrade = async (listingId, type) => {
+  try {
+    setIsUpgrading(true);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Bu əməliyyat üçün əvvəlcə hesabınıza daxil olun.");
+      return;
     }
-  };
+
+    const { data } = await axios.post(
+      `${BASE_URL}/api/payments/create-checkout/${listingId}`,
+      { type },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    if (data?.url) {
+      window.location.href = data.url;
+    } else {
+      alert("Ödəniş səhifəsi yaradıla bilmədi.");
+    }
+  } catch (err) {
+    console.error("Upgrade error:", err.response?.data || err.message);
+    alert(err.response?.data?.message || "Ödəniş zamanı xəta baş verdi.");
+  } finally {
+    setIsUpgrading(false);
+  }
+};
 
   /* =========================================================
      LOADING

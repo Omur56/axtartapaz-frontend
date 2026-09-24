@@ -257,11 +257,26 @@ export default function PostDetailHousehold() {
   // VIP / Premium
   // ---------------------------------------------------------
 
+  // ---------------------------------------------------------
+  // VIP / PREMIUM - KAPİTAL BANK
+  // ---------------------------------------------------------
   const handleUpgrade = async (listingId, type) => {
     try {
       setUpgrading(type);
 
       const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Bu əməliyyat üçün əvvəlcə hesabınıza daxil olun.");
+        setUpgrading(null);
+        return;
+      }
+
+      if (!listingId) {
+        alert("Elanın ID-si tapılmadı.");
+        setUpgrading(null);
+        return;
+      }
 
       const { data } = await axios.post(
         `${BASE_URL}/api/payments/create-checkout/${listingId}`,
@@ -273,16 +288,29 @@ export default function PostDetailHousehold() {
         },
       );
 
-      if (data?.url) {
-        window.location.href = data.url;
+      console.log("Kapital Bank ödəniş cavabı:", data);
+
+      // Kapital Bank HPP ödəniş səhifəsinə keç
+      if (data?.paymentUrl) {
+        window.location.href = data.paymentUrl;
+        return;
       }
+
+      console.error("Kapital Bank paymentUrl qaytarmadı:", data);
+
+      alert(data?.message || "Ödəniş səhifəsi yaradıla bilmədi.");
+
+      setUpgrading(null);
     } catch (err) {
       console.error("Ödəniş xətası:", err.response?.data || err.message);
-    } finally {
+
+      alert(err.response?.data?.message || "Ödəniş zamanı xəta baş verdi.");
+
       setUpgrading(null);
     }
   };
 
+  
   // ---------------------------------------------------------
   // Loading
   // ---------------------------------------------------------

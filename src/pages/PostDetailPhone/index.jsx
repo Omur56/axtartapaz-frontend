@@ -293,15 +293,21 @@ export default function PostDetailPhone() {
   /* =========================================================
      VIP / PREMIUM
   ========================================================= */
+  // =========================================================
+  // VIP / PREMIUM - KAPİTAL BANK
+  // =========================================================
   const handleUpgrade = async (listingId, type) => {
     try {
       const token = localStorage.getItem("token");
 
+      if (!token) {
+        alert("Bu əməliyyat üçün əvvəlcə hesabınıza daxil olun.");
+        return;
+      }
+
       const { data } = await axios.post(
         `${BASE_URL}/api/payments/create-checkout/${listingId}`,
-        {
-          type,
-        },
+        { type },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -309,14 +315,23 @@ export default function PostDetailPhone() {
         },
       );
 
-      if (data?.url) {
-        window.location.href = data.url;
+      console.log("Kapital Bank ödəniş cavabı:", data);
+
+      // Kapital Bank HPP ödəniş səhifəsinə keç
+      if (data?.paymentUrl) {
+        window.location.href = data.paymentUrl;
+        return;
       }
+
+      console.error("Kapital Bank paymentUrl qaytarmadı:", data);
+
+      alert(data?.message || "Ödəniş səhifəsi yaradıla bilmədi.");
     } catch (err) {
       console.error("Ödəniş xətası:", err.response?.data || err.message);
+
+      alert(err.response?.data?.message || "Ödəniş zamanı xəta baş verdi.");
     }
   };
-
   /* =========================================================
      LOADING
   ========================================================= */

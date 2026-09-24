@@ -195,11 +195,20 @@ export default function AcsesuarDetail() {
   // VIP / Premium
   // =========================================================
 
+  // =========================================================
+  // VIP / Premium - Kapital Bank
+  // =========================================================
   const handleUpgrade = async (listingId, type) => {
     try {
       setUpgrading(type);
 
       const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.error("Token tapılmadı");
+        setUpgrading(null);
+        return;
+      }
 
       const { data } = await axios.post(
         `${BASE_URL}/api/payments/create-checkout/${listingId}`,
@@ -211,7 +220,17 @@ export default function AcsesuarDetail() {
         },
       );
 
-      window.location.href = data.url;
+      console.log("Kapital ödəniş cavabı:", data);
+
+      // Kapital Bank HPP səhifəsinə keçid
+      if (data?.success && data?.paymentUrl) {
+        window.location.href = data.paymentUrl;
+        return;
+      }
+
+      console.error("Kapital Bank paymentUrl qaytarmadı:", data);
+
+      setUpgrading(null);
     } catch (err) {
       console.error("Ödəniş yaradılmadı:", err.response?.data || err.message);
 

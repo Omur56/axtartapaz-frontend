@@ -39,7 +39,7 @@ export default function PostDetailRealEstate() {
   const [isUpgrading, setIsUpgrading] = useState(false);
 
   const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
-const [showFullDescription, setShowFullDescription] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
   /* =========================================================
      ELANI GƏTİR
   ========================================================= */
@@ -276,6 +276,9 @@ const [showFullDescription, setShowFullDescription] = useState(false);
      VIP / PREMIUM
   ========================================================= */
 
+  // =========================================================
+  // VIP / PREMIUM - KAPİTAL BANK
+  // =========================================================
   const handleUpgrade = async (listingId, type) => {
     try {
       setIsUpgrading(true);
@@ -284,6 +287,7 @@ const [showFullDescription, setShowFullDescription] = useState(false);
 
       if (!token) {
         alert("Bu əməliyyat üçün əvvəlcə hesabınıza daxil olun.");
+        setIsUpgrading(false);
         return;
       }
 
@@ -297,11 +301,17 @@ const [showFullDescription, setShowFullDescription] = useState(false);
         },
       );
 
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        alert("Ödəniş səhifəsi yaradıla bilmədi.");
+      console.log("Kapital Bank ödəniş cavabı:", data);
+
+      // Kapital Bank HPP ödəniş səhifəsinə keç
+      if (data?.paymentUrl) {
+        window.location.href = data.paymentUrl;
+        return;
       }
+
+      console.error("Kapital Bank paymentUrl qaytarmadı:", data);
+
+      alert(data?.message || "Ödəniş səhifəsi yaradıla bilmədi.");
     } catch (err) {
       console.error("Upgrade error:", err.response?.data || err.message);
 
