@@ -82,6 +82,7 @@ import Prohibited from "../pages/Prohibited";
 import PostingRules from "../pages/PostingRules";
 import BusinessProfile from "../pages/Business/BusinessProfile";
 import CreateBusiness from "../pages/Business/CreateBusiness";
+import PaymentResult from "../pages/PaymentResult.jsx";
 
 // =====================================================
 // ROUTER
@@ -119,6 +120,11 @@ const router = createBrowserRouter([
       {
         path: "payment/:listingId",
         Component: PaymentPage,
+      },
+
+      {
+        path: "/payment-result",
+        Component: PaymentResult,
       },
 
       // =================================================
