@@ -144,6 +144,32 @@ const Home = () => {
     fetchAll();
   }, []);
 
+
+
+
+// hər yeni elan gətirən funksiyya
+
+  
+
+  const [todayAdsCount, setTodayAdsCount] = useState(0);
+
+  useEffect(() => {
+    const getTodayAdsCount = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/ads/today-count`,
+        );
+
+        if (response.data?.success) {
+          setTodayAdsCount(response.data.count);
+        }
+      } catch (error) {
+        console.error("Bugünkü elan sayı alınmadı:", error);
+      }
+    };
+
+    getTodayAdsCount();
+  }, []);
   /*
    * -------------------------------------------------------
    * FILTER BRANDS
@@ -867,6 +893,11 @@ const Home = () => {
 
     const image = item.images?.[item.images.length - 1] || "/no-image.jpg";
 
+
+
+
+    
+
     return (
       <div className="relative w-full rounded-[14px] max-w-[270px] group">
         <Link
@@ -1140,7 +1171,7 @@ const Home = () => {
           MAIN
       --------------------------------------------------- */}
 
-      <main className="max-w-[1240px] mx-auto px-1 sm:px-1 lg:px-3 pt-[82px] pb-24">
+      <main className="max-w-[1240px] mx-auto px-1 ">
         {/* -------------------------------------------------
             HERO / SEARCH
         ------------------------------------------------- */}
@@ -1675,25 +1706,93 @@ const Home = () => {
         ------------------------------------------------- */}
 
         {!query.trim() && (
-          <div className="flex items-end justify-between mb-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-7 rounded-full bg-[#670fff]" />
+          <div className="mb-5 sm:mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+              {/* SOL TƏRƏF */}
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-1.5 h-8 rounded-full bg-[#670fff]" />
 
-                <h2 className="text-xl sm:text-2xl font-black tracking-tight">
-                  Son elanlar
-                </h2>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl sm:text-2xl font-black tracking-tight text-gray-900 dark:text-white">
+                        Son elanlar
+                      </h2>
+
+                      <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-[#670fff]/10 text-[#670fff] text-[10px] sm:text-[11px] font-bold">
+                        YENİ
+                      </span>
+                    </div>
+
+                    <p className="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                      Ən yeni elanları kəşf et
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <p className="ml-3.5 mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                Ən yeni elanları kəşf et
-              </p>
+              {/* SAĞ TƏRƏF */}
+              <div className="flex items-center gap-2">
+                {/* ÜMUMİ ELAN SAYI */}
+                <div
+                  className="
+            flex items-center gap-2
+            px-3 py-2
+            rounded-2xl
+            bg-white dark:bg-zinc-900
+            border border-gray-100 dark:border-zinc-800
+            shadow-sm
+          "
+                >
+                  <div className="flex items-center justify-center w-7 h-7 rounded-xl bg-[#670fff]/10">
+                    <Sparkles size={14} className="text-[#670fff]" />
+                  </div>
+
+                  <div className="leading-none">
+                    <div className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">
+                      Ümumi
+                    </div>
+
+                    <div className="mt-1 text-xs font-black text-gray-800 dark:text-gray-200">
+                      {allAds.length.toLocaleString("az-AZ")} elan
+                    </div>
+                  </div>
+                </div>
+
+                {/* BU GÜN ƏLAVƏ OLUNANLAR */}
+                <div
+                  className="
+            relative
+            flex items-center gap-2
+            px-3 py-2
+            rounded-2xl
+            bg-[#670fff]
+            shadow-md shadow-[#670fff]/20
+            overflow-hidden
+          "
+                >
+                  {/* İşıq effekti */}
+                  <div className="absolute -top-5 -right-5 w-14 h-14 rounded-full bg-white/10" />
+
+                  <div className="relative flex items-center justify-center w-7 h-7 rounded-xl bg-white/15">
+                    <span className="text-sm">⚡</span>
+                  </div>
+
+                  <div className="relative leading-none">
+                    <div className="text-[10px] text-white/70 font-medium">
+                      Bu gün
+                    </div>
+
+                    <div className="mt-1 text-xs font-black text-white">
+                      {todayAdsCount.toLocaleString("az-AZ")} yeni elan
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-gray-500 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-full px-3 py-2">
-              <Sparkles size={13} className="text-[#670fff]" />
-              {allAds.length} elan
-            </div>
+            {/* ALT XƏTT */}
+            <div className="mt-4 h-px bg-gradient-to-r from-[#670fff]/30 via-gray-200 dark:via-zinc-800 to-transparent" />
           </div>
         )}
 
