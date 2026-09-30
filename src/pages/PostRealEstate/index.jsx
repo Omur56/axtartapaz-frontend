@@ -21,8 +21,10 @@ import {
   Tag,
   User,
   X,
+  Eye,
 } from "lucide-react";
 import { useTheme } from "../../components/Main/ThemeContext";
+import { getVisitorId } from "../../utils/visitorId";
 
 export default function PostDetailRealEstate() {
   const { id } = useParams();
@@ -44,40 +46,89 @@ export default function PostDetailRealEstate() {
      ELANI GƏTİR
   ========================================================= */
 
-  useEffect(() => {
-    let mounted = true;
+useEffect(() => {
+  let mounted = true;
 
-    const fetchPost = async () => {
+  const fetchPost = async () => {
+    try {
+      setLoading(true);
+      setNotFound(false);
+
+      // Elanı gətir
+      const res = await axios.get(`${BASE_URL}/api/RealEstate/${id}`);
+
+      if (!mounted) return;
+
+      setPost(res.data);
+
+      // =====================================================
+      // ELAN BAXIŞINI QEYD ET
+      // =====================================================
       try {
-        setLoading(true);
-        setNotFound(false);
+        const visitorId = getVisitorId();
+        const token = localStorage.getItem("token");
 
-        const res = await axios.get(`${BASE_URL}/api/RealEstate/${id}`);
+        const viewResponse = await axios.post(
+          `${BASE_URL}/api/ads/${id}/view`,
+          {},
+          {
+            headers: {
+              "x-visitor-id": visitorId,
+              ...(token
+                ? {
+                    Authorization: `Bearer ${token}`,
+                  }
+                : {}),
+            },
+          },
+        );
 
         if (!mounted) return;
 
-        setPost(res.data);
-      } catch (err) {
-        console.error("Daşınmaz əmlak elan xətası:", err);
-
-        if (mounted) {
-          setNotFound(true);
+        // Backend yeni viewCount qaytarırsa,
+        // ayrıca GET etməyə ehtiyac yoxdur.
+        if (
+          viewResponse.data?.success &&
+          typeof viewResponse.data.viewCount === "number"
+        ) {
+          setPost((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  viewCount: viewResponse.data.viewCount,
+                }
+              : prev,
+          );
         }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+      } catch (viewError) {
+        // Baxış sayının xətası elan səhifəsinin açılmasına mane olmamalıdır.
+        console.error(
+          "Elan baxışı qeyd olunmadı:",
+          viewError.response?.data || viewError.message,
+        );
       }
-    };
+    } catch (err) {
+      console.error("Daşınmaz əmlak elan xətası:", err);
 
-    if (id) {
-      fetchPost();
+      if (mounted) {
+        setPost(null);
+        setNotFound(true);
+      }
+    } finally {
+      if (mounted) {
+        setLoading(false);
+      }
     }
+  };
 
-    return () => {
-      mounted = false;
-    };
-  }, [id, BASE_URL]);
+  if (id) {
+    fetchPost();
+  }
+
+  return () => {
+    mounted = false;
+  };
+}, [id, BASE_URL]);
 
   /* =========================================================
      BƏNZƏR ELANLARI GƏTİR
@@ -521,26 +572,32 @@ export default function PostDetailRealEstate() {
                     darkMode ? "text-gray-400" : "text-gray-500"
                   }`}
                 >
-                  {(post.city || post.location) && (
+                  {post.city || post.location ? (
                     <span className="flex items-center gap-1.5">
                       <MapPin size={15} />
                       {post.city || post.location}
                     </span>
-                  )}
+                  ) : null}
 
-                  {post.data && (
+                  {post.data ? (
                     <span className="flex items-center gap-1.5">
                       <CalendarDays size={15} />
                       {formatDate(post.data)}
                     </span>
-                  )}
+                  ) : null}
 
-                  {post.data && (
+                  {post.data ? (
                     <span className="flex items-center gap-1.5">
                       <Clock3 size={15} />
                       {getCurrentTime(post.data)}
                     </span>
-                  )}
+                  ) : null}
+
+                  {/* BAXIŞ SAYI */}
+                  <span className="flex items-center gap-1.5">
+                    <Eye size={15} />
+                    {(post.viewCount || 0).toLocaleString("az-AZ")} baxış
+                  </span>
                 </div>
               </div>
 
@@ -773,6 +830,7 @@ export default function PostDetailRealEstate() {
                     : "border-gray-100 text-gray-500"
                 }`}
               >
+                {/* ELAN NÖMRƏSİ */}
                 <span>
                   Elanın nömrəsi:{" "}
                   <strong
@@ -782,9 +840,23 @@ export default function PostDetailRealEstate() {
                   </strong>
                 </span>
 
+                {/* YERLƏŞMƏ */}
                 <span className="flex items-center gap-1.5">
                   <MapPin size={15} />
                   {post.location || post.city || "Məlum deyil"}
+                </span>
+
+                {/* BAXIŞ SAYI */}
+                <span className="flex items-center gap-1.5">
+                  <Eye size={15} />
+
+                  <span>Baxış:</span>
+
+                  <strong
+                    className={darkMode ? "text-gray-200" : "text-gray-800"}
+                  >
+                    {(post.viewCount || 0).toLocaleString("az-AZ")}
+                  </strong>
                 </span>
               </div>
             </div>
@@ -1065,13 +1137,27 @@ export default function PostDetailRealEstate() {
                         )}
 
                         <div
-                          className={`mt-2 flex items-center gap-1 truncate text-xs ${
+                          className={`mt-2 flex items-center justify-between gap-2 text-xs ${
                             darkMode ? "text-gray-500" : "text-gray-400"
                           }`}
                         >
-                          <MapPin size={12} />
+                          {/* YER */}
+                          <div className="flex min-w-0 items-center gap-1 truncate">
+                            <MapPin size={12} className="shrink-0" />
 
-                          {item.city || item.location || "Məlum deyil"}
+                            <span className="truncate">
+                              {item.city || item.location || "Məlum deyil"}
+                            </span>
+                          </div>
+
+                          {/* BAXIŞ */}
+                          <div className="flex shrink-0 items-center gap-1">
+                            <Eye size={12} />
+
+                            <span>
+                              {(item.viewCount || 0).toLocaleString("az-AZ")}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>

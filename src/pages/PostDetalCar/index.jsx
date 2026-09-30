@@ -33,6 +33,7 @@ import {
   MapPinned,
   ArrowLeft,
   Store,
+  Eye,
 } from "lucide-react";
 
 import { Avatar } from "@mui/material";
@@ -47,8 +48,15 @@ import {
 import { useTheme } from "../../components/Main/ThemeContext";
 import BubbleBackground from "../../components/ui/BubbleBackground";
 import BottomMenu from "../../components/MobileMenu";
+import { getVisitorId } from "../../utils/visitorId";
 
 const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
+
+
+
+
+
+
 
 const getImageUrl = (image) => {
   if (!image) return "";
@@ -288,6 +296,39 @@ export default function PostDetailCar() {
         if (!mounted) return;
 
         setPost(res.data);
+
+        // Elanın baxışını qeyd et
+        try {
+          const visitorId = getVisitorId();
+          const token = localStorage.getItem("token");
+
+          await axios.post(
+            `${BASE_URL}/api/ads/${id}/view`,
+            {},
+            {
+              headers: {
+                "x-visitor-id": visitorId,
+                ...(token
+                  ? {
+                      Authorization: `Bearer ${token}`,
+                    }
+                  : {}),
+              },
+            },
+          );
+
+          // Backend yeni viewCount qaytarırsa ekranda dərhal göstər
+          const updatedPost = await axios.get(`${BASE_URL}/api/car/${id}`);
+
+          if (mounted) {
+            setPost(updatedPost.data);
+          }
+        } catch (viewError) {
+          console.error(
+            "Elan baxışı qeyd olunmadı:",
+            viewError.response?.data || viewError.message,
+          );
+        }
       } catch (error) {
         console.error("Elan yüklənmədi:", error);
 
@@ -310,6 +351,7 @@ export default function PostDetailCar() {
       mounted = false;
     };
   }, [id]);
+
 
   // Zoom üçün əvvəlki şəkil
   const prevImage = useCallback(() => {
@@ -1063,6 +1105,7 @@ export default function PostDetailCar() {
                 }`}
               >
                 <div className="space-y-3 text-sm">
+                  {/* Elanın nömrəsi */}
                   <div className="flex justify-between gap-3">
                     <span
                       className={darkMode ? "text-gray-500" : "text-gray-400"}
@@ -1075,6 +1118,7 @@ export default function PostDetailCar() {
                     </span>
                   </div>
 
+                  {/* Tarix */}
                   <div className="flex justify-between gap-3">
                     <span
                       className={darkMode ? "text-gray-500" : "text-gray-400"}
@@ -1087,6 +1131,7 @@ export default function PostDetailCar() {
                     </span>
                   </div>
 
+                  {/* Saat */}
                   <div className="flex justify-between gap-3">
                     <span
                       className={darkMode ? "text-gray-500" : "text-gray-400"}
@@ -1098,6 +1143,30 @@ export default function PostDetailCar() {
                       {getCurrentTime(post.createdAt || post.data)}
                     </span>
                   </div>
+
+                  {/* Baxış sayı */}
+                </div>
+                <div
+                  className={`flex items-center  gap-3 border-t pt-3 ${
+                    darkMode ? "border-white/10" : "border-gray-100"
+                  }`}
+                >
+                  <span
+                    className={`flex items-center gap-2 ${
+                      darkMode ? "text-gray-500" : "text-gray-400"
+                    }`}
+                  >
+                    <Eye size={16} />
+                    Baxışların sayı
+                  </span>
+
+                  <span
+                    className={`font-semibold ${
+                      darkMode ? "text-gray-200" : "text-gray-700"
+                    }`}
+                  >
+                    {(post.viewCount || 0).toLocaleString("az-AZ")}
+                  </span>
                 </div>
               </div>
 
@@ -1280,6 +1349,13 @@ export default function PostDetailCar() {
                             <span className="shrink-0">
                               {formatDate(car.createdAt || car.data)}
                             </span>
+
+                            <div className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400">
+                              <Eye size={16} />
+                              <span>
+                                {(car.viewCount || 0).toLocaleString("az-AZ")}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </article>

@@ -26,6 +26,7 @@ import {
   CalendarDays,
   Clock3,
   Loader2,
+  Eye,
 } from "lucide-react";
 
 import { useTheme } from "../../components/Main/ThemeContext";
@@ -33,6 +34,7 @@ import { useTheme } from "../../components/Main/ThemeContext";
 import BubbleBackground from "../../components/ui/BubbleBackground";
 
 import BottomMenu from "../../components/MobileMenu";
+import { getVisitorId } from "../../utils/visitorId";
 
 export default function PostDetailHousehold() {
   const { id } = useParams();
@@ -69,66 +71,131 @@ export default function PostDetailHousehold() {
   // ---------------------------------------------------------
   // Cari elan
   // ---------------------------------------------------------
+useEffect(() => {
+  let mounted = true;
 
-  useEffect(() => {
+  const fetchPost = async () => {
     setLoading(true);
     setNotFound(false);
     setBusiness(null);
 
-    axios
-      .get(`${BASE_URL}/api/Household/${id}`)
-      .then(async (res) => {
-        if (!res.data) {
-          setNotFound(true);
-          return;
-        }
+    try {
+      const res = await axios.get(`${BASE_URL}/api/Household/${id}`);
 
-        setPost(res.data);
+      if (!mounted) return;
 
-        // ---------------------------------------------------
-        // BİZNES MƏLUMATI
-        // ---------------------------------------------------
+      if (!res.data) {
+        setNotFound(true);
+        setLoading(false);
+        return;
+      }
 
-        const businessData = res.data?.businessId;
+      setPost(res.data);
 
-        // Əgər backend businessId-ni populate edib obyekt kimi göndəribsə
-        if (
-          businessData &&
-          typeof businessData === "object" &&
-          businessData.slug
-        ) {
-          setBusiness(businessData);
-          return;
-        }
+      // ---------------------------------------------------
+      // BİZNES MƏLUMATI
+      // ---------------------------------------------------
 
-        // Əgər businessId sadəcə ID kimi gəlirsə
-        if (businessData) {
-          try {
-            const businessRes = await axios.get(
-              `${BASE_URL}/api/business/by-id/${businessData}`,
-            );
+      const businessData = res.data?.businessId;
 
-            if (businessRes.data) {
-              setBusiness(businessRes.data);
-            }
-          } catch (businessError) {
-            console.error("Biznes məlumatı alınmadı:", businessError);
+      // Backend businessId-ni populate edib obyekt kimi göndəribsə
+      if (
+        businessData &&
+        typeof businessData === "object" &&
+        businessData.slug
+      ) {
+        setBusiness(businessData);
+      }
 
+      // Business ID ayrıca gəlirsə
+      else if (businessData) {
+        try {
+          const businessRes = await axios.get(
+            `${BASE_URL}/api/business/by-id/${businessData}`,
+          );
+
+          if (mounted && businessRes.data) {
+            setBusiness(businessRes.data);
+          }
+        } catch (businessError) {
+          console.error("Biznes məlumatı alınmadı:", businessError);
+
+          if (mounted) {
             setBusiness(null);
           }
-        } else {
-          setBusiness(null);
         }
-      })
-      .catch((err) => {
-        console.error("Elan yüklənmədi:", err);
+      } else {
+        setBusiness(null);
+      }
+
+      // ---------------------------------------------------
+      // ELAN BAXIŞINI QEYD ET
+      // ---------------------------------------------------
+
+      try {
+        const visitorId = getVisitorId();
+        const token = localStorage.getItem("token");
+
+        const viewResponse = await axios.post(
+          `${BASE_URL}/api/ads/${id}/view`,
+          {},
+          {
+            headers: {
+              "x-visitor-id": visitorId,
+              ...(token
+                ? {
+                    Authorization: `Bearer ${token}`,
+                  }
+                : {}),
+            },
+          },
+        );
+
+        if (!mounted) return;
+
+        // Backend yeni viewCount qaytarır
+        if (
+          viewResponse.data?.success &&
+          typeof viewResponse.data.viewCount === "number"
+        ) {
+          setPost((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  viewCount: viewResponse.data.viewCount,
+                }
+              : prev,
+          );
+        }
+      } catch (viewError) {
+        console.error(
+          "Elan baxışı qeyd olunmadı:",
+          viewError.response?.data || viewError.message,
+        );
+      }
+    } catch (err) {
+      console.error("Elan yüklənmədi:", err);
+
+      if (mounted) {
+        setPost(null);
         setNotFound(true);
         setBusiness(null);
-      })
-      .finally(() => {
+      }
+    } finally {
+      if (mounted) {
         setLoading(false);
-      });
-  }, [id, BASE_URL]);
+      }
+    }
+  };
+
+  if (id) {
+    fetchPost();
+  }
+
+  return () => {
+    mounted = false;
+  };
+}, [id, BASE_URL]);
 
   // ---------------------------------------------------------
   // Şəkillər
@@ -698,30 +765,40 @@ export default function PostDetailHousehold() {
                   <ShieldCheck size={16} />
 
                   <span>
-                    Elanın nömrəsi: <strong>{post.id || post._id}</strong>
+                    Elanın nömrəsi:{" "}
+                    <strong
+                      className={darkMode ? "text-slate-200" : "text-slate-800"}
+                    >
+                      {post.id || post._id}
+                    </strong>
                   </span>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="inline-flex items-center gap-1.5">
                     <CalendarDays size={15} />
-
                     {formatDate(postDate)}
                   </span>
 
                   <span className="inline-flex items-center gap-1.5">
                     <Clock3 size={15} />
-
                     {getCurrentTime(postDate)}
                   </span>
 
                   {post.location && (
                     <span className="inline-flex items-center gap-1.5">
                       <MapPin size={15} />
-
                       {post.location}
                     </span>
                   )}
+
+                  <span className="inline-flex items-center gap-1.5">
+                    <Eye size={15} />
+
+                    <span>{(post.viewCount || 0).toLocaleString("az-AZ")}</span>
+
+                    <span>baxış</span>
+                  </span>
                 </div>
               </div>
             </div>
@@ -997,14 +1074,26 @@ export default function PostDetailHousehold() {
                           }`}
                         >
                           <span className="flex items-center gap-1 truncate">
-                            <MapPin size={13} />
+                            <MapPin size={13} className="shrink-0" />
 
-                            {item?.location || "—"}
+                            <span className="truncate">
+                              {item?.location || "—"}
+                            </span>
                           </span>
 
-                          <span className="whitespace-nowrap">
-                            {formatDate(itemDate)}
-                          </span>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="flex items-center gap-1">
+                              <Eye size={12} />
+
+                              <span>
+                                {(item?.viewCount || 0).toLocaleString("az-AZ")}
+                              </span>
+                            </span>
+
+                            <span className="whitespace-nowrap">
+                              {formatDate(itemDate)}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>

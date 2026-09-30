@@ -22,6 +22,7 @@ import {
   ChevronDown,
   Sparkles,
   Clock3,
+  Eye,
 } from "lucide-react";
 
 import { Helmet } from "react-helmet-async";
@@ -899,7 +900,7 @@ const Home = () => {
     
 
     return (
-      <div className="relative w-full rounded-[14px] max-w-[270px] group">
+      <div className="relative w-full rounded-[7px] max-w-[268.75px] group">
         <Link
           to={`/${item.__type}/${item._id}/${encodeURIComponent(slug || "")}`}
           className="block"
@@ -908,7 +909,7 @@ const Home = () => {
             className={`
               relative
               overflow-hidden
-              rounded-[14px]
+              rounded-[7px]
              dark:bg-zinc-900
             
               
@@ -1099,8 +1100,9 @@ const Home = () => {
               {/* DIVIDER */}
               <div className="my-2 border-t border-gray-100 dark:border-zinc-800" />
 
-              {/* LOCATION + DATE */}
+              {/* LOCATION + DATE + VIEWS */}
               <div className="flex items-center justify-between gap-2 text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400">
+                {/* LOCATION */}
                 <div className="flex items-center gap-1 min-w-0">
                   <MapPin size={13} className="text-[#670fff] shrink-0" />
 
@@ -1109,10 +1111,19 @@ const Home = () => {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0">
-                  <Clock3 size={12} />
+                {/* DATE + VIEWS */}
+                <div className="flex items-center gap-2 shrink-0">
+                  {/* DATE */}
+                  <div className="flex items-center gap-1">
+                    <Clock3 size={12} />
+                    <span>{formatDate(item.createdAt)}</span>
+                  </div>
 
-                  <span>{formatDate(item.createdAt)}</span>
+                  {/* VIEWS */}
+                  <div className="flex items-center gap-1">
+                    <Eye size={12} />
+                    <span>{(item.viewCount || 0).toLocaleString("az-AZ")}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1171,7 +1182,7 @@ const Home = () => {
           MAIN
       --------------------------------------------------- */}
 
-      <main className="max-w-[1240px] mx-auto px-1 ">
+      <main className="w-full mx-auto ">
         {/* -------------------------------------------------
             HERO / SEARCH
         ------------------------------------------------- */}
@@ -1181,7 +1192,7 @@ const Home = () => {
           <div className="absolute -right-20 -top-24 w-64 h-64 rounded-full bg-white/10 blur-2xl" />
           <div className="absolute -left-20 -bottom-28 w-72 h-72 rounded-full bg-purple-300/10 blur-3xl" />
 
-          <div className="relative z-10 p-5 sm:p-8">
+          <div className="relative z-10 p-5 ">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center">
                 <Sparkles size={19} className="text-white" />

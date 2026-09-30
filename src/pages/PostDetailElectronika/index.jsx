@@ -24,11 +24,13 @@ import {
   Loader2,
   Store,
   ExternalLink,
+  Eye,
 } from "lucide-react";
 
 import { useTheme } from "../../components/Main/ThemeContext";
 import BubbleBackground from "../../components/ui/BubbleBackground";
 import BottomMenu from "../../components/MobileMenu";
+import { getVisitorId } from "../../utils/visitorId";
 
 export default function PostDetailelectronics() {
   const { id } = useParams();
@@ -51,16 +53,94 @@ export default function PostDetailelectronics() {
   // BÜTÜN ELEKTRONİKA ELANLARI
   // =====================================================
 
-  useEffect(() => {
-    axios
-      .get(`${BASE_URL}/api/electronics`)
-      .then((res) => {
-        setPosts(Array.isArray(res.data) ? res.data : []);
-      })
-      .catch((err) => {
-        console.error("Elektronika elanları yüklənmədi:", err);
-      });
-  }, [BASE_URL]);
+useEffect(() => {
+  let mounted = true;
+
+  const fetchPost = async () => {
+    try {
+      setLoading(true);
+      setNotFound(false);
+
+      const res = await axios.get(`${BASE_URL}/api/electronics/${id}`);
+
+      if (!mounted) return;
+
+      if (!res.data) {
+        setPost(null);
+        setNotFound(true);
+        return;
+      }
+
+      setPost(res.data);
+
+      // =====================================================
+      // ELAN BAXIŞI
+      // =====================================================
+      try {
+        const visitorId = getVisitorId();
+        const token = localStorage.getItem("token");
+
+        const viewResponse = await axios.post(
+          `${BASE_URL}/api/ads/${id}/view`,
+          {},
+          {
+            headers: {
+              "x-visitor-id": visitorId,
+              ...(token
+                ? {
+                    Authorization: `Bearer ${token}`,
+                  }
+                : {}),
+            },
+          },
+        );
+
+        if (!mounted) return;
+
+        if (
+          viewResponse.data?.success &&
+          typeof viewResponse.data.viewCount === "number"
+        ) {
+          setPost((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  viewCount: viewResponse.data.viewCount,
+                }
+              : prev,
+          );
+        }
+      } catch (viewError) {
+        console.error(
+          "Elan baxışı qeyd olunmadı:",
+          viewError.response?.data || viewError.message,
+        );
+      }
+    } catch (err) {
+      console.error(
+        "Elektronika elanı yüklənmədi:",
+        err.response?.data || err.message,
+      );
+
+      if (mounted) {
+        setPost(null);
+        setNotFound(true);
+      }
+    } finally {
+      if (mounted) {
+        setLoading(false);
+      }
+    }
+  };
+
+  if (id) {
+    fetchPost();
+  }
+
+  return () => {
+    mounted = false;
+  };
+}, [id, BASE_URL]);
 
   // =====================================================
   // SEÇİLMİŞ ELAN
@@ -509,9 +589,11 @@ export default function PostDetailelectronics() {
               {/* BAŞLIQ */}
 
               <h1 className="text-2xl sm:text-3xl font-black leading-tight mb-5">
-                {post?.brand || ""}
-                {post?.brand && post?.model ? " " : ""}
-                {post?.model || post?.title || "Elektronika"}
+                {post?.electronics.brand || ""}
+                {post?.electronics.brand && post?.electronics.model ? " " : ""}
+                {post?.electronics.model ||
+                  post?.electronics.title ||
+                  "Elektronika"}
               </h1>
 
               {/* GALEREYA */}
@@ -595,7 +677,7 @@ export default function PostDetailelectronics() {
 
                     <p className="font-bold flex items-center gap-2">
                       <Tag size={16} className="text-cyan-500" />
-                      {post?.brand || "—"}
+                      {post?.electronics.brand || "—"}
                     </p>
                   </div>
 
@@ -610,7 +692,9 @@ export default function PostDetailelectronics() {
                   >
                     <p className="text-xs opacity-50 mb-1">Model</p>
 
-                    <p className="font-bold">{post?.model || "—"}</p>
+                    <p className="font-bold">
+                      {post?.electronics.model || "—"}
+                    </p>
                   </div>
 
                   {/* KATEQORİYA */}
@@ -624,7 +708,7 @@ export default function PostDetailelectronics() {
                   >
                     <p className="text-xs opacity-50 mb-1">Kateqoriya</p>
 
-                    <p className="font-bold">{post?.category || "—"}</p>
+                    <p className="font-bold">{post.category || "—"}</p>
                   </div>
 
                   {/* ŞƏHƏR */}
@@ -671,7 +755,7 @@ export default function PostDetailelectronics() {
               {/* ELAN MƏLUMATLARI */}
 
               <div
-                className={`grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 pt-6 border-t ${
+                className={` grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6 pt-6 border-t ${
                   darkMode ? "border-white/10" : "border-slate-200"
                 }`}
               >
@@ -713,6 +797,19 @@ export default function PostDetailelectronics() {
 
                     <p className="font-bold text-sm">
                       {getCurrentTime(post?.createdAt)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
+                    <Eye size={18} className="text-cyan-500" />
+                  </div>
+
+                  <div>
+                    <p className="text-xs opacity-50">Baxış sayı</p>
+
+                    <p className="font-bold text-sm">
+                      {(post?.viewCount || 0).toLocaleString("az-AZ")}
                     </p>
                   </div>
                 </div>
@@ -761,7 +858,7 @@ export default function PostDetailelectronics() {
                       <p className="text-xs opacity-50">Ad</p>
 
                       <p className="font-bold break-words">
-                        {contact?.name || "—"}
+                        {post?.contact.name || "—"}
                       </p>
                     </div>
                   </div>
@@ -1028,6 +1125,11 @@ export default function PostDetailelectronics() {
                           <span className="flex items-center gap-1 truncate">
                             <MapPin size={13} />
                             {item?.location || "—"}
+                          </span>
+
+                          <span className="flex items-center gap-1 whitespace-nowrap">
+                            <Eye size={13} />
+                            {(item?.viewCount || 0).toLocaleString("az-AZ")}
                           </span>
 
                           <span className="flex items-center gap-1 whitespace-nowrap">

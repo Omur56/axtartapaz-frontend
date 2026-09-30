@@ -26,9 +26,11 @@ import {
   ZoomIn,
   Zap,
   Package,
+  Eye,
 } from "lucide-react";
 
 import { useTheme } from "../../components/Main/ThemeContext";
+import { getVisitorId } from "../../utils/visitorId";
 
 export default function PostDetailPhone() {
   const { id } = useParams();
@@ -60,75 +62,151 @@ export default function PostDetailPhone() {
   /* =========================================================
      CARİ ELAN + BİZNES
   ========================================================= */
-  useEffect(() => {
+useEffect(() => {
+  let mounted = true;
+
+  const fetchPost = async () => {
     setPost(null);
     setBusiness(null);
     setNotFound(false);
 
-    axios
-      .get(`${BASE_URL}/api/Phone/${id}`)
-      .then(async (res) => {
-        if (!res.data) {
-          setNotFound(true);
-          return;
-        }
+    try {
+      const res = await axios.get(`${BASE_URL}/api/Phone/${id}`);
 
-        setPost(res.data);
+      if (!mounted) return;
 
-        /*
-         * businessId iki formada gələ bilər:
-         *
-         * 1. Populate olunmuş obyekt:
-         * {
-         *   _id: "...",
-         *   businessName: "...",
-         *   slug: "..."
-         * }
-         *
-         * 2. Sadəcə ObjectId:
-         * "68xxxxxxxx..."
-         */
+      if (!res.data) {
+        setNotFound(true);
+        return;
+      }
 
-        const businessData = res.data?.businessId;
+      const loadedPost = res.data;
+
+      setPost(loadedPost);
+
+      // =========================================================
+      // ELAN BAXIŞINI QEYD ET
+      // =========================================================
+      try {
+        const visitorId = getVisitorId();
+        const token = localStorage.getItem("token");
+
+        const viewResponse = await axios.post(
+          `${BASE_URL}/api/ads/${id}/view`,
+          {},
+          {
+            headers: {
+              "x-visitor-id": visitorId,
+              ...(token
+                ? {
+                    Authorization: `Bearer ${token}`,
+                  }
+                : {}),
+            },
+          },
+        );
+
+        if (!mounted) return;
 
         if (
-          businessData &&
-          typeof businessData === "object" &&
-          businessData.slug
+          viewResponse.data?.success &&
+          typeof viewResponse.data.viewCount === "number"
         ) {
+          setPost((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  viewCount: viewResponse.data.viewCount,
+                }
+              : prev,
+          );
+        }
+      } catch (viewError) {
+        console.error(
+          "Elan baxışı qeyd olunmadı:",
+          viewError.response?.data || viewError.message,
+        );
+      }
+
+      // =========================================================
+      // BİZNES MƏLUMATI
+      // =========================================================
+
+      const businessData = loadedPost?.businessId;
+
+      /*
+        businessId iki formada gələ bilər:
+
+        1. Populate olunmuş obyekt:
+           {
+             _id: "...",
+             businessName: "...",
+             slug: "..."
+           }
+
+        2. Sadəcə ObjectId:
+           "68xxxxxxxx..."
+      */
+
+      if (
+        businessData &&
+        typeof businessData === "object" &&
+        businessData.slug
+      ) {
+        if (mounted) {
           setBusiness(businessData);
-          return;
         }
 
-        if (businessData) {
-          try {
-            const businessRes = await axios.get(
-              `${BASE_URL}/api/business/by-id/${businessData}`,
-            );
+        return;
+      }
 
-            if (businessRes.data) {
-              setBusiness(businessRes.data);
-            } else {
-              setBusiness(null);
-            }
-          } catch (businessError) {
-            console.error(
-              "Biznes məlumatı yüklənmədi:",
-              businessError.response?.data || businessError.message,
-            );
+      if (businessData) {
+        try {
+          const businessRes = await axios.get(
+            `${BASE_URL}/api/business/by-id/${businessData}`,
+          );
 
+          if (!mounted) return;
+
+          if (businessRes.data) {
+            setBusiness(businessRes.data);
+          } else {
             setBusiness(null);
           }
-        } else {
+        } catch (businessError) {
+          console.error(
+            "Biznes məlumatı yüklənmədi:",
+            businessError.response?.data || businessError.message,
+          );
+
+          if (mounted) {
+            setBusiness(null);
+          }
+        }
+      } else {
+        if (mounted) {
           setBusiness(null);
         }
-      })
-      .catch((err) => {
-        console.error("Elan yüklənmədi:", err);
+      }
+    } catch (err) {
+      console.error("Elan yüklənmədi:", err.response?.data || err.message);
+
+      if (mounted) {
+        setPost(null);
         setNotFound(true);
         setBusiness(null);
-      });
-  }, [id, BASE_URL]);
+      }
+    }
+  };
+
+  if (id) {
+    fetchPost();
+  }
+
+  return () => {
+    mounted = false;
+  };
+}, [id, BASE_URL]);
 
   /* =========================================================
      PHONE DATA
@@ -802,7 +880,7 @@ export default function PostDetailPhone() {
                   META
               ================================================= */}
               <div
-                className={`mt-8 grid grid-cols-1 gap-3 border-t pt-6 sm:grid-cols-3 ${
+                className={`mt-8 grid grid-cols-1 gap-3 border-t pt-6 sm:grid-cols-4 ${
                   darkMode ? "border-white/10" : "border-gray-200"
                 }`}
               >
@@ -838,6 +916,17 @@ export default function PostDetailPhone() {
 
                     <p className="text-sm font-semibold">
                       {getCurrentTime(postDate) || "--:--"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Eye size={18} className="text-indigo-500" />
+
+                  <div>
+                    <p className="text-xs opacity-50">Baxış sayı</p>
+
+                    <p className="text-sm font-semibold">
+                      {(post.viewCount || 0).toLocaleString("az-AZ")}
                     </p>
                   </div>
                 </div>
@@ -1138,18 +1227,31 @@ export default function PostDetailPhone() {
                         </p>
 
                         <div
-                          className={`mt-3 flex items-center justify-between text-xs ${
+                          className={`mt-3 flex items-center justify-between gap-2 text-xs ${
                             darkMode ? "text-gray-500" : "text-gray-400"
                           }`}
                         >
                           <span className="flex min-w-0 items-center gap-1 truncate">
-                            <MapPin size={13} />
-                            {item?.location || item?.city || "—"}
+                            <MapPin size={13} className="shrink-0" />
+
+                            <span className="truncate">
+                              {item?.location || item?.city || "—"}
+                            </span>
                           </span>
 
-                          <span className="shrink-0">
-                            {formatDate(item?.data || item?.createdAt)}
-                          </span>
+                          <div className="flex shrink-0 items-center gap-3">
+                            <span className="flex items-center gap-1">
+                              <Clock3 size={12} />
+
+                              {formatDate(item?.data || item?.createdAt)}
+                            </span>
+
+                            <span className="flex items-center gap-1">
+                              <Eye size={12} />
+
+                              {(item?.viewCount || 0).toLocaleString("az-AZ")}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </Link>

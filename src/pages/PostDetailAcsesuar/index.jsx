@@ -22,11 +22,13 @@ import {
   ShieldCheck,
   Package,
   Loader2,
+  Eye,
 } from "lucide-react";
 
 import { useTheme } from "../../components/Main/ThemeContext";
 import BubbleBackground from "../../components/ui/BubbleBackground";
 import BottomMenu from "../../components/MobileMenu";
+import { getVisitorId } from "../../utils/visitorId";
 
 export default function AcsesuarDetail() {
   const { id } = useParams();
@@ -46,17 +48,28 @@ export default function AcsesuarDetail() {
   // =========================================================
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchAccessories = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/api/accessory`);
 
+        if (!mounted) return;
+
         setAccessories(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.error("Aksesuar elanları yüklənmədi:", err);
+        console.error(
+          "Aksesuar elanları yüklənmədi:",
+          err.response?.data || err.message,
+        );
       }
     };
 
     fetchAccessories();
+
+    return () => {
+      mounted = false;
+    };
   }, [BASE_URL]);
 
   // =========================================================
@@ -64,6 +77,8 @@ export default function AcsesuarDetail() {
   // =========================================================
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchPost = async () => {
       try {
         setLoading(true);
@@ -71,16 +86,94 @@ export default function AcsesuarDetail() {
 
         const res = await axios.get(`${BASE_URL}/api/accessory/${id}`);
 
+        if (!mounted) return;
+
+        if (!res.data) {
+          setPost(null);
+          setNotFound(true);
+          return;
+        }
+
         setPost(res.data);
+
+        // =====================================================
+        // DATE DEBUG
+        // =====================================================
+
+        console.log("Aksesuar tarix məlumatı:", {
+          id: res.data?.id,
+          mongoId: res.data?._id,
+          data: res.data?.data,
+          createdAt: res.data?.createdAt,
+          updatedAt: res.data?.updatedAt,
+        });
+
+        // =====================================================
+        // ELAN BAXIŞINI QEYD ET
+        // Qonaq + login olan istifadəçi
+        // =====================================================
+
+        try {
+          const visitorId = getVisitorId();
+          const token = localStorage.getItem("token");
+
+          const viewResponse = await axios.post(
+            `${BASE_URL}/api/ads/${id}/view`,
+            {},
+            {
+              headers: {
+                "x-visitor-id": visitorId,
+                ...(token
+                  ? {
+                      Authorization: `Bearer ${token}`,
+                    }
+                  : {}),
+              },
+            },
+          );
+
+          if (!mounted) return;
+
+          if (
+            viewResponse.data?.success &&
+            typeof viewResponse.data.viewCount === "number"
+          ) {
+            setPost((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    viewCount: viewResponse.data.viewCount,
+                  }
+                : prev,
+            );
+          }
+        } catch (viewError) {
+          console.error(
+            "Elan baxışı qeyd olunmadı:",
+            viewError.response?.data || viewError.message,
+          );
+        }
       } catch (err) {
-        console.error("Elan yüklənmədi:", err);
-        setNotFound(true);
+        console.error("Elan yüklənmədi:", err.response?.data || err.message);
+
+        if (mounted) {
+          setPost(null);
+          setNotFound(true);
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
-    fetchPost();
+    if (id) {
+      fetchPost();
+    }
+
+    return () => {
+      mounted = false;
+    };
   }, [id, BASE_URL]);
 
   // =========================================================
@@ -132,42 +225,85 @@ export default function AcsesuarDetail() {
   };
 
   // =========================================================
-  // Date
+  // DATE / TIME
+  // =========================================================
+
+  /*
+   * Əsas tarix:
+   *
+   * Yeni elanlar:
+   * createdAt
+   *
+   * Köhnə elanlarda data varsa:
+   * data
+   *
+   * Son fallback:
+   * updatedAt
+   */
+
+  const getPostDate = (item) => {
+    if (!item) return null;
+
+    return item.createdAt || item.data || item.updatedAt || null;
+  };
+
+  // =========================================================
+  // Format Date
   // =========================================================
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
 
-    const postDate = new Date(dateString);
+    const date = new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+
     const now = new Date();
 
-    const today = new Date(now);
-    today.setHours(0, 0, 0, 0);
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    const postDay = new Date(postDate);
-    postDay.setHours(0, 0, 0, 0);
+    const postDay = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+    );
 
-    const diffTime = today - postDay;
-    const oneDay = 24 * 60 * 60 * 1000;
+    const diffDays = Math.round((today - postDay) / (24 * 60 * 60 * 1000));
 
-    if (diffTime === 0) return "bugün";
-    if (diffTime === oneDay) return "dünən";
+    if (diffDays === 0) {
+      return "bugün";
+    }
 
-    return postDate.toLocaleDateString("az-AZ", {
-      day: "numeric",
+    if (diffDays === 1) {
+      return "dünən";
+    }
+
+    return date.toLocaleDateString("az-AZ", {
+      day: "2-digit",
       month: "long",
       year: "numeric",
     });
   };
 
-  const getCurrentTime = (isoString) => {
-    if (!isoString) return "";
+  // =========================================================
+  // Format Time
+  // =========================================================
 
-    const date = new Date(isoString);
+  const getCurrentTime = (dateString) => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
 
     return date.toLocaleTimeString("az-AZ", {
       hour: "2-digit",
       minute: "2-digit",
+      hour12: false,
     });
   };
 
@@ -184,20 +320,21 @@ export default function AcsesuarDetail() {
   };
 
   const prevImage = () => {
+    if (imageArray.length === 0) return;
+
     setZoomIndex((prev) => (prev === 0 ? imageArray.length - 1 : prev - 1));
   };
 
   const nextImage = () => {
+    if (imageArray.length === 0) return;
+
     setZoomIndex((prev) => (prev === imageArray.length - 1 ? 0 : prev + 1));
   };
 
   // =========================================================
-  // VIP / Premium
-  // =========================================================
-
-  // =========================================================
   // VIP / Premium - Kapital Bank
   // =========================================================
+
   const handleUpgrade = async (listingId, type) => {
     try {
       setUpgrading(type);
@@ -315,6 +452,12 @@ export default function AcsesuarDetail() {
   }
 
   // =========================================================
+  // Current post date
+  // =========================================================
+
+  const currentPostDate = getPostDate(post);
+
+  // =========================================================
   // Main
   // =========================================================
 
@@ -380,6 +523,9 @@ export default function AcsesuarDetail() {
                         src={getImageUrl(img)}
                         alt={`Şəkil ${index + 1}`}
                         className="h-full w-full rounded-2xl object-contain"
+                        onError={(e) => {
+                          e.currentTarget.src = "/no-image.jpg";
+                        }}
                       />
                     </div>
                   ))}
@@ -493,7 +639,9 @@ export default function AcsesuarDetail() {
                 Meta
             ================================================= */}
 
-            <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* Elanın nömrəsi */}
+
               <div
                 className={`rounded-2xl border p-4 ${
                   darkMode
@@ -503,6 +651,7 @@ export default function AcsesuarDetail() {
               >
                 <div className="flex items-center gap-2 text-[#670fff]">
                   <ShieldCheck size={18} />
+
                   <span className="text-xs font-bold">Elanın nömrəsi</span>
                 </div>
 
@@ -515,6 +664,8 @@ export default function AcsesuarDetail() {
                 </p>
               </div>
 
+              {/* Tarix */}
+
               <div
                 className={`rounded-2xl border p-4 ${
                   darkMode
@@ -524,6 +675,7 @@ export default function AcsesuarDetail() {
               >
                 <div className="flex items-center gap-2 text-[#670fff]">
                   <CalendarDays size={18} />
+
                   <span className="text-xs font-bold">Tarix</span>
                 </div>
 
@@ -532,9 +684,11 @@ export default function AcsesuarDetail() {
                     darkMode ? "text-white" : "text-slate-800"
                   }`}
                 >
-                  {formatDate(post.data)}
+                  {formatDate(currentPostDate) || "—"}
                 </p>
               </div>
+
+              {/* Saat */}
 
               <div
                 className={`rounded-2xl border p-4 ${
@@ -545,6 +699,7 @@ export default function AcsesuarDetail() {
               >
                 <div className="flex items-center gap-2 text-[#670fff]">
                   <Clock3 size={18} />
+
                   <span className="text-xs font-bold">Saat</span>
                 </div>
 
@@ -553,9 +708,13 @@ export default function AcsesuarDetail() {
                     darkMode ? "text-white" : "text-slate-800"
                   }`}
                 >
-                  {getCurrentTime(post.data)}
+                  {getCurrentTime(currentPostDate) || "—"}
                 </p>
               </div>
+              <span className="mt-2 flex shrink-0 items-center gap-1 text-xs text-slate-500">
+                <Eye size={13} />
+                {(post?.viewCount || 0).toLocaleString("az-AZ")} baxış
+              </span>
             </div>
           </div>
 
@@ -596,6 +755,8 @@ export default function AcsesuarDetail() {
               </div>
 
               <div className="space-y-3">
+                {/* Ad */}
+
                 <div
                   className={`rounded-2xl border p-4 ${
                     darkMode
@@ -617,6 +778,8 @@ export default function AcsesuarDetail() {
                   </p>
                 </div>
 
+                {/* Telefon */}
+
                 <div
                   className={`rounded-2xl border p-4 ${
                     darkMode
@@ -636,6 +799,8 @@ export default function AcsesuarDetail() {
                     {post.contact?.phone || "N/A"}
                   </a>
                 </div>
+
+                {/* Email */}
 
                 <div
                   className={`rounded-2xl border p-4 ${
@@ -658,6 +823,8 @@ export default function AcsesuarDetail() {
                   </p>
                 </div>
 
+                {/* Şəhər */}
+
                 <div
                   className={`rounded-2xl border p-4 ${
                     darkMode
@@ -679,6 +846,8 @@ export default function AcsesuarDetail() {
                   </p>
                 </div>
 
+                {/* Mağaza */}
+
                 {post.businessId?.slug && (
                   <Link
                     to={`/biznes/${post.businessId.slug}`}
@@ -695,6 +864,7 @@ export default function AcsesuarDetail() {
               </div>
 
               {/* Call */}
+
               <a
                 href={`tel:${post.contact?.phone || ""}`}
                 className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 py-3.5 font-black text-white shadow-lg shadow-green-500/20 transition-all hover:-translate-y-0.5 hover:shadow-xl"
@@ -704,6 +874,7 @@ export default function AcsesuarDetail() {
               </a>
 
               {/* Upgrade */}
+
               <div className="mt-5">
                 <p
                   className={`mb-3 text-xs font-bold uppercase tracking-wider ${
@@ -714,8 +885,10 @@ export default function AcsesuarDetail() {
                 </p>
 
                 <div className="grid grid-cols-2 gap-2">
+                  {/* VIP */}
+
                   <button
-                    onClick={() => handleUpgrade(post._id, "vip")}
+                    onClick={() => handleUpgrade(post._id || post.id, "vip")}
                     disabled={upgrading !== null}
                     className="flex items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2.5 text-sm font-bold text-blue-600 transition hover:bg-blue-100 disabled:opacity-60"
                   >
@@ -727,8 +900,12 @@ export default function AcsesuarDetail() {
                     VIP
                   </button>
 
+                  {/* Premium */}
+
                   <button
-                    onClick={() => handleUpgrade(post._id, "premium")}
+                    onClick={() =>
+                      handleUpgrade(post._id || post.id, "premium")
+                    }
                     disabled={upgrading !== null}
                     className="flex items-center justify-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-sm font-bold text-amber-600 transition hover:bg-amber-100 disabled:opacity-60"
                   >
@@ -773,75 +950,108 @@ export default function AcsesuarDetail() {
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
             {[...accessories]
               .reverse()
-              .filter((item) => (item._id || item.id) !== id)
+              .filter((item) => String(item._id || item.id) !== String(id))
               .slice(0, 8)
-              .map((item) => (
-                <Link
-                  key={item._id || item.id}
-                  to={`/PostDetailAcsesuar/${item._id || item.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`group overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
-                    darkMode
-                      ? "border-slate-800 bg-slate-900"
-                      : "border-slate-200 bg-white"
-                  }`}
-                >
-                  <div className="relative h-[160px] sm:h-[190px] overflow-hidden">
-                    <img
-                      src={getImageUrl(item.images?.[0])}
-                      alt={item.title || "Aksesuar"}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      onError={(e) => {
-                        e.currentTarget.src = "/no-image.jpg";
-                      }}
-                    />
+              .map((item) => {
+                const itemDate = getPostDate(item);
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                return (
+                  <Link
+                    key={item._id || item.id}
+                    to={`/PostDetailAcsesuar/${item._id || item.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`group overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                      darkMode
+                        ? "border-slate-800 bg-slate-900"
+                        : "border-slate-200 bg-white"
+                    }`}
+                  >
+                    {/* Image */}
 
-                    <span className="absolute left-2 top-2 rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-md">
-                      {item.category || "Aksesuar"}
-                    </span>
-                  </div>
+                    <div className="relative h-[160px] sm:h-[190px] overflow-hidden">
+                      <img
+                        src={getImageUrl(item.images?.[0])}
+                        alt={item.title || "Aksesuar"}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => {
+                          e.currentTarget.src = "/no-image.jpg";
+                        }}
+                      />
 
-                  <div className="p-3.5">
-                    <h3
-                      className={`text-lg font-black ${
-                        darkMode ? "text-white" : "text-slate-900"
-                      }`}
-                    >
-                      {item.price} ₼
-                    </h3>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-                    <p
-                      className={`mt-1 truncate text-sm font-semibold ${
-                        darkMode ? "text-slate-300" : "text-slate-700"
-                      }`}
-                    >
-                      {item.title || `${item.brand || ""} ${item.model || ""}`}
-                    </p>
-
-                    <div
-                      className={`mt-3 flex items-center gap-1 text-xs ${
-                        darkMode ? "text-slate-500" : "text-slate-400"
-                      }`}
-                    >
-                      <MapPin size={13} />
-                      <span className="truncate">
-                        {item.location || "Məlum deyil"}
+                      <span className="absolute left-2 top-2 rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-md">
+                        {item.category || "Aksesuar"}
                       </span>
                     </div>
 
-                    <p
-                      className={`mt-1 text-xs ${
-                        darkMode ? "text-slate-600" : "text-slate-400"
-                      }`}
-                    >
-                      {formatDate(item.data)} {getCurrentTime(item.data)}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+                    {/* Content */}
+
+                    <div className="p-3.5">
+                      <h3
+                        className={`text-lg font-black ${
+                          darkMode ? "text-white" : "text-slate-900"
+                        }`}
+                      >
+                        {item.price} ₼
+                      </h3>
+
+                      <p
+                        className={`mt-1 truncate text-sm font-semibold ${
+                          darkMode ? "text-slate-300" : "text-slate-700"
+                        }`}
+                      >
+                        {item.title ||
+                          `${item.brand || ""} ${item.model || ""}`}
+                      </p>
+
+                      {/* Meta */}
+
+                      <div
+                        className={`mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm ${
+                          darkMode ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
+                        {/* Location */}
+
+                        <span className="flex items-center gap-1.5">
+                          <MapPin size={15} />
+
+                          {item.location || "Məlum deyil"}
+                        </span>
+
+                        {/* Date */}
+
+                        {itemDate && (
+                          <span className="flex items-center gap-1.5">
+                            <CalendarDays size={15} />
+
+                            {formatDate(itemDate)}
+                          </span>
+                        )}
+
+                        {/* Time */}
+
+                        {itemDate && (
+                          <span className="flex items-center gap-1.5">
+                            <Clock3 size={15} />
+
+                            {getCurrentTime(itemDate)}
+                          </span>
+                        )}
+
+                        {/* Views */}
+
+                        <span className="flex items-center gap-1.5">
+                          <Eye size={15} />
+                          {(item.viewCount || 0).toLocaleString("az-AZ")} baxış
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
           </div>
         </section>
       </main>
@@ -856,6 +1066,7 @@ export default function AcsesuarDetail() {
           onClick={closeZoom}
         >
           {/* Close */}
+
           <button
             onClick={closeZoom}
             className="absolute right-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-red-500"
@@ -865,11 +1076,13 @@ export default function AcsesuarDetail() {
           </button>
 
           {/* Counter */}
+
           <div className="absolute left-1/2 top-5 -translate-x-1/2 rounded-full bg-white/10 px-4 py-2 text-sm font-bold text-white backdrop-blur-md">
             {zoomIndex + 1} / {imageArray.length}
           </div>
 
           {/* Previous */}
+
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -882,14 +1095,19 @@ export default function AcsesuarDetail() {
           </button>
 
           {/* Image */}
+
           <img
             src={getImageUrl(imageArray[zoomIndex])}
             alt="Böyük şəkil"
             className="max-h-[88vh] max-w-[88vw] rounded-xl object-contain"
             onClick={(e) => e.stopPropagation()}
+            onError={(e) => {
+              e.currentTarget.src = "/no-image.jpg";
+            }}
           />
 
           {/* Next */}
+
           <button
             onClick={(e) => {
               e.stopPropagation();

@@ -1,19 +1,18 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 import "./ThemeContext.css";
 
 // Context
-const ThemeContext = createContext();
+const ThemeContext = createContext(null);
 
 // Provider
 export const ThemeProvider = ({ children }) => {
-  // LocalStorage-dan başlanğıc temanı birbaşa oxu
+  // LocalStorage-dan başlanğıc temanı oxu
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem("darkMode") === "true";
   });
 
-  // Dark mode dəyişəndə həm localStorage,
-  // həm də HTML elementini yenilə
+  // Dark mode dəyişəndə localStorage və HTML elementini yenilə
   useEffect(() => {
     localStorage.setItem("darkMode", String(darkMode));
 

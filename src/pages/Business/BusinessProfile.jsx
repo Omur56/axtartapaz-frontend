@@ -126,6 +126,28 @@ const BUSINESS_TYPES = [
   },
 ];
 
+// =====================================================
+// ANONİM / QONAQ İSTİFADƏÇİ BAXIŞ ID
+// =====================================================
+
+const getVisitorId = () => {
+  let visitorId = localStorage.getItem("businessVisitorId");
+
+  if (!visitorId) {
+    if (typeof crypto !== "undefined" && crypto.randomUUID) {
+      visitorId = crypto.randomUUID();
+    } else {
+      visitorId = `visitor-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2)}`;
+    }
+
+    localStorage.setItem("businessVisitorId", visitorId);
+  }
+
+  return visitorId;
+};
+
 const BusinessProfile = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -290,21 +312,48 @@ const BusinessProfile = () => {
           currentUserId && ownerId && String(currentUserId) === String(ownerId),
         );
 
+        // =================================================
+        // BİZNES PROFİLİ BAXIŞINI QEYDƏ AL
+        // Qeydiyyatlı istifadəçi + Qonaq istifadəçi
+        // =================================================
+
         if (
           businessData?._id &&
-          currentUserId &&
-          String(currentUserId) !== String(ownerId)
+          String(currentUserId || "") !== String(ownerId || "")
         ) {
           try {
-            await axios.post(
+            const visitorId = getVisitorId();
+            const token = localStorage.getItem("token");
+
+            const headers = {
+              "x-visitor-id": visitorId,
+            };
+
+            // Login olunubsa token də göndərilir.
+            // Qonaq istifadəçidə yalnız visitorId göndərilir.
+            if (token) {
+              headers.Authorization = `Bearer ${token}`;
+            }
+
+            const viewResponse = await axios.post(
               `${API}/api/business/${businessData._id}/view`,
               {},
               {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
+                headers,
               },
             );
+
+            console.log("👁️ BUSINESS VIEW RESPONSE:", viewResponse.data);
+            console.log(
+              "👤 BUSINESS VIEWER:",
+              currentUserId ? "Qeydiyyatlı istifadəçi" : "Qonaq",
+            );
+            console.log("🆔 VISITOR ID:", visitorId);
+
+            // Yeni baxış qeydə alınıbsa ekrandakı ümumi sayı da yenilə.
+            if (viewResponse.data?.counted) {
+              await fetchPublicViewCount(businessData._id);
+            }
           } catch (viewError) {
             console.error("❌ Business view error:", viewError);
           }
@@ -1263,135 +1312,134 @@ const BusinessProfile = () => {
 
   // =========
   return (
-    <div className="">
-      <div className="w-full ">
-        {/* =====================================================
+    <div className="w-[1010px] mx-auto">
+      {/* =====================================================
             GERİ
         ====================================================== */}
 
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 mb-5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-[#670fff] transition"
-        >
-          <ArrowLeft size={18} />
-          Geri qayıt
-        </button>
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 mb-5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-[#670fff] transition"
+      >
+        <ArrowLeft size={18} />
+        Geri qayıt
+      </button>
 
-        {/* =====================================================
+      {/* =====================================================
             BİZNES BAŞLIĞI
         ====================================================== */}
 
-        <div className="bg-white dark:bg-[#15151b] rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-sm">
-          {/* COVER */}
+      <div className=" max-w-screen overflow-hidden   shadow-sm">
+        {/* COVER */}
 
-          {/* =====================================================
+        {/* =====================================================
     COVER CAROUSEL
 ===================================================== */}
 
-          <div
-            className="relative h-40 sm:h-80 overflow-hidden bg-gradient-to-r from-[#670fff] to-purple-400 select-none"
-            onTouchStart={(e) => {
-              e.currentTarget.dataset.touchStartX = e.touches[0].clientX;
-            }}
-            onTouchEnd={(e) => {
-              const startX = Number(e.currentTarget.dataset.touchStartX || 0);
+        <div
+          className="relative h-40 sm:h-80 overflow-hidden bg-gradient-to-r from-[#670fff] to-purple-400 select-none"
+          onTouchStart={(e) => {
+            e.currentTarget.dataset.touchStartX = e.touches[0].clientX;
+          }}
+          onTouchEnd={(e) => {
+            const startX = Number(e.currentTarget.dataset.touchStartX || 0);
 
-              const endX = e.changedTouches[0].clientX;
+            const endX = e.changedTouches[0].clientX;
 
-              const difference = startX - endX;
+            const difference = startX - endX;
 
-              if (Math.abs(difference) < 50) {
-                return;
-              }
+            if (Math.abs(difference) < 50) {
+              return;
+            }
 
-              if (difference > 0) {
-                goToNextCover();
-              } else {
-                goToPreviousCover();
-              }
-            }}
-          >
-            {(() => {
-              const coverImages =
-                business.coverImages?.length > 0
-                  ? business.coverImages
-                  : business.coverImage
-                    ? [business.coverImage]
-                    : [];
+            if (difference > 0) {
+              goToNextCover();
+            } else {
+              goToPreviousCover();
+            }
+          }}
+        >
+          {(() => {
+            const coverImages =
+              business.coverImages?.length > 0
+                ? business.coverImages
+                : business.coverImage
+                  ? [business.coverImage]
+                  : [];
 
-              if (coverImages.length === 0) {
-                return (
-                  <div className="w-full h-full bg-gradient-to-r from-[#670fff] to-purple-400" />
-                );
-              }
-
+            if (coverImages.length === 0) {
               return (
-                <>
-                  {/* =================================================
+                <div className="w-full h-full bg-gradient-to-r from-[#670fff] to-purple-400" />
+              );
+            }
+
+            return (
+              <>
+                {/* =================================================
             ŞƏKİL
         ================================================== */}
 
-                  <img
-                    key={coverImages[activeCoverIndex]}
-                    src={coverImages[activeCoverIndex]}
-                    alt={business.businessName}
-                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
-                  />
+                <img
+                  key={coverImages[activeCoverIndex]}
+                  src={coverImages[activeCoverIndex]}
+                  alt={business.businessName}
+                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+                />
 
-                  {/* =================================================
+                {/* =================================================
             DARK OVERLAY
         ================================================== */}
 
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/30 pointer-events-none" />
+                <div className="absolute pointer-events-none" />
 
-                  {/* =================================================
+                {/* =================================================
             WHATSAPP STATUS PROGRESS
         ================================================== */}
 
-                  {coverImages.length > 1 && (
-                    <div className="absolute top-3 left-3 right-3 z-20 flex gap-1.5">
-                      {coverImages.map((image, index) => {
-                        const isCompleted = index < activeCoverIndex;
+                {coverImages.length > 1 && (
+                  <div className="absolute top-3 left-3 right-3 z-20 flex gap-1.5">
+                    {coverImages.map((image, index) => {
+                      const isCompleted = index < activeCoverIndex;
 
-                        const isCurrent = index === activeCoverIndex;
+                      const isCurrent = index === activeCoverIndex;
 
-                        return (
+                      return (
+                        <div
+                          key={`${image}-${index}`}
+                          className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/35 backdrop-blur-sm"
+                        >
                           <div
-                            key={`${image}-${index}`}
-                            className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/35 backdrop-blur-sm"
-                          >
-                            <div
-                              className="h-full rounded-full bg-white transition-[width] duration-75 ease-linear"
-                              style={{
-                                width: isCompleted
-                                  ? "100%"
-                                  : isCurrent
-                                    ? `${coverProgress}%`
-                                    : "0%",
-                              }}
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                            className="h-full rounded-full bg-white transition-[width] duration-75 ease-linear"
+                            style={{
+                              width: isCompleted
+                                ? "100%"
+                                : isCurrent
+                                  ? `${coverProgress}%`
+                                  : "0%",
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
 
-                  {/* =================================================
+                {/* =================================================
             SOL TƏRƏF - ƏVVƏLKİ
         ================================================== */}
-                  {/* =================================================
+                {/* =================================================
     SOL TƏRƏF - ƏVVƏLKİ COVER
 ================================================= */}
-                  {coverImages.length > 1 && (
-                    <button
-                      type="button"
-                      aria-label="Əvvəlki cover"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        goToPreviousCover();
-                      }}
-                      className="
+                {coverImages.length > 1 && (
+                  <button
+                    type="button"
+                    aria-label="Əvvəlki cover"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goToPreviousCover();
+                    }}
+                    className="
       absolute left-3 top-1/2 -translate-y-1/2
       z-30
       flex h-10 w-10
@@ -1407,23 +1455,23 @@ const BusinessProfile = () => {
       hover:scale-105
       active:scale-95
     "
-                    >
-                      <ChevronLeft size={26} strokeWidth={2.5} />
-                    </button>
-                  )}
+                  >
+                    <ChevronLeft size={26} strokeWidth={2.5} />
+                  </button>
+                )}
 
-                  {/* =================================================
+                {/* =================================================
     SAĞ TƏRƏF - NÖVBƏTİ COVER
 ================================================= */}
-                  {coverImages.length > 1 && (
-                    <button
-                      type="button"
-                      aria-label="Növbəti cover"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        goToNextCover();
-                      }}
-                      className="
+                {coverImages.length > 1 && (
+                  <button
+                    type="button"
+                    aria-label="Növbəti cover"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goToNextCover();
+                    }}
+                    className="
       absolute right-3 top-1/2 -translate-y-1/2
       z-30
       flex h-10 w-10
@@ -1439,493 +1487,492 @@ const BusinessProfile = () => {
       hover:scale-105
       active:scale-95
     "
-                    >
-                      <ChevronRight size={26} strokeWidth={2.5} />
-                    </button>
-                  )}
+                  >
+                    <ChevronRight size={26} strokeWidth={2.5} />
+                  </button>
+                )}
 
-                  {/* =================================================
+                {/* =================================================
             ŞƏKİL SAYI
         ================================================== */}
 
-                  {coverImages.length > 1 && (
-                    <div className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-black/45 px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
-                      {activeCoverIndex + 1} / {coverImages.length}
-                    </div>
-                  )}
-                </>
-              );
-            })()}
+                {coverImages.length > 1 && (
+                  <div className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-black/45 px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
+                    {activeCoverIndex + 1} / {coverImages.length}
+                  </div>
+                )}
+              </>
+            );
+          })()}
 
-            {/* =================================================
+          {/* =================================================
       REDAKTƏ
   ================================================== */}
 
-            {isOwner && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openBusinessEditModal();
-                }}
-                className="absolute right-4 top-7 z-30 flex items-center gap-2 rounded-xl bg-black/40 backdrop-blur-md px-4 py-2.5 text-sm font-bold text-white hover:bg-black/60 transition"
-              >
-                <Pencil size={16} />
-                Redaktə et
-              </button>
-            )}
-          </div>
+          {isOwner && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                openBusinessEditModal();
+              }}
+              className="absolute right-4 top-7 z-30 flex items-center gap-2 rounded-xl bg-black/40 backdrop-blur-md px-4 py-2.5 text-sm font-bold text-white hover:bg-black/60 transition"
+            >
+              <Pencil size={16} />
+              Redaktə et
+            </button>
+          )}
+        </div>
 
-          <div className="px-5 sm:px-8 pb-7">
-            {/* LOGO + NAME */}
+        <div className="px-5 sm:px-8 pb-7">
+          {/* LOGO + NAME */}
 
-            <div className="-mt-14 relative flex flex-col sm:flex-row sm:items-end gap-4">
-              {/* LOGO */}
+          <div className="-mt-14 relative flex flex-col sm:flex-row sm:items-end gap-4">
+            {/* LOGO */}
 
-              <div className="w-28 h-28 rounded-3xl bg-white dark:bg-[#15151b] border-4 border-white dark:border-[#15151b] shadow-lg overflow-hidden flex items-center justify-center shrink-0">
-                {business.logo ? (
-                  <img
-                    src={business.logo}
-                    alt={business.businessName}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <Store size={42} className="text-[#670fff]" />
+            <div className="w-28 h-28 rounded-3xl bg-white dark:bg-[#15151b] border-4 border-white dark:border-[#15151b] shadow-lg overflow-hidden flex items-center justify-center shrink-0">
+              {business.logo ? (
+                <img
+                  src={business.logo}
+                  alt={business.businessName}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Store size={42} className="text-[#670fff]" />
+              )}
+            </div>
+
+            {/* BUSINESS INFO */}
+
+            <div className="flex-1 pt-2 sm:pb-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-2xl sm:text-3xl font-black text-black dark:text-white">
+                  {business.businessName}
+                </h1>
+
+                {business.verified && (
+                  <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold">
+                    ✓ Təsdiqlənmiş
+                  </span>
                 )}
               </div>
 
-              {/* BUSINESS INFO */}
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                {business.businessType === "magaza"
+                  ? "Mağaza"
+                  : business.businessType === "avtosalon"
+                    ? "Avtosalon"
+                    : business.businessType === "sirket"
+                      ? "Şirkət"
+                      : business.businessType === "xidmet"
+                        ? "Xidmət"
+                        : "Digər"}
+              </p>
 
-              <div className="flex-1 pt-2 sm:pb-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
-                    {business.businessName}
-                  </h1>
-
-                  {business.verified && (
-                    <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold">
-                      ✓ Təsdiqlənmiş
-                    </span>
-                  )}
-                </div>
-
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                  {business.businessType === "magaza"
-                    ? "Mağaza"
-                    : business.businessType === "avtosalon"
-                      ? "Avtosalon"
-                      : business.businessType === "sirket"
-                        ? "Şirkət"
-                        : business.businessType === "xidmet"
-                          ? "Xidmət"
-                          : "Digər"}
-                </p>
-
-                <div className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#670fff]/10 text-[#670fff] text-xs font-bold">
-                  <CategoryIcon size={15} />
-                  {categoryInfo.label}
-                </div>
+              <div className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#670fff]/10 text-[#670fff] text-xs font-bold">
+                <CategoryIcon size={15} />
+                {categoryInfo.label}
               </div>
-
-              {/* OWNER BUTTONS */}
-
-              {isOwner && (
-                <div className="flex flex-col sm:flex-row gap-2 sm:mb-2">
-                  <button
-                    type="button"
-                    onClick={handleCreateAd}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#670fff] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-purple-200 transition hover:bg-[#5600db] active:scale-95"
-                  >
-                    <Plus size={17} />
-                    Elan yerləşdir
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={openBusinessEditModal}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#670fff]/20 bg-[#670fff]/5 px-4 py-2.5 text-sm font-bold text-[#670fff] transition hover:bg-[#670fff]/10 active:scale-95"
-                  >
-                    <Pencil size={17} />
-                    Biznesi redaktə et
-                  </button>
-                </div>
-              )}
             </div>
 
-            {/* =====================================================
-                MƏLUMATLAR
-            ====================================================== */}
+            {/* OWNER BUTTONS */}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-7">
-              {/* ŞƏHƏR */}
-
-              {business.city && (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#101015]">
-                  <MapPin size={19} className="text-[#670fff] shrink-0" />
-
-                  <div className="min-w-0">
-                    <div className="text-xs text-slate-400">Şəhər</div>
-
-                    <div className="font-bold text-sm text-slate-800 dark:text-white truncate">
-                      {business.city}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ÜNVAN */}
-
-              {business.address && (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#101015]">
-                  <MapPin size={19} className="text-[#670fff] shrink-0" />
-
-                  <div className="min-w-0">
-                    <div className="text-xs text-slate-400">Ünvan</div>
-
-                    <div className="font-bold text-sm text-slate-800 dark:text-white truncate">
-                      {business.address}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* TELEFON */}
-
-              {business.phone && (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#101015]">
-                  <Phone size={19} className="text-[#670fff] shrink-0" />
-
-                  <div className="min-w-0">
-                    <div className="text-xs text-slate-400">Telefon</div>
-
-                    <div className="font-bold text-sm text-slate-800 dark:text-white truncate">
-                      {business.phone}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* EMAIL */}
-
-              {business.email && (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#101015]">
-                  <Mail size={19} className="text-[#670fff] shrink-0" />
-
-                  <div className="min-w-0">
-                    <div className="text-xs text-slate-400">E-poçt</div>
-
-                    <div className="font-bold text-sm text-slate-800 dark:text-white truncate">
-                      {business.email}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* =====================================================
-                İŞ SAATLARI
-            ====================================================== */}
             {isOwner && (
-              <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-slate-900">
-                <div className="mb-5 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-black">Profil statistikası</h3>
-
-                    <p className="mt-1 text-sm text-slate-500">
-                      Biznes profilinizə daxil olan istifadəçilər
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={fetchBusinessViews}
-                    className="rounded-xl bg-[#670fff] px-4 py-2 text-sm font-bold text-white"
-                  >
-                    Yenilə
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl bg-slate-100 p-4 dark:bg-white/5">
-                    <p className="text-sm text-slate-500">Ümumi baxış</p>
-
-                    <p className="mt-1 text-2xl font-black">
-                      {businessViews?.totalViews || 0}
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl bg-slate-100 p-4 dark:bg-white/5">
-                    <p className="text-sm text-slate-500">Unikal istifadəçi</p>
-
-                    <p className="mt-1 text-2xl font-black">
-                      {businessViews?.uniqueUsers || 0}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5">
-                  <h4 className="mb-3 font-black">Profilə daxil olanlar</h4>
-
-                  {loadingViews ? (
-                    <p className="text-sm text-slate-500">Yüklənir...</p>
-                  ) : businessViews?.visitors?.length ? (
-                    <div className="space-y-2">
-                      {businessViews.visitors.map((visitor) => (
-                        <div
-                          key={visitor.id}
-                          className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 dark:border-white/10"
-                        >
-                          {visitor.avatar ? (
-                            <img
-                              src={visitor.avatar}
-                              alt=""
-                              className="h-10 w-10 rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#670fff] font-bold text-white">
-                              {(visitor.username || visitor.name || "?")
-                                .charAt(0)
-                                .toUpperCase()}
-                            </div>
-                          )}
-
-                          <div>
-                            <p className="font-bold">
-                              {visitor.name || visitor.username || "İstifadəçi"}
-                              {visitor.surname ? ` ${visitor.surname}` : ""}
-                            </p>
-
-                            {visitor.username && (
-                              <p className="text-xs text-slate-500">
-                                @{visitor.username}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-slate-500">
-                      Hələ heç bir istifadəçi profilə daxil olmayıb.
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-            <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <div className="mb-4 flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-[#670fff] dark:bg-purple-950/40">
-                  <Clock size={20} />
-                </div>
-                <div className="w-full flex items-center justify-between gap-4">
-                  <div className="min-w-0">
-                    <h3 className="text-lg font-black text-gray-900 dark:text-white">
-                      İş saatları
-                    </h3>
-
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Biznesin həftəlik iş qrafiki
-                    </p>
-                  </div>
-
-                  <div className="shrink-0 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                    <Eye size={17} />
-                    <span>{publicViewCount.toLocaleString("az-AZ")} baxış</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                {WORKING_DAYS.map((day) => {
-                  const hours = {
-                    ...DEFAULT_WORKING_HOURS[day.key],
-                    ...(business.workingHours?.[day.key] || {}),
-                  };
-
-                  return (
-                    <div
-                      key={day.key}
-                      className="flex items-center justify-between gap-3 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-800/50"
-                    >
-                      <span className="font-semibold text-gray-800 dark:text-gray-200">
-                        {day.label}
-                      </span>
-
-                      {hours.closed ? (
-                        <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-600 dark:bg-red-950/40 dark:text-red-400">
-                          Bağlıdır
-                        </span>
-                      ) : (
-                        <span className="font-bold text-[#670fff] whitespace-nowrap">
-                          {hours.open} — {hours.close}
-                        </span>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* =====================================================
-                BİZNES HAQQINDA
-            ====================================================== */}
-
-            {business.description && (
-              <div className="mt-7">
-                <h2 className="text-lg font-black text-slate-900 dark:text-white">
-                  Biznes haqqında
-                </h2>
-
-                <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300 whitespace-pre-line">
-                  {business.description}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* =====================================================
-            ELANLAR
-        ====================================================== */}
-
-        <div className="mt-7">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-                {categoryInfo.label} elanları
-              </h2>
-
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                {ads.length} elan
-              </p>
-            </div>
-
-            <CategoryIcon size={27} className="text-[#670fff]" />
-          </div>
-
-          {/* ELAN YOXDUR */}
-
-          {ads.length === 0 ? (
-            <div className="bg-white dark:bg-[#15151b] border border-slate-200 dark:border-white/10 rounded-3xl p-10 text-center">
-              <CategoryIcon
-                size={45}
-                className="mx-auto text-slate-300 dark:text-slate-600"
-              />
-
-              <h3 className="mt-4 font-black text-lg text-slate-900 dark:text-white">
-                Hələ elan yoxdur
-              </h3>
-
-              <p className="mt-1 text-sm text-slate-500">
-                İlk {categoryInfo.label.toLowerCase()} elanınızı yerləşdirin.
-              </p>
-
-              {isOwner && (
+              <div className="flex flex-col sm:flex-row gap-2 sm:mb-2">
                 <button
                   type="button"
                   onClick={handleCreateAd}
-                  className="mt-5 px-5 py-3 rounded-xl bg-[#670fff] text-white font-black inline-flex items-center gap-2"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#670fff] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-purple-200 transition hover:bg-[#5600db] active:scale-95"
                 >
-                  <Plus size={18} />
-                  İlk elanı yerləşdir
+                  <Plus size={17} />
+                  Elan yerləşdir
                 </button>
-              )}
+
+                <button
+                  type="button"
+                  onClick={openBusinessEditModal}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#670fff]/20 bg-[#670fff]/5 px-4 py-2.5 text-sm font-bold text-[#670fff] transition hover:bg-[#670fff]/10 active:scale-95"
+                >
+                  <Pencil size={17} />
+                  Biznesi redaktə et
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* =====================================================
+                MƏLUMATLAR
+            ====================================================== */}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-7">
+            {/* ŞƏHƏR */}
+
+            {business.city && (
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#101015]">
+                <MapPin size={19} className="text-[#670fff] shrink-0" />
+
+                <div className="min-w-0">
+                  <div className="text-xs text-slate-400">Şəhər</div>
+
+                  <div className="font-bold text-sm text-slate-800 dark:text-white truncate">
+                    {business.city}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ÜNVAN */}
+
+            {business.address && (
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#101015]">
+                <MapPin size={19} className="text-[#670fff] shrink-0" />
+
+                <div className="min-w-0">
+                  <div className="text-xs text-slate-400">Ünvan</div>
+
+                  <div className="font-bold text-sm text-slate-800 dark:text-white truncate">
+                    {business.address}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TELEFON */}
+
+            {business.phone && (
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#101015]">
+                <Phone size={19} className="text-[#670fff] shrink-0" />
+
+                <div className="min-w-0">
+                  <div className="text-xs text-slate-400">Telefon</div>
+
+                  <div className="font-bold text-sm text-slate-800 dark:text-white truncate">
+                    {business.phone}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* EMAIL */}
+
+            {business.email && (
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#101015]">
+                <Mail size={19} className="text-[#670fff] shrink-0" />
+
+                <div className="min-w-0">
+                  <div className="text-xs text-slate-400">E-poçt</div>
+
+                  <div className="font-bold text-sm text-slate-800 dark:text-white truncate">
+                    {business.email}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* =====================================================
+                İŞ SAATLARI
+            ====================================================== */}
+          {isOwner && (
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-slate-900">
+              <div className="mb-5 flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-black">Profil statistikası</h3>
+
+                  <p className="mt-1 text-sm text-slate-500">
+                    Biznes profilinizə daxil olan istifadəçilər
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={fetchBusinessViews}
+                  className="rounded-xl bg-[#670fff] px-4 py-2 text-sm font-bold text-white"
+                >
+                  Yenilə
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-2xl bg-slate-100 p-4 dark:bg-white/5">
+                  <p className="text-sm text-slate-500">Ümumi baxış</p>
+
+                  <p className="mt-1 text-2xl font-black">
+                    {businessViews?.totalViews || 0}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-slate-100 p-4 dark:bg-white/5">
+                  <p className="text-sm text-slate-500">Unikal istifadəçi</p>
+
+                  <p className="mt-1 text-2xl font-black">
+                    {businessViews?.uniqueUsers || 0}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5">
+                <h4 className="mb-3 font-black">Profilə daxil olanlar</h4>
+
+                {loadingViews ? (
+                  <p className="text-sm text-slate-500">Yüklənir...</p>
+                ) : businessViews?.visitors?.length ? (
+                  <div className="space-y-2">
+                    {businessViews.visitors.map((visitor) => (
+                      <div
+                        key={visitor.id}
+                        className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 dark:border-white/10"
+                      >
+                        {visitor.avatar ? (
+                          <img
+                            src={visitor.avatar}
+                            alt=""
+                            className="h-10 w-10 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#670fff] font-bold text-white">
+                            {(visitor.username || visitor.name || "?")
+                              .charAt(0)
+                              .toUpperCase()}
+                          </div>
+                        )}
+
+                        <div>
+                          <p className="font-bold">
+                            {visitor.name || visitor.username || "İstifadəçi"}
+                            {visitor.surname ? ` ${visitor.surname}` : ""}
+                          </p>
+
+                          {visitor.username && (
+                            <p className="text-xs text-slate-500">
+                              @{visitor.username}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-500">
+                    Hələ heç bir istifadəçi profilə daxil olmayıb.
+                  </p>
+                )}
+              </div>
             </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-              {ads.map((ad) => {
-                const adId = ad?._id || ad?.id;
-                const detailPath = getAdDetailPath(ad);
+          )}
+          <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+            <div className="mb-4 flex items-center gap-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-[#670fff] dark:bg-purple-950/40">
+                <Clock size={20} />
+              </div>
+              <div className="w-full flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <h3 className="text-lg font-black text-gray-900 dark:text-white">
+                    İş saatları
+                  </h3>
+
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Biznesin həftəlik iş qrafiki
+                  </p>
+                </div>
+
+                <div className="shrink-0 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                  <Eye size={17} />
+                  <span>{publicViewCount.toLocaleString("az-AZ")} baxış</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              {WORKING_DAYS.map((day) => {
+                const hours = {
+                  ...DEFAULT_WORKING_HOURS[day.key],
+                  ...(business.workingHours?.[day.key] || {}),
+                };
 
                 return (
                   <div
-                    key={adId}
-                    className="group bg-white dark:bg-[#15151b] rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
+                    key={day.key}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-800/50"
                   >
-                    {/* DETAL */}
+                    <span className="font-semibold text-gray-800 dark:text-gray-200">
+                      {day.label}
+                    </span>
 
-                    <Link to={detailPath} className="block">
-                      {/* ŞƏKİL */}
-
-                      <div className="relative h-36 sm:h-48 bg-slate-100 dark:bg-[#101015] overflow-hidden">
-                        {ad.mainImage || ad.images?.[0] ? (
-                          <img
-                            src={ad.mainImage || ad.images?.[0]}
-                            alt={ad.title || "Elan"}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Store
-                              size={35}
-                              className="text-slate-300 dark:text-slate-600"
-                            />
-                          </div>
-                        )}
-
-                        <div className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur">
-                          <ExternalLink size={14} />
-                        </div>
-                      </div>
-
-                      {/* MƏLUMAT */}
-
-                      <div className="p-3">
-                        <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white line-clamp-2">
-                          {ad.title || "Adsız elan"}
-                        </h3>
-
-                        <div className="mt-2 text-lg font-black text-[#670fff]">
-                          {ad.price
-                            ? `${Number(ad.price).toLocaleString("az-AZ")} ₼`
-                            : "Qiymət yoxdur"}
-                        </div>
-
-                        {ad.city && (
-                          <div className="mt-1 text-xs text-slate-500">
-                            {ad.city}
-                          </div>
-                        )}
-                      </div>
-                    </Link>
-
-                    {/* OWNER CONTROLS */}
-
-                    {isOwner && (
-                      <div className="flex items-center gap-2 border-t border-slate-100 dark:border-white/10 p-3">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleOpenEditModal(ad);
-                          }}
-                          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#670fff]/20 bg-[#670fff]/5 px-3 py-2.5 text-sm font-black text-[#670fff] transition hover:bg-[#670fff]/10"
-                        >
-                          <Pencil size={16} />
-                          Düzəliş
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleDeleteAd(ad);
-                          }}
-                          className="flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-black text-red-600 transition hover:bg-red-100 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20"
-                        >
-                          <Trash2 size={16} />
-                          Sil
-                        </button>
-                      </div>
+                    {hours.closed ? (
+                      <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-600 dark:bg-red-950/40 dark:text-red-400">
+                        Bağlıdır
+                      </span>
+                    ) : (
+                      <span className="font-bold text-[#670fff] whitespace-nowrap">
+                        {hours.open} — {hours.close}
+                      </span>
                     )}
                   </div>
                 );
               })}
             </div>
+          </div>
+
+          {/* =====================================================
+                BİZNES HAQQINDA
+            ====================================================== */}
+
+          {business.description && (
+            <div className="mt-7">
+              <h2 className="text-lg font-black text-slate-900 dark:text-white">
+                Biznes haqqında
+              </h2>
+
+              <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300 whitespace-pre-line">
+                {business.description}
+              </p>
+            </div>
           )}
         </div>
+      </div>
+
+      {/* =====================================================
+            ELANLAR
+        ====================================================== */}
+
+      <div className="mt-7">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+              {categoryInfo.label} elanları
+            </h2>
+
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              {ads.length} elan
+            </p>
+          </div>
+
+          <CategoryIcon size={27} className="text-[#670fff]" />
+        </div>
+
+        {/* ELAN YOXDUR */}
+
+        {ads.length === 0 ? (
+          <div className="bg-white dark:bg-[#15151b] border border-slate-200 dark:border-white/10 rounded-3xl p-10 text-center">
+            <CategoryIcon
+              size={45}
+              className="mx-auto text-slate-300 dark:text-slate-600"
+            />
+
+            <h3 className="mt-4 font-black text-lg text-slate-900 dark:text-white">
+              Hələ elan yoxdur
+            </h3>
+
+            <p className="mt-1 text-sm text-slate-500">
+              İlk {categoryInfo.label.toLowerCase()} elanınızı yerləşdirin.
+            </p>
+
+            {isOwner && (
+              <button
+                type="button"
+                onClick={handleCreateAd}
+                className="mt-5 px-5 py-3 rounded-xl bg-[#670fff] text-white font-black inline-flex items-center gap-2"
+              >
+                <Plus size={18} />
+                İlk elanı yerləşdir
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+            {ads.map((ad) => {
+              const adId = ad?._id || ad?.id;
+              const detailPath = getAdDetailPath(ad);
+
+              return (
+                <div
+                  key={adId}
+                  className="group bg-white dark:bg-[#15151b] rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
+                >
+                  {/* DETAL */}
+
+                  <Link to={detailPath} className="block">
+                    {/* ŞƏKİL */}
+
+                    <div className="relative h-36 sm:h-48 bg-slate-100 dark:bg-[#101015] overflow-hidden">
+                      {ad.mainImage || ad.images?.[0] ? (
+                        <img
+                          src={ad.mainImage || ad.images?.[0]}
+                          alt={ad.title || "Elan"}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Store
+                            size={35}
+                            className="text-slate-300 dark:text-slate-600"
+                          />
+                        </div>
+                      )}
+
+                      <div className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur">
+                        <ExternalLink size={14} />
+                      </div>
+                    </div>
+
+                    {/* MƏLUMAT */}
+
+                    <div className="p-3">
+                      <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white line-clamp-2">
+                        {ad.title || "Adsız elan"}
+                      </h3>
+
+                      <div className="mt-2 text-lg font-black text-[#670fff]">
+                        {ad.price
+                          ? `${Number(ad.price).toLocaleString("az-AZ")} ₼`
+                          : "Qiymət yoxdur"}
+                      </div>
+
+                      {ad.city && (
+                        <div className="mt-1 text-xs text-slate-500">
+                          {ad.city}
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+
+                  {/* OWNER CONTROLS */}
+
+                  {isOwner && (
+                    <div className="flex items-center gap-2 border-t border-slate-100 dark:border-white/10 p-3">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleOpenEditModal(ad);
+                        }}
+                        className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#670fff]/20 bg-[#670fff]/5 px-3 py-2.5 text-sm font-black text-[#670fff] transition hover:bg-[#670fff]/10"
+                      >
+                        <Pencil size={16} />
+                        Düzəliş
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDeleteAd(ad);
+                        }}
+                        className="flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-black text-red-600 transition hover:bg-red-100 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20"
+                      >
+                        <Trash2 size={16} />
+                        Sil
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* =========================================================
@@ -2566,6 +2613,6 @@ const BusinessProfile = () => {
       )}
     </div>
   );
-};;;;
+};
 
 export default BusinessProfile;

@@ -21,10 +21,12 @@ import {
   CalendarDays,
   Clock3,
   Loader2,
+  Eye,
 } from "lucide-react";
 import { useTheme } from "../../components/Main/ThemeContext";
 import BubbleBackground from "../../components/ui/BubbleBackground";
 import BottomMenu from "../../components/MobileMenu";
+import { getVisitorId } from "../../utils/visitorId";
 
 export default function PostDetail() {
   const { id } = useParams();
@@ -57,27 +59,100 @@ export default function PostDetail() {
   // ---------------------------------------------------------
   // Cari elanı gətir
   // ---------------------------------------------------------
-  useEffect(() => {
+useEffect(() => {
+  let mounted = true;
+
+  const fetchPost = async () => {
     setLoading(true);
     setNotFound(false);
 
-    axios
-      .get(`${BASE_URL}/api/homeGarden/${id}`)
-      .then((res) => {
-        if (res.data) {
-          setPost(res.data);
-        } else {
-          setNotFound(true);
-        }
-      })
-      .catch((err) => {
-        console.error("Elan yüklənmədi:", err);
+    try {
+      // ---------------------------------------------------
+      // CARİ ELANI GƏTİR
+      // ---------------------------------------------------
+
+      const res = await axios.get(`${BASE_URL}/api/homeGarden/${id}`);
+
+      if (!mounted) return;
+
+      if (!res.data) {
+        setPost(null);
         setNotFound(true);
-      })
-      .finally(() => {
+        return;
+      }
+
+      setPost(res.data);
+
+      // ---------------------------------------------------
+      // ELAN BAXIŞINI QEYD ET
+      // ---------------------------------------------------
+
+      try {
+        const visitorId = getVisitorId();
+        const token = localStorage.getItem("token");
+
+        const viewResponse = await axios.post(
+          `${BASE_URL}/api/ads/${id}/view`,
+          {},
+          {
+            headers: {
+              "x-visitor-id": visitorId,
+              ...(token
+                ? {
+                    Authorization: `Bearer ${token}`,
+                  }
+                : {}),
+            },
+          },
+        );
+
+        if (!mounted) return;
+
+        // Backend yeni viewCount qaytarır
+        if (
+          viewResponse.data?.success &&
+          typeof viewResponse.data.viewCount === "number"
+        ) {
+          setPost((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  viewCount: viewResponse.data.viewCount,
+                }
+              : prev,
+          );
+        }
+      } catch (viewError) {
+        console.error(
+          "Elan baxışı qeyd olunmadı:",
+          viewError.response?.data || viewError.message,
+        );
+      }
+    } catch (err) {
+      console.error(
+        "Ev və bağ elanı yüklənmədi:",
+        err.response?.data || err.message,
+      );
+
+      if (mounted) {
+        setPost(null);
+        setNotFound(true);
+      }
+    } finally {
+      if (mounted) {
         setLoading(false);
-      });
-  }, [id, BASE_URL]);
+      }
+    }
+  };
+
+  if (id) {
+    fetchPost();
+  }
+
+  return () => {
+    mounted = false;
+  };
+}, [id, BASE_URL]);
 
   // ---------------------------------------------------------
   // Şəkillər
@@ -588,7 +663,9 @@ export default function PostDetail() {
 
                   <span>
                     Elanın nömrəsi:{" "}
-                    <strong className="text-current">
+                    <strong
+                      className={darkMode ? "text-slate-200" : "text-slate-800"}
+                    >
                       {post.id || post._id}
                     </strong>
                   </span>
@@ -603,6 +680,14 @@ export default function PostDetail() {
                   <span className="inline-flex items-center gap-1.5">
                     <Clock3 size={15} />
                     {getCurrentTime(postDate)}
+                  </span>
+
+                  <span className="inline-flex items-center gap-1.5">
+                    <Eye size={15} />
+
+                    <span>{(post.viewCount || 0).toLocaleString("az-AZ")}</span>
+
+                    <span>baxış</span>
                   </span>
                 </div>
               </div>
@@ -861,22 +946,35 @@ export default function PostDetail() {
                           </p>
                         )}
 
-                        <div
-                          className={`flex items-center justify-between gap-2 mt-4 pt-3 border-t text-xs ${
-                            darkMode
-                              ? "border-slate-800 text-slate-500"
-                              : "border-slate-100 text-slate-400"
-                          }`}
-                        >
-                          <span className="flex items-center gap-1 truncate">
-                            <MapPin size={13} />
-                            {item?.location || "—"}
-                          </span>
+                       <div
+  className={`flex items-center justify-between gap-2 mt-4 pt-3 border-t text-xs ${
+    darkMode
+      ? "border-slate-800 text-slate-500"
+      : "border-slate-100 text-slate-400"
+  }`}
+>
+  <span className="flex items-center gap-1 min-w-0 truncate">
+    <MapPin size={13} className="shrink-0" />
 
-                          <span className="whitespace-nowrap">
-                            {formatDate(itemDate)}
-                          </span>
-                        </div>
+    <span className="truncate">
+      {item?.location || "—"}
+    </span>
+  </span>
+
+  <div className="flex items-center gap-2 shrink-0">
+    <span className="flex items-center gap-1">
+      <Eye size={12} />
+
+      <span>
+        {(item?.viewCount || 0).toLocaleString("az-AZ")}
+      </span>
+    </span>
+
+    <span className="whitespace-nowrap">
+      {formatDate(itemDate)}
+    </span>
+  </div>
+</div>
                       </div>
                     </div>
                   </Link>

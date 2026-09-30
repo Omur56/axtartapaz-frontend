@@ -25,9 +25,11 @@ import {
   Tag,
   User,
   X,
+  Eye,
 } from "lucide-react";
 
 import { useTheme } from "../../components/Main/ThemeContext";
+import { getVisitorId } from "../../utils/visitorId";
 
 export default function PostDetailClothing() {
   const { id } = useParams();
@@ -47,40 +49,94 @@ export default function PostDetailClothing() {
      ELANI GƏTİR
   ========================================================= */
 
-  useEffect(() => {
-    let mounted = true;
+ useEffect(() => {
+   let mounted = true;
 
-    const fetchPost = async () => {
-      try {
-        setLoading(true);
-        setNotFound(false);
+   const fetchPost = async () => {
+     try {
+       setLoading(true);
+       setNotFound(false);
 
-        const res = await axios.get(`${BASE_URL}/api/Clothing/${id}`);
+       const res = await axios.get(`${BASE_URL}/api/Clothing/${id}`);
 
-        if (!mounted) return;
+       if (!mounted) return;
 
-        setPost(res.data);
-      } catch (err) {
-        console.error("Clothing detail error:", err);
+       if (!res.data) {
+         setPost(null);
+         setNotFound(true);
+         return;
+       }
 
-        if (mounted) {
-          setNotFound(true);
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
+       setPost(res.data);
 
-    if (id) {
-      fetchPost();
-    }
+       // =====================================================
+       // ELAN BAXIŞINI QEYD ET
+       // =====================================================
+       try {
+         const visitorId = getVisitorId();
+         const token = localStorage.getItem("token");
 
-    return () => {
-      mounted = false;
-    };
-  }, [id, BASE_URL]);
+         const viewResponse = await axios.post(
+           `${BASE_URL}/api/ads/${id}/view`,
+           {},
+           {
+             headers: {
+               "x-visitor-id": visitorId,
+               ...(token
+                 ? {
+                     Authorization: `Bearer ${token}`,
+                   }
+                 : {}),
+             },
+           },
+         );
+
+         if (!mounted) return;
+
+         if (
+           viewResponse.data?.success &&
+           typeof viewResponse.data.viewCount === "number"
+         ) {
+           setPost((prev) =>
+             prev
+               ? {
+                   ...prev,
+                   viewCount: viewResponse.data.viewCount,
+                 }
+               : prev,
+           );
+         }
+       } catch (viewError) {
+         console.error(
+           "Elan baxışı qeyd olunmadı:",
+           viewError.response?.data || viewError.message,
+         );
+       }
+     } catch (err) {
+       console.error(
+         "Clothing detail error:",
+         err.response?.data || err.message,
+       );
+
+       if (mounted) {
+         setPost(null);
+         setNotFound(true);
+       }
+     } finally {
+       if (mounted) {
+         setLoading(false);
+       }
+     }
+   };
+
+   if (id) {
+     fetchPost();
+   }
+
+   return () => {
+     mounted = false;
+   };
+ }, [id, BASE_URL]);
 
   /* =========================================================
      BƏNZƏR ELANLAR
@@ -512,6 +568,10 @@ const handleUpgrade = async (listingId, type) => {
                       {getCurrentTime(post.data)}
                     </span>
                   )}
+                  <span className="flex items-center gap-1.5">
+                    <Eye size={15} />
+                    {(post.viewCount || 0).toLocaleString("az-AZ")} baxış
+                  </span>
                 </div>
               </div>
 
@@ -727,6 +787,11 @@ const handleUpgrade = async (listingId, type) => {
                 <span className="flex items-center gap-1.5">
                   <MapPin size={15} />
                   {post.location || "Məlum deyil"}
+                </span>
+
+                <span className="flex items-center gap-1.5">
+                  <Eye size={15} />
+                  {(post.viewCount || 0).toLocaleString("az-AZ")} baxış
                 </span>
               </div>
             </div>
@@ -1009,12 +1074,19 @@ const handleUpgrade = async (listingId, type) => {
                         )}
 
                         <div
-                          className={`mt-2 flex items-center gap-1 truncate text-xs ${
+                          className={`mt-2 flex items-center gap-3 truncate text-xs ${
                             darkMode ? "text-gray-500" : "text-gray-400"
                           }`}
                         >
-                          <MapPin size={12} />
-                          {item.location || "Məlum deyil"}
+                          <span className="flex min-w-0 items-center gap-1 truncate">
+                            <MapPin size={12} />
+                            {item.location || "Məlum deyil"}
+                          </span>
+
+                          <span className="flex shrink-0 items-center gap-1">
+                            <Eye size={12} />
+                            {(item?.viewCount || 0).toLocaleString("az-AZ")}
+                          </span>
                         </div>
                       </div>
                     </div>

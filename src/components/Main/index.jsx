@@ -106,9 +106,10 @@ const RootLayout = () => {
             z-10
             flex-grow
             w-full
-            max-w-[1240px]
+          sm:max-w-[1240px]
+          max-w-full
             mx-auto
-            px-3
+            p-1
             sm:px-5
             lg:px-6
             pt-[78px]
