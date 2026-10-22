@@ -1312,7 +1312,7 @@ const BusinessProfile = () => {
 
   // =========
   return (
-    <div className="w-[1010px] mx-auto">
+    <div className=" marker::min-w-[1010px] max-w-screen min-h-screen bg-slate-50 dark:bg-[#0b0b0f] text-slate-900 dark:text-white">
       {/* =====================================================
             GERİ
         ====================================================== */}
@@ -1516,7 +1516,7 @@ const BusinessProfile = () => {
                 e.stopPropagation();
                 openBusinessEditModal();
               }}
-              className="absolute right-4 top-7 z-30 flex items-center gap-2 rounded-xl bg-black/40 backdrop-blur-md px-4 py-2.5 text-sm font-bold text-white hover:bg-black/60 transition"
+              className="absolute right-4 top-28 sm:top-60  z-30 flex items-center gap-2 rounded-xl bg-black/40 backdrop-blur-md px-4 py-2.5 text-sm font-bold text-white hover:bg-black/60 transition"
             >
               <Pencil size={16} />
               Redaktə et

@@ -69,10 +69,13 @@ const RootLayout = () => {
           aria-label={darkMode ? "Açıq rejimə keç" : "Qaranlıq rejimə keç"}
           className={`
             fixed
+           
             right-4
-            sm:right-6
-            top-[200px]
-            z-[90]
+            
+            
+            top-20
+            
+            z-[100]
             w-10
             h-10
             sm:w-11
